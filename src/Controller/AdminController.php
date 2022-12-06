@@ -71,8 +71,9 @@ class AdminController extends ExposeDataController
     public function fetchTotalAdmittedApplicants()
     {
         $query = "SELECT COUNT(*) AS total 
-                FROM admitted_students AS a, applicants_login as l, admission_period AS p 
-                WHERE l.id = a.app_login AND a.admission_period = p.id AND p.active = 1 AND p.id = l.admission_period";
+                FROM form_sections_chek AS f, applicants_login as l, admission_period AS p, purchase_detail AS d 
+                WHERE d.`id` = l.`purchase_id` AND d.`admission_period` = p.`id` AND l.`id` = f.`app_login` AND 
+                p.`active` = 1 AND f.`admitted` = 1";
         return $this->getData($query);
     }
 
@@ -85,11 +86,17 @@ class AdminController extends ExposeDataController
                 WHERE 
                     p.`app_login` = l.`id` AND a.`app_login` = l.`id` AND 
                     f.`app_login` = l.`id` AND i.`app_login` = l.`id` AND
-                    a.`awaiting_result` = 0 AND a.`cert_type` = :c AND f.`declaration` = 1";
-        return $this->getData($query, array(":c" => $certificate));
+                    a.`awaiting_result` = 0 AND f.`declaration` = 1";
+        $param = array();
+        if (strtolower($certificate) != "all") {
+            $query .= " AND a.`cert_type` = :c";
+            $param = array(":c" => $certificate);
+        }
+
+        return $this->getData($query, $param);
     }
 
-    public function getApplicantsSubjects(int $loginID)
+    public function getAppCourseSubjects(int $loginID)
     {
         $query = "SELECT 
                     r.`type`, r.`subject`, r.`grade` 
@@ -109,7 +116,7 @@ class AdminController extends ExposeDataController
 
         foreach ($allAppData as  $appData) {
             $applicant = [];
-            $subjs = $this->getApplicantsSubjects($appData["id"]);
+            $subjs = $this->getAppCourseSubjects($appData["id"]);
             $applicant["app_pers"] = $appData;
             $applicant["sch_rslt"] = $subjs;
             array_push($data, $applicant);
