@@ -86,7 +86,7 @@ class AdminController extends ExposeDataController
                 WHERE 
                     p.`app_login` = l.`id` AND a.`app_login` = l.`id` AND 
                     f.`app_login` = l.`id` AND i.`app_login` = l.`id` AND
-                    a.`awaiting_result` = 0 AND f.`declaration` = 1";
+                    a.`awaiting_result` = 0 AND f.`declaration` = 1 AND f.`admitted` = 0";
         $param = array();
         if (strtolower($certificate) != "all") {
             $query .= " AND a.`cert_type` = :c";
@@ -214,6 +214,7 @@ class AdminController extends ExposeDataController
                 $app_result["id"] = $data["app_pers"]["id"];
                 $app_result["data"] = $feed;
                 $app_result["admitted"] = false;
+                $app_result["email_sent_status"] = false;
 
                 // Admit applicant
                 if ($required_core_passed == 2 && $any_one_core_passed > 0 && $any_three_elective_passed >= 3) {
@@ -227,7 +228,9 @@ class AdminController extends ExposeDataController
                                 : $bs_data["app_pers"]["first_name"] . " " . $bs_data["app_pers"]["last_name"];
                             $message = "Congratulations " . $full_name . "! <br> You have been offered admission at Regional Maritime University to study "
                                 . $bs_data["app_pers"]['programme'];
-                            $this->sendEmail(strtolower($bs_data["app_pers"]["email_address"]), $subject, $message);
+                            if ($this->sendEmail(strtolower($bs_data["app_pers"]["email_address"]), $subject, $message)) {
+                                $app_result["email_sent_status"] = true;
+                            }
                         }
                     }
                 }
