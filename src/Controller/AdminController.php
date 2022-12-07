@@ -244,23 +244,25 @@ class AdminController extends ExposeDataController
         $app_result["admitted"] = false;
         $app_result["email_sent_status"] = false;
 
+        $prog_choice = $data["app_pers"]["prog_category"] . "_qualified";
+
         // Admit applicant
-        if ($required_core_passed == 2 && $any_one_core_passed > 0 && $any_three_elective_passed >= 3) {
-            if ($feed["total_score"] <= 36 && ($certificate == 'WASSCE' || $certificate == 'NECO')) {
-                $query = "UPDATE `form_sections_chek` SET `admitted` = 1 WHERE `app_login` = :i";
-                if ($this->getData($query, array(":i" => $app_result["id"]))) {
-                    $app_result["admitted"] = true;
-                    $subject = "ADMISSIONS";
-                    $full_name = !empty($data["app_pers"]["middle_name"])
-                        ? $data["app_pers"]["first_name"] . " " . $data["app_pers"]["middle_name"] . " " . $data["app_pers"]["last_name"]
-                        : $data["app_pers"]["first_name"] . " " . $data["app_pers"]["last_name"];
-                    $message = "Congratulations " . $full_name . "! <br> You have been offered admission at Regional Maritime University to study "
-                        . $data["app_pers"]['programme'];
-                    if ($this->sendEmail(strtolower($data["app_pers"]["email_addr"]), $subject, $message)) {
+        if ($required_core_passed == 2 && $any_one_core_passed > 0 && $any_three_elective_passed >= 3 && $feed["total_score"] <= 36) {
+            $query = "UPDATE `form_sections_chek` SET `admitted` = 1, `$prog_choice` = 1 WHERE `app_login` = :i";
+            $this->getData($query, array(":i" => $app_result["id"]));
+            $app_result["admitted"] = true;
+            $subject = "ADMISSIONS";
+            $full_name = !empty($data["app_pers"]["middle_name"])
+                ? $data["app_pers"]["first_name"] . " " . $data["app_pers"]["middle_name"] . " " . $data["app_pers"]["last_name"]
+                : $data["app_pers"]["first_name"] . " " . $data["app_pers"]["last_name"];
+            $message = "Congratulations " . $full_name . "! <br> You have been offered admission at Regional Maritime University to study "
+                . $data["app_pers"]['programme'];
+            /*if ($this->sendEmail(strtolower($data["app_pers"]["email_addr"]), $subject, $message)) {
                         $app_result["email_sent_status"] = true;
-                    }
-                }
-            }
+                    }*/
+        } else {
+            $query = "UPDATE `form_sections_chek` SET`admitted` = 0,  `$prog_choice` = 1 WHERE `app_login` = :i";
+            $this->getData($query, array(":i" => $app_result["id"]));
         }
 
         return $app_result;
