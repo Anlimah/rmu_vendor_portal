@@ -124,6 +124,7 @@ class AdminController extends ExposeDataController
         foreach ($allAppData as  $appData) {
             $applicant = [];
             $applicant["app_pers"] = $appData;
+            $applicant["app_pers"]["prog_category"] = $progCategory;
             $subjs = $this->getAppCourseSubjects($appData["id"]);
             $applicant["sch_rslt"] = $subjs;
             $progs = $this->getAppProgDetails($appData["programme"]);
@@ -255,9 +256,9 @@ class AdminController extends ExposeDataController
                         : $data["app_pers"]["first_name"] . " " . $data["app_pers"]["last_name"];
                     $message = "Congratulations " . $full_name . "! <br> You have been offered admission at Regional Maritime University to study "
                         . $data["app_pers"]['programme'];
-                    /*if ($this->sendEmail(strtolower($data["app_pers"]["email_addr"]), $subject, $message)) {
+                    if ($this->sendEmail(strtolower($data["app_pers"]["email_addr"]), $subject, $message)) {
                         $app_result["email_sent_status"] = true;
-                    }*/
+                    }
                 }
             }
         }
