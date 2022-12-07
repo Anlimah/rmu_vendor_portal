@@ -134,7 +134,10 @@ class AdminController extends ExposeDataController
         return $data;
     }
 
-    public function admitAllStudents($data, $qualifications)
+    /*
+    * Admit applicants in groups by their certificate category
+    */
+    public function admitApplicantsByCertCat($data, $qualifications)
     {
         $final_result = [];
         foreach ($data as $std_data) {
@@ -155,7 +158,6 @@ class AdminController extends ExposeDataController
                 continue;
             }
         }
-
         return $final_result;
     }
 
@@ -326,7 +328,10 @@ class AdminController extends ExposeDataController
         return $final_result;
     }
 
-    public function admitAllStudentsByCat($cat_A_stds_data, $qualify_cat, $certificate)
+    /*
+    * Admit applicants in groups by their certificate category
+    */
+    /*public function admitStudentsByCertCat($cat_A_stds_data, $qualify_cat, $certificate)
     {
         $final_result = [];
         switch ($qualify_cat) {
@@ -356,34 +361,23 @@ class AdminController extends ExposeDataController
                 break;
         }
         return $final_result;
-    }
+    }*/
 
     public function admitQualifiedStudents($certificate, $progCategory)
     {
         $students_bs_data = $this->fetchBroadsheetData($certificate, $progCategory);
 
-        $qualifications = array(
-            "A" => array('WASSCE', 'SSSCE', 'GBCE', 'NECO'),
-            "B" => array('GCE', "GCE 'A' Level", "GCE 'O' Level"),
-            "C" => array('HND'),
-            "D" => array('IB', 'International Baccalaureate', 'Baccalaureate'),
-        );
+        if (!empty($students_bs_data)) {
+            $qualifications = array(
+                "A" => array('WASSCE', 'SSSCE', 'GBCE', 'NECO'),
+                "B" => array('GCE', "GCE 'A' Level", "GCE 'O' Level"),
+                "C" => array('HND'),
+                "D" => array('IB', 'International Baccalaureate', 'Baccalaureate'),
+            );
 
-        if (strtolower($certificate) == "all") {
-            $result = $this->admitAllStudents($students_bs_data, $qualifications);
-        } else {
-            // check program group
-            if (in_array($certificate, $qualifications['A'])) {
-                $result = $this->admitAllStudentsByCat($students_bs_data, 'A', $certificate);
-            } else if (in_array($certificate, $qualifications['B'])) {
-                $result = $this->admitAllStudentsByCat($students_bs_data, 'B', $certificate);
-            } else if (in_array($certificate, $qualifications['C'])) {
-                $result = $this->admitAllStudentsByCat($students_bs_data, 'C', $certificate);
-            } else if (in_array($certificate, $qualifications['D'])) {
-                $result = $this->admitAllStudentsByCat($students_bs_data, 'D', $certificate);
-            }
+            return $this->admitApplicantsByCertCat($students_bs_data, $qualifications);
         }
 
-        return $result;
+        return 0;
     }
 }

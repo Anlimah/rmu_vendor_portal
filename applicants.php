@@ -59,7 +59,7 @@ require_once('inc/page-data.php');
               <div class="row">
 
                 <!-- Broadsheets Card -->
-                <div class="col-xxl-4 col-md-3">
+                <div class="col-xxl-3 col-md-3">
                   <div class="card info-card" style="border: 1px solid #999;">
                     <div class="card-body" style="padding: 0 15px;">
                       <h5 class="card-title">Total</h5>
@@ -68,7 +68,7 @@ require_once('inc/page-data.php');
                           <i class="bi bi-files"></i>
                         </div>
                         <div class="ps-3">
-                          <h6><?= json_encode($expose->fetchTotalApplications()[0]["total"]); ?></h6>
+                          <h6><?= $expose->fetchTotalApplications()[0]["total"]; ?></h6>
                         </div>
                       </div>
                     </div>
@@ -76,7 +76,7 @@ require_once('inc/page-data.php');
                 </div><!-- End Broadsheets Card -->
 
                 <!-- Broadsheets Card -->
-                <div class="col-xxl-4 col-md-3">
+                <div class="col-xxl-3 col-md-3">
                   <div class="card info-card" style="border: 1px solid #999;">
                     <div class="card-body" style="padding: 0 15px;">
                       <h5 class="card-title">Submitted</h5>
@@ -85,7 +85,7 @@ require_once('inc/page-data.php');
                           <i class="bi bi-files"></i>
                         </div>
                         <div class="ps-3">
-                          <h6><?= json_encode($expose->fetchTotalSubmittedOrUnsubmittedApps()[0]["total"]); ?></h6>
+                          <h6><?= $expose->fetchTotalSubmittedOrUnsubmittedApps()[0]["total"]; ?></h6>
                         </div>
                       </div>
                     </div>
@@ -93,7 +93,7 @@ require_once('inc/page-data.php');
                 </div><!-- End Broadsheets Card -->
 
                 <!-- Broadsheets Card -->
-                <div class="col-xxl-4 col-md-3">
+                <div class="col-xxl-3 col-md-3">
                   <div class="card info-card" style="border: 1px solid #999;">
                     <div class="card-body" style="padding: 0 15px;">
                       <h5 class="card-title">In Progress</h5>
@@ -102,7 +102,7 @@ require_once('inc/page-data.php');
                           <i class="bi bi-files"></i>
                         </div>
                         <div class="ps-3">
-                          <h6><?= json_encode($expose->fetchTotalSubmittedOrUnsubmittedApps(false)[0]["total"]); ?></h6>
+                          <h6><?= $expose->fetchTotalSubmittedOrUnsubmittedApps(false)[0]["total"]; ?></h6>
                         </div>
                       </div>
                     </div>
@@ -110,7 +110,7 @@ require_once('inc/page-data.php');
                 </div><!-- End Broadsheets Card -->
 
                 <!-- Broadsheets Card -->
-                <div class="col-xxl-4 col-md-3">
+                <div class="col-xxl-3 col-md-3">
                   <div class="card info-card" style="border: 1px solid #999;">
                     <div class="card-body" style="padding: 0 15px;">
                       <h5 class="card-title">Admitted Students</h5>
@@ -119,7 +119,7 @@ require_once('inc/page-data.php');
                           <i class="bi bi-files"></i>
                         </div>
                         <div class="ps-3">
-                          <h6><?= json_encode($expose->fetchTotalAdmittedApplicants()[0]["total"]); ?></h6>
+                          <h6><?= $expose->fetchTotalAdmittedApplicants()[0]["total"]; ?></h6>
                         </div>
                       </div>
                     </div>

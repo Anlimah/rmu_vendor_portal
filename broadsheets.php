@@ -123,9 +123,7 @@ require_once('inc/page-data.php');
   <script>
     $(document).ready(function() {
 
-      $("#fetchDataForm").on("submit", function(e) {
-        e.preventDefault();
-
+      var fetchBroadsheet = function() {
         data = {
           "cert-type": $("#cert-type").val(),
           "prog-type": $("#prog-type").val(),
@@ -174,6 +172,10 @@ require_once('inc/page-data.php');
             console.log(error);
           }
         });
+      }
+      $("#fetchDataForm").on("submit", function(e) {
+        e.preventDefault();
+        fetchBroadsheet();
       });
 
       function getUrlVars() {
@@ -210,8 +212,10 @@ require_once('inc/page-data.php');
           type: "POST",
           url: "endpoint/admitAll",
           data: data,
-          success: function(success) {
-            console.log(success);
+          success: function(result) {
+            console.log(result);
+            if (result.success) fetchBroadsheet();
+
           },
           error: function(error) {
             console.log(error);
