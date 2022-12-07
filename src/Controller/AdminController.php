@@ -79,7 +79,8 @@ class AdminController extends ExposeDataController
 
     public function getAllApplicantsID($certificate, $progCategory)
     {
-        $query = "SELECT l.`id`, p.`first_name`, p.`middle_name`, p.`last_name`, p.`email_addr`, i.`$progCategory` AS programme
+        $query = "SELECT l.`id`, p.`first_name`, p.`middle_name`, p.`last_name`, 
+                    p.`email_addr`, i.`$progCategory` AS programme, a.`cert_type` 
                 FROM 
                     `personal_information` AS p, `academic_background` AS a, 
                     `applicants_login` AS l, `form_sections_chek` AS f, `program_info` AS i 
@@ -107,6 +108,12 @@ class AdminController extends ExposeDataController
         return $this->getData($query, array(":i" => $loginID));
     }
 
+    public function getAppProgDetails($program)
+    {
+        $query = "SELECT `id`, `type`, `group` FROM programs WHERE `name` = :p";
+        return $this->getData($query, array(":p" => $program));
+    }
+
     public function fetchBroadsheetData($certificate, $progCategory)
     {
         $allAppData = $this->getAllApplicantsID($certificate, $progCategory);
@@ -116,149 +123,476 @@ class AdminController extends ExposeDataController
 
         foreach ($allAppData as  $appData) {
             $applicant = [];
-            $subjs = $this->getAppCourseSubjects($appData["id"]);
             $applicant["app_pers"] = $appData;
+            $subjs = $this->getAppCourseSubjects($appData["id"]);
             $applicant["sch_rslt"] = $subjs;
+            $progs = $this->getAppProgDetails($appData["programme"]);
+            $applicant["prog_info"] = $progs;
             array_push($data, $applicant);
         }
 
         return $data;
     }
 
-    public function admitCatA()
+    public function admitAllStudents($data, $qualifications)
     {
+        $final_result = [];
+        foreach ($data as $std_data) {
+            if (in_array($std_data["app_pers"]["cert_type"], $qualifications["A"])) {
+                $app_result = $this->admitByCatA($std_data, $std_data["app_pers"]["cert_type"]);
+            }
+            if (in_array($std_data["app_pers"]["cert_type"], $qualifications["B"])) {
+                $app_result = $this->admitByCatB($std_data, $std_data["app_pers"]["cert_type"]);
+            }
+            if (in_array($std_data["app_pers"]["cert_type"], $qualifications["C"])) {
+                $app_result = $this->admitByCatC($std_data, $std_data["app_pers"]["cert_type"]);
+            }
+            if (in_array($std_data["app_pers"]["cert_type"], $qualifications["D"])) {
+                $app_result = $this->admitByCatD($std_data, $std_data["app_pers"]["cert_type"]);
+            }
+            array_push($final_result, $app_result);
+        }
+
+        return $app_result;
     }
 
-    public function admitByCat($bs_data, $category, $certificate)
+    public function admitByCatA($data, $certificate)
+    {
+
+        // set all qualified grades
+        $grade_range = array(
+            array('grade' => 'A1', 'score' => 1),
+            array('grade' => 'B2', 'score' => 2),
+            array('grade' => 'B3', 'score' => 3),
+            array('grade' => 'C4', 'score' => 4),
+            array('grade' => 'C5', 'score'  => 5),
+            array('grade' => 'C6', 'score'  => 6),
+            array('grade' => 'A', 'score' => 1),
+            array('grade' => 'B', 'score' => 2),
+            array('grade' => 'C', 'score' => 3),
+            array('grade' => 'D', 'score' => 4)
+        );
+
+        $total_core_score = 0;
+        $required_core_passed = 0;
+        $any_one_core_passed = 0;
+        $any_one_core_score = 7;
+
+        $any_three_elective_passed = 0;
+        $total_elective_score = 0;
+        $any_three_elective_scores = [];
+
+        foreach ($data["sch_rslt"] as $result) {
+
+            $score = 7;
+            for ($i = 0; $i < count($grade_range); $i++) {
+                if ($result["grade"] == $grade_range[$i]["grade"]) {
+                    $score = $grade_range[$i]['score'];
+                }
+            }
+
+            if ($result["type"] == "core") {
+                if ($result["subject"] == "CORE MATHEMATICS" || $result["subject"] == "ENGLISH LANGUAGE") {
+                    if ($score != 7) {
+                        $required_core_passed += 1;
+                        $total_core_score += $score;
+                    }
+                } else {
+                    if ($score < $any_one_core_score) {
+                        if (!empty($any_one_core_passed)) $total_core_score -= $any_one_core_score;
+                        if (empty($any_one_core_passed)) $any_one_core_passed += 1;
+                        $total_core_score += $score;
+                        $any_one_core_score = $score;
+                    }
+                }
+            }
+
+            if ($result["type"] == "elective") {
+                if ($score != 7) {
+                    $any_three_elective_passed += 1;
+                    array_push($any_three_elective_scores, $score);
+                }
+            }
+        }
+
+        $array_before_sort = $any_three_elective_scores;
+        asort($any_three_elective_scores);
+        $array_with_new_values = array_values($any_three_elective_scores);
+        $any_three_elective_scores = array_values($any_three_elective_scores);
+        if (count($any_three_elective_scores) > 3) unset($any_three_elective_scores[count($any_three_elective_scores) - 1]);
+        $total_elective_score = array_sum($any_three_elective_scores);
+
+        $feed["total_core_score"] = $total_core_score;
+        $feed["total_elective_score"] = $total_elective_score;
+        $feed["total_score"] = $total_core_score + $total_elective_score;
+        $feed["required_core_passed"] = $required_core_passed;
+        $feed["any_one_core_passed"] = $any_one_core_passed;
+        $feed["any_one_core_score"] = $any_one_core_score;
+        $feed["any_three_elective_passed"] = $any_three_elective_passed;
+        $feed["any_three_elective_scores"] = $any_three_elective_scores;
+        $feed["array_before_sort"] = $array_before_sort;
+        $feed["array_with_new_values"] = $array_with_new_values;
+
+        $app_result["id"] = $data["app_pers"]["id"];
+        $app_result["data"] = $feed;
+        $app_result["admitted"] = false;
+        $app_result["email_sent_status"] = false;
+
+        // Admit applicant
+        if ($required_core_passed == 2 && $any_one_core_passed > 0 && $any_three_elective_passed >= 3) {
+            if ($feed["total_score"] <= 36 && ($certificate == 'WASSCE' || $certificate == 'NECO')) {
+                $query = "UPDATE `form_sections_chek` SET `admitted` = 1 WHERE `app_login` = :i";
+                if ($this->getData($query, array(":i" => $app_result["id"]))) {
+                    $app_result["admitted"] = true;
+                    $subject = "ADMISSIONS";
+                    $full_name = !empty($data["app_pers"]["middle_name"])
+                        ? $data["app_pers"]["first_name"] . " " . $data["app_pers"]["middle_name"] . " " . $data["app_pers"]["last_name"]
+                        : $data["app_pers"]["first_name"] . " " . $data["app_pers"]["last_name"];
+                    $message = "Congratulations " . $full_name . "! <br> You have been offered admission at Regional Maritime University to study "
+                        . $data["app_pers"]['programme'];
+                    if ($this->sendEmail(strtolower($data["app_pers"]["email_addr"]), $subject, $message)) {
+                        $app_result["email_sent_status"] = true;
+                    }
+                }
+            }
+        }
+
+        return $app_result;
+    }
+
+    public function admitByCatB($bs_data, $certificate)
     {
         $final_result = [];
 
-        if ($category == 'A') {
+        // set all qualified grades
+        $grade_range = array(
+            array('grade' => 'A1', 'score' => 1),
+            array('grade' => 'B2', 'score' => 2),
+            array('grade' => 'B3', 'score' => 3),
+            array('grade' => 'C4', 'score' => 4),
+            array('grade' => 'C5', 'score'  => 5),
+            array('grade' => 'C6', 'score'  => 6),
+            array('grade' => 'A', 'score' => 1),
+            array('grade' => 'B', 'score' => 2),
+            array('grade' => 'C', 'score' => 3),
+            array('grade' => 'D', 'score' => 4)
+        );
 
-            // set all qualified grades
-            $grade_range = array(
-                array('grade' => 'A1', 'score' => 1),
-                array('grade' => 'B2', 'score' => 2),
-                array('grade' => 'B3', 'score' => 3),
-                array('grade' => 'C4', 'score' => 4),
-                array('grade' => 'C5', 'score'  => 5),
-                array('grade' => 'C6', 'score'  => 6),
-                array('grade' => 'A', 'score' => 1),
-                array('grade' => 'B', 'score' => 2),
-                array('grade' => 'C', 'score' => 3),
-                array('grade' => 'D', 'score' => 4)
-            );
+        foreach ($bs_data as $data) {
 
-            foreach ($bs_data as $data) {
+            $total_core_score = 0;
+            $required_core_passed = 0;
+            $any_one_core_passed = 0;
+            $any_one_core_score = 7;
 
-                $total_core_score = 0;
-                $required_core_passed = 0;
-                $any_one_core_passed = 0;
-                $any_one_core_score = 7;
+            $any_three_elective_passed = 0;
+            $total_elective_score = 0;
+            $any_three_elective_scores = [];
 
-                $any_three_elective_passed = 0;
-                $total_elective_score = 0;
-                $any_three_elective_scores = [];
+            foreach ($data["sch_rslt"] as $result) {
 
-                foreach ($data["sch_rslt"] as $result) {
-
-                    $score = 7;
-                    for ($i = 0; $i < count($grade_range); $i++) {
-                        if ($result["grade"] == $grade_range[$i]["grade"]) {
-                            $score = $grade_range[$i]['score'];
-                        }
+                $score = 7;
+                for ($i = 0; $i < count($grade_range); $i++) {
+                    if ($result["grade"] == $grade_range[$i]["grade"]) {
+                        $score = $grade_range[$i]['score'];
                     }
+                }
 
-                    if ($result["type"] == "core") {
-                        if ($result["subject"] == "CORE MATHEMATICS" || $result["subject"] == "ENGLISH LANGUAGE") {
-                            if ($score != 7) {
-                                $required_core_passed += 1;
-                                $total_core_score += $score;
-                            }
-                        } else {
-                            if ($score < $any_one_core_score) {
-                                if (!empty($any_one_core_passed)) $total_core_score -= $any_one_core_score;
-                                if (empty($any_one_core_passed)) $any_one_core_passed += 1;
-                                $total_core_score += $score;
-                                $any_one_core_score = $score;
-                            }
-                        }
-                    }
-
-                    if ($result["type"] == "elective") {
+                if ($result["type"] == "core") {
+                    if ($result["subject"] == "CORE MATHEMATICS" || $result["subject"] == "ENGLISH LANGUAGE") {
                         if ($score != 7) {
-                            $any_three_elective_passed += 1;
-                            array_push($any_three_elective_scores, $score);
+                            $required_core_passed += 1;
+                            $total_core_score += $score;
+                        }
+                    } else {
+                        if ($score < $any_one_core_score) {
+                            if (!empty($any_one_core_passed)) $total_core_score -= $any_one_core_score;
+                            if (empty($any_one_core_passed)) $any_one_core_passed += 1;
+                            $total_core_score += $score;
+                            $any_one_core_score = $score;
                         }
                     }
                 }
 
-                $array_before_sort = $any_three_elective_scores;
-                asort($any_three_elective_scores);
-                $array_with_new_values = array_values($any_three_elective_scores);
-                $any_three_elective_scores = array_values($any_three_elective_scores);
-                if (count($any_three_elective_scores) > 3) unset($any_three_elective_scores[count($any_three_elective_scores) - 1]);
-                $total_elective_score = array_sum($any_three_elective_scores);
+                if ($result["type"] == "elective") {
+                    if ($score != 7) {
+                        $any_three_elective_passed += 1;
+                        array_push($any_three_elective_scores, $score);
+                    }
+                }
+            }
 
-                $feed["total_core_score"] = $total_core_score;
-                $feed["total_elective_score"] = $total_elective_score;
-                $feed["total_score"] = $total_core_score + $total_elective_score;
-                $feed["required_core_passed"] = $required_core_passed;
-                $feed["any_one_core_passed"] = $any_one_core_passed;
-                $feed["any_one_core_score"] = $any_one_core_score;
-                $feed["any_three_elective_passed"] = $any_three_elective_passed;
-                $feed["any_three_elective_scores"] = $any_three_elective_scores;
-                $feed["array_before_sort"] = $array_before_sort;
-                $feed["array_with_new_values"] = $array_with_new_values;
+            $array_before_sort = $any_three_elective_scores;
+            asort($any_three_elective_scores);
+            $array_with_new_values = array_values($any_three_elective_scores);
+            $any_three_elective_scores = array_values($any_three_elective_scores);
+            if (count($any_three_elective_scores) > 3) unset($any_three_elective_scores[count($any_three_elective_scores) - 1]);
+            $total_elective_score = array_sum($any_three_elective_scores);
 
-                $app_result["id"] = $data["app_pers"]["id"];
-                $app_result["data"] = $feed;
-                $app_result["admitted"] = false;
-                $app_result["email_sent_status"] = false;
+            $feed["total_core_score"] = $total_core_score;
+            $feed["total_elective_score"] = $total_elective_score;
+            $feed["total_score"] = $total_core_score + $total_elective_score;
+            $feed["required_core_passed"] = $required_core_passed;
+            $feed["any_one_core_passed"] = $any_one_core_passed;
+            $feed["any_one_core_score"] = $any_one_core_score;
+            $feed["any_three_elective_passed"] = $any_three_elective_passed;
+            $feed["any_three_elective_scores"] = $any_three_elective_scores;
+            $feed["array_before_sort"] = $array_before_sort;
+            $feed["array_with_new_values"] = $array_with_new_values;
 
-                // Admit applicant
-                if ($required_core_passed == 2 && $any_one_core_passed > 0 && $any_three_elective_passed >= 3) {
-                    if ($feed["total_score"] <= 36 && ($certificate == 'WASSCE' || $certificate == 'NECO')) {
-                        $query = "UPDATE `form_sections_chek` SET `admitted` = 1 WHERE `app_login` = :i";
-                        if ($this->getData($query, array(":i" => $app_result["id"]))) {
-                            $app_result["admitted"] = true;
-                            $subject = "ADMISSIONS";
-                            $full_name = !empty($bs_data["app_pers"]["middle_name"])
-                                ? $bs_data["app_pers"]["first_name"] . " " . $bs_data["app_pers"]["middle_name"] . " " . $bs_data["app_pers"]["last_name"]
-                                : $bs_data["app_pers"]["first_name"] . " " . $bs_data["app_pers"]["last_name"];
-                            $message = "Congratulations " . $full_name . "! <br> You have been offered admission at Regional Maritime University to study "
-                                . $bs_data["app_pers"]['programme'];
-                            if ($this->sendEmail(strtolower($bs_data["app_pers"]["email_address"]), $subject, $message)) {
-                                $app_result["email_sent_status"] = true;
-                            }
+            $app_result["id"] = $data["app_pers"]["id"];
+            $app_result["data"] = $feed;
+            $app_result["admitted"] = false;
+            $app_result["email_sent_status"] = false;
+
+            // Admit applicant
+            if ($required_core_passed == 2 && $any_one_core_passed > 0 && $any_three_elective_passed >= 3) {
+                if ($feed["total_score"] <= 36 && ($certificate == 'WASSCE' || $certificate == 'NECO')) {
+                    $query = "UPDATE `form_sections_chek` SET `admitted` = 1 WHERE `app_login` = :i";
+                    if ($this->getData($query, array(":i" => $app_result["id"]))) {
+                        $app_result["admitted"] = true;
+                        $subject = "ADMISSIONS";
+                        $full_name = !empty($bs_data["app_pers"]["middle_name"])
+                            ? $bs_data["app_pers"]["first_name"] . " " . $bs_data["app_pers"]["middle_name"] . " " . $bs_data["app_pers"]["last_name"]
+                            : $bs_data["app_pers"]["first_name"] . " " . $bs_data["app_pers"]["last_name"];
+                        $message = "Congratulations " . $full_name . "! <br> You have been offered admission at Regional Maritime University to study "
+                            . $bs_data["app_pers"]['programme'];
+                        if ($this->sendEmail(strtolower($bs_data["app_pers"]["email_address"]), $subject, $message)) {
+                            $app_result["email_sent_status"] = true;
+                        }
+                    }
+                }
+            }
+
+            array_push($final_result, $app_result);
+        }
+
+        return $final_result;
+    }
+
+    public function admitByCatC($bs_data, $certificate)
+    {
+        $final_result = [];
+
+        // set all qualified grades
+        $grade_range = array(
+            array('grade' => 'A1', 'score' => 1),
+            array('grade' => 'B2', 'score' => 2),
+            array('grade' => 'B3', 'score' => 3),
+            array('grade' => 'C4', 'score' => 4),
+            array('grade' => 'C5', 'score'  => 5),
+            array('grade' => 'C6', 'score'  => 6),
+            array('grade' => 'A', 'score' => 1),
+            array('grade' => 'B', 'score' => 2),
+            array('grade' => 'C', 'score' => 3),
+            array('grade' => 'D', 'score' => 4)
+        );
+
+        foreach ($bs_data as $data) {
+
+            $total_core_score = 0;
+            $required_core_passed = 0;
+            $any_one_core_passed = 0;
+            $any_one_core_score = 7;
+
+            $any_three_elective_passed = 0;
+            $total_elective_score = 0;
+            $any_three_elective_scores = [];
+
+            foreach ($data["sch_rslt"] as $result) {
+
+                $score = 7;
+                for ($i = 0; $i < count($grade_range); $i++) {
+                    if ($result["grade"] == $grade_range[$i]["grade"]) {
+                        $score = $grade_range[$i]['score'];
+                    }
+                }
+
+                if ($result["type"] == "core") {
+                    if ($result["subject"] == "CORE MATHEMATICS" || $result["subject"] == "ENGLISH LANGUAGE") {
+                        if ($score != 7) {
+                            $required_core_passed += 1;
+                            $total_core_score += $score;
+                        }
+                    } else {
+                        if ($score < $any_one_core_score) {
+                            if (!empty($any_one_core_passed)) $total_core_score -= $any_one_core_score;
+                            if (empty($any_one_core_passed)) $any_one_core_passed += 1;
+                            $total_core_score += $score;
+                            $any_one_core_score = $score;
                         }
                     }
                 }
 
-                array_push($final_result, $app_result);
+                if ($result["type"] == "elective") {
+                    if ($score != 7) {
+                        $any_three_elective_passed += 1;
+                        array_push($any_three_elective_scores, $score);
+                    }
+                }
             }
+
+            $array_before_sort = $any_three_elective_scores;
+            asort($any_three_elective_scores);
+            $array_with_new_values = array_values($any_three_elective_scores);
+            $any_three_elective_scores = array_values($any_three_elective_scores);
+            if (count($any_three_elective_scores) > 3) unset($any_three_elective_scores[count($any_three_elective_scores) - 1]);
+            $total_elective_score = array_sum($any_three_elective_scores);
+
+            $feed["total_core_score"] = $total_core_score;
+            $feed["total_elective_score"] = $total_elective_score;
+            $feed["total_score"] = $total_core_score + $total_elective_score;
+            $feed["required_core_passed"] = $required_core_passed;
+            $feed["any_one_core_passed"] = $any_one_core_passed;
+            $feed["any_one_core_score"] = $any_one_core_score;
+            $feed["any_three_elective_passed"] = $any_three_elective_passed;
+            $feed["any_three_elective_scores"] = $any_three_elective_scores;
+            $feed["array_before_sort"] = $array_before_sort;
+            $feed["array_with_new_values"] = $array_with_new_values;
+
+            $app_result["id"] = $data["app_pers"]["id"];
+            $app_result["data"] = $feed;
+            $app_result["admitted"] = false;
+            $app_result["email_sent_status"] = false;
+
+            // Admit applicant
+            if ($required_core_passed == 2 && $any_one_core_passed > 0 && $any_three_elective_passed >= 3) {
+                if ($feed["total_score"] <= 36 && ($certificate == 'WASSCE' || $certificate == 'NECO')) {
+                    $query = "UPDATE `form_sections_chek` SET `admitted` = 1 WHERE `app_login` = :i";
+                    if ($this->getData($query, array(":i" => $app_result["id"]))) {
+                        $app_result["admitted"] = true;
+                        $subject = "ADMISSIONS";
+                        $full_name = !empty($bs_data["app_pers"]["middle_name"])
+                            ? $bs_data["app_pers"]["first_name"] . " " . $bs_data["app_pers"]["middle_name"] . " " . $bs_data["app_pers"]["last_name"]
+                            : $bs_data["app_pers"]["first_name"] . " " . $bs_data["app_pers"]["last_name"];
+                        $message = "Congratulations " . $full_name . "! <br> You have been offered admission at Regional Maritime University to study "
+                            . $bs_data["app_pers"]['programme'];
+                        if ($this->sendEmail(strtolower($bs_data["app_pers"]["email_address"]), $subject, $message)) {
+                            $app_result["email_sent_status"] = true;
+                        }
+                    }
+                }
+            }
+
+            array_push($final_result, $app_result);
         }
 
-        if ($category == 'B') {
-            foreach ($bs_data as $data) {
+        return $final_result;
+    }
+
+    public function admitByCatD($bs_data, $certificate)
+    {
+        $final_result = [];
+
+        // set all qualified grades
+        $grade_range = array(
+            array('grade' => 'A1', 'score' => 1),
+            array('grade' => 'B2', 'score' => 2),
+            array('grade' => 'B3', 'score' => 3),
+            array('grade' => 'C4', 'score' => 4),
+            array('grade' => 'C5', 'score'  => 5),
+            array('grade' => 'C6', 'score'  => 6),
+            array('grade' => 'A', 'score' => 1),
+            array('grade' => 'B', 'score' => 2),
+            array('grade' => 'C', 'score' => 3),
+            array('grade' => 'D', 'score' => 4)
+        );
+
+        foreach ($bs_data as $data) {
+
+            $total_core_score = 0;
+            $required_core_passed = 0;
+            $any_one_core_passed = 0;
+            $any_one_core_score = 7;
+
+            $any_three_elective_passed = 0;
+            $total_elective_score = 0;
+            $any_three_elective_scores = [];
+
+            foreach ($data["sch_rslt"] as $result) {
+
+                $score = 7;
+                for ($i = 0; $i < count($grade_range); $i++) {
+                    if ($result["grade"] == $grade_range[$i]["grade"]) {
+                        $score = $grade_range[$i]['score'];
+                    }
+                }
+
+                if ($result["type"] == "core") {
+                    if ($result["subject"] == "CORE MATHEMATICS" || $result["subject"] == "ENGLISH LANGUAGE") {
+                        if ($score != 7) {
+                            $required_core_passed += 1;
+                            $total_core_score += $score;
+                        }
+                    } else {
+                        if ($score < $any_one_core_score) {
+                            if (!empty($any_one_core_passed)) $total_core_score -= $any_one_core_score;
+                            if (empty($any_one_core_passed)) $any_one_core_passed += 1;
+                            $total_core_score += $score;
+                            $any_one_core_score = $score;
+                        }
+                    }
+                }
+
+                if ($result["type"] == "elective") {
+                    if ($score != 7) {
+                        $any_three_elective_passed += 1;
+                        array_push($any_three_elective_scores, $score);
+                    }
+                }
             }
+
+            $array_before_sort = $any_three_elective_scores;
+            asort($any_three_elective_scores);
+            $array_with_new_values = array_values($any_three_elective_scores);
+            $any_three_elective_scores = array_values($any_three_elective_scores);
+            if (count($any_three_elective_scores) > 3) unset($any_three_elective_scores[count($any_three_elective_scores) - 1]);
+            $total_elective_score = array_sum($any_three_elective_scores);
+
+            $feed["total_core_score"] = $total_core_score;
+            $feed["total_elective_score"] = $total_elective_score;
+            $feed["total_score"] = $total_core_score + $total_elective_score;
+            $feed["required_core_passed"] = $required_core_passed;
+            $feed["any_one_core_passed"] = $any_one_core_passed;
+            $feed["any_one_core_score"] = $any_one_core_score;
+            $feed["any_three_elective_passed"] = $any_three_elective_passed;
+            $feed["any_three_elective_scores"] = $any_three_elective_scores;
+            $feed["array_before_sort"] = $array_before_sort;
+            $feed["array_with_new_values"] = $array_with_new_values;
+
+            $app_result["id"] = $data["app_pers"]["id"];
+            $app_result["data"] = $feed;
+            $app_result["admitted"] = false;
+            $app_result["email_sent_status"] = false;
+
+            // Admit applicant
+            if ($required_core_passed == 2 && $any_one_core_passed > 0 && $any_three_elective_passed >= 3) {
+                if ($feed["total_score"] <= 36 && ($certificate == 'WASSCE' || $certificate == 'NECO')) {
+                    $query = "UPDATE `form_sections_chek` SET `admitted` = 1 WHERE `app_login` = :i";
+                    if ($this->getData($query, array(":i" => $app_result["id"]))) {
+                        $app_result["admitted"] = true;
+                        $subject = "ADMISSIONS";
+                        $full_name = !empty($bs_data["app_pers"]["middle_name"])
+                            ? $bs_data["app_pers"]["first_name"] . " " . $bs_data["app_pers"]["middle_name"] . " " . $bs_data["app_pers"]["last_name"]
+                            : $bs_data["app_pers"]["first_name"] . " " . $bs_data["app_pers"]["last_name"];
+                        $message = "Congratulations " . $full_name . "! <br> You have been offered admission at Regional Maritime University to study "
+                            . $bs_data["app_pers"]['programme'];
+                        if ($this->sendEmail(strtolower($bs_data["app_pers"]["email_address"]), $subject, $message)) {
+                            $app_result["email_sent_status"] = true;
+                        }
+                    }
+                }
+            }
+
+            array_push($final_result, $app_result);
         }
 
-        if ($category == 'C') {
-            foreach ($bs_data as $data) {
-            }
-        }
-
-        if ($category == 'D') {
-            foreach ($bs_data as $data) {
-            }
-        }
         return $final_result;
     }
 
     public function admitQualifiedStudents($certificate, $progCategory)
     {
-        $bs_data = $this->fetchBroadsheetData($certificate, $progCategory);
+        $students_bs_data = $this->fetchBroadsheetData($certificate, $progCategory);
 
         $qualifications = array(
             "A" => array('WASSCE', 'SSSCE', 'GBCE', 'NECO'),
@@ -267,23 +601,29 @@ class AdminController extends ExposeDataController
             "D" => array('IB', 'International Baccalaureate', 'Baccalaureate'),
         );
 
-        // check program group
-        if (in_array($certificate, $qualifications['A'])) {
-            $total_catA_admitted = $this->admitByCat($bs_data, 'A', $certificate);
-        }
+        //if (strtolower($certificate) == "all") {
+        $result = $this->admitAllStudents($students_bs_data, $qualifications);
+        /*} else {
+            // check program group
+            if (in_array($certificate, $qualifications['A'])) {
+                $result .= $this->admitByCat($bs_data, 'A', $certificate);
+            }
 
-        if (in_array($certificate, $qualifications['B'])) {
-            $total_catA_admitted = $this->admitByCat($bs_data, 'B', $certificate);
-        }
+            if (in_array($certificate, $qualifications['B'])) {
+                $result .= $this->admitByCat($bs_data, 'B', $certificate);
+            }
 
-        if (in_array($certificate, $qualifications['C'])) {
-            $total_catA_admitted = $this->admitByCat($bs_data, 'C', $certificate);
-        }
+            if (in_array($certificate, $qualifications['C'])) {
+                $result .= $this->admitByCat($bs_data, 'C', $certificate);
+            }
 
-        if (in_array($certificate, $qualifications['D'])) {
-            $total_catA_admitted = $this->admitByCat($bs_data, 'D', $certificate);
-        }
+            if (in_array($certificate, $qualifications['D'])) {
+                $result .= $this->admitByCat($bs_data, 'D', $certificate);
+            }
+        }*/
 
-        return array("success" => true, "message" => $total_catA_admitted);
+
+
+        return $result;
     }
 }
