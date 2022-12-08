@@ -141,28 +141,56 @@ class AdminController extends ExposeDataController
     public function admitApplicantsByCertCat($data, $qualifications)
     {
         $final_result = [];
+
         foreach ($data as $std_data) {
             if (in_array($std_data["app_pers"]["cert_type"], $qualifications["A"])) {
-                array_push($final_result, $this->admitByCatA($std_data, $std_data["app_pers"]["cert_type"]));
+                array_push($final_result, $this->admitByCatA($std_data));
                 continue;
             }
             if (in_array($std_data["app_pers"]["cert_type"], $qualifications["B"])) {
-                array_push($final_result, $this->admitByCatB($std_data, $std_data["app_pers"]["cert_type"]));
+                array_push($final_result, $this->admitByCatB($std_data));
                 continue;
             }
             if (in_array($std_data["app_pers"]["cert_type"], $qualifications["C"])) {
-                array_push($final_result, $this->admitByCatC($std_data, $std_data["app_pers"]["cert_type"]));
+                array_push($final_result, $this->admitByCatC($std_data));
                 continue;
             }
             if (in_array($std_data["app_pers"]["cert_type"], $qualifications["D"])) {
-                array_push($final_result, $this->admitByCatD($std_data, $std_data["app_pers"]["cert_type"]));
+                array_push($final_result, $this->admitByCatD($std_data));
                 continue;
             }
         }
         return $final_result;
     }
 
-    public function admitByCatA($data, $certificate)
+    public function admitCatAApplicant($app_result, $prog_choice, $cert_type)
+    {
+
+        $qualified = false;
+        // Admit applicant
+        if ($app_result["feed"]["required_core_passed"] == 2 && $app_result["feed"]["any_one_core_passed"] > 0 && $app_result["feed"]["any_three_elective_passed"] >= 3) {
+
+            if (in_array($cert_type, ["SSSCE", "NECO", "GBCE"]) && $app_result["feed"]["total_score"] <= 24) {
+                $qualified = true;
+            }
+
+            if (in_array($cert_type, ["WASSCE"]) && $app_result["feed"]["total_score"] <= 36) {
+                $qualified = true;
+            }
+
+            if ($qualified) {
+                $query = "UPDATE `form_sections_chek` SET `admitted` = 1, `$prog_choice` = 1 WHERE `app_login` = :i";
+                $this->getData($query, array(":i" => $app_result["id"]));
+                return $qualified;
+            }
+        } else {
+            $query = "UPDATE `form_sections_chek` SET`admitted` = 0,  `$prog_choice` = 1 WHERE `app_login` = :i";
+            $this->getData($query, array(":i" => $app_result["id"]));
+            return $qualified;
+        }
+    }
+
+    public function admitByCatA($data)
     {
 
         // set all qualified grades
@@ -240,35 +268,29 @@ class AdminController extends ExposeDataController
         $feed["array_with_new_values"] = $array_with_new_values;
 
         $app_result["id"] = $data["app_pers"]["id"];
-        $app_result["data"] = $feed;
+        $app_result["feed"] = $feed;
         $app_result["admitted"] = false;
-        $app_result["email_sent_status"] = false;
+        $app_result["emailed"] = false;
 
         $prog_choice = $data["app_pers"]["prog_category"] . "_qualified";
 
+        $app_result["admitted"] = $this->admitCatAApplicant($app_result, $prog_choice, $data["app_pers"]["cert_type"]);
         // Admit applicant
-        if ($required_core_passed == 2 && $any_one_core_passed > 0 && $any_three_elective_passed >= 3 && $feed["total_score"] <= 36) {
-            $query = "UPDATE `form_sections_chek` SET `admitted` = 1, `$prog_choice` = 1 WHERE `app_login` = :i";
-            $this->getData($query, array(":i" => $app_result["id"]));
-            $app_result["admitted"] = true;
-            $subject = "ADMISSIONS";
-            $full_name = !empty($data["app_pers"]["middle_name"])
-                ? $data["app_pers"]["first_name"] . " " . $data["app_pers"]["middle_name"] . " " . $data["app_pers"]["last_name"]
-                : $data["app_pers"]["first_name"] . " " . $data["app_pers"]["last_name"];
-            $message = "Congratulations " . $full_name . "! <br> You have been offered admission at Regional Maritime University to study "
-                . $data["app_pers"]['programme'];
-            /*if ($this->sendEmail(strtolower($data["app_pers"]["email_addr"]), $subject, $message)) {
-                        $app_result["email_sent_status"] = true;
-                    }*/
-        } else {
-            $query = "UPDATE `form_sections_chek` SET`admitted` = 0,  `$prog_choice` = 1 WHERE `app_login` = :i";
-            $this->getData($query, array(":i" => $app_result["id"]));
+
+        $subject = "RMU ADMISSIONS";
+        $full_name = !empty($data["app_pers"]["middle_name"])
+            ? $data["app_pers"]["first_name"] . " " . $data["app_pers"]["middle_name"] . " " . $data["app_pers"]["last_name"]
+            : $data["app_pers"]["first_name"] . " " . $data["app_pers"]["last_name"];
+        $message = "Congratulations " . $full_name . "! <br> You have been offered admission at Regional Maritime University to study "
+            . $data["app_pers"]['programme'] . ". Please follow the link <a href='https://admissions.rmuictonline.com/apply/'>here</a> to complete process. ";
+        if ($this->sendEmail(strtolower($data["app_pers"]["email_addr"]), $subject, $message)) {
+            $app_result["emailed"] = true;
         }
 
         return $app_result;
     }
 
-    public function admitByCatB($bs_data, $certificate)
+    public function admitByCatB($bs_data)
     {
         $final_result = [];
 
@@ -289,7 +311,7 @@ class AdminController extends ExposeDataController
         return $final_result;
     }
 
-    public function admitByCatC($bs_data, $certificate)
+    public function admitByCatC($bs_data)
     {
         $final_result = [];
 
@@ -310,7 +332,7 @@ class AdminController extends ExposeDataController
         return $final_result;
     }
 
-    public function admitByCatD($bs_data, $certificate)
+    public function admitByCatD($bs_data)
     {
         $final_result = [];
 
