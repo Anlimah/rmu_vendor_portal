@@ -60,13 +60,15 @@ require_once('inc/page-data.php');
 
                 <!-- Broadsheets Card -->
                 <div class="col-xxl-3 col-md-3">
-                  <div class="card info-card" style="border: 1px solid #999;">
-                    <div class="card-body" style="padding: 0 15px;">
-                      <h5 class="card-title">Total</h5>
-                      <div class="d-flex align-items-center">
+                  <div class="card info-card" style="border: 1px solid #999; padding: 0 !important">
+                    <div class="card-body row" style="padding: 0px;">
+                      <div class="col-md-8" style="display: flex; flex-direction: row">
                         <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                          <i class="bi bi-files"></i>
+                          <i class="bi bi-people-fill"></i>
                         </div>
+                        <h5 class="card-title">Total</h5>
+                      </div>
+                      <div class="d-flex align-items-center col-md-4">
                         <div class="ps-3">
                           <h6><?= $expose->fetchTotalApplications()[0]["total"]; ?></h6>
                         </div>
@@ -77,13 +79,15 @@ require_once('inc/page-data.php');
 
                 <!-- Broadsheets Card -->
                 <div class="col-xxl-3 col-md-3">
-                  <div class="card info-card" style="border: 1px solid #999;">
-                    <div class="card-body" style="padding: 0 15px;">
-                      <h5 class="card-title">Submitted</h5>
-                      <div class="d-flex align-items-center">
+                  <div class="card info-card" style="border: 1px solid #999; padding: 0 !important">
+                    <div class="card-body row" style="padding: 0px;">
+                      <div class="col-md-8" style="display: flex; flex-direction: row">
                         <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                           <i class="bi bi-files"></i>
                         </div>
+                        <h5 class="card-title col">Submitted</h5>
+                      </div>
+                      <div class="d-flex align-items-center col-md-4">
                         <div class="ps-3">
                           <h6><?= $expose->fetchTotalSubmittedOrUnsubmittedApps()[0]["total"]; ?></h6>
                         </div>
@@ -94,13 +98,15 @@ require_once('inc/page-data.php');
 
                 <!-- Broadsheets Card -->
                 <div class="col-xxl-3 col-md-3">
-                  <div class="card info-card" style="border: 1px solid #999;">
-                    <div class="card-body" style="padding: 0 15px;">
-                      <h5 class="card-title">In Progress</h5>
-                      <div class="d-flex align-items-center">
+                  <div class="card info-card" style="border: 1px solid #999; padding: 0 !important">
+                    <div class="card-body row" style="padding: 0px;">
+                      <div class="col-md-8" style="display: flex; flex-direction: row">
                         <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                          <i class="bi bi-files"></i>
+                          <i class="bi bi-person-lines-fill"></i>
                         </div>
+                        <h5 class="card-title">Progress</h5>
+                      </div>
+                      <div class="d-flex align-items-center col-md-4">
                         <div class="ps-3">
                           <h6><?= $expose->fetchTotalSubmittedOrUnsubmittedApps(false)[0]["total"]; ?></h6>
                         </div>
@@ -111,13 +117,15 @@ require_once('inc/page-data.php');
 
                 <!-- Broadsheets Card -->
                 <div class="col-xxl-3 col-md-3">
-                  <div class="card info-card" style="border: 1px solid #999;">
-                    <div class="card-body" style="padding: 0 15px;">
-                      <h5 class="card-title">Admitted Students</h5>
-                      <div class="d-flex align-items-center">
+                  <div class="card info-card" style="border: 1px solid #999; padding: 0 !important">
+                    <div class="card-body row" style="padding: 0px;">
+                      <div class="col-md-8" style="display: flex; flex-direction: row">
                         <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                          <i class="bi bi-files"></i>
+                          <i class="bi bi-person-check"></i>
                         </div>
+                        <h5 class="card-title col">Admitted</h5>
+                      </div>
+                      <div class="d-flex align-items-center col-md-4">
                         <div class="ps-3">
                           <h6><?= $expose->fetchTotalAdmittedApplicants()[0]["total"]; ?></h6>
                         </div>

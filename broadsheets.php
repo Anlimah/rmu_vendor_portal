@@ -40,7 +40,7 @@ require_once('inc/page-data.php');
           <div class="card recent-sales overflow-auto">
 
             <div class="filter">
-              <a class="icon" href="javascript:void()" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="View & Download Broadsheets">
+              <a class="icon" href="javascript:void()" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Download Broadsheets">
                 <i class="bi bi-download"></i>
               </a>
             </div>

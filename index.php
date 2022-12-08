@@ -1,3 +1,12 @@
+<?php
+require_once('bootstrap.php');
+
+use Src\Controller\AdminController;
+
+$expose = new AdminController();
+require_once('inc/page-data.php');
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -55,7 +64,7 @@
                     </div>
                     <div class="ps-3">
                       <a href="applicants.php">
-                        <h6>145</h6>
+                        <h6><?= $expose->fetchTotalApplications()[0]["total"]; ?></h6>
                         <span class="text-muted small pt-2 ps-1">Applicants</span>
                       </a>
                     </div>
@@ -100,7 +109,7 @@
                     </div>
                     <div class="ps-3">
                       <a href="admitted-students.php" style="text-decoration: none;">
-                        <h6>3</h6>
+                        <h6><?= $expose->fetchTotalAdmittedApplicants()[0]["total"]; ?></h6>
                         <span class="text-muted small pt-2 ps-1">Qualified</span>
                       </a>
                     </div>
@@ -159,7 +168,7 @@
                     </div>
                     <div class="ps-3">
                       <a href="admitted-students.php" style="text-decoration: none;">
-                        <h6>145</h6>
+                        <h6><?= $expose->fetchTotalApplications()[0]["total"]; ?></h6>
                         <span class="text-muted small pt-2 ps-1">Forms bought</span>
                       </a>
                     </div>

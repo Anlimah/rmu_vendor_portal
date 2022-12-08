@@ -283,6 +283,7 @@ class AdminController extends ExposeDataController
             : $data["app_pers"]["first_name"] . " " . $data["app_pers"]["last_name"];
         $message = "Congratulations " . $full_name . "! <br> You have been offered admission at Regional Maritime University to study "
             . $data["app_pers"]['programme'] . ". Please follow the link <a href='https://admissions.rmuictonline.com/apply/'>here</a> to complete process. ";
+
         if ($this->sendEmail(strtolower($data["app_pers"]["email_addr"]), $subject, $message)) {
             $app_result["emailed"] = true;
         }
