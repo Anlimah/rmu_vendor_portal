@@ -101,7 +101,7 @@ require_once('inc/page-data.php');
             <div class="col-xxl-3 col-md-3">
               <div class="card info-card text-danger">
                 <div class="card-body">
-                  <a href="admitted-students.php" style="text-decoration: none;">
+                  <a href="forms-sale.php" style="text-decoration: none;">
                     <h5 class="card-title">Forms Sale</h5>
                     <div class="d-flex align-items-center">
                       <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">

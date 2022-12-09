@@ -305,4 +305,10 @@ class ExposeDataController extends DatabaseMethods
         WHERE p.`form_type` = f.`id` AND p.vendor = v.`id` AND p.`admission_period` = a.`id` AND p.`id` = :i";
         return $this->getData($sql, array(':i' => $transaction_id));
     }
+
+    public function getCurrentAdmissionPeriodID()
+    {
+        //return $this->dm->getData("SELECT * FROM `admission_period` WHERE `active` = 1 OR deadline <> NOW()");
+        return $this->getID("SELECT `id` FROM `admission_period` WHERE `active` = 1");
+    }
 }

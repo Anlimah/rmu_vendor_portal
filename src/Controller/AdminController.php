@@ -135,6 +135,29 @@ class AdminController extends ExposeDataController
         return $data;
     }
 
+    public function saveAdmittedApplicantData(int $admin_period, int $appID, int $program_id, $admitted_data, $prog_choice)
+    {
+        if (empty($appID) || empty($admin_period) || empty($program_id) || empty($admitted_data)) return 0;
+
+        $query = "INSERT INTO `broadsheets` (`admin_period`,`app_login`,`program_id`,
+                `required_core_passed`,`any_one_core_passed`,`total_core_score`,`any_three_elective_passed`,
+                `total_elective_score`,`total_score`,`program_choice`) 
+                VALUES (:ap, :al, :pi, :rcp, :aocp, :tcs, :atep, :tes, :ts, :pc)";
+        $params = array(
+            ":ap" => $admin_period,
+            ":al" => $appID,
+            ":pi" => $program_id,
+            ":rcp" => $admitted_data["required_core_passed"],
+            ":aocp" => $admitted_data["any_one_core_passed"],
+            ":tcs" => $admitted_data["total_core_score"],
+            ":atep" => $admitted_data["any_three_elective_passed"],
+            ":tes" => $admitted_data["total_elective_score"],
+            ":ts" => $admitted_data["total_score"],
+            ":pc" => $prog_choice
+        );
+        $this->inputData($query, $params);
+    }
+
     /*
     * Admit applicants in groups by their certificate category
     */
@@ -275,6 +298,11 @@ class AdminController extends ExposeDataController
         $prog_choice = $data["app_pers"]["prog_category"] . "_qualified";
 
         $app_result["admitted"] = $this->admitCatAApplicant($app_result, $prog_choice, $data["app_pers"]["cert_type"]);
+        $admin_period = $this->getCurrentAdmissionPeriodID();
+
+        if ($app_result["admitted"]) {
+            $this->saveAdmittedApplicantData($admin_period, $app_result["id"], $data["prog_info"][0]["id"], $app_result["feed"], $data["app_pers"]["prog_category"]);
+        }
 
         return $app_result;
     }
