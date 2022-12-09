@@ -270,23 +270,11 @@ class AdminController extends ExposeDataController
         $app_result["id"] = $data["app_pers"]["id"];
         $app_result["feed"] = $feed;
         $app_result["admitted"] = false;
-        $app_result["emailed"] = false;
+        //$app_result["emailed"] = false;
 
         $prog_choice = $data["app_pers"]["prog_category"] . "_qualified";
 
         $app_result["admitted"] = $this->admitCatAApplicant($app_result, $prog_choice, $data["app_pers"]["cert_type"]);
-        // Admit applicant
-
-        $subject = "RMU ADMISSIONS";
-        $full_name = !empty($data["app_pers"]["middle_name"])
-            ? $data["app_pers"]["first_name"] . " " . $data["app_pers"]["middle_name"] . " " . $data["app_pers"]["last_name"]
-            : $data["app_pers"]["first_name"] . " " . $data["app_pers"]["last_name"];
-        $message = "Congratulations " . $full_name . "! <br> You have been offered admission at Regional Maritime University to study "
-            . $data["app_pers"]['programme'] . ". Please follow the link <a href='https://admissions.rmuictonline.com/apply/'>here</a> to complete process. ";
-
-        if ($this->sendEmail(strtolower($data["app_pers"]["email_addr"]), $subject, $message)) {
-            $app_result["emailed"] = true;
-        }
 
         return $app_result;
     }
