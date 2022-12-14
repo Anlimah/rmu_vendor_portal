@@ -40,7 +40,8 @@ require_once('inc/page-data.php');
           <div class="card recent-sales overflow-auto">
 
             <div class="filter">
-              <a class="icon" href="javascript:void()" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Download Broadsheets">
+              <span id="dbs-progress"></span>
+              <a class="icon" id="download-bs" href="javascript:void()" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Download Broadsheets">
                 <i class="bi bi-download"></i>
               </a>
             </div>
@@ -122,6 +123,21 @@ require_once('inc/page-data.php');
 
   <script>
     $(document).ready(function() {
+
+      $("#download-bs").click(function() {
+        $.ajax({
+          type: "POST",
+          url: "endpoint/downloadBS",
+          success: function(result) {
+            console.log(result);
+            if (result.success) $("#dbs-progress").text(result.message);
+
+          },
+          error: function(error) {
+            console.log(error);
+          }
+        });
+      })
 
       var fetchBroadsheet = function() {
         data = {

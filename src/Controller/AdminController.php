@@ -51,6 +51,12 @@ class AdminController extends ExposeDataController
         return $this->getData($query);
     }
 
+    public function fetchAllAdmittedApps()
+    {
+        $query = "SELECT a.`id`, p.`first_name`, p.`middle_name`, p.`last_name`, p.`nationality`, f.`name` AS `app_type`
+                FROM `personal_information` AS p, `applicants_login`, `form_sections_chek` AS fs";
+    }
+
     public function fetchTotalApplications()
     {
         $query = "SELECT COUNT(*) AS total 

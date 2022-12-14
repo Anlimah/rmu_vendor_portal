@@ -93,6 +93,11 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         die(json_encode(array("success" => true, "message" => $result)));
     }
 
+    //
+    elseif ($_GET["url"] == "downloadBS") {
+        die(json_encode(array("success" => true, "message" => "Downloading broadsheet...")));
+    }
+
     // All PUT request will be sent here
 } else if ($_SERVER['REQUEST_METHOD'] == "PUT") {
     parse_str(file_get_contents("php://input"), $_PUT);
