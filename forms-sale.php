@@ -22,11 +22,11 @@ require_once('inc/page-data.php');
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Dashboard</h1>
+      <h1>Forms Sale</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item active">Dashboard</li>
+          <li class="breadcrumb-item"><a href="index.php">Home</a></li>
+          <li class="breadcrumb-item active">Forms Sale</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
@@ -67,75 +67,90 @@ require_once('inc/page-data.php');
               </div>
 
             </div>
-            <div class="col-lg-1">
-            </div>
 
-            <div class="col-lg-4">
+            <div class="col-lg-9">
 
-              <div class="card mb-3">
+              <div class="card mb-4">
 
                 <div class="card-body">
 
                   <div class="pt-4 pb-2">
-                    <h5 class="card-title text-center pb-0 fs-4">Create an Account</h5>
-                    <p class="text-center small">Enter your personal details to create account</p>
+                    <h5 class="card-title text-center pb-0 fs-4">Buying an Admission Form</h5>
+                    <p class="text-center small">Enter buyer personal details</p>
                   </div>
 
-                  <form class="row g-3 needs-validation" novalidate>
-                    <div class="col-12">
-                      <label for="yourName" class="form-label">Your Name</label>
-                      <input type="text" name="name" class="form-control" id="yourName" required>
-                      <div class="invalid-feedback">Please, enter your name!</div>
-                    </div>
+                  <div style="display: flex !important; flex-direction: row !important; justify-content: center !important;">
+                    <div class="col-5">
 
-                    <div class="col-12">
-                      <label for="yourEmail" class="form-label">Your Email</label>
-                      <input type="email" name="email" class="form-control" id="yourEmail" required>
-                      <div class="invalid-feedback">Please enter a valid Email adddress!</div>
-                    </div>
+                      <!-- Personal Details -->
+                      <form class="row g-3 needs-validation" novalidate>
+                        <div class="col-12">
+                          <label for="yourName" class="form-label">First Name</label>
+                          <input type="text" name="name" class="form-control" id="yourName" required>
+                          <div class="invalid-feedback">Please, enter buyer first name!</div>
+                        </div>
 
-                    <div class="col-12">
-                      <label for="yourUsername" class="form-label">Username</label>
-                      <div class="input-group has-validation">
-                        <span class="input-group-text" id="inputGroupPrepend">@</span>
-                        <input type="text" name="username" class="form-control" id="yourUsername" required>
-                        <div class="invalid-feedback">Please choose a username.</div>
-                      </div>
-                    </div>
+                        <div class="col-12">
+                          <label for="yourEmail" class="form-label">Last Name</label>
+                          <input type="email" name="email" class="form-control" id="yourEmail" required>
+                          <div class="invalid-feedback">Please enter buyer last name!</div>
+                        </div>
 
-                    <div class="col-12">
-                      <label for="yourPassword" class="form-label">Password</label>
-                      <input type="password" name="password" class="form-control" id="yourPassword" required>
-                      <div class="invalid-feedback">Please enter your password!</div>
-                    </div>
+                        <div class="col-12">
+                          <div style="display:flex !important; flex-direction:row !important; justify-content: flex-start !important;">
+                            <label class="form-label" for="country" style="margin-right: 10px; width: 45%">Country Code</label>
+                            <label class="form-label" style="float:left" for="phone-number">Phone Number</label>
+                          </div>
+                          <div style="display:flex !important; flex-direction:row !important; justify-content: space-between !important">
+                            <input name="country" id="country" value="<?= '(' . COUNTRIES[83]["code"] . ') ' . COUNTRIES[83]["name"]  ?>" title="Choose country and country code" class="form-control" list="address-country-list" style="margin-right: 10px; width: 60%" placeholder="Type for options" required>
+                            <datalist id="address-country-list">
+                              <?php
+                              foreach (COUNTRIES as $cn) {
+                                echo '<option value="(' . $cn["code"] . ') ' . $cn["name"] . '">(' . $cn["code"] . ') ' . $cn["name"] . '</option>';
+                              }
+                              ?>
+                            </datalist>
+                            <input name="phone_number" id="phone_number" maxlength="10" title="Provide your Provide Number" class="form-control" style="width: 70%" type="tel" placeholder="0244123123" required>
+                          </div>
+                        </div>
+                        <div class="col-12 mt-4 mb-4">
+                          <button class="btn btn-primary w-100" type="submit">Verify Details</button>
+                        </div>
+                      </form>
 
-                    <div class="col-12">
-                      <div class="form-check">
-                        <input class="form-check-input" name="terms" type="checkbox" value="" id="acceptTerms" required>
-                        <label class="form-check-label" for="acceptTerms">I agree and accept the <a href="#">terms and conditions</a></label>
-                        <div class="invalid-feedback">You must agree before submitting.</div>
-                      </div>
+                      <!-- Buyer phone number check -->
+                      <form class="row g-3 needs-validation" novalidate style="display: none;">
+                        <p class="mb-4">Enter the verification code we sent to your phone.</p>
+                        <div class="mb-4" style="display:flex !important; flex-direction:row !important; justify-content: space-around !important; align-items:baseline">
+                          <label class="form-label" for="email_addr">RMU - </label>
+                          <input class="form-control num" type="text" maxlength="1" style="width:50px; text-align:center" name="code[]" id="num1" placeholder="0" required>
+                          <input class="form-control num" type="text" maxlength="1" style="width:50px; text-align:center" name="code[]" id="num2" placeholder="0" required>
+                          <input class="form-control num" type="text" maxlength="1" style="width:50px; text-align:center" name="code[]" id="num3" placeholder="0" required>
+                          <input class="form-control num" type="text" maxlength="1" style="width:50px; text-align:center" name="code[]" id="num4" placeholder="0" required>
+                        </div>
+                        <div class="col-12 mb-4">
+                          <button class="btn btn-primary w-100" type="submit" id="submitBtn">
+                            Verify
+                          </button>
+                        </div>
+                        <input class="form-control" type="hidden" name="_vSMSToken" value="<?= $_SESSION["_verifySMSToken"]; ?>">
+                        <a href="step4.php">Change number</a>
+                      </form>
+
                     </div>
-                    <div class="col-12">
-                      <button class="btn btn-primary w-100" type="submit">Create Account</button>
-                    </div>
-                    <div class="col-12">
-                      <p class="small mb-0">Already have an account? <a href="pages-login.html">Log in</a></p>
-                    </div>
-                  </form>
+                  </div>
 
                 </div>
+
               </div>
 
             </div>
+          </div><!-- Forms Sales Card  -->
 
-          </div>
-        </div><!-- Forms Sales Card  -->
+        </div><!-- End Left side columns -->
 
-      </div><!-- End Left side columns -->
-
-      <!-- Right side columns -->
-      <!-- End Right side columns -->
+        <!-- Right side columns -->
+        <!-- End Right side columns -->
 
     </section>
 
