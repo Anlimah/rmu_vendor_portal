@@ -37,16 +37,43 @@ class Broadsheet
         return $data;
     }
 
-    private function makeSpreadsheetContent($datasheet)
+    private function makeSpreadsheetContent($datasheet, $title)
     {
         $sheet = $this->spreadsheet->getActiveSheet();
-        $sheet->setCellValue('A1', 'Hello World !');
+        $sheet->setCellValue('A1', $title);
+        $sheet->mergeCells('A1:J1')->setAlign('center');
+
+        $sheet->setCellValue('A2', "Name")->setAlign('center');
+
+        $sheet->setCellValue('B2', "Core Subjects");
+        $sheet->mergeCells('B2:E2')->setAlign('center');
+
+        $sheet->setCellValue('F2', "Elective Subjects");
+        $sheet->mergeCells('F2:J2')->setAlign('center');
+
+        $sheet->setCellValue('B2', "CORE MATHEMATICS")->setAlign('center');
+        $sheet->setCellValue('C2', "ENGLISH LANGUAGE")->setAlign('center');
+        $sheet->setCellValue('D2', "INTEGRATED SCIENCE")->setAlign('center');
+        $sheet->setCellValue('E2', "SOCIAL STUDIES")->setAlign('center');
+
+        $sheet->setCellValue('F2', "ELECTIVE 1")->setAlign('center');
+        $sheet->setCellValue('G2', "ELECTIVE 2")->setAlign('center');
+        $sheet->setCellValue('H2', "ELECTIVE 3")->setAlign('center');
+        $sheet->setCellValue('I2', "ELECTIVE 4")->setAlign('center');
+
+        $sheet->mergeCells('B2:E2')->setAlign('center');
+        $sheet->mergeCells('F2:I2')->setAlign('center');
 
         $coreExcelColumns = ["B", "C", "D", "E"];
         $elecExcelColumns = ["F", "G", "H", "I"];
-        $row = 1;
+
+        //$format_top->setTextWrap(1);
+
+        $row = 3;
 
         foreach ($datasheet as $data) {
+
+            // set applicant fullname
             $fullname = $data["pers_details"]["first_name"] . " " . $data["pers_details"]["last_name"];
             if (!empty($data["pers_details"]["middle_name"])) {
                 $fullname = $data["pers_details"]["first_name"] . " " . $data["pers_details"]["middle_name"] . " " . $data["pers_details"]["last_name"];
@@ -55,27 +82,46 @@ class Broadsheet
             $coreNextInput = 0;
             $electiveNextInput = 0;
 
-            $nameCell = "A" . $row;
-            $sheet->setCellValue($nameCell, $fullname);
+            //set applicant name value
+            $appNameCell = "A" . $row;
+            $sheet->setCellValue($appNameCell, $fullname);
+
             foreach ($data["exam_details"] as $subj) {
+                // set all core subject value
                 if ($subj["type"] == "core") {
                     $coreCell = $coreExcelColumns[$coreNextInput] . "" . $row;
                     $sheet->setCellValue($coreCell, $subj["grade"]);
                     $coreNextInput += 1;
                 }
+
+                // set all core subject value
                 if ($subj["type"] == "elective") {
                     $elecCell = $elecExcelColumns[$electiveNextInput] . "" . $row;
                     $sheet->setCellValue($elecCell, $subj["grade"]);
                     $electiveNextInput += 1;
                 }
             }
+
+            //set program value
+            $progNameCell = "J" . $row;
+            $sheet->setCellValue($progNameCell, $fullname);
+
             $row += 1;
         }
     }
 
     private function saveSpreadsheetFile($filename)
     {
-        $this->writer->save($filename . '.xlsx');
+        $file = $filename . '.xlsx';
+
+        if (file_exists($file)) {
+            unlink($file);
+        }
+
+        $this->writer->save($file);
+
+        $this->spreadsheet->disconnectWorksheets();
+        unset($this->spreadsheet);
     }
 
     public function generate($prog)
@@ -84,7 +130,6 @@ class Broadsheet
         if (empty($datasheet)) return 0;
         $this->makeSpreadsheetContent($datasheet);
         $filename = strtoupper("List of All Admitted" . ($prog != "all" ? " $prog " : " ") . "Students");
-
         $this->saveSpreadsheetFile($filename);
     }
 }
