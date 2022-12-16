@@ -49,7 +49,7 @@ class Broadsheet
         $sheet->mergeCells('B2:E2');
 
         $sheet->setCellValue('F2', "Elective Subjects");
-        $sheet->mergeCells('F2:J2');
+        $sheet->mergeCells('F2:I2');
 
         $sheet->setCellValue('B2', "CORE MATHEMATICS");
         $sheet->setCellValue('C2', "ENGLISH LANGUAGE");
@@ -104,7 +104,7 @@ class Broadsheet
 
             //set program value
             $progNameCell = "J" . $row;
-            $sheet->setCellValue($progNameCell, $fullname);
+            $sheet->setCellValue($progNameCell, $data["pers_details"]["programme"]);
 
             $row += 1;
         }

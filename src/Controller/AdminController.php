@@ -92,7 +92,7 @@ class AdminController extends ExposeDataController
 
     public function getAllAdmittedAppsPersDetails()
     {
-        $query = "SELECT a.`id`, p.`first_name`, p.`middle_name`, p.`last_name`, pg.name
+        $query = "SELECT a.`id`, p.`first_name`, p.`middle_name`, p.`last_name`, pg.name AS programme
                 FROM `personal_information` AS p, `applicants_login` AS a, broadsheets AS b, programs AS pg 
                 WHERE p.app_login = a.id AND b.app_login = a.id AND pg.id = b.program_id AND  
                 a.id IN (SELECT b.app_login AS id FROM broadsheets AS b)";
