@@ -13,8 +13,8 @@ class Broadsheet
 
     public function __construct()
     {
-        $spreadsheet = new Spreadsheet();
-        $writer = new Xlsx($spreadsheet);
+        $this->spreadsheet = new Spreadsheet();
+        $this->writer = new Xlsx($spreadsheet);
     }
 
     private function makeSpreadsheetContent()
