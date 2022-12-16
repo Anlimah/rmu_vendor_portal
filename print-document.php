@@ -15,9 +15,13 @@ class Broadsheet
     private $dataSheet = [];
     private $fileName = null;
     private $sheetTitle = null;
+    private $cert_type = null;
+    private $programme = null;
 
-    public function __construct()
+    public function __construct($cert_type, $programme)
     {
+        $this->cert_type = $cert_type;
+        $this->programme = $programme;
         $this->spreadsheet = new Spreadsheet();
         $this->sheet = $this->spreadsheet->getActiveSheet();
         $this->writer = new Xlsx($this->spreadsheet);
@@ -142,14 +146,14 @@ class Broadsheet
         $dateData = $this->admin->getAcademicPeriod();
         $this->fileName = strtoupper("List of Admitted" . ($prog != "all" ? " $prog " : " ") . "Students");
         $academicIntake = $dateData[0]["start_year"] . " - " . $dateData[0]["start_year"] . " " . $dateData[0]["info"];
-        $this->sheetTitle = $this->fileName . "(" . $academicIntake . ")";
+        $this->sheetTitle = $this->fileName . "(" . strtoupper($academicIntake) . ")";
     }
 
-    public function generate($prog)
+    public function generate()
     {
         $this->prepareBSData();
         if (!empty($this->dataSheet)) {
-            $this->createFileName($prog);
+            $this->createFileName($this->cert_type, $this->programme);
             $this->formatSpreadsheet($this->sheetTitle);
             $this->makeSpreadsheetContent($this->dataSheet);
             $this->saveSpreadsheetFile($this->fileName);
@@ -157,6 +161,9 @@ class Broadsheet
     }
 }
 
-$broadsheet = new Broadsheet();
-$broadsheet->generate("BCS");
+$cert_type = "WASSCE";
+$programme = "BSC. COMPUTER SCIENCE";
+
+$broadsheet = new Broadsheet($cert_type, $programme);
+$broadsheet->generate();
 echo "OKAY";
