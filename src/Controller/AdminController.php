@@ -7,6 +7,13 @@ use Src\Controller\ExposeDataController;
 class AdminController extends ExposeDataController
 {
 
+    public function getAcademicPeriod()
+    {
+        $query = "SELECT YEAR(`start_date`) AS start_year, YEAR(`end_date`) AS end_year, info 
+                FROM admission_period WHERE active = 1";
+        return $this->getData($query);
+    }
+
     public function fetchPrograms(int $type)
     {
         $param = array();
@@ -80,6 +87,15 @@ class AdminController extends ExposeDataController
                 FROM form_sections_chek AS f, applicants_login as l, admission_period AS p, purchase_detail AS d 
                 WHERE d.`id` = l.`purchase_id` AND d.`admission_period` = p.`id` AND l.`id` = f.`app_login` AND 
                 p.`active` = 1 AND f.`admitted` = 1";
+        return $this->getData($query);
+    }
+
+    public function getAllAdmittedAppsPersDetails()
+    {
+        $query = "SELECT a.`id`, p.`first_name`, p.`middle_name`, p.`last_name`, pg.name
+                FROM `personal_information` AS p, `applicants_login` AS a, broadsheets AS b, programs AS pg 
+                WHERE p.app_login = a.id AND b.app_login = a.id AND pg.id = b.program_id AND  
+                a.id IN (SELECT b.app_login AS id FROM broadsheets AS b)";
         return $this->getData($query);
     }
 
