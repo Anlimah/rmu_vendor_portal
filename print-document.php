@@ -141,7 +141,7 @@ class Broadsheet
     {
         $dateData = $this->admin->getAcademicPeriod();
         $this->fileName = strtoupper("List of Admitted" . ($prog != "all" ? " $prog " : " ") . "Students");
-        $academicIntake = $dateData[0]["start_year"] . " - " . $dateData[0]["start_year"] . " " . $dateData["info"] . " Intake";
+        $academicIntake = $dateData[0]["start_year"] . " - " . $dateData[0]["start_year"] . " " . $dateData["info"];
         $this->sheetTitle = $this->fileName . "(" . $academicIntake . ")";
     }
 
