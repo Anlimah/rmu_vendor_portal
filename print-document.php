@@ -42,8 +42,34 @@ class Broadsheet
         $sheet = $this->spreadsheet->getActiveSheet();
         $sheet->setCellValue('A1', 'Hello World !');
 
+        $coreExcelColumns = ["B", "C", "D", "E"];
+        $elecExcelColumns = ["F", "G", "H", "I"];
+        $row = 1;
+
         foreach ($datasheet as $data) {
-            var_dump(json_encode($data));
+            $fullname = $data["pers_details"]["first_name"] . " " . $data["pers_details"]["last_name"];
+            if (!empty($data["pers_details"]["middle_name"])) {
+                $fullname = $data["pers_details"]["first_name"] . " " . $data["pers_details"]["middle_name"] . " " . $data["pers_details"]["last_name"];
+            }
+
+            $coreNextInput = 0;
+            $electiveNextInput = 0;
+
+            $nameCell = "A" . $row;
+            $sheet->setCellValue($nameCell, $fullname);
+            foreach ($data["exam_details"] as $subj) {
+                if ($subj["type"] == "core") {
+                    $coreCell = $coreExcelColumns[$coreNextInput] . "" . $row;
+                    $sheet->setCellValue($coreCell, $subj["grade"]);
+                    $coreNextInput += 1;
+                }
+                if ($subj["type"] == "elective") {
+                    $elecCell = $elecExcelColumns[$electiveNextInput] . "" . $row;
+                    $sheet->setCellValue($elecCell, $subj["grade"]);
+                    $electiveNextInput += 1;
+                }
+            }
+            $row += 1;
         }
     }
 
@@ -57,12 +83,12 @@ class Broadsheet
         $datasheet = $this->prepareBSData();
         if (empty($datasheet)) return 0;
         $this->makeSpreadsheetContent($datasheet);
-        /*$filename = strtoupper("List of All Admitted" . ($prog != "all" ? " $prog " : " ") . "Students");
+        $filename = strtoupper("List of All Admitted" . ($prog != "all" ? " $prog " : " ") . "Students");
 
-        $this->saveSpreadsheetFile($filename);*/
+        $this->saveSpreadsheetFile($filename);
     }
 }
 
 $broadsheet = new Broadsheet();
-$broadsheet->generate("");
+$broadsheet->generate("BCS");
 echo "OKAY";
