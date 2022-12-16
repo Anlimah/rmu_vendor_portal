@@ -41,28 +41,28 @@ class Broadsheet
     {
         $sheet = $this->spreadsheet->getActiveSheet();
         $sheet->setCellValue('A1', $title);
-        $sheet->mergeCells('A1:J1')->setAlign('center');
+        $sheet->mergeCells('A1:J1');
 
-        $sheet->setCellValue('A2', "Name")->setAlign('center');
+        $sheet->setCellValue('A2', "Name");
 
         $sheet->setCellValue('B2', "Core Subjects");
-        $sheet->mergeCells('B2:E2')->setAlign('center');
+        $sheet->mergeCells('B2:E2');
 
         $sheet->setCellValue('F2', "Elective Subjects");
-        $sheet->mergeCells('F2:J2')->setAlign('center');
+        $sheet->mergeCells('F2:J2');
 
-        $sheet->setCellValue('B2', "CORE MATHEMATICS")->setAlign('center');
-        $sheet->setCellValue('C2', "ENGLISH LANGUAGE")->setAlign('center');
-        $sheet->setCellValue('D2', "INTEGRATED SCIENCE")->setAlign('center');
-        $sheet->setCellValue('E2', "SOCIAL STUDIES")->setAlign('center');
+        $sheet->setCellValue('B2', "CORE MATHEMATICS");
+        $sheet->setCellValue('C2', "ENGLISH LANGUAGE");
+        $sheet->setCellValue('D2', "INTEGRATED SCIENCE");
+        $sheet->setCellValue('E2', "SOCIAL STUDIES");
 
-        $sheet->setCellValue('F2', "ELECTIVE 1")->setAlign('center');
-        $sheet->setCellValue('G2', "ELECTIVE 2")->setAlign('center');
-        $sheet->setCellValue('H2', "ELECTIVE 3")->setAlign('center');
-        $sheet->setCellValue('I2', "ELECTIVE 4")->setAlign('center');
+        $sheet->setCellValue('F2', "ELECTIVE 1");
+        $sheet->setCellValue('G2', "ELECTIVE 2");
+        $sheet->setCellValue('H2', "ELECTIVE 3");
+        $sheet->setCellValue('I2', "ELECTIVE 4");
 
-        $sheet->mergeCells('B2:E2')->setAlign('center');
-        $sheet->mergeCells('F2:I2')->setAlign('center');
+        $sheet->mergeCells('B2:E2');
+        $sheet->mergeCells('F2:I2');
 
         $coreExcelColumns = ["B", "C", "D", "E"];
         $elecExcelColumns = ["F", "G", "H", "I"];
