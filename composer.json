@@ -1,11 +1,17 @@
 {
     "require": {
         "vlucas/phpdotenv": "^2.4",
-        "twilio/sdk": "^6.37"
+        "twilio/sdk": "^6.37",
+        "phpoffice/phpspreadsheet": "^1.23"
     },
     "autoload": {
         "psr-4": {
             "Src\\": "src/"
+        }
+    },
+    "config": {
+        "platform": {
+            "php": "8.1.6"
         }
     }
 }
