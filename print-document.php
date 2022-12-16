@@ -128,8 +128,8 @@ class Broadsheet
     {
         $datasheet = $this->prepareBSData();
         if (empty($datasheet)) return 0;
-        $this->makeSpreadsheetContent($datasheet);
         $filename = strtoupper("List of All Admitted" . ($prog != "all" ? " $prog " : " ") . "Students");
+        $this->makeSpreadsheetContent($datasheet, $filename);
         $this->saveSpreadsheetFile($filename);
     }
 }
