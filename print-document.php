@@ -12,6 +12,9 @@ class Broadsheet
     private $writer = null;
     private $admin = null;
     private $sheet = null;
+    private $dataSheet = [];
+    private $fileName = null;
+    private $sheetTitle = null;
 
     public function __construct()
     {
@@ -26,17 +29,13 @@ class Broadsheet
         $admittedApps = $this->admin->getAllAdmittedAppsPersDetails();
         if (empty($admittedApps)) return 0;
 
-        $data = [];
-
         foreach ($admittedApps as  $appData) {
             $applicant = [];
             $applicant["pers_details"] = $appData;
             $subjs = $this->admin->getAppCourseSubjects($appData["id"]);
             $applicant["exam_details"] = $subjs;
-            array_push($data, $applicant);
+            array_push($this->dataSheet, $applicant);
         }
-
-        return $data;
     }
 
     public function formatSpreadsheet($title)
@@ -138,14 +137,23 @@ class Broadsheet
         unset($this->spreadsheet);
     }
 
+    public function createFileName($prog)
+    {
+        $dateData = $this->admin->getAcademicPeriod();
+        $this->fileName = strtoupper("List of Admitted" . ($prog != "all" ? " $prog " : " ") . "Students");
+        $academicIntake = $dateData[0]["start_year"] . " - " . $dateData[0]["start_year"] . " " . $dateData["info"] . " Intake";
+        $this->sheetTitle = $this->fileName . "(" . $academicIntake . ")";
+    }
+
     public function generate($prog)
     {
-        $datasheet = $this->prepareBSData();
-        if (empty($datasheet)) return 0;
-        $filename = strtoupper("List of All Admitted" . ($prog != "all" ? " $prog " : " ") . "Students");
-        $this->formatSpreadsheet($filename);
-        $this->makeSpreadsheetContent($datasheet, $filename);
-        $this->saveSpreadsheetFile($filename);
+        $this->prepareBSData();
+        if (!empty($this->dataSheet)) {
+            $this->createFileName($prog);
+            $this->formatSpreadsheet($this->sheetTitle);
+            $this->makeSpreadsheetContent($this->dataSheet);
+            $this->saveSpreadsheetFile($this->fileName);
+        }
     }
 }
 
