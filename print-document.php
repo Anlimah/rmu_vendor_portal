@@ -37,10 +37,14 @@ class Broadsheet
         return $data;
     }
 
-    private function makeSpreadsheetContent()
+    private function makeSpreadsheetContent($datasheet)
     {
         $sheet = $this->spreadsheet->getActiveSheet();
         $sheet->setCellValue('A1', 'Hello World !');
+
+        foreach ($datasheet as $data) {
+            var_dump(json_encode($data));
+        }
     }
 
     private function saveSpreadsheetFile($filename)
@@ -50,10 +54,10 @@ class Broadsheet
 
     public function generate($prog)
     {
-        $data = $this->prepareBSData();
-        var_dump(json_encode($data));
-        /*$this->makeSpreadsheetContent();
-        $filename = strtoupper("List of All Admitted" . ($prog != "all" ? " $prog " : " ") . "Students");
+        $datasheet = $this->prepareBSData();
+        if (empty($datasheet)) return 0;
+        $this->makeSpreadsheetContent($datasheet);
+        /*$filename = strtoupper("List of All Admitted" . ($prog != "all" ? " $prog " : " ") . "Students");
 
         $this->saveSpreadsheetFile($filename);*/
     }
