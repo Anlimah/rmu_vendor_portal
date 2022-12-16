@@ -11,10 +11,12 @@ class Broadsheet
     private $spreadsheet = null;
     private $writer = null;
     private $admin = null;
+    private $sheet = null;
 
     public function __construct()
     {
         $this->spreadsheet = new Spreadsheet();
+        $this->sheet = $this->spreadsheet->getActiveSheet();
         $this->writer = new Xlsx($this->spreadsheet);
         $this->admin = new AdminController();
     }
@@ -37,39 +39,51 @@ class Broadsheet
         return $data;
     }
 
-    private function makeSpreadsheetContent($datasheet, $title)
+    public function formatSpreadsheet($title)
     {
-        $sheet = $this->spreadsheet->getActiveSheet();
-        $sheet->setCellValue('A1', $title);
-        $sheet->mergeCells('A1:J1');
+        $this->sheet->setCellValue('A1', $title);
+        $this->sheet->mergeCells('A1:J1');
 
-        $sheet->setCellValue('A2', "Name");
+        $this->sheet->setCellValue('A2', "Name");
 
-        $sheet->setCellValue('B2', "Core Subjects");
-        $sheet->mergeCells('B2:E2');
+        $this->sheet->setCellValue('B2', "CORE SUBJECTS");
+        $this->sheet->mergeCells('B2:E2');
 
-        $sheet->setCellValue('F2', "Elective Subjects");
-        $sheet->mergeCells('F2:I2');
+        $this->sheet->setCellValue('F2', "ELECTIVE SUBJECTS");
+        $this->sheet->mergeCells('F2:I2');
 
-        $sheet->setCellValue('B2', "CORE MATHEMATICS");
-        $sheet->setCellValue('C2', "ENGLISH LANGUAGE");
-        $sheet->setCellValue('D2', "INTEGRATED SCIENCE");
-        $sheet->setCellValue('E2', "SOCIAL STUDIES");
+        $this->sheet->setCellValue('B3', "CORE MATHEMATICS");
+        $this->sheet->setCellValue('C3', "ENGLISH LANGUAGE");
+        $this->sheet->setCellValue('D3', "INTEGRATED SCIENCE");
+        $this->sheet->setCellValue('E3', "SOCIAL STUDIES");
 
-        $sheet->setCellValue('F2', "ELECTIVE 1");
-        $sheet->setCellValue('G2', "ELECTIVE 2");
-        $sheet->setCellValue('H2', "ELECTIVE 3");
-        $sheet->setCellValue('I2', "ELECTIVE 4");
+        $this->sheet->setCellValue('F3', "ELECTIVE 1");
+        $this->sheet->setCellValue('G3', "ELECTIVE 2");
+        $this->sheet->setCellValue('H3', "ELECTIVE 3");
+        $this->sheet->setCellValue('I3', "ELECTIVE 4");
 
-        $sheet->mergeCells('B2:E2');
-        $sheet->mergeCells('F2:I2');
+        $this->sheet->getColumnDimension('A')->setAutoSize(true);
+        $this->sheet->getColumnDimension('B')->setAutoSize(true);
+        $this->sheet->getColumnDimension('C')->setAutoSize(true);
+        $this->sheet->getColumnDimension('D')->setAutoSize(true);
+        $this->sheet->getColumnDimension('E')->setAutoSize(true);
+        $this->sheet->getColumnDimension('F')->setAutoSize(true);
+        $this->sheet->getColumnDimension('G')->setAutoSize(true);
+        $this->sheet->getColumnDimension('H')->setAutoSize(true);
+        $this->sheet->getColumnDimension('I')->setAutoSize(true);
+        $this->sheet->getColumnDimension('J')->setAutoSize(true);
 
+        $this->sheet->getStyle('A1:J3')->getAlignment()->setHorizontal('center');
+    }
+
+    private function makeSpreadsheetContent($datasheet)
+    {
         $coreExcelColumns = ["B", "C", "D", "E"];
         $elecExcelColumns = ["F", "G", "H", "I"];
 
         //$format_top->setTextWrap(1);
 
-        $row = 3;
+        $row = 4;
 
         foreach ($datasheet as $data) {
 
@@ -84,27 +98,27 @@ class Broadsheet
 
             //set applicant name value
             $appNameCell = "A" . $row;
-            $sheet->setCellValue($appNameCell, $fullname);
+            $this->sheet->setCellValue($appNameCell, $fullname);
 
             foreach ($data["exam_details"] as $subj) {
                 // set all core subject value
                 if ($subj["type"] == "core") {
                     $coreCell = $coreExcelColumns[$coreNextInput] . "" . $row;
-                    $sheet->setCellValue($coreCell, $subj["grade"]);
+                    $this->sheet->setCellValue($coreCell, $subj["grade"]);
                     $coreNextInput += 1;
                 }
 
                 // set all core subject value
                 if ($subj["type"] == "elective") {
                     $elecCell = $elecExcelColumns[$electiveNextInput] . "" . $row;
-                    $sheet->setCellValue($elecCell, $subj["grade"]);
+                    $this->sheet->setCellValue($elecCell, $subj["grade"]);
                     $electiveNextInput += 1;
                 }
             }
 
             //set program value
             $progNameCell = "J" . $row;
-            $sheet->setCellValue($progNameCell, $data["pers_details"]["programme"]);
+            $this->sheet->setCellValue($progNameCell, $data["pers_details"]["programme"]);
 
             $row += 1;
         }
@@ -129,6 +143,7 @@ class Broadsheet
         $datasheet = $this->prepareBSData();
         if (empty($datasheet)) return 0;
         $filename = strtoupper("List of All Admitted" . ($prog != "all" ? " $prog " : " ") . "Students");
+        $this->formatSpreadsheet($filename);
         $this->makeSpreadsheetContent($datasheet, $filename);
         $this->saveSpreadsheetFile($filename);
     }
