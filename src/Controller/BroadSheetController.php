@@ -2,213 +2,161 @@
 
 namespace Src\Controller;
 
-use Src\Controller\ExposeDataController;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Src\Controller\AdminController;
 
-class BroadSheetController extends ExposeDataController
+class BroadsheetController
 {
-    private $total_core_score = 0;
-    private $required_core_passed = 0;
-    private $any_one_core_passed = 0;
-    private $any_one_core_score = 7;
+    private $spreadsheet = null;
+    private $writer = null;
+    private $admin = null;
+    private $sheet = null;
+    private $dataSheet = [];
+    private $fileName = null;
+    private $sheetTitle = null;
+    private $cert_type = null;
+    private $programme = null;
 
-    private $any_three_elective_passed = 0;
-    private $total_elective_score = 0;
-    private $any_three_elective_scores = [];
-
-    private $school_records = null;
-
-    private $grade_range = array(
-        array(
-            'type' => array('WASSCE', 'NECO'),
-            'system' => array(
-                array('grade' => 'A1', 'score' => 1),
-                array('grade' => 'B2', 'score' => 2),
-                array('grade' => 'B3', 'score' => 3),
-                array('grade' => 'C4', 'score' => 4),
-                array('grade' => 'C5', 'score' => 5),
-                array('grade' => 'C6', 'score' => 6),
-            )
-        ),
-        array(
-            'type' => array('SSSCE', 'GBCE'),
-            'system' => array(
-                array('grade' => 'A', 'score' => 1),
-                array('grade' => 'B', 'score' => 2),
-                array('grade' => 'C', 'score' => 3),
-                array('grade' => 'D', 'score' => 4),
-            )
-        )
-    );
-
-    public function __constuct($certificate, $progCategory)
+    public function __construct($cert_type, $programme)
     {
-        $this->certificate_type = $certificate;
-        $this->program_category = $progCategory;
+        $this->cert_type = $cert_type;
+        $this->programme = $programme;
+        $this->spreadsheet = new Spreadsheet();
+        $this->sheet = $this->spreadsheet->getActiveSheet();
+        $this->writer = new Xlsx($this->spreadsheet);
+        $this->admin = new AdminController();
     }
 
-    public function getAllApplicantsID($certificate, $progCategory)
+    public function prepareBSData()
     {
-        $query = "SELECT l.`id`, p.`first_name`, p.`middle_name`, p.`last_name`, i.`$progCategory` AS programme
-                FROM 
-                    `personal_information` AS p, `academic_background` AS a, 
-                    `applicants_login` AS l, `form_sections_chek` AS f, `program_info` AS i 
-                WHERE 
-                    p.`app_login` = l.`id` AND a.`app_login` = l.`id` AND 
-                    f.`app_login` = l.`id` AND i.`app_login` = l.`id` AND
-                    a.`awaiting_result` = 0 AND a.`cert_type` = :c";
-        return $this->getData($query, array(":c" => $certificate));
-    }
+        $admittedApps = $this->admin->getAllAdmittedAppsPersDetails();
+        if (empty($admittedApps)) return 0;
 
-    public function getApplicantsSubjects(int $loginID)
-    {
-        $query = "SELECT 
-                    r.`type`, r.`subject`, r.`grade` 
-                FROM 
-                    academic_background AS a, high_school_results AS r, applicants_login AS l 
-                WHERE 
-                    l.`id` = a.`app_login` AND r.`acad_back_id` = a.`id` AND a.`id` = :i";
-        return $this->getData($query, array(":i" => $loginID));
-    }
-
-    public function fetchBroadsheetData($certificate, $progCategory)
-    {
-        $allAppData = $this->getAllApplicantsID($certificate, $progCategory);
-        if (empty($allAppData)) return 0;
-
-        $data = [];
-
-        foreach ($allAppData as  $appData) {
+        foreach ($admittedApps as  $appData) {
             $applicant = [];
-            $subjs = $this->getApplicantsSubjects($appData["id"]);
-            $applicant["app_pers"] = $appData;
-            $applicant["sch_rslt"] = $subjs;
-            array_push($data, $applicant);
+            $applicant["pers_details"] = $appData;
+            $subjs = $this->admin->getAppCourseSubjects($appData["id"]);
+            $applicant["exam_details"] = $subjs;
+            array_push($this->dataSheet, $applicant);
         }
-
-        return $data;
     }
 
-    public function admitByCat($bs_data, $category)
+    public function formatSpreadsheet($title)
     {
-        if ($category == 'A') {
+        $this->sheet->setCellValue('A1', $title);
+        $this->sheet->mergeCells('A1:J1');
 
-            // set all qualified grades
-            $grade_range = array(
-                array('grade' => 'A1', 'score' => 1),
-                array('grade' => 'B2', 'score' => 2),
-                array('grade' => 'B3', 'score' => 3),
-                array('grade' => 'C4', 'score' => 4),
-                array('grade' => 'C5', 'score'  => 5),
-                array('grade' => 'C6', 'score'  => 6),
-                array('grade' => 'A', 'score' => 1),
-                array('grade' => 'B', 'score' => 2),
-                array('grade' => 'C', 'score' => 3),
-                array('grade' => 'D', 'score' => 4)
-            );
+        $this->sheet->setCellValue('A2', "Name");
 
-            foreach ($bs_data as $data) {
+        $this->sheet->setCellValue('B2', "CORE SUBJECTS");
+        $this->sheet->mergeCells('B2:E2');
 
-                $total_core_score = 0;
-                $required_core_passed = 0;
-                $any_one_core_passed = 0;
-                $any_one_core_score = 7;
+        $this->sheet->setCellValue('F2', "ELECTIVE SUBJECTS");
+        $this->sheet->mergeCells('F2:I2');
 
-                $any_three_elective_passed = 0;
-                $total_elective_score = 0;
-                $any_three_elective_scores = [];
+        $this->sheet->setCellValue('B3', "CORE MATHEMATICS");
+        $this->sheet->setCellValue('C3', "ENGLISH LANGUAGE");
+        $this->sheet->setCellValue('D3', "INTEGRATED SCIENCE");
+        $this->sheet->setCellValue('E3', "SOCIAL STUDIES");
 
-                foreach ($data["sch_rslt"] as $result) {
+        $this->sheet->setCellValue('F3', "ELECTIVE 1");
+        $this->sheet->setCellValue('G3', "ELECTIVE 2");
+        $this->sheet->setCellValue('H3', "ELECTIVE 3");
+        $this->sheet->setCellValue('I3', "ELECTIVE 4");
 
-                    $score = 0;
-                    for ($i = 0; $i < count($grade_range); $i++) {
-                        if ($result["grade"] == $grade_range[$i]["grade"]) {
-                            $score = $grade_range[$i]['score'];
-                        }
-                    }
+        $this->sheet->getColumnDimension('A')->setAutoSize(true);
+        $this->sheet->getColumnDimension('B')->setAutoSize(true);
+        $this->sheet->getColumnDimension('C')->setAutoSize(true);
+        $this->sheet->getColumnDimension('D')->setAutoSize(true);
+        $this->sheet->getColumnDimension('E')->setAutoSize(true);
+        $this->sheet->getColumnDimension('F')->setAutoSize(true);
+        $this->sheet->getColumnDimension('G')->setAutoSize(true);
+        $this->sheet->getColumnDimension('H')->setAutoSize(true);
+        $this->sheet->getColumnDimension('I')->setAutoSize(true);
+        $this->sheet->getColumnDimension('J')->setAutoSize(true);
 
-                    if ($result["type"] == "core") {
-                        if ($result["subject"] == "CORE MATHEMATICS" || $result["subject"] == "ENGLISH LANGUAGE") {
-                            if ($score) $required_core_passed += 1;
-                            $total_core_score += $score;
-                        } else {
-                            if ($score < $any_one_core_score) {
-                                if (!empty($any_one_core_passed)) $total_core_score -= $any_one_core_score;
-                                if (empty($any_one_core_passed)) $any_one_core_passed += 1;
-                                $total_core_score += $score;
-                                $any_one_core_score = $score;
-                            }
-                        }
-                    }
+        $this->sheet->getStyle('A1:J3')->getAlignment()->setHorizontal('center');
+    }
 
-                    if ($result["type"] == "elective") {
-                        $any_three_elective_passed += 1;
-                        array_push($any_three_elective_scores, $score);
-                        if ($any_three_elective_passed == 4) {
-                            asort($any_three_elective_scores);
-                            $any_three_elective_scores = array_values($any_three_elective_scores);
-                            unset($any_three_elective_scores[count($any_three_elective_scores) - 1]);
-                            $total_elective_score = array_sum($any_three_elective_scores);
-                        }
-                    }
+    private function makeSpreadsheetContent($datasheet)
+    {
+        $coreExcelColumns = ["B", "C", "D", "E"];
+        $elecExcelColumns = ["F", "G", "H", "I"];
+
+        //$format_top->setTextWrap(1);
+
+        $row = 4;
+
+        foreach ($datasheet as $data) {
+
+            // set applicant fullname
+            $fullname = $data["pers_details"]["first_name"] . " " . $data["pers_details"]["last_name"];
+            if (!empty($data["pers_details"]["middle_name"])) {
+                $fullname = $data["pers_details"]["first_name"] . " " . $data["pers_details"]["middle_name"] . " " . $data["pers_details"]["last_name"];
+            }
+
+            $coreNextInput = 0;
+            $electiveNextInput = 0;
+
+            //set applicant name value
+            $appNameCell = "A" . $row;
+            $this->sheet->setCellValue($appNameCell, $fullname);
+
+            foreach ($data["exam_details"] as $subj) {
+                // set all core subject value
+                if ($subj["type"] == "core") {
+                    $coreCell = $coreExcelColumns[$coreNextInput] . "" . $row;
+                    $this->sheet->setCellValue($coreCell, $subj["grade"]);
+                    $coreNextInput += 1;
                 }
 
-                $feed["total_core_score"] = $total_core_score;
-                $feed["total_elective_score"] = $total_elective_score;
-                $feed["total_score"] = $total_core_score + $total_elective_score;
-                $feed["required_core_passed"] = $required_core_passed;
-                $feed["any_one_core_passed"] = $any_one_core_passed;
-                $feed["any_one_core_score"] = $any_one_core_score;
-                $feed["any_three_elective_passed"] = $any_three_elective_passed;
-
-                return $feed;
+                // set all core subject value
+                if ($subj["type"] == "elective") {
+                    $elecCell = $elecExcelColumns[$electiveNextInput] . "" . $row;
+                    $this->sheet->setCellValue($elecCell, $subj["grade"]);
+                    $electiveNextInput += 1;
+                }
             }
-        }
 
-        if ($category == 'B') {
-            foreach ($bs_data as $data) {
-            }
-        }
+            //set program value
+            $progNameCell = "J" . $row;
+            $this->sheet->setCellValue($progNameCell, $data["pers_details"]["programme"]);
 
-        if ($category == 'C') {
-            foreach ($bs_data as $data) {
-            }
+            $row += 1;
         }
-
-        if ($category == 'D') {
-            foreach ($bs_data as $data) {
-            }
-        }
-        return $bs_data;
     }
 
-    public function admitQualifiedStudents($certificate, $progCategory)
+    private function saveSpreadsheetFile($filename)
     {
-        $bs_data = $this->fetchBroadsheetData($certificate, $progCategory);
+        $file = $filename . '.xlsx';
 
-        $qualifications = array(
-            "A" => array('WASSCE', 'SSSCE', 'GBCE', 'NECO'),
-            "B" => array('GCE', "GCE 'A' Level", "GCE 'O' Level"),
-            "C" => array('HND'),
-            "D" => array('IB', 'International Baccalaureate', 'Baccalaureate'),
-        );
-
-        // check program group
-        if (in_array($certificate, $qualifications['A'])) {
-            $total_catA_admitted = $this->admitByCat($bs_data, 'A');
+        if (file_exists($file)) {
+            unlink($file);
         }
 
-        if (in_array($certificate, $qualifications['B'])) {
-            $total_catA_admitted = $this->admitByCat($bs_data, 'B');
-        }
+        $this->writer->save($file);
 
-        if (in_array($certificate, $qualifications['C'])) {
-            $total_catA_admitted = $this->admitByCat($bs_data, 'C');
-        }
+        $this->spreadsheet->disconnectWorksheets();
+        unset($this->spreadsheet);
+    }
 
-        if (in_array($certificate, $qualifications['D'])) {
-            $total_catA_admitted = $this->admitByCat($bs_data, 'D');
-        }
+    public function createFileName($prog)
+    {
+        $dateData = $this->admin->getAcademicPeriod();
+        $this->fileName = strtoupper("List of Admitted" . ($prog != "all" ? " $prog " : " ") . "Students");
+        $academicIntake = $dateData[0]["start_year"] . " - " . $dateData[0]["start_year"] . " " . $dateData[0]["info"];
+        $this->sheetTitle = $this->fileName . "(" . strtoupper($academicIntake) . ")";
+    }
 
-        return array("success" => true, "message" => $total_catA_admitted);
+    public function generate()
+    {
+        $this->prepareBSData();
+        if (!empty($this->dataSheet)) {
+            $this->createFileName($this->cert_type, $this->programme);
+            $this->formatSpreadsheet($this->sheetTitle);
+            $this->makeSpreadsheetContent($this->dataSheet);
+            $this->saveSpreadsheetFile($this->fileName);
+        }
     }
 }

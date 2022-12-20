@@ -3,6 +3,7 @@
 namespace Src\Controller;
 
 use Src\Controller\ExposeDataController;
+use Src\Controller\Broadsheet;
 
 class AdminController extends ExposeDataController
 {
@@ -87,6 +88,16 @@ class AdminController extends ExposeDataController
                 FROM form_sections_chek AS f, applicants_login as l, admission_period AS p, purchase_detail AS d 
                 WHERE d.`id` = l.`purchase_id` AND d.`admission_period` = p.`id` AND l.`id` = f.`app_login` AND 
                 p.`active` = 1 AND f.`admitted` = 1";
+        return $this->getData($query);
+    }
+
+    public function fetchTotalAwaitingResults()
+    {
+        $query = "SELECT COUNT(*) AS total 
+                FROM form_sections_chek AS f, applicants_login as l, admission_period AS p, 
+                    purchase_detail AS d, `academic_background` AS a 
+                WHERE a.`app_login` = l.`id` AND d.`id` = l.`purchase_id` AND d.`admission_period` = p.`id` AND l.`id` = f.`app_login` AND 
+                p.`active` = 1 AND f.`declaration` = 1 AND a.`awaiting_result` = 1";
         return $this->getData($query);
     }
 

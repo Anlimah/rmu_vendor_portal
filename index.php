@@ -62,7 +62,7 @@ require_once('inc/page-data.php');
             <div class="col-xxl-3 col-md-3">
               <div class="card info-card">
                 <div class="card-body">
-                  <a href="broadsheets.php" style="text-decoration: none;">
+                  <a href="admit-applicants.php" style="text-decoration: none;">
                     <h5 class="card-title">Admit Applicants</h5>
                     <div class="d-flex align-items-center">
                       <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
@@ -76,27 +76,6 @@ require_once('inc/page-data.php');
                 </div>
               </div>
             </div><!-- End Broadsheets Card -->
-
-            <!-- Admitted Students Card -->
-            <!--<div class="col-xxl-3 col-md-3">
-              <div class="card info-card text-success">
-                <div class="card-body">
-                  <a href="admitted-students.php" style="text-decoration: none;">
-                    <h5 class="card-title">Admit Applicants </h5>
-                    <div class="d-flex align-items-center">
-                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                        <i class="bi bi-person-check"></i>
-                      </div>
-                      <div class="ps-3">
-                        <h6><?= $expose->fetchTotalAdmittedApplicants()[0]["total"]; ?></h6>
-                        <span class="text-muted small pt-2 ps-1">Admitted</span>
-                      </div>
-                    </div>
-                  </a>
-                </div>
-              </div>
-            </div>-->
-            <!-- End Admitted Students Card -->
 
             <!-- Forms Sales Card -->
             <div class="col-xxl-3 col-md-3">
@@ -117,6 +96,27 @@ require_once('inc/page-data.php');
                 </div>
               </div>
             </div>
+
+            <!-- Admitted Students Card -->
+            <div class="col-xxl-3 col-md-3">
+              <div class="card info-card text-success">
+                <div class="card-body">
+                  <a href="awaiting-results.php" style="text-decoration: none;">
+                    <h5 class="card-title">Awaiting Results</h5>
+                    <div class="d-flex align-items-center">
+                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-person-check"></i>
+                      </div>
+                      <div class="ps-3">
+                        <h6><?= $expose->fetchTotalAwaitingResults()[0]["total"]; ?></h6>
+                        <span class="text-muted small pt-2 ps-1">awaiting results</span>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <!-- End Admitted Students Card -->
 
           </div>
         </div><!-- Forms Sales Card  -->

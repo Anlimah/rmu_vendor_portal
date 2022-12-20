@@ -17,16 +17,16 @@
         </li><!-- End Application Page Nav -->
 
         <li class="nav-item">
-            <a class="nav-link collapsed" href="broadsheets.php">
+            <a class="nav-link collapsed" href="admit-applicants.php">
                 <i class="bi bi-files"></i>
-                <span>Broadsheet</span>
+                <span>Admit Applicants</span>
             </a>
         </li><!-- End Broadsheet Page Nav -->
 
         <li class="nav-item">
-            <a class="nav-link collapsed" href="admitted-students.php">
+            <a class="nav-link collapsed" href="broadsheet.php">
                 <i class="bi bi-person-check"></i>
-                <span>Admitted Students</span>
+                <span>Broadsheet</span>
             </a>
         </li><!-- End Application Page Nav -->
 

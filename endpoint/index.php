@@ -95,7 +95,13 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
     //
     elseif ($_GET["url"] == "downloadBS") {
-        die(json_encode(array("success" => true, "message" => "Downloading broadsheet...")));
+        if (!isset($_POST[""]) || !isset($_POST[""])) {
+            die(json_encode(array("success" => false, "message" => "Invalid input field")));
+        }
+        if (empty($_POST["cert-type"]) || empty($_POST["prog-type"])) {
+            die(json_encode(array("success" => false, "message" => "Missing input field")));
+        }
+        die(json_encode(array("success" => true, "message" => "")));
     }
 
     // All PUT request will be sent here
