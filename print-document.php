@@ -157,6 +157,7 @@ class Broadsheet
             $this->formatSpreadsheet($this->sheetTitle);
             $this->makeSpreadsheetContent($this->dataSheet);
             $this->saveSpreadsheetFile($this->fileName);
+            return $this->fileName;
         }
     }
 }
@@ -165,5 +166,10 @@ $cert_type = "WASSCE";
 $programme = "BSC. COMPUTER SCIENCE";
 
 $broadsheet = new Broadsheet($cert_type, $programme);
-$broadsheet->generate();
-echo "OKAY";
+$file = $broadsheet->generate();
+
+$file_url = './' . $file . ".xlsx";
+header('Content-Type:application/octet-stream');
+header("Content-Transfer-Encoding:utf-8");
+header("Content-disposition:attachment;filename=\"" . basename($file_url) . "\"");
+readfile($file_url);
