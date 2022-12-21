@@ -50,7 +50,7 @@ class Broadsheet
         $this->sheet->setCellValue('A2', "NAME");
         $this->sheet->mergeCells('A2:A3');
 
-        $this->sheet->setCellValue('A2', "PROGRAMME");
+        $this->sheet->setCellValue('J2', "PROGRAMME");
         $this->sheet->mergeCells('J2:J3');
 
         $this->sheet->setCellValue('B2', "CORE SUBJECTS");
@@ -81,6 +81,8 @@ class Broadsheet
         $this->sheet->getColumnDimension('J')->setAutoSize(true);
 
         $this->sheet->getStyle('A1:J3')->getAlignment()->setHorizontal('center');
+        $this->sheet->getStyle('A2:A3')->getAlignment()->setVertical('center');
+        $this->sheet->getStyle('J2:J3')->getAlignment()->setVertical('center');
     }
 
     private function makeSpreadsheetContent($datasheet)
