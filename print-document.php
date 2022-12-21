@@ -47,7 +47,11 @@ class Broadsheet
         $this->sheet->setCellValue('A1', $title);
         $this->sheet->mergeCells('A1:J1');
 
-        $this->sheet->setCellValue('A2', "Name");
+        $this->sheet->setCellValue('A2', "NAME");
+        $this->sheet->mergeCells('A2:A3');
+
+        $this->sheet->setCellValue('A2', "PROGRAMME");
+        $this->sheet->mergeCells('J2:J3');
 
         $this->sheet->setCellValue('B2', "CORE SUBJECTS");
         $this->sheet->mergeCells('B2:E2');
@@ -149,7 +153,7 @@ class Broadsheet
         $this->sheetTitle = $this->fileName . "(" . strtoupper($academicIntake) . ")";
     }
 
-    public function generate()
+    public function generateFile()
     {
         $this->prepareBSData();
         if (!empty($this->dataSheet)) {
@@ -160,16 +164,20 @@ class Broadsheet
             return $this->fileName;
         }
     }
+
+    public function downloadFile($file)
+    {
+        $file_url = './' . $file . ".xlsx";
+        header('Content-Type:application/octet-stream');
+        header("Content-Transfer-Encoding:utf-8");
+        header("Content-disposition:attachment;filename=\"" . basename($file_url) . "\"");
+        readfile($file_url);
+    }
 }
 
 $cert_type = "WASSCE";
 $programme = "BSC. COMPUTER SCIENCE";
 
 $broadsheet = new Broadsheet($cert_type, $programme);
-$file = $broadsheet->generate();
-
-$file_url = './' . $file . ".xlsx";
-header('Content-Type:application/octet-stream');
-header("Content-Transfer-Encoding:utf-8");
-header("Content-disposition:attachment;filename=\"" . basename($file_url) . "\"");
-readfile($file_url);
+$file = $broadsheet->generateFile();
+$broadsheet->downloadFile($file);
