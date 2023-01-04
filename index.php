@@ -42,21 +42,62 @@ require_once('inc/page-data.php');
             <div class="col-xxl-3 col-md-3">
               <div class="card info-card sales-card">
                 <div class="card-body">
-                  <a href="applicants.php">
-                    <h5 class="card-title">Applications</h5>
+                  <a href="undergraduate.php">
+                    <h5 class="card-title">Undergraduate</h5>
                     <div class="d-flex align-items-center">
                       <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                         <i class="bi bi-people"></i>
                       </div>
                       <div class="ps-3">
                         <h6><?= $expose->fetchTotalApplications()[0]["total"]; ?></h6>
-                        <span class="text-muted small pt-2 ps-1">Applicants</span>
+                        <span class="text-muted small pt-2 ps-1">Applications</span>
                       </div>
                     </div>
                   </a>
                 </div>
               </div>
             </div><!-- End Applications Card -->
+
+            <!-- Applications Card -->
+            <div class="col-xxl-3 col-md-3">
+              <div class="card info-card sales-card">
+                <div class="card-body">
+                  <a href="postgraduate.php">
+                    <h5 class="card-title">Postgraduate</h5>
+                    <div class="d-flex align-items-center">
+                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-people"></i>
+                      </div>
+                      <div class="ps-3">
+                        <h6><?= $expose->fetchTotalApplications()[0]["total"]; ?></h6>
+                        <span class="text-muted small pt-2 ps-1">Applications</span>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div><!-- End Applications Card -->
+
+            <!-- Admitted Students Card -->
+            <div class="col-xxl-3 col-md-3">
+              <div class="card info-card text-success">
+                <div class="card-body">
+                  <a href="awaiting-results.php" style="text-decoration: none;">
+                    <h5 class="card-title">Awaiting Results</h5>
+                    <div class="d-flex align-items-center">
+                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-person-check"></i>
+                      </div>
+                      <div class="ps-3">
+                        <h6><?= $expose->fetchTotalAwaitingResults()[0]["total"]; ?></h6>
+                        <span class="text-muted small pt-2 ps-1">awaiting results</span>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <!-- End Admitted Students Card -->
 
             <!-- Broadsheets Card -->
             <div class="col-xxl-3 col-md-3">
@@ -69,7 +110,7 @@ require_once('inc/page-data.php');
                         <i class="bi bi-files"></i>
                       </div>
                       <div class="ps-3">
-                        <span class="text-muted small pt-2 ps-1">Generate & Download Broadsheet</span>
+                        <span class="text-muted small pt-2 ps-1">Admit qualified applicants</span>
                       </div>
                     </div>
                   </a>
@@ -101,15 +142,14 @@ require_once('inc/page-data.php');
             <div class="col-xxl-3 col-md-3">
               <div class="card info-card text-success">
                 <div class="card-body">
-                  <a href="awaiting-results.php" style="text-decoration: none;">
-                    <h5 class="card-title">Awaiting Results</h5>
+                  <a href="broadsheet.php" style="text-decoration: none;">
+                    <h5 class="card-title">Broadsheet</h5>
                     <div class="d-flex align-items-center">
                       <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                         <i class="bi bi-person-check"></i>
                       </div>
                       <div class="ps-3">
-                        <h6><?= $expose->fetchTotalAwaitingResults()[0]["total"]; ?></h6>
-                        <span class="text-muted small pt-2 ps-1">awaiting results</span>
+                        <span class="text-muted small pt-2 ps-1">Download broadsheets</span>
                       </div>
                     </div>
                   </a>
