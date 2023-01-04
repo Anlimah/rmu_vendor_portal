@@ -180,6 +180,6 @@ class Broadsheet
 $cert_type = "WASSCE";
 $programme = "BSC. COMPUTER SCIENCE";
 
-$broadsheet = new Broadsheet($cert_type, $programme);
+$broadsheet = new Broadsheet($GET['c'], $GET['p']);
 $file = $broadsheet->generateFile();
 $broadsheet->downloadFile($file);

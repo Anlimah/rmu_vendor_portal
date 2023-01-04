@@ -95,13 +95,14 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
     //
     elseif ($_GET["url"] == "downloadBS") {
-        if (!isset($_POST[""]) || !isset($_POST[""])) {
+        if (!isset($_POST["cert-type"]) || !isset($_POST["prog-type"])) {
             die(json_encode(array("success" => false, "message" => "Invalid input field")));
         }
         if (empty($_POST["cert-type"]) || empty($_POST["prog-type"])) {
             die(json_encode(array("success" => false, "message" => "Missing input field")));
         }
-        die(json_encode(array("success" => true, "message" => "")));
+        $url = "https://office.rmuictonline.com/print-document.php?c=" . $_POST["cert-type"] . "&p=" . $_POST["prog-type"];
+        die(json_encode(array("success" => true, "message" => $url)));
     }
 
     // All PUT request will be sent here

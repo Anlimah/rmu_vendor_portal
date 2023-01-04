@@ -72,7 +72,7 @@ require_once('inc/page-data.php');
                   <tr class="table-dark">
                     <th scope="col">#</th>
                     <th scope="col" colspan="1">Full Name</th>
-                    <th scope="col" colspan="1">Programme: (<span class="pro-choice">1<sup>st</sup></span>) Choice</th>
+                    <th scope="col" colspan="1">Programme</th>
                     <th scope="col" colspan="4" style="text-align: center;">Core Subjects</th>
                     <th scope="col" colspan="4" style="text-align: center;">Elective Subjects</th>
                   </tr>
@@ -116,13 +116,24 @@ require_once('inc/page-data.php');
     $(document).ready(function() {
 
       $("#download-bs").click(function() {
+        let data = {
+          'cert-type': $('#cert-type').val(),
+          'prog-type': $('#prog-type').val(),
+        }
+
+        if ($('#cert-type').val() == "" || $('#prog-type').val() == "") {
+          alert("Missing Values! Choose Certificate type and Program type");
+          return;
+        }
+
         $.ajax({
           type: "POST",
           url: "endpoint/downloadBS",
+          data: data,
           success: function(result) {
             console.log(result);
-            if (result.success) $("#dbs-progress").text(result.message);
-
+            if (result.success) window.open(result.message, '_blank');
+            else alert(result.message);
           },
           error: function(error) {
             console.log(error);
