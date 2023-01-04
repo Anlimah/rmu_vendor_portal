@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         if (empty($_POST["cert-type"]) || empty($_POST["prog-type"])) {
             die(json_encode(array("success" => false, "message" => "Missing input field")));
         }
-        $url = "https://office.rmuictonline.com/print-document.php?c=" . $_POST["cert-type"] . "&p=" . $_POST["prog-type"];
+        $url = "https://office.rmuictonline.com/download-bs.php?c=" . $_POST["cert-type"] . "&p=" . $_POST["prog-type"];
         die(json_encode(array("success" => true, "message" => $url)));
     }
 
