@@ -124,21 +124,6 @@ require_once('inc/page-data.php');
   <script>
     $(document).ready(function() {
 
-      $("#download-bs").click(function() {
-        $.ajax({
-          type: "POST",
-          url: "endpoint/downloadBS",
-          success: function(result) {
-            console.log(result);
-            if (result.success) $("#dbs-progress").text(result.message);
-
-          },
-          error: function(error) {
-            console.log(error);
-          }
-        });
-      })
-
       var fetchBroadsheet = function() {
         data = {
           "cert-type": $("#cert-type").val(),
@@ -147,7 +132,7 @@ require_once('inc/page-data.php');
 
         $.ajax({
           type: "POST",
-          url: "endpoint/getBroadsheetData",
+          url: "endpoint/getUnadmittedApps",
           data: data,
           success: function(result) {
             console.log(result);
@@ -189,34 +174,11 @@ require_once('inc/page-data.php');
           }
         });
       }
+
       $("#fetchDataForm").on("submit", function(e) {
         e.preventDefault();
         fetchBroadsheet();
       });
-
-      function getUrlVars() {
-        var vars = {};
-        var parts = window.location.href.replace(
-          /[?&]+([^=&]+)=([^&]*)/gi,
-          function(m, key, value) {
-            vars[key] = value;
-          }
-        );
-        return vars;
-      }
-
-      //Use a default value when param is missing
-      function getUrlParam(parameter, defaultvalue) {
-        var urlparameter = defaultvalue;
-        if (window.location.href.indexOf(parameter) > -1) {
-          urlparameter = getUrlVars()[parameter];
-        }
-        return urlparameter;
-      }
-
-      if (getUrlVars()["status"] != "" || getUrlVars()["status"] != undefined) {
-        if (getUrlVars()["exttrid"] != "" || getUrlVars()["exttrid"] != undefined) {}
-      }
 
       $('#admit-all-bs').click(function() {
         data = {

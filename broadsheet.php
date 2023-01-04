@@ -53,16 +53,17 @@ require_once('inc/page-data.php');
                       <option value="ALL">ALL</option>
                     </select>
                   </div>
-                  <div class="col-3">
+                  <!--<div class="col-3">
                     <label for="prog-type" class="form-label">Programme Category</label>
                     <select name="prog-type" id="prog-type" class="form-select">
                       <option value="" hidden>Choose Category</option>
                       <option value="first_prog">First Choice</option>
                       <option value="second_prog">Second Choice</option>
                     </select>
-                  </div>
+                  </div>-->
                   <div class="col-2">
-                    <button type="submit" class="btn mb-4 btn-primary" style="margin-top: 30px;">Fetch Data</button>
+                    <label for="prog-type" class="form-label" style="visibility: hidden;">Programme Category</label>
+                    <button type="submit" class="btn mb-4 btn-outline-primary">Fetch Data</button>
                   </div>
                 </div>
               </form>
@@ -93,7 +94,7 @@ require_once('inc/page-data.php');
                 <tbody>
                 </tbody>
               </table>
-              <div class="mt-4" style="float:right">
+              <div class="mt-4" id="down-bs" style="display: none;float:right">
                 <button class="btn btn-primary" id="download-bs">Download Broadsheet</button>
               </div>
               <div class="clearfix"></div>
@@ -117,11 +118,10 @@ require_once('inc/page-data.php');
 
       $("#download-bs").click(function() {
         let data = {
-          'cert-type': $('#cert-type').val(),
-          'prog-type': $('#prog-type').val(),
+          'cert-type': $('#cert-type').val()
         }
 
-        if ($('#cert-type').val() == "" || $('#prog-type').val() == "") {
+        if ($('#cert-type').val() == "") {
           alert("Missing Values! Choose Certificate type and Program type");
           return;
         }
@@ -143,8 +143,7 @@ require_once('inc/page-data.php');
 
       var fetchBroadsheet = function() {
         data = {
-          "cert-type": $("#cert-type").val(),
-          "prog-type": $("#prog-type").val(),
+          "cert-type": $("#cert-type").val()
         }
 
         $.ajax({
@@ -172,7 +171,7 @@ require_once('inc/page-data.php');
                   '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[7].subject + '">' + value.sch_rslt[7].grade + '</td>' +
                   '</tr>');
               });
-
+              $("#down-bs").show();
             } else {
               $("tbody").html('');
               $("#info-output").html(
@@ -192,51 +191,6 @@ require_once('inc/page-data.php');
       $("#fetchDataForm").on("submit", function(e) {
         e.preventDefault();
         fetchBroadsheet();
-      });
-
-      function getUrlVars() {
-        var vars = {};
-        var parts = window.location.href.replace(
-          /[?&]+([^=&]+)=([^&]*)/gi,
-          function(m, key, value) {
-            vars[key] = value;
-          }
-        );
-        return vars;
-      }
-
-      //Use a default value when param is missing
-      function getUrlParam(parameter, defaultvalue) {
-        var urlparameter = defaultvalue;
-        if (window.location.href.indexOf(parameter) > -1) {
-          urlparameter = getUrlVars()[parameter];
-        }
-        return urlparameter;
-      }
-
-      if (getUrlVars()["status"] != "" || getUrlVars()["status"] != undefined) {
-        if (getUrlVars()["exttrid"] != "" || getUrlVars()["exttrid"] != undefined) {}
-      }
-
-      $('#admit-all-bs').click(function() {
-        data = {
-          "cert-type": $("#cert-type").val(),
-          "prog-type": $("#prog-type").val(),
-        }
-
-        $.ajax({
-          type: "POST",
-          url: "endpoint/admitAll",
-          data: data,
-          success: function(result) {
-            console.log(result);
-            if (result.success) fetchBroadsheet();
-
-          },
-          error: function(error) {
-            console.log(error);
-          }
-        });
       });
 
     });

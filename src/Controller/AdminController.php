@@ -101,16 +101,20 @@ class AdminController extends ExposeDataController
         return $this->getData($query);
     }
 
-    public function getAllAdmittedAppsPersDetails()
+    public function getAllAdmitedApplicants($cert_type)
     {
-        $query = "SELECT a.`id`, p.`first_name`, p.`middle_name`, p.`last_name`, pg.name AS programme
-                FROM `personal_information` AS p, `applicants_login` AS a, broadsheets AS b, programs AS pg 
-                WHERE p.app_login = a.id AND b.app_login = a.id AND pg.id = b.program_id AND  
-                a.id IN (SELECT b.app_login AS id FROM broadsheets AS b)";
+        if (in_array($cert_type, ["WASSCE", "NECO"])) $in_query = "AND ab.cert_type IN ('WASSCE', 'NECO')";
+        if (in_array($cert_type, ["SSSCE", "GBCE"])) $in_query = "AND ab.cert_type IN ('SSSCE', 'GBCE')";
+        if (in_array($cert_type, ["BACCALAUREATE"])) $in_query = "AND ab.cert_type IN ('BACCALAUREATE')";
+
+        $query = "SELECT a.`id`, p.`first_name`, p.`middle_name`, p.`last_name`, pg.name AS programme, b.program_choice 
+                FROM `personal_information` AS p, `applicants_login` AS a, broadsheets AS b, programs AS pg,  academic_background AS ab  
+                WHERE p.app_login = a.id AND b.app_login = a.id AND ab.app_login = a.id AND pg.id = b.program_id AND 
+                a.id IN (SELECT b.app_login AS id FROM broadsheets AS b) $in_query";
         return $this->getData($query);
     }
 
-    public function getAllApplicantsID($certificate, $progCategory)
+    public function getAllUnadmitedApplicants($certificate, $progCategory)
     {
         $query = "SELECT l.`id`, p.`first_name`, p.`middle_name`, p.`last_name`, 
                     p.`email_addr`, i.`$progCategory` AS programme, a.`cert_type` 
@@ -147,25 +151,39 @@ class AdminController extends ExposeDataController
         return $this->getData($query, array(":p" => $program));
     }
 
-    public function fetchBroadsheetData($certificate, $progCategory)
+    public function bundleApplicantsData($data, $prog_category = "")
     {
-        $allAppData = $this->getAllApplicantsID($certificate, $progCategory);
-        if (empty($allAppData)) return 0;
-
-        $data = [];
-
-        foreach ($allAppData as  $appData) {
+        $store = [];
+        foreach ($data as  $appData) {
+            if ($prog_category == "") $prog_category = $appData["program_choice"];
             $applicant = [];
             $applicant["app_pers"] = $appData;
-            $applicant["app_pers"]["prog_category"] = $progCategory;
+            $applicant["app_pers"]["prog_category"] = $prog_category;
             $subjs = $this->getAppCourseSubjects($appData["id"]);
             $applicant["sch_rslt"] = $subjs;
             $progs = $this->getAppProgDetails($appData["programme"]);
             $applicant["prog_info"] = $progs;
-            array_push($data, $applicant);
+            array_push($store, $applicant);
         }
+        return $store;
+    }
 
-        return $data;
+    public function fetchAllUnadmittedApplicantsData($certificate, $progCategory)
+    {
+        $allAppData = $this->getAllUnadmitedApplicants($certificate, $progCategory);
+        if (empty($allAppData)) return 0;
+
+        $store = $this->bundleApplicantsData($allAppData, $progCategory);
+        return $store;
+    }
+
+    public function fetchAllAdmittedApplicantsData($cert_type)
+    {
+        $allAppData = $this->getAllAdmitedApplicants($cert_type);
+        if (empty($allAppData)) return 0;
+
+        $store = $this->bundleApplicantsData($allAppData);
+        return $store;
     }
 
     public function saveAdmittedApplicantData(int $admin_period, int $appID, int $program_id, $admitted_data, $prog_choice)
@@ -440,7 +458,7 @@ class AdminController extends ExposeDataController
 
     public function admitQualifiedStudents($certificate, $progCategory)
     {
-        $students_bs_data = $this->fetchBroadsheetData($certificate, $progCategory);
+        $students_bs_data = $this->fetchAllUnadmittedApplicantsData($certificate, $progCategory);
 
         if (!empty($students_bs_data)) {
             $qualifications = array(

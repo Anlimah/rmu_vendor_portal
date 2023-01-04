@@ -56,9 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         } else {
         }
         die(json_encode($data));
-
-        //
-    } elseif ($_GET["url"] == "getBroadsheetData") {
+    } elseif ($_GET["url"] == "getUnadmittedApps") {
 
         if (!isset($_POST["cert-type"]) || !isset($_POST["prog-type"])) {
             die(json_encode(array("success" => false, "message" => "Invalid input field")));
@@ -67,17 +65,24 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
             die(json_encode(array("success" => false, "message" => "Missing input field")));
         }
 
-        $result = $expose->fetchBroadsheetData($_POST["cert-type"], $_POST["prog-type"]);
+        $result = $expose->fetchAllUnadmittedApplicantsData($_POST["cert-type"], $_POST["prog-type"]);
 
         if (empty($result)) {
             die(json_encode(array("success" => false, "message" => "No result found!")));
         }
         die(json_encode(array("success" => true, "message" => $result)));
-    }
 
-    //
-    elseif ($_GET["url"] == "admitAll") {
+        //
+    } elseif ($_GET["url"] == "getBroadsheetData") {
 
+        if (!isset($_POST["cert-type"])) die(json_encode(array("success" => false, "message" => "Invalid input field")));
+        if (empty($_POST["cert-type"])) die(json_encode(array("success" => false, "message" => "Missing input field")));
+
+        $result = $expose->fetchAllAdmittedApplicantsData($_POST["cert-type"]);
+
+        if (empty($result)) die(json_encode(array("success" => false, "message" => "No result found!")));
+        die(json_encode(array("success" => true, "message" => $result)));
+    } elseif ($_GET["url"] == "admitAll") {
         if (!isset($_POST["cert-type"]) || !isset($_POST["prog-type"])) {
             die(json_encode(array("success" => false, "message" => "Invalid input field")));
         }
@@ -91,17 +96,14 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
             die(json_encode(array("success" => false, "message" => "No result found!")));
         }
         die(json_encode(array("success" => true, "message" => $result)));
-    }
-
-    //
-    elseif ($_GET["url"] == "downloadBS") {
-        if (!isset($_POST["cert-type"]) || !isset($_POST["prog-type"])) {
+    } elseif ($_GET["url"] == "downloadBS") {
+        if (!isset($_POST["cert-type"])) {
             die(json_encode(array("success" => false, "message" => "Invalid input field")));
         }
-        if (empty($_POST["cert-type"]) || empty($_POST["prog-type"])) {
+        if (empty($_POST["cert-type"])) {
             die(json_encode(array("success" => false, "message" => "Missing input field")));
         }
-        $url = "https://office.rmuictonline.com/download-bs.php?c=" . $_POST["cert-type"] . "&p=" . $_POST["prog-type"];
+        $url = "https://office.rmuictonline.com/download-bs.php?c=" . $_POST["cert-type"];
         die(json_encode(array("success" => true, "message" => $url)));
     }
 
