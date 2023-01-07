@@ -8,6 +8,48 @@ use Src\Controller\Broadsheet;
 class AdminController extends ExposeDataController
 {
 
+    public function fetchAppsSummaryData($data)
+    {
+        // extract the array values into variables
+        // create a new array with the keys of $data as the values and the values of $data as the keys
+        // and then extract the values of the new array into variables
+        extract(array_combine(array_keys($data), array_values($data)));
+
+        $SQL_COND = "";
+        if ($country != "All") $SQL_COND .= " AND p.`nationality` = '$country'";
+        if ($type != "All") $SQL_COND .= " AND ft.`id` = $type";
+        if ($program != "All") $SQL_COND .= " AND pi.`first_prog` = '$program' OR pi.`second_prog` = '$program'";
+
+        $SQL_COND;
+
+        $result = array();
+        switch ($action) {
+            case 'apps-total':
+                $result = $this->fetchAllApplication($SQL_COND);
+                break;
+            case 'apps-submitted':
+                $result = $this->fetchAllSubmittedOrUnsubmittecApplication(true, $SQL_COND);
+                break;
+
+            case 'apps-in-progress':
+                $result = $this->fetchAllSubmittedOrUnsubmittecApplication(false, $SQL_COND);
+                break;
+
+            case 'apps-admitted':
+                $result = $this->fetchAllAdmittedOrUnAdmittedApplication(true, $SQL_COND);
+                break;
+
+            case 'apps-unadmitted':
+                $result = $this->fetchAllAdmittedOrUnAdmittedApplication(false, $SQL_COND);
+                break;
+
+            case 'apps-awaiting':
+                $result = $this->fetchAllAwaitingApplication($SQL_COND);
+                break;
+        }
+        return $result;
+    }
+
     public function getAcademicPeriod()
     {
         $query = "SELECT YEAR(`start_date`) AS start_year, YEAR(`end_date`) AS end_year, info 
@@ -27,42 +69,68 @@ class AdminController extends ExposeDataController
         return $this->getData($query, $param);
     }
 
-    public function fetchApplicants($country, $type, $program)
+    public function fetchAllApplication($SQL_COND)
     {
-        $WHERE = "";
-
-        if ($country != "All") {
-            $WHERE .= " AND p.`nationality` = '$country'";
-        }
-        if ($type != "All") {
-            $WHERE .= " AND f.`id` = $type";
-        }
-        if ($program != "All") {
-            $WHERE .= " AND r.`first_prog` LIKE '%$program%'";
-        }
-
-        $query = "SELECT a.`id`, p.`first_name`, p.`last_name`, p.`nationality`, f.`name` AS `app_type`, r.`first_prog`, fs.`declaration` 
-                FROM `personal_information` AS p, `applicants_login` AS a, `form_type` AS f, 
-                `purchase_detail` AS d, `program_info` AS r, `form_sections_chek` AS fs  
-                WHERE p.`app_login` = a.`id` AND d.`form_type` = f.`id` AND d.`id` = a.`purchase_id` AND 
-                r.`app_login` = a.`id` AND fs.`app_login` = a.`id`$WHERE";
+        $query = "SELECT 
+                    a.id, CONCAT(p.first_name, ' ', IFNULL(p.middle_name, ''), ' ', p.last_name) AS fullname, 
+                    p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration 
+                FROM 
+                    personal_information AS p, applicants_login AS a, 
+                    form_type AS ft, purchase_detail AS pd, program_info AS pi, 
+                    form_sections_chek AS fs, admission_period AS ap, academic_background AS ab 
+                WHERE 
+                    p.app_login = a.id AND pi.app_login = a.id AND fs.app_login = a.id AND ab.app_login = a.id AND
+                    pd.admission_period = ap.id AND pd.form_type = ft.id AND pd.id = a.purchase_id AND 
+                    ap.active = 1$SQL_COND";
         return $this->getData($query);
     }
 
-    public function fetchAllApplicants()
+    public function fetchAllSubmittedOrUnsubmittecApplication(bool $submitted, $SQL_COND)
     {
-        $query = "SELECT a.`id`, p.`first_name`, p.`middle_name`, p.`last_name`, p.`nationality`, f.`name` AS `app_type`, r.`first_prog`, fs.`declaration` 
-                FROM `personal_information` AS p, `applicants_login` AS a, `form_type` AS f, 
-                `purchase_detail` AS d, `program_info` AS r, `form_sections_chek` AS fs  
-                WHERE p.`app_login` = a.`id` AND d.`form_type` = f.`id` AND d.`id` = a.`purchase_id` AND 
-                r.`app_login` = a.`id` AND fs.`app_login` = a.`id`";
-        return $this->getData($query);
+        $query = "SELECT 
+                    a.id, CONCAT(p.first_name, ' ', IFNULL(p.middle_name, ''), ' ', p.last_name) AS fullname, 
+                    p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration 
+                FROM 
+                    personal_information AS p, applicants_login AS a, 
+                    form_type AS ft, purchase_detail AS pd, program_info AS pi, 
+                    form_sections_chek AS fs, admission_period AS ap, academic_background AS ab 
+                WHERE 
+                    p.app_login = a.id AND pi.app_login = a.id AND fs.app_login = a.id AND ab.app_login = a.id AND
+                    pd.admission_period = ap.id AND pd.form_type = ft.id AND pd.id = a.purchase_id AND 
+                    ap.active = 1 AND fs.declaration = :s$SQL_COND";
+        return $this->getData($query, array(":s" => (int) $submitted));
     }
 
-    public function fetchAllAdmittedApps()
+    public function fetchAllAdmittedOrUnAdmittedApplication(bool $admitted, $SQL_COND)
     {
-        $query = "SELECT a.`id`, p.`first_name`, p.`middle_name`, p.`last_name`, p.`nationality`, f.`name` AS `app_type`
-                FROM `personal_information` AS p, `applicants_login`, `form_sections_chek` AS fs";
+        $query = "SELECT 
+                    a.id, CONCAT(p.first_name, ' ', IFNULL(p.middle_name, ''), ' ', p.last_name) AS fullname, 
+                    p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration 
+                FROM 
+                    personal_information AS p, applicants_login AS a, 
+                    form_type AS ft, purchase_detail AS pd, program_info AS pi, 
+                    form_sections_chek AS fs, admission_period AS ap, academic_background AS ab 
+                WHERE 
+                    p.app_login = a.id AND pi.app_login = a.id AND fs.app_login = a.id AND ab.app_login = a.id AND
+                    pd.admission_period = ap.id AND pd.form_type = ft.id AND pd.id = a.purchase_id AND 
+                    ap.active = 1 AND fs.admitted = :s$SQL_COND";
+        return $this->getData($query, array(":s" => (int) $admitted));
+    }
+
+    public function fetchAllAwaitingApplication($SQL_COND)
+    {
+        $query = "SELECT 
+                    a.id, CONCAT(p.first_name, ' ', IFNULL(p.middle_name, ''), ' ', p.last_name) AS fullname, 
+                    p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration 
+                FROM 
+                    personal_information AS p, applicants_login AS a, 
+                    form_type AS ft, purchase_detail AS pd, program_info AS pi, 
+                    form_sections_chek AS fs, admission_period AS ap, academic_background AS ab 
+                WHERE 
+                    p.app_login = a.id AND pi.app_login = a.id AND fs.app_login = a.id AND ab.app_login = a.id AND
+                    pd.admission_period = ap.id AND pd.form_type = ft.id AND pd.id = a.purchase_id AND 
+                    ap.active = 1 AND fs.declaration = 1 AND ab.awaiting_result = 1$SQL_COND";
+        return $this->getData($query);
     }
 
     public function fetchTotalApplications()
@@ -82,13 +150,13 @@ class AdminController extends ExposeDataController
         return $this->getData($query, array(":s" => (int) $submitted));
     }
 
-    public function fetchTotalAdmittedApplicants()
+    public function fetchTotalAdmittedOrUnadmittedApplicants(bool $admitted = true)
     {
         $query = "SELECT COUNT(*) AS total 
                 FROM form_sections_chek AS f, applicants_login as l, admission_period AS p, purchase_detail AS d 
                 WHERE d.`id` = l.`purchase_id` AND d.`admission_period` = p.`id` AND l.`id` = f.`app_login` AND 
-                p.`active` = 1 AND f.`admitted` = 1";
-        return $this->getData($query);
+                p.`active` = 1 AND f.`admitted` = :s";
+        return $this->getData($query, array(":s" => (int) $admitted));
     }
 
     public function fetchTotalAwaitingResults()

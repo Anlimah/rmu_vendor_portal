@@ -40,168 +40,126 @@ require_once('inc/page-data.php');
           <div class="card recent-sales overflow-auto">
 
             <div class="filter">
-              <a class="icon" href="javascript:void()" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Download PDF"><i class="bi bi-download"></i></a>
+              <span class="icon export-excel" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Export Excel">
+                <img src="assets/img/icons8-microsoft-excel-2019-48.png" alt="" style="width: 24px;">
+              </span>
+              <span class="icon download-pdf" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Download PDF">
+                <img src="assets/img/icons8-pdf-48.png" alt="" style="width: 24px;">
+              </span>
             </div>
 
             <div class="card-body">
               <h5 class="card-title">Applicantions</h5>
 
-              <div class="row">
+              <div class="row mx-auto">
+                <!-- summary data buttons -->
+                <button id="apps-total" class="btn btn-outline-primary col me-2 toggle-output">
+                  Total
+                  <span class="badge text-bg-secondary">
+                    <?= $expose->fetchTotalApplications()[0]["total"]; ?>
+                  </span>
+                </button>
 
-                <!-- Broadsheets Card -->
-                <div class="col-xxl-3 col-md-3">
-                  <div class="card info-card" style="border: 1px solid #999; padding: 0 !important">
-                    <div class="card-body row" style="padding: 0px;">
-                      <div class="col-md-8" style="padding: 0 !important; margin: 0 !important; display: flex; flex-direction: row; align-items:baseline">
-                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                          <i class="bi bi-people-fill" style="font-size: 25px;"></i>
-                        </div>
-                        <h5 class="card-title">Total</h5>
-                        <div class="d-flex align-items-center">
-                          <div class="ps-3">
-                            <h6><?= $expose->fetchTotalApplications()[0]["total"]; ?></h6>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div><!-- End Broadsheets Card -->
+                <button id="apps-submitted" class="btn btn-outline-primary col me-2 toggle-output">
+                  Submitted
+                  <span class="badge text-bg-secondary">
+                    <?= $expose->fetchTotalSubmittedOrUnsubmittedApps()[0]["total"]; ?>
+                  </span>
+                </button>
 
-                <!-- Broadsheets Card -->
-                <div class="col-xxl-3 col-md-3">
-                  <div class="card info-card" style="border: 1px solid #999; padding: 0 !important">
-                    <div class="card-body row" style="padding: 0px;">
-                      <div class="col-md-8" style="padding: 0 !important; margin: 0 !important; display: flex; flex-direction: row; align-items:baseline">
-                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                          <i class="bi bi-files" style="font-size: 25px;"></i>
-                        </div>
-                        <h5 class="card-title col">Submitted</h5>
-                        <div class="d-flex align-items-center">
-                          <div class="ps-3">
-                            <h6><?= $expose->fetchTotalSubmittedOrUnsubmittedApps()[0]["total"]; ?></h6>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div><!-- End Broadsheets Card -->
+                <button id="apps-in-progress" class="btn btn-outline-primary col me-2 toggle-output">
+                  In Progress
+                  <span class="badge text-bg-secondary">
+                    <?= $expose->fetchTotalSubmittedOrUnsubmittedApps(false)[0]["total"]; ?>
+                  </span>
+                </button>
 
-                <!-- Broadsheets Card -->
-                <div class="col-xxl-3 col-md-3">
-                  <div class="card info-card" style="border: 1px solid #999; padding: 0 !important">
-                    <div class="card-body row" style="padding: 0px;">
-                      <div class="col-md-8" style="padding: 0 !important; margin: 0 !important; display: flex; flex-direction: row; align-items:baseline">
-                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                          <i class="bi bi-person-lines-fill" style="font-size: 25px;"></i>
-                        </div>
-                        <h5 class="card-title">Progress</h5>
-                        <div class="ps-3">
-                          <h6><?= $expose->fetchTotalSubmittedOrUnsubmittedApps(false)[0]["total"]; ?></h6>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div><!-- End Broadsheets Card -->
+                <button id="apps-admitted" class="btn btn-outline-primary col me-2 toggle-output">
+                  Admitted
+                  <span class="badge text-bg-secondary">
+                    <?= $expose->fetchTotalAdmittedOrUnadmittedApplicants(true)[0]["total"]; ?>
+                  </span>
+                </button>
 
-                <!-- Broadsheets Card -->
-                <div class="col-xxl-3 col-md-3">
-                  <div class="card info-card" style="border: 1px solid #999; padding: 0 !important">
-                    <div class="card-body row" style="padding: 0px;">
-                      <div class="col-md-8" style="padding: 0 !important; margin: 0 !important; display: flex; flex-direction: row; align-items:baseline">
-                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                          <i class="bi bi-person-check" style="font-size: 25px;"></i>
-                        </div>
-                        <h5 class="card-title col">Admitted</h5>
-                        <div class="ps-3">
-                          <h6><?= $expose->fetchTotalAdmittedApplicants()[0]["total"]; ?></h6>
-                        </div>
-                      </div>
+                <button id="apps-unadmitted" class="btn btn-outline-primary col me-2 toggle-output">
+                  Unadmitted
+                  <span class="badge text-bg-secondary">
+                    <?= $expose->fetchTotalAdmittedOrUnadmittedApplicants(false)[0]["total"]; ?>
+                  </span>
+                </button>
 
-                    </div>
-                  </div>
-                </div><!-- End Broadsheets Card -->
+                <button id="apps-awaiting" class="btn btn-outline-primary col toggle-output">
+                  Awaiting
+                  <span class="badge text-bg-secondary">
+                    <?= $expose->fetchTotalAwaitingResults()[0]["total"]; ?>
+                  </span>
+                </button>
 
               </div>
+              <div class="collapse" id="toggle-output">
+                <hr class="mb-4">
 
-              <hr class="mb-4">
-
-              <form action="" class="mb-4 mt-4" id="form-filter">
-                <div class="row">
-                  <div class="col-4">
-                    <label for="country" class="form-label">Country</label>
-                    <select name="country" id="country" class="form-select">
-                      <option value="All" selected>All</option>
-                      <option value="Cameroun">Cameroun</option>
-                      <option value="Ghana">Ghana</option>
-                      <option value="Guinea">Guinea</option>
-                      <option value="Liberia">Liberia</option>
-                      <option value="Sierra Leone">Sierra Leone</option>
-                      <option value="Others">Others</option>
-                    </select>
+                <form action="" class="mb-4 mt-4" id="form-filter">
+                  <div class="row">
+                    <div class="col-4">
+                      <label for="country" class="form-label">Country</label>
+                      <select name="country" id="country" class="form-select">
+                        <option value="All" selected>All</option>
+                        <option value="Cameroun">Cameroun</option>
+                        <option value="Ghana">Ghana</option>
+                        <option value="Guinea">Guinea</option>
+                        <option value="Liberia">Liberia</option>
+                        <option value="Sierra Leone">Sierra Leone</option>
+                        <option value="Others">Others</option>
+                      </select>
+                    </div>
+                    <div class="col-4">
+                      <label for="type" class="form-label">Application Type</label>
+                      <select name="type" id="type" class="form-select">
+                        <option value="All" selected>All</option>
+                        <?php
+                        $data = $expose->getFormTypes();
+                        foreach ($data as $ft) {
+                        ?>
+                          <option value="<?= $ft['id'] ?>"><?= $ft['name'] ?></option>
+                        <?php
+                        }
+                        ?>
+                      </select>
+                    </div>
+                    <div class="col-4">
+                      <label for="program" class="form-label">Programs</label>
+                      <select name="program" id="program" class="form-select">
+                        <option value="All">All</option>
+                        <?php
+                        $data = $expose->fetchPrograms(0);
+                        foreach ($data as $ft) {
+                        ?>
+                          <option value="<?= $ft['id'] ?>"><?= $ft['name'] ?></option>
+                        <?php
+                        }
+                        ?>
+                      </select>
+                    </div>
                   </div>
-                  <div class="col-4">
-                    <label for="type" class="form-label">Application Type</label>
-                    <select name="type" id="type" class="form-select">
-                      <option value="All" selected>All</option>
-                      <?php
-                      $data = $expose->getFormTypes();
-                      foreach ($data as $ft) {
-                      ?>
-                        <option value="<?= $ft['id'] ?>"><?= $ft['name'] ?></option>
-                      <?php
-                      }
-                      ?>
-                    </select>
-                  </div>
-                  <div class="col-4">
-                    <label for="program" class="form-label">Programs</label>
-                    <select name="program" id="program" class="form-select">
-                      <option value="All">All</option>
-                      <?php
-                      $data = $expose->fetchPrograms(0);
-                      foreach ($data as $ft) {
-                      ?>
-                        <option value="<?= $ft['id'] ?>"><?= $ft['name'] ?></option>
-                      <?php
-                      }
-                      ?>
-                    </select>
-                  </div>
-                </div>
-              </form>
-              <div id="info-output"></div>
-              <table class="table table-borderless datatable table-striped table-hover">
-                <thead class="table-dark">
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">First & Last Name</th>
-                    <th scope="col">Country</th>
-                    <th scope="col">Application Type</th>
-                    <th scope="col">Programme (1<sup>st</sup> Choice)</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <?php
-                  $data = $expose->fetchAllApplicants();
-                  foreach ($data as $ft) {
-                    $status = $ft["declaration"] == 1 ? '<span class="badge text-bg-success">Submitted</span>' : '<span class="badge text-bg-danger">In Progress</span>';
-                  ?>
+                </form>
+                <div id="info-output"></div>
+                <table class="table table-borderless datatable table-striped table-hover">
+                  <thead class="table-dark">
                     <tr>
-                      <th scope="row"><?= $ft['id'] ?></th>
-                      <td><?= $ft["first_name"] . " " . $ft["last_name"] ?></td>
-                      <td><?= $ft["nationality"] ?></td>
-                      <td><?= $ft["app_type"] ?></td>
-                      <td><?= $ft["first_prog"] ?></td>
-                      <td><?= $status ?></td>
-                      <td><b><a href="applicant-info.php?q=' + value.id + '">Open</a></b></td>
+                      <th scope="col">#</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Country</th>
+                      <th scope="col">Application Type</th>
+                      <th scope="col">Programme (1<sup>st</sup> Choice)</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Action</th>
                     </tr>
-                  <?php
-                  }
-                  ?>
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+              </div>
 
             </div>
 
@@ -220,10 +178,60 @@ require_once('inc/page-data.php');
 
   <script>
     $(document).ready(function() {
+      var summary_selected = "";
+      // when a summary data button is clicked
+      $(".toggle-output").click(function() {
+        summary_selected = $(this).attr("id");
+        alert(summary_selected)
+        $.ajax({
+          type: "POST",
+          url: "endpoint/apps-data",
+          data: {
+            action: summary_selected
+          },
+          success: function(result) {
+            console.log(result);
 
+            if (result.success) {
+              $("tbody").html('');
+              $.each(result.message, function(index, value) {
+                let status = value.declaration == 1 ? '<span class="badge text-bg-success">Submitted</span>' : '<span class="badge text-bg-danger">In Progress</span>';
+                $("tbody").append(
+                  '<tr>' +
+                  '<th scope="row"><a href="javascript:void()">' + value.id + '</a></th>' +
+                  '<td>' + value.fullname + '</td>' +
+                  '<td>' + value.nationality + '</td>' +
+                  '<td>' + value.app_type + '</td>' +
+                  '<td>' + value.first_prog + '</td>' +
+                  '<td>' + status + '</td>' +
+                  '<td><b><a href="applicant-info.php?q=' + value.id + '">Open</a></b></td>' +
+                  '</tr>');
+              });
+
+            } else {
+              $("tbody").html('');
+              $("#info-output").html(
+                '<div class="alert alert-info alert-dismissible fade show" role="alert">' +
+                '<i class="bi bi-info-circle me-1"></i>' + result.message +
+                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                '</div>'
+              );
+            }
+          },
+          error: function(error) {
+            console.log(error);
+          }
+        });
+
+        if ($("#toggle-output").is(":visible") === false) $("#toggle-output").slideToggle();
+      });
+
+      // when 
       $(".form-select").change("blur", function(e) {
+        alert(summary_selected)
         e.preventDefault();
         data = {
+          "action": summary_selected,
           "country": $("#country").val(),
           "type": $("#type").val(),
           "program": $("#program").val(),
@@ -323,6 +331,30 @@ require_once('inc/page-data.php');
       if (getUrlVars()["status"] != "" || getUrlVars()["status"] != undefined) {
         if (getUrlVars()["exttrid"] != "" || getUrlVars()["exttrid"] != undefined) {}
       }
+
+      $(".export-excel").click(function() {
+        if (summary_selected !== "") {
+          data = {
+            "action": summary_selected,
+            "country": $("#country").val(),
+            "type": $("#type").val(),
+            "program": $("#program").val(),
+          }
+          window.open("export-excel.php?w=sdjgskfsd&a=hoh&c=jgkg&t=hjgkj&p=jgksjgks", "_blank");
+        }
+      });
+
+      $(".download-pdf").click(function() {
+        if (summary_selected !== "") {
+          data = {
+            "action": summary_selected,
+            "country": $("#country").val(),
+            "type": $("#type").val(),
+            "program": $("#program").val(),
+          }
+          window.open("download-pdf.php", "_blank");
+        }
+      });
 
 
     });

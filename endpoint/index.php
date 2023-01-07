@@ -11,6 +11,11 @@ header("Access-Control-Allow-Methods: GET,POST,PUT,DELETE");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
+/*$method = $_SERVER['REQUEST_METHOD'];
+$request = explode('/', trim($_SERVER['PATH_INFO'], '/'));
+$input = json_decode(file_get_contents('php://input'), true);
+die(json_encode($input));*/
+
 require "../bootstrap.php";
 
 use Src\Controller\AdminController;
@@ -43,20 +48,40 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
     // All POST request will be sent here
 } elseif ($_SERVER['REQUEST_METHOD'] == "POST") {
-    if ($_GET["url"] == "applicants") {
-        if (isset($_POST["country"]) && isset($_POST["type"]) && isset($_POST["program"])) {
-            $result = $expose->fetchApplicants($_POST["country"], $_POST["type"], $_POST["program"]);
-            if (!empty($result)) {
-                $data["success"] = true;
-                $data["message"] = $result;
-            } else {
-                $data["success"] = false;
-                $data["message"] = "No result found!";
-            }
+    //
+    if ($_GET["url"] == "apps-data") {
+        if (!isset($_POST["action"])) die(json_encode(array("success" => false, "message" => "Invalid input!")));
+        if (empty($_POST["action"])) die(json_encode(array("success" => false, "message" => "Missing request!")));
+
+        $v_data = $expose->validateText($_POST["action"]);
+        if (!$v_data["success"]) die(json_encode($v_data));
+        $data = array('action' => $_POST["action"], 'country' => 'All', 'type' => 'All', 'program' => 'All');
+        $result = $expose->fetchAppsSummaryData($data);
+        if (empty($result)) die(json_encode(array("success" => false, "message" => "Empty result!")));
+        die(json_encode(array("success" => true, "message" => $result)));
+    }
+    //
+    elseif ($_GET["url"] == "applicants") {
+
+        if (!isset($_POST["action"]) || !isset($_POST["country"]) || !isset($_POST["type"]) || !isset($_POST["program"])) {
+            die(json_encode(array("success" => false, "message" => "Missing input!")));
+        }
+        if (empty($_POST["action"]) || empty($_POST["country"]) || empty($_POST["type"]) || empty($_POST["program"])) {
+            die(json_encode(array("success" => false, "message" => "Missing input!")));
+        }
+
+        $result = $expose->fetchAppsSummaryData($_POST);
+        if (!empty($result)) {
+            $data["success"] = true;
+            $data["message"] = $result;
         } else {
+            $data["success"] = false;
+            $data["message"] = "No result found!";
         }
         die(json_encode($data));
-    } elseif ($_GET["url"] == "getUnadmittedApps") {
+    }
+    //
+    elseif ($_GET["url"] == "getUnadmittedApps") {
 
         if (!isset($_POST["cert-type"]) || !isset($_POST["prog-type"])) {
             die(json_encode(array("success" => false, "message" => "Invalid input field")));
@@ -73,7 +98,9 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         die(json_encode(array("success" => true, "message" => $result)));
 
         //
-    } elseif ($_GET["url"] == "getBroadsheetData") {
+    }
+    //
+    elseif ($_GET["url"] == "getBroadsheetData") {
 
         if (!isset($_POST["cert-type"])) die(json_encode(array("success" => false, "message" => "Invalid input field")));
         if (empty($_POST["cert-type"])) die(json_encode(array("success" => false, "message" => "Missing input field")));
@@ -82,7 +109,9 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
         if (empty($result)) die(json_encode(array("success" => false, "message" => "No result found!")));
         die(json_encode(array("success" => true, "message" => $result)));
-    } elseif ($_GET["url"] == "admitAll") {
+    }
+    //
+    elseif ($_GET["url"] == "admitAll") {
         if (!isset($_POST["cert-type"]) || !isset($_POST["prog-type"])) {
             die(json_encode(array("success" => false, "message" => "Invalid input field")));
         }
@@ -96,7 +125,9 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
             die(json_encode(array("success" => false, "message" => "No result found!")));
         }
         die(json_encode(array("success" => true, "message" => $result)));
-    } elseif ($_GET["url"] == "downloadBS") {
+    }
+    //
+    elseif ($_GET["url"] == "downloadBS") {
         if (!isset($_POST["cert-type"])) {
             die(json_encode(array("success" => false, "message" => "Invalid input field")));
         }

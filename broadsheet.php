@@ -53,14 +53,6 @@ require_once('inc/page-data.php');
                       <option value="ALL">ALL</option>
                     </select>
                   </div>
-                  <!--<div class="col-3">
-                    <label for="prog-type" class="form-label">Programme Category</label>
-                    <select name="prog-type" id="prog-type" class="form-select">
-                      <option value="" hidden>Choose Category</option>
-                      <option value="first_prog">First Choice</option>
-                      <option value="second_prog">Second Choice</option>
-                    </select>
-                  </div>-->
                   <div class="col-2">
                     <label for="prog-type" class="form-label" style="visibility: hidden;">Programme Category</label>
                     <button type="submit" class="btn mb-4 btn-outline-primary">Fetch Data</button>
