@@ -3,10 +3,197 @@
 namespace Src\Controller;
 
 use Src\Controller\ExposeDataController;
-use Src\Controller\Broadsheet;
 
 class AdminController extends ExposeDataController
 {
+
+    public function getAcademicPeriod()
+    {
+        $query = "SELECT YEAR(`start_date`) AS start_year, YEAR(`end_date`) AS end_year, info 
+                FROM admission_period WHERE active = 1";
+        return $this->getData($query);
+    }
+
+    public function fetchPrograms(int $type)
+    {
+        $param = array();
+        if ($type != 0) {
+            $query = "SELECT * FROM programs WHERE `type` = :t";
+            $param = array(':t' => $type);
+        } else {
+            $query = "SELECT * FROM programs";
+        }
+        return $this->getData($query, $param);
+    }
+
+    public function fetchAvailableformTypes()
+    {
+        return $this->getData("SELECT * FROM form_type");
+    }
+
+    public function getFormTypeName(int $form_type)
+    {
+        $query = "SELECT * FROM form_type WHERE id = :i";
+        return $this->getData($query, array(":i" => $form_type));
+    }
+
+    /**
+     * Fetching forms sale data totals
+     */
+
+    public function fetchTotalFormsSold()
+    {
+        $query = "SELECT COUNT(pd.id) AS total 
+                FROM 
+                    purchase_detail AS pd, form_type AS ft, form_price AS fp, 
+                    admission_period AS ap, vendor_details AS v  
+                WHERE
+                    pd.form_type = ft.id AND pd.admission_period = ap.id AND 
+                    pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1";
+        return $this->getData($query);
+    }
+
+    public function fetchTotalPostgradsFormsSold()
+    {
+        $query = "SELECT COUNT(pd.id) AS total 
+        FROM 
+            purchase_detail AS pd, form_type AS ft, form_price AS fp, 
+            admission_period AS ap, vendor_details AS v  
+        WHERE
+            pd.form_type = ft.id AND pd.admission_period = ap.id AND 
+            pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
+            AND ft.name LIKE '%Post%' OR ft.name LIKE '%Master%'";
+        return $this->getData($query);
+    }
+
+    public function fetchTotalUdergradsFormsSold()
+    {
+        $query = "SELECT COUNT(pd.id) AS total 
+        FROM 
+            purchase_detail AS pd, form_type AS ft, form_price AS fp, 
+            admission_period AS ap, vendor_details AS v  
+        WHERE
+            pd.form_type = ft.id AND pd.admission_period = ap.id AND 
+            pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
+            AND (ft.name LIKE '%Degree%' OR ft.name LIKE '%Diploma%')";
+        return $this->getData($query);
+    }
+
+    public function fetchTotalShortCoursesFormsSold()
+    {
+        $query = "SELECT COUNT(pd.id) AS total 
+        FROM 
+            purchase_detail AS pd, form_type AS ft, form_price AS fp, 
+            admission_period AS ap, vendor_details AS v  
+        WHERE
+            pd.form_type = ft.id AND pd.admission_period = ap.id AND 
+            pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
+            AND ft.name LIKE '%Short%'";
+        return $this->getData($query);
+    }
+
+    public function fetchTotalVendorsFormsSold()
+    {
+        $query = "SELECT COUNT(pd.id) AS total 
+        FROM 
+            purchase_detail AS pd, form_type AS ft, form_price AS fp, 
+            admission_period AS ap, vendor_details AS v  
+        WHERE
+            pd.form_type = ft.id AND pd.admission_period = ap.id AND 
+            pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
+            AND v.vendor_name NOT LIKE '%ONLINE%'";
+        return $this->getData($query);
+    }
+
+    public function fetchTotalOnlineFormsSold()
+    {
+        $query = "SELECT COUNT(pd.id) AS total 
+        FROM 
+            purchase_detail AS pd, form_type AS ft, form_price AS fp, 
+            admission_period AS ap, vendor_details AS v  
+        WHERE
+            pd.form_type = ft.id AND pd.admission_period = ap.id AND 
+            pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
+            AND v.vendor_name LIKE '%ONLINE%'";
+        return $this->getData($query);
+    }
+
+    /**
+     * Fetching form sales data by statistics
+     */
+    public function fetchFormsSoldStatsByVendor()
+    {
+        $query = "SELECT 
+                    v.vendor_name, COUNT(pd.id) AS total, SUM(fp.amount) AS amount 
+                FROM 
+                    purchase_detail AS pd, form_type AS ft, form_price AS fp, 
+                    admission_period AS ap, vendor_details AS v  
+                WHERE
+                    pd.form_type = ft.id AND pd.admission_period = ap.id AND 
+                    pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
+                GROUP BY pd.vendor";
+        return $this->getData($query);
+    }
+
+    public function fetchFormsSoldStatsByPaymentMethod()
+    {
+        $query = "SELECT 
+                    pd.payment_method, COUNT(pd.id) AS total, SUM(fp.amount) AS amount 
+                FROM 
+                    purchase_detail AS pd, form_type AS ft, form_price AS fp, 
+                    admission_period AS ap, vendor_details AS v  
+                WHERE
+                    pd.form_type = ft.id AND pd.admission_period = ap.id AND 
+                    pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
+                GROUP BY pd.payment_method";
+        return $this->getData($query);
+    }
+
+    public function fetchFormsSoldStatsByFormType()
+    {
+        $query = "SELECT 
+                    ft.name, COUNT(pd.id) AS total, SUM(fp.amount) AS amount 
+                FROM 
+                    purchase_detail AS pd, form_type AS ft, form_price AS fp, 
+                    admission_period AS ap, vendor_details AS v  
+                WHERE
+                    pd.form_type = ft.id AND pd.admission_period = ap.id AND 
+                    pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
+                GROUP BY pd.form_type";
+        return $this->getData($query);
+    }
+
+    public function fetchFormsSoldStatsByCountry()
+    {
+        $query = "SELECT 
+                    pd.country_name, pd.country_code, COUNT(pd.id) AS total, SUM(fp.amount) AS amount 
+                FROM 
+                    purchase_detail AS pd, form_type AS ft, form_price AS fp, 
+                    admission_period AS ap, vendor_details AS v  
+                WHERE
+                    pd.form_type = ft.id AND pd.admission_period = ap.id AND 
+                    pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
+                GROUP BY pd.country_code";
+        return $this->getData($query);
+    }
+
+    public function fetchFormsSoldStatsByPurchaseStatus()
+    {
+        $query = "SELECT 
+                    pd.status, COUNT(pd.id) AS total, SUM(fp.amount) AS amount 
+                FROM 
+                    purchase_detail AS pd, form_type AS ft, form_price AS fp, 
+                    admission_period AS ap, vendor_details AS v  
+                WHERE
+                    pd.form_type = ft.id AND pd.admission_period = ap.id AND 
+                    pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
+                GROUP BY pd.status";
+        return $this->getData($query);
+    }
+
+    /**
+     * fetching applicants data
+     */
 
     public function fetchAppsSummaryData($data)
     {
@@ -48,25 +235,6 @@ class AdminController extends ExposeDataController
                 break;
         }
         return $result;
-    }
-
-    public function getAcademicPeriod()
-    {
-        $query = "SELECT YEAR(`start_date`) AS start_year, YEAR(`end_date`) AS end_year, info 
-                FROM admission_period WHERE active = 1";
-        return $this->getData($query);
-    }
-
-    public function fetchPrograms(int $type)
-    {
-        $param = array();
-        if ($type != 0) {
-            $query = "SELECT * FROM programs WHERE `type` = :t";
-            $param = array(':t' => $type);
-        } else {
-            $query = "SELECT * FROM programs";
-        }
-        return $this->getData($query, $param);
     }
 
     public function fetchAllApplication($SQL_COND)
@@ -133,44 +301,62 @@ class AdminController extends ExposeDataController
         return $this->getData($query);
     }
 
-    public function fetchTotalApplications()
+    public function fetchTotalApplications(int $form_type = 100)
     {
-        $query = "SELECT COUNT(*) AS total 
-                FROM purchase_detail AS p, admission_period AS a, form_sections_chek AS f, applicants_login AS l  
-                WHERE a.id = p.admission_period AND a.active = 1 AND f.app_login = l.id AND l.purchase_id = p.id";
-        return $this->getData($query);
+        if ($form_type == 100) {
+            $query = "SELECT 
+                    COUNT(*) AS total 
+                FROM 
+                    purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, form_type AS ft
+                WHERE 
+                    ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id 
+                    AND pd.form_type = ft.id";
+            return $this->getData($query);
+        } else {
+            $query = "SELECT 
+                    COUNT(*) AS total 
+                FROM 
+                    purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, form_type AS ft
+                WHERE 
+                    ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id 
+                    AND pd.form_type = ft.id AND ft.id = :f";
+            return $this->getData($query, array(":f" => $form_type));
+        }
     }
 
-    public function fetchTotalSubmittedOrUnsubmittedApps(bool $submitted = true)
+    public function fetchTotalSubmittedOrUnsubmittedApps(int $form_type, bool $submitted = true)
     {
         $query = "SELECT COUNT(*) AS total 
-                FROM purchase_detail AS p, admission_period AS a, form_sections_chek AS f, applicants_login AS l  
-                WHERE a.id = p.admission_period AND a.active = 1 AND f.app_login = l.id AND l.purchase_id = p.id 
-                AND f.declaration = :s";
-        return $this->getData($query, array(":s" => (int) $submitted));
+                FROM 
+                    purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, form_type AS ft
+                WHERE 
+                    ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id 
+                AND pd.form_type = ft.id AND fc.declaration = :s AND ft.id = :f";
+        return $this->getData($query, array(":s" => (int) $submitted, ":f" => $form_type));
     }
 
-    public function fetchTotalAdmittedOrUnadmittedApplicants(bool $admitted = true)
+    public function fetchTotalAdmittedOrUnadmittedApplicants(int $form_type, bool $admitted = true)
     {
         $query = "SELECT COUNT(*) AS total 
-                FROM form_sections_chek AS f, applicants_login as l, admission_period AS p, purchase_detail AS d 
-                WHERE d.`id` = l.`purchase_id` AND d.`admission_period` = p.`id` AND l.`id` = f.`app_login` AND 
-                p.`active` = 1 AND f.`admitted` = :s";
-        return $this->getData($query, array(":s" => (int) $admitted));
+                FROM form_sections_chek AS fc, applicants_login as al, admission_period AS ap, purchase_detail AS pd, form_type AS ft 
+                WHERE pd.`id` = al.`purchase_id` AND pd.`admission_period` = ap.`id` AND al.`id` = fc.`app_login` AND 
+                ap.`active` = 1 AND fc.`admitted` = :s AND ft.id = :f";
+        return $this->getData($query, array(":s" => (int) $admitted, ":f" => $form_type));
     }
 
-    public function fetchTotalAwaitingResults()
+    public function fetchTotalAwaitingResults(int $form_type)
     {
         $query = "SELECT COUNT(*) AS total 
-                FROM form_sections_chek AS f, applicants_login as l, admission_period AS p, 
-                    purchase_detail AS d, `academic_background` AS a 
-                WHERE a.`app_login` = l.`id` AND d.`id` = l.`purchase_id` AND d.`admission_period` = p.`id` AND l.`id` = f.`app_login` AND 
-                p.`active` = 1 AND f.`declaration` = 1 AND a.`awaiting_result` = 1";
-        return $this->getData($query);
+                FROM form_sections_chek AS fc, applicants_login as al, admission_period AS ap, 
+                    purchase_detail AS pd, `academic_background` AS ab, form_type AS ft 
+                WHERE ab.`app_login` = al.`id` AND pd.`id` = al.`purchase_id` AND pd.`admission_period` = ap.`id` AND al.`id` = fc.`app_login` AND 
+                ap.`active` = 1 AND fc.`declaration` = 1 AND ab.`awaiting_result` = 1 AND ft.id = :f";
+        return $this->getData($query, array(":f" => $form_type));
     }
 
     public function getAllAdmitedApplicants($cert_type)
     {
+        $in_query = "";
         if (in_array($cert_type, ["WASSCE", "NECO"])) $in_query = "AND ab.cert_type IN ('WASSCE', 'NECO')";
         if (in_array($cert_type, ["SSSCE", "GBCE"])) $in_query = "AND ab.cert_type IN ('SSSCE', 'GBCE')";
         if (in_array($cert_type, ["BACCALAUREATE"])) $in_query = "AND ab.cert_type IN ('BACCALAUREATE')";

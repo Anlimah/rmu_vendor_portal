@@ -3,7 +3,7 @@ require_once('bootstrap.php');
 
 use Src\Controller\AdminController;
 
-$expose = new AdminController();
+$admin = new AdminController();
 require_once('inc/page-data.php');
 
 ?>
@@ -25,7 +25,7 @@ require_once('inc/page-data.php');
       <h1>Dashboard</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item"><a href="index.php">Home</a></li>
           <li class="breadcrumb-item active">Dashboard</li>
         </ol>
       </nav>
@@ -42,14 +42,14 @@ require_once('inc/page-data.php');
             <div class="col-xxl-3 col-md-3">
               <div class="card info-card sales-card">
                 <div class="card-body">
-                  <a href="undergraduate.php">
-                    <h5 class="card-title">Undergraduate</h5>
+                  <a href="applications.php">
+                    <h5 class="card-title">Applications</h5>
                     <div class="d-flex align-items-center">
                       <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                         <i class="bi bi-people"></i>
                       </div>
                       <div class="ps-3">
-                        <h6><?= $expose->fetchTotalApplications()[0]["total"]; ?></h6>
+                        <h6><?= $admin->fetchTotalApplications()[0]["total"]; ?></h6>
                         <span class="text-muted small pt-2 ps-1">Applications</span>
                       </div>
                     </div>
@@ -62,15 +62,14 @@ require_once('inc/page-data.php');
             <div class="col-xxl-3 col-md-3">
               <div class="card info-card sales-card">
                 <div class="card-body">
-                  <a href="postgraduate.php">
-                    <h5 class="card-title">Postgraduate</h5>
+                  <a href="https://forms.rmuictonline.com/buy-vendor/">
+                    <h5 class="card-title">Sell Form</h5>
                     <div class="d-flex align-items-center">
                       <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                        <i class="bi bi-people"></i>
+                        <img src="./assets/img/icons8-sell-48.png" style="width: 48px;" alt="">
                       </div>
                       <div class="ps-3">
-                        <h6><?= $expose->fetchTotalApplications()[0]["total"]; ?></h6>
-                        <span class="text-muted small pt-2 ps-1">Applications</span>
+                        <span class="text-muted small pt-2 ps-1">forms</span>
                       </div>
                     </div>
                   </a>
@@ -78,85 +77,43 @@ require_once('inc/page-data.php');
               </div>
             </div><!-- End Applications Card -->
 
-            <!-- Admitted Students Card -->
+            <!-- Applications Card -->
             <div class="col-xxl-3 col-md-3">
-              <div class="card info-card text-success">
+              <div class="card info-card sales-card">
                 <div class="card-body">
-                  <a href="awaiting-results.php" style="text-decoration: none;">
-                    <h5 class="card-title">Awaiting Results</h5>
+                  <a href="forms-sale.php">
+                    <h5 class="card-title">Form Sales Stats</h5>
                     <div class="d-flex align-items-center">
                       <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                        <i class="bi bi-person-check"></i>
+                        <img src="./assets/img/icons8-stocks-growth-96.png" style="width: 48px;" alt="">
                       </div>
                       <div class="ps-3">
-                        <h6><?= $expose->fetchTotalAwaitingResults()[0]["total"]; ?></h6>
-                        <span class="text-muted small pt-2 ps-1">awaiting results</span>
+                        <span class="text-muted small pt-2 ps-1">Statistics</span>
                       </div>
                     </div>
                   </a>
                 </div>
               </div>
-            </div>
-            <!-- End Admitted Students Card -->
+            </div><!-- End Applications Card -->
 
-            <!-- Broadsheets Card -->
+            <!-- Applications Card -->
             <div class="col-xxl-3 col-md-3">
-              <div class="card info-card">
+              <div class="card info-card sales-card">
                 <div class="card-body">
-                  <a href="admit-applicants.php" style="text-decoration: none;">
-                    <h5 class="card-title">Admit Applicants</h5>
+                  <a href="general-settings.php">
+                    <h5 class="card-title">Settings</h5>
                     <div class="d-flex align-items-center">
                       <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                        <i class="bi bi-files"></i>
+                        <img src="./assets/img/icons8-services-96.png" style="width: 48px;" alt="">
                       </div>
                       <div class="ps-3">
-                        <span class="text-muted small pt-2 ps-1">Admit qualified applicants</span>
+                        <span class="text-muted small pt-2 ps-1">Statistics</span>
                       </div>
                     </div>
                   </a>
                 </div>
               </div>
-            </div><!-- End Broadsheets Card -->
-
-            <!-- Forms Sales Card -->
-            <div class="col-xxl-3 col-md-3">
-              <div class="card info-card text-danger">
-                <div class="card-body">
-                  <a href="forms-sale.php" style="text-decoration: none;">
-                    <h5 class="card-title">Forms Sale</h5>
-                    <div class="d-flex align-items-center">
-                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                        <i class="bi bi-wallet2"></i>
-                      </div>
-                      <div class="ps-3">
-                        <h6><?= $expose->fetchTotalApplications()[0]["total"]; ?></h6>
-                        <span class="text-muted small pt-2 ps-1">Forms bought</span>
-                      </div>
-                    </div>
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <!-- Admitted Students Card -->
-            <div class="col-xxl-3 col-md-3">
-              <div class="card info-card text-success">
-                <div class="card-body">
-                  <a href="broadsheet.php" style="text-decoration: none;">
-                    <h5 class="card-title">Broadsheet</h5>
-                    <div class="d-flex align-items-center">
-                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                        <i class="bi bi-person-check"></i>
-                      </div>
-                      <div class="ps-3">
-                        <span class="text-muted small pt-2 ps-1">Download broadsheets</span>
-                      </div>
-                    </div>
-                  </a>
-                </div>
-              </div>
-            </div>
-            <!-- End Admitted Students Card -->
+            </div><!-- End Applications Card -->
 
           </div>
         </div><!-- Forms Sales Card  -->

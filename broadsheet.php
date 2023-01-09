@@ -45,7 +45,7 @@ require_once('inc/page-data.php');
                 <div class="row">
                   <div class="col-3">
                     <label for="cert-type" class="form-label">Certificate Type</label>
-                    <select name="cert-type" id="cert-type" class="form-select">
+                    <select name="cert-type" id="cert-type" class="form-select form-select-sm">
                       <option value="" hidden>Choose Certificate</option>
                       <option value="WASSCE">WASSCE/NECO</option>
                       <option value="SSSCE">SSSCE/GBCE</option>
@@ -53,9 +53,9 @@ require_once('inc/page-data.php');
                       <option value="ALL">ALL</option>
                     </select>
                   </div>
-                  <div class="col-2">
+                  <div class="col-3">
                     <label for="prog-type" class="form-label" style="visibility: hidden;">Programme Category</label>
-                    <button type="submit" class="btn mb-4 btn-outline-primary">Fetch Data</button>
+                    <button type="submit" class="btn mb-4 btn-outline-primary btn-sm">Fetch Data</button>
                   </div>
                 </div>
               </form>

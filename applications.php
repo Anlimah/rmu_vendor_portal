@@ -3,7 +3,7 @@ require_once('bootstrap.php');
 
 use Src\Controller\AdminController;
 
-$expose = new AdminController();
+$admin = new AdminController();
 require_once('inc/page-data.php');
 
 ?>
@@ -22,17 +22,141 @@ require_once('inc/page-data.php');
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Dashboard</h1>
+      <h1>Applications</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item active">Dashboard</li>
+          <li class="breadcrumb-item"><a href="index.php">Dashboard</a></li>
+          <li class="breadcrumb-item <?= !isset($_GET["t"]) ? 'active' : '' ?>"><a href="applications.php">Applications</a></li>
+          <?php
+          if (isset($_GET["t"])) {
+            $form_name = $admin->getFormTypeName($_GET["t"]);
+            echo '<li class="breadcrumb-item active">' . $form_name[0]["name"] . '</li>';
+          }
+          ?>
         </ol>
       </nav>
     </div><!-- End Page Title -->
 
     <section class="section dashboard">
-      <div class="row">
+      <div class="row" <?= isset($_GET["t"]) ? 'style="display:none"' : "" ?>>
+
+        <!-- Left side columns -->
+        <div class="col-lg-12">
+          <div class="row">
+
+            <?php
+            $form_types = $admin->fetchAvailableformTypes();
+            foreach ($form_types as $form_type) {
+            ?>
+              <!-- Applications Card -->
+              <div class="col-xxl-3 col-md-3">
+                <div class="card info-card sales-card">
+                  <div class="card-body">
+                    <a href="applications.php?t=<?= $form_type["id"] ?>">
+                      <h5 class="card-title"><?= $form_type["name"] ?></h5>
+                      <div class="d-flex align-items-center">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                          <img src="./assets/img/icons8-<?= $form_type["name"] ?>.png" style="width: 48px;" alt="">
+                        </div>
+                        <div class="ps-3">
+                          <h6><?= $admin->fetchTotalApplications($form_type["id"])[0]["total"]; ?></h6>
+                          <span class="text-muted small pt-2 ps-1">Applications</span>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+              </div><!-- End Applications Card -->
+            <?php
+            }
+            ?>
+
+            <!-- Admitted Students Card -->
+            <div class="col-xxl-3 col-md-3">
+              <div class="card info-card text-success">
+                <div class="card-body">
+                  <a href="awaiting-results.php" style="text-decoration: none;">
+                    <h5 class="card-title">Awaiting Results</h5>
+                    <div class="d-flex align-items-center">
+                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <img src="./assets/img/icons8-queue-64.png" style="width: 48px;" alt="">
+                      </div>
+                      <div class="ps-3">
+                        <h6><?= $admin->fetchTotalAwaitingResults(1)[0]["total"]; ?></h6>
+                        <span class="text-muted small pt-2 ps-1">awaiting results</span>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <!-- End Admitted Students Card -->
+
+            <!-- Broadsheets Card -->
+            <div class="col-xxl-3 col-md-3">
+              <div class="card info-card">
+                <div class="card-body">
+                  <a href="admit-applicants.php" style="text-decoration: none;">
+                    <h5 class="card-title">Admit Applicants</h5>
+                    <div class="d-flex align-items-center">
+                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <img src="./assets/img/icons8-checked-user-male-96.png" style="width: 48px;" alt="">
+                      </div>
+                      <div class="ps-3">
+                        <span class="text-muted small pt-2 ps-1">Admit qualified applicants</span>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div><!-- End Broadsheets Card -->
+
+            <!-- Admitted Students Card -->
+            <div class="col-xxl-3 col-md-3">
+              <div class="card info-card text-success">
+                <div class="card-body">
+                  <a href="broadsheet.php" style="text-decoration: none;">
+                    <h5 class="card-title">Broadsheet</h5>
+                    <div class="d-flex align-items-center">
+                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <img src="./assets/img/icons8-documents-96.png" style="width: 48px;" alt="">
+                      </div>
+                      <div class="ps-3">
+                        <span class="text-muted small pt-2 ps-1">Download broadsheets</span>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <!-- End Admitted Students Card -->
+
+            <!-- Applications Card -->
+            <div class="col-xxl-3 col-md-3">
+              <div class="card info-card sales-card">
+                <div class="card-body">
+                  <a href="general-settings.php">
+                    <h5 class="card-title">Settings</h5>
+                    <div class="d-flex align-items-center">
+                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <img src="./assets/img/icons8-services-96.png" style="width: 48px;" alt="">
+                      </div>
+                      <div class="ps-3">
+                        <span class="text-muted small pt-2 ps-1">Statistics</span>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div><!-- End Applications Card -->
+
+          </div>
+        </div><!-- Forms Sales Card  -->
+
+      </div><!-- End Left side columns -->
+
+
+      <div class="row" <?= !isset($_GET["t"]) ? 'style="display:none"' : "" ?>>
 
         <!-- Recent Sales -->
         <div class="col-12">
@@ -56,42 +180,42 @@ require_once('inc/page-data.php');
                 <button id="apps-total" class="btn btn-outline-primary col me-2 toggle-output">
                   Total
                   <span class="badge text-bg-secondary">
-                    <?= $expose->fetchTotalApplications()[0]["total"]; ?>
+                    <?= $admin->fetchTotalApplications($_GET["t"])[0]["total"]; ?>
                   </span>
                 </button>
 
                 <button id="apps-submitted" class="btn btn-outline-primary col me-2 toggle-output">
                   Submitted
                   <span class="badge text-bg-secondary">
-                    <?= $expose->fetchTotalSubmittedOrUnsubmittedApps()[0]["total"]; ?>
+                    <?= $admin->fetchTotalSubmittedOrUnsubmittedApps($_GET["t"], true)[0]["total"]; ?>
                   </span>
                 </button>
 
                 <button id="apps-in-progress" class="btn btn-outline-primary col me-2 toggle-output">
                   In Progress
                   <span class="badge text-bg-secondary">
-                    <?= $expose->fetchTotalSubmittedOrUnsubmittedApps(false)[0]["total"]; ?>
+                    <?= $admin->fetchTotalSubmittedOrUnsubmittedApps($_GET["t"], false)[0]["total"]; ?>
                   </span>
                 </button>
 
                 <button id="apps-admitted" class="btn btn-outline-primary col me-2 toggle-output">
                   Admitted
                   <span class="badge text-bg-secondary">
-                    <?= $expose->fetchTotalAdmittedOrUnadmittedApplicants(true)[0]["total"]; ?>
+                    <?= $admin->fetchTotalAdmittedOrUnadmittedApplicants($_GET["t"], true)[0]["total"]; ?>
                   </span>
                 </button>
 
                 <button id="apps-unadmitted" class="btn btn-outline-primary col me-2 toggle-output">
                   Unadmitted
                   <span class="badge text-bg-secondary">
-                    <?= $expose->fetchTotalAdmittedOrUnadmittedApplicants(false)[0]["total"]; ?>
+                    <?= $admin->fetchTotalAdmittedOrUnadmittedApplicants($_GET["t"], false)[0]["total"]; ?>
                   </span>
                 </button>
 
                 <button id="apps-awaiting" class="btn btn-outline-primary col toggle-output">
                   Awaiting
                   <span class="badge text-bg-secondary">
-                    <?= $expose->fetchTotalAwaitingResults()[0]["total"]; ?>
+                    <?= $admin->fetchTotalAwaitingResults($_GET["t"])[0]["total"]; ?>
                   </span>
                 </button>
 
@@ -118,7 +242,7 @@ require_once('inc/page-data.php');
                       <select name="type" id="type" class="form-select">
                         <option value="All" selected>All</option>
                         <?php
-                        $data = $expose->getFormTypes();
+                        $data = $admin->getFormTypes();
                         foreach ($data as $ft) {
                         ?>
                           <option value="<?= $ft['id'] ?>"><?= $ft['name'] ?></option>
@@ -132,7 +256,7 @@ require_once('inc/page-data.php');
                       <select name="program" id="program" class="form-select">
                         <option value="All">All</option>
                         <?php
-                        $data = $expose->fetchPrograms(0);
+                        $data = $admin->fetchPrograms(0);
                         foreach ($data as $ft) {
                         ?>
                           <option value="<?= $ft['id'] ?>"><?= $ft['name'] ?></option>
@@ -170,11 +294,15 @@ require_once('inc/page-data.php');
         <!-- End Right side columns -->
 
       </div>
+      <!-- Right side columns -->
+      <!-- End Right side columns -->
+
     </section>
 
   </main><!-- End #main -->
 
   <?= require_once("inc/footer-section.php") ?>
+  <script src="js/jquery-3.6.0.min.js"></script>
 
   <script>
     $(document).ready(function() {
@@ -182,7 +310,7 @@ require_once('inc/page-data.php');
       // when a summary data button is clicked
       $(".toggle-output").click(function() {
         summary_selected = $(this).attr("id");
-        alert(summary_selected)
+
         $.ajax({
           type: "POST",
           url: "endpoint/apps-data",
@@ -328,6 +456,8 @@ require_once('inc/page-data.php');
         return urlparameter;
       }
 
+
+
       if (getUrlVars()["status"] != "" || getUrlVars()["status"] != undefined) {
         if (getUrlVars()["exttrid"] != "" || getUrlVars()["exttrid"] != undefined) {}
       }
@@ -352,7 +482,7 @@ require_once('inc/page-data.php');
             "type": $("#type").val(),
             "program": $("#program").val(),
           }
-          window.open("download-pdf.php", "_blank");
+          window.open("download-pdf.php?w=apps&t=" + getUrlVars()["t"] + "&a=" + data["action"] + "&c=" + data["country"] + "&t=" + data["type"] + "&p=" + data["program"], "_blank");
         }
       });
 

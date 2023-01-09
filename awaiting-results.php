@@ -22,11 +22,12 @@ require_once('inc/page-data.php');
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Admit Applicants</h1>
+      <h1>Applications</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item active">Admit Applicants</li>
+          <li class="breadcrumb-item"><a href="applications.php">Applications</a></li>
+          <li class="breadcrumb-item active">Awaiting</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
@@ -43,10 +44,10 @@ require_once('inc/page-data.php');
                 <div class="card info-card text-success">
                   <div class="card-body">
                     <a href="awaiting-results.php" style="text-decoration: none;">
-                      <h5 class="card-title" style="text-align: center;">Uploaded Applicants Results Datasheet</h5>
-                      <div style="display: flex; flex-direction:row; justify-content:center;">
+                      <h5 class="card-title" style="text-align: center;">Uploaded Results Datasheet</h5>
+                      <div style="display: flex; flex-direction:column; align-items: center">
+                        <p id="upload-notification"></p>
                         <form action="" method="post">
-                          <p id="upload-notification"></p>
                           <label for="upload-awaiting-ds" class="btn btn-primary">Upload</label>
                           <input type="file" name="upload-awaiting-ds" id="upload-awaiting-ds" style="display: none;" accept=".xlsx,.xls,pplication/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
                         </form>
@@ -139,76 +140,6 @@ require_once('inc/page-data.php');
   <script>
     $(document).ready(function() {
 
-      $("#download-bs").click(function() {
-        $.ajax({
-          type: "POST",
-          url: "endpoint/downloadBS",
-          success: function(result) {
-            console.log(result);
-            if (result.success) $("#dbs-progress").text(result.message);
-
-          },
-          error: function(error) {
-            console.log(error);
-          }
-        });
-      })
-
-      var fetchBroadsheet = function() {
-        data = {
-          "cert-type": $("#cert-type").val(),
-          "prog-type": $("#prog-type").val(),
-        }
-
-        $.ajax({
-          type: "POST",
-          url: "endpoint/getBroadsheetData",
-          data: data,
-          success: function(result) {
-            console.log(result);
-
-            if (result.success) {
-              $("tbody").html('');
-              $.each(result.message, function(index, value) {
-                let status = value.declaration == 1 ? '<span class="badge text-bg-success">Q</span>' : '<span class="badge text-bg-danger">F</span>';
-                $("tbody").append(
-                  '<tr>' +
-                  '<th scope="row">' + (index + 1) + '</th>' +
-                  '<td>' + value.app_pers.first_name + ' ' + value.app_pers.last_name + '</td>' +
-                  '<td>' + value.app_pers.programme + '</td>' +
-                  '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[0].subject + '">' + value.sch_rslt[0].grade + '</td>' +
-                  '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[1].subject + '">' + value.sch_rslt[1].grade + '</td>' +
-                  '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[2].subject + '">' + value.sch_rslt[2].grade + '</td>' +
-                  '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[3].subject + '">' + value.sch_rslt[3].grade + '</td>' +
-                  '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[4].subject + '">' + value.sch_rslt[4].grade + '</td>' +
-                  '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[5].subject + '">' + value.sch_rslt[5].grade + '</td>' +
-                  '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[6].subject + '">' + value.sch_rslt[6].grade + '</td>' +
-                  '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[7].subject + '">' + value.sch_rslt[7].grade + '</td>' +
-                  '<td style="text-align: center">' + status + '</td>' +
-                  '</tr>');
-              });
-
-            } else {
-              $("tbody").html('');
-              $("#info-output").html(
-                '<div class="alert alert-info alert-dismissible fade show" role="alert">' +
-                '<i class="bi bi-info-circle me-1"></i>' + result.message +
-                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-                '</div>'
-              );
-            }
-
-          },
-          error: function(error) {
-            console.log(error);
-          }
-        });
-      }
-      $("#fetchDataForm").on("submit", function(e) {
-        e.preventDefault();
-        fetchBroadsheet();
-      });
-
       function getUrlVars() {
         var vars = {};
         var parts = window.location.href.replace(
@@ -252,6 +183,32 @@ require_once('inc/page-data.php');
             console.log(error);
           }
         });
+      });
+
+      $("#upload-awaiting-ds").change(function() {
+        $("#upload-notification").text($(this).val()).show("slow");
+
+        // Get the form element
+        var form = $('form')[0];
+
+        // Create a new FormData object
+        var formData = new FormData(form);
+
+        // Set up ajax request
+        $.ajax({
+          type: 'POST',
+          url: "endpoint/extra-awaiting-data",
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function(result) {
+            console.log(result);
+          },
+          error: function() {
+            alert('An error occurred!');
+          }
+        });
+
       });
 
     });

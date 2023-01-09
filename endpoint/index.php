@@ -137,6 +137,12 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         $url = "https://office.rmuictonline.com/download-bs.php?c=" . $_POST["cert-type"];
         die(json_encode(array("success" => true, "message" => $url)));
     }
+    //
+    elseif ($_GET["url"] == "extra-awaiting-data") {
+        if (isset($_FILES["upload-awaiting-ds"])) {
+            die(json_encode(array("success" => true, "message" => $_FILES["upload-awaiting-ds"]["name"])));
+        }
+    }
 
     // All PUT request will be sent here
 } else if ($_SERVER['REQUEST_METHOD'] == "PUT") {
