@@ -354,6 +354,7 @@ class ExcelDataController
         array_push($output, array("total_list" => $count));
         array_push($output, array("success_count" => $this->successEncountered));
         array_push($output, array("errors_count" => $this->errorsEncountered));
+        array_push($output, array("errors" => $error_list));
         return $output;
     }
 }
