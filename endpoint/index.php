@@ -172,7 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
                     die(json_encode(array("success" => false, "message" => "Invalid input (2)!")));
 
                 $excelData = new ExcelDataController($_FILES["awaiting-ds"], $_POST['startRow'], $_POST['endRow']);
-                $result = $excelData->extractAwaitingData();
+                $result = $excelData->extractAwaitingApplicantsResults();
                 break;
         }
 

@@ -214,9 +214,8 @@ class ExcelDataController
         $this->dm = new DatabaseMethods();
     }
 
-    public function extractAwaitingData()
+    public function saveDataFile()
     {
-
         $allowedFileType = [
             'application/vnd.ms-excel',
             'text/xls',
@@ -242,53 +241,15 @@ class ExcelDataController
             }
 
             // Move the file to the target directory
-            if (move_uploaded_file($this->fileObj['tmp_name'], $this->targetPath)) {
-                //return array("success" => false, "message" => "File upload successful!");
-                return $this->getExcelDataIntoDB();
-            }
+            if (!move_uploaded_file($this->fileObj['tmp_name'], $this->targetPath))
+                return array("success" => false, "message" => "Failed to upload file!");
+            return array("success" => true, "message" => "Failed to upload file!");
         }
+        return array("success" => false, "message" => "Error: Invalid file object!");
     }
 
-    public function saveSubjectAndGrades($indexNumber, $subjects = array())
+    public function extractExcelData()
     {
-        if (empty($subjects) || empty($indexNumber)) {
-            $this->errorsEncountered += 1;
-            return array(
-                "success" => false,
-                "index number" => $indexNumber,
-                "message" => "Empty value inputs!"
-            );
-        }
-
-        // Get applicant application number/id using index number provide
-        $query = "SELECT ab.id FROM applicants_login AS ap, academic_background AS ab
-                    WHERE ap.id = ab.app_login AND ab.index_number = ':in'";
-        $appID = $this->dm->getID($query, array(":in" => $indexNumber));
-
-        if (empty($appID)) {
-            $this->errorsEncountered += 1;
-            return array(
-                "success" => false,
-                "index number" => $indexNumber,
-                "message" => "Applicant data not found in DB!",
-            );
-        }
-
-        $sql = "INSERT INTO `high_school_results` (`type`, `subject`, `grade`, `acad_back_id`) VALUES (:t, :s, :g, :ai)";
-
-        foreach ($subjects as  $sbj) {
-            return $sbj;
-            $params = array(":t" => $sbj["type"], ":s" => $sbj["subject"], ":g" => $sbj["grade"], ":ai" => $appID);
-            $this->admin->inputData($sql, $params);
-        }
-        return array("success" => true, "index number" => $indexNumber, "message" => "Subjects added!");
-    }
-
-    public function getExcelDataIntoDB()
-    {
-        $error_list = [];
-        $output = [];
-
         $Reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
         $spreadSheet = $Reader->load($this->targetPath);
         $excelSheet = $spreadSheet->getActiveSheet();
@@ -297,7 +258,7 @@ class ExcelDataController
         if ($this->endRow == 0) $this->endRow = count($spreadSheetArray);
         if ($this->startRow > 1) $this->startRow -= 1;
 
-        $count = 0;
+        $dataset = array();
 
         for ($i = $this->startRow; $i <= $this->endRow - 1; $i++) {
             //$admisNum = $spreadSheetArray[$i][0];
@@ -346,20 +307,73 @@ class ExcelDataController
                 }
             }
 
-            return $examResults;
-            $result = $this->saveSubjectAndGrades($indexNum, $examResults);
+            array_push($dataset, array("index_number" => $indexNum, "exam_results" => $examResults));
+        }
 
-            return $result;
+        return $dataset;
+    }
+
+    public function saveSubjectAndGrades($indexNumber, $subjects = array())
+    {
+        if (empty($subjects) || empty($indexNumber)) {
+            $this->errorsEncountered += 1;
+            return array(
+                "success" => false, "index number" => $indexNumber, "message" => "Empty value inputs!"
+            );
+        }
+
+        // Get applicant application number/id using index number provide
+        $query = "SELECT ab.id FROM applicants_login AS ap, academic_background AS ab
+                    WHERE ap.id = ab.app_login AND ab.index_number = ':in'";
+        $appID = $this->dm->getID($query, array(":in" => $indexNumber));
+
+        if (empty($appID)) {
+            $this->errorsEncountered += 1;
+            return array(
+                "success" => false, "index number" => $indexNumber, "message" => "Applicant data not found in DB!",
+            );
+        }
+
+        $sql = "INSERT INTO `high_school_results` (`type`, `subject`, `grade`, `acad_back_id`) VALUES (:t, :s, :g, :ai)";
+
+        foreach ($subjects as  $sbj) {
+            return $sbj;
+            $params = array(":t" => $sbj["type"], ":s" => $sbj["subject"], ":g" => $sbj["grade"], ":ai" => $appID);
+            $this->admin->inputData($sql, $params);
+        }
+        return array("success" => true, "index number" => $indexNumber, "message" => "Subjects added!");
+    }
+
+    public function extractAwaitingApplicantsResults()
+    {
+        // save file to uploads folder
+        $file_upload_msg = $this->saveDataFile();
+        if (!$file_upload_msg["success"]) return $file_upload_msg;
+
+        //extraxt data into array
+        $extracted_data = $this->extractExcelData();
+        if (empty($extracted_data)) array("success" => true, "message" => "Extra data could not be extracted!");
+
+        return $extracted_data;
+
+        /*$error_list = [];
+        $output = [];
+        $count = 0;
+
+        // add results for each applicant to db
+        foreach ($extracted_data as $data) {
+            $result = $this->saveSubjectAndGrades($data["indexNum"], $data["examResults"]);
+
             if (!$result["success"]) array_push($error_list, $result);
             if ($result["success"]) $this->successEncountered += 1;
             $count++;
         }
-        return $examResults;
 
         array_push($output, array("total_list" => $count));
         array_push($output, array("success_count" => $this->successEncountered));
         array_push($output, array("errors_count" => $this->errorsEncountered));
         array_push($output, array("errors" => $error_list));
-        return $output;
+
+        return $output;*/
     }
 }
