@@ -324,7 +324,7 @@ class ExcelDataController
                     ));
                 }
             }
-            return $examResults;
+            echo $examResults;
         }
         //echo "<script>alert('Successfully transfered " . $count . " excel data into DB')</script>";
         //return 1;
