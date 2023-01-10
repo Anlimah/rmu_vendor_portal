@@ -285,8 +285,10 @@ class ExcelDataController
             $examYear = $spreadSheetArray[$i][3];
 
             // Get all the courses
-            $examResults = array();
 
+            $endRowData = count($spreadSheetArray);
+            $examResults = array();
+            return $endRowData;
             $s = 6;
             for ($i = 1; $i < $this->endRow; $i += 2) {
                 if ($spreadSheetArray[$i][$s] == "") break;
