@@ -1,5 +1,7 @@
 <?php
 
+namespace Src\Controller;
+
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Src\Controller\AdminController;
@@ -15,21 +17,20 @@ class ExcelDataController
     private $sheetTitle = null;
     private $cert_type = null;
 
-    private $targetPath = null;
+    private $fileObj = array();
     private $startRow = null;
     private $endRow = null;
+    private $targetPath = null;
 
-    public function __call($name, $arguments)
+    public function __construct(...$args)
     {
-        if ($name == '__construct') {
-            switch (count($arguments)) {
-                case 0:
-                    $this->__construct_download_bs($arguments[0]);
-                    break;
-                case 1:
-                    $this->__construct_upload_awaiting($arguments[0], $arguments[1], $arguments[2]);
-                    break;
-            }
+        switch (count($args)) {
+            case 1:
+                $this->__construct_download_bs($args[0]);
+                break;
+            case 3:
+                $this->__construct_upload_awaiting($args[0], $args[1], $args[2]);
+                break;
         }
     }
 
@@ -199,12 +200,47 @@ class ExcelDataController
      * Uploading awaiting students data
      */
 
-    private function __construct_upload_awaiting($targetPath, $startRow, $endRow)
+    private function __construct_upload_awaiting($fileObj, $startRow, $endRow)
     {
-        $this->targetPath = $targetPath;
+        $this->fileObj = $fileObj;
         $this->startRow = $startRow;
         $this->endRow = $endRow;
         $this->admin = new AdminController();
+    }
+
+    public function extractAwaitingData()
+    {
+
+        $allowedFileType = [
+            'application/vnd.ms-excel',
+            'text/xls',
+            'text/xlsx',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        ];
+
+        if (!in_array($this->fileObj["type"], $allowedFileType)) {
+            return array("success" => false, "message" => "Invalid file type. Please choose an excel file!");
+        }
+
+        if ($this->fileObj['error'] == UPLOAD_ERR_OK) {
+
+            // Create a unique file name
+            $name = time() . '-' . 'awaiting.xlsx';
+
+            // Create the full path to the file
+            $this->targetPath = UPLOAD_DIR . "/awaiting/" . $name;
+
+            // Delete file if exsists
+            if (file_exists($this->targetPath)) {
+                unlink($this->targetPath);
+            }
+
+            // Move the file to the target directory
+            if (move_uploaded_file($this->fileObj['tmp_name'], $this->targetPath)) {
+                //return array("success" => false, "message" => "File upload successful!");
+                return $this->getExcelDataIntoDB($this->targetPath, $this->startRow, $this->endRow);
+            }
+        }
     }
 
     public function saveSubjectAndGrades($subjects = array(), $aca_id)

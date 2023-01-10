@@ -19,7 +19,7 @@ die(json_encode($input));*/
 require "../bootstrap.php";
 
 use Src\Controller\AdminController;
-use Src\Controller\ExposeDataController;
+use Src\Controller\ExcelDataController;
 
 $expose = new AdminController();
 
@@ -140,42 +140,39 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     }
     //
     elseif ($_GET["url"] == "extra-awaiting-data") {
-        if (!isset($_FILES["awaiting-ds"]) || empty($_FILES["awaiting-ds"])) {
-            die(json_encode(array("success" => false, "message" => "Invalid request!")));
-        }
-        if ($_FILES["awaiting-ds"]['error']) {
-            die(json_encode(array("success" => false, "message" => "Failed to upload file!")));
-        }
 
-        $allowedFileType = [
-            'application/vnd.ms-excel',
-            'text/xls',
-            'text/xlsx',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        ];
-
-        if (!in_array($_FILES["awaiting-ds"]["type"], $allowedFileType)) {
-            die(json_encode(array("success" => false, "message" => "Invalid file type. Please choose an excel file!")));
+        if (!isset($_POST["action"]) || empty($_POST["action"])) {
+            die(json_encode(array("success" => false, "message" => "Invalid request (1)!")));
         }
 
         $result;
 
-        switch ($_GET["action"]) {
+        switch ($_POST["action"]) {
                 // download broadsheet dbs
             case 'dbs':
-                $broadsheet = new ExcelDataController($_GET['c']);
+                $broadsheet = new ExcelDataController($_POST['c']);
                 $file = $broadsheet->generateFile();
                 $result = $broadsheet->downloadFile($file);
                 break;
 
                 // upload awaiting datasheet uad
             case 'uad':
-                if (!isset($_GET['t']) || empty($_GET['t'])) break;
-                if (!isset($_GET['s']) || empty($_GET['s'])) break;
-                if (!isset($_GET['e']) || empty($_GET['e'])) break;
 
-                $broadsheet = new ExcelDataController($_GET['t'], $_GET['s'], $_GET['e']);
-                $result = $excelData->getExcelDataIntoDB($_FILES["awaiting-ds"]);
+                if (!isset($_FILES["awaiting-ds"]) || empty($_FILES["awaiting-ds"])) {
+                    die(json_encode(array("success" => false, "message" => "Invalid request!")));
+                }
+
+                if ($_FILES["awaiting-ds"]['error']) {
+                    die(json_encode(array("success" => false, "message" => "Failed to upload file!")));
+                }
+
+                if (!isset($_POST['startRow']) || empty($_POST['startRow']))
+                    die(json_encode(array("success" => false, "message" => "Invalid input (1)!")));
+                if (!isset($_POST['endRow']) || empty($_POST['endRow']))
+                    die(json_encode(array("success" => false, "message" => "Invalid input (2)!")));
+
+                $excelData = new ExcelDataController($_FILES["awaiting-ds"], $_POST['startRow'], $_POST['endRow']);
+                $result = $excelData->extractAwaitingData();
                 break;
         }
 
