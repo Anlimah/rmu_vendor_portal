@@ -295,6 +295,23 @@ class ExcelDataController
                     "subject" => $spreadSheetArray[$i][$j],
                     "grade" => $spreadSheetArray[$i][($j + 1)]
                 ));
+
+                if (preg_match("/^english lang$/i", $spreadSheetArray[$i][$j])) {
+                    echo $spreadSheetArray[$i][$j];
+                }
+
+                if (preg_match("/^mathematics(core)$/i", $spreadSheetArray[$i][$j])) {
+                    echo $spreadSheetArray[$i][$j];
+                }
+
+                if (preg_match("/^social studies$/i", $spreadSheetArray[$i][$j])) {
+                    echo $spreadSheetArray[$i][$j];
+                }
+
+                if (preg_match("/^integrated science$/i", $spreadSheetArray[$i][$j])) {
+                    echo $spreadSheetArray[$i][$j];
+                }
+                return $examResults;
             }
 
             return $examResults;
