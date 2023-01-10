@@ -74,6 +74,19 @@ class ExposeDataController extends DatabaseMethods
         return array("success" => false, "message" => "Invalid input!");
     }
 
+
+    public function validateNumber($input)
+    {
+        if ($input == "") return array("success" => false, "message" => "Input required!");
+
+        $user_input = htmlentities(htmlspecialchars($input));
+        $validated_input = (bool) preg_match('/^[0-9]/', $user_input);
+
+        if ($validated_input) return array("success" => true, "message" => $user_input);
+
+        return array("success" => false, "message" => "Invalid input!");
+    }
+
     public function validateText($input)
     {
         if (empty($input)) return array("success" => false, "message" => "Input required!");
