@@ -256,7 +256,7 @@ class ExcelDataController
             return array(
                 "success" => false,
                 "index number" => $indexNumber,
-                "error" => "Empty value inputs!"
+                "message" => "Empty value inputs!"
             );
         }
 
@@ -270,7 +270,7 @@ class ExcelDataController
             return array(
                 "success" => false,
                 "index number" => $indexNumber,
-                "error" => "Applicant data not found in DB!",
+                "message" => "Applicant data not found in DB!",
             );
         }
 
@@ -280,7 +280,7 @@ class ExcelDataController
             $params = array(":t" => $sbj["type"], ":s" => $sbj["subject"], ":g" => $sbj["grade"], ":ai" => $appID);
             $this->admin->inputData($sql, $params);
         }
-        return array("success" => true, "index number" => $indexNumber, "success" => "Subjects added!");
+        return array("success" => true, "index number" => $indexNumber, "message" => "Subjects added!");
     }
 
     public function getExcelDataIntoDB()
