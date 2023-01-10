@@ -292,10 +292,10 @@ class ExcelDataController
             $s = 6;
             for ($i = 0; $i < count($spreadSheetArray); $i += 2) {
                 if ($subjects[$i] == "") break;
-                $examResults[$i] = array(
+                array_push($examResults, array(
                     "subject" => $spreadSheetArray[$i][$s],
                     "grade" => $spreadSheetArray[$i][($s + 1)]
-                );
+                ));
             }
 
             return $examResults;
