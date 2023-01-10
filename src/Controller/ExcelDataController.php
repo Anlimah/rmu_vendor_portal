@@ -346,7 +346,9 @@ class ExcelDataController
                 }
             }
 
+            return $examResults;
             $result = $this->saveSubjectAndGrades($indexNum, $examResults);
+
             return $result;
             if (!$result["success"]) array_push($error_list, $result);
             if ($result["success"]) $this->successEncountered += 1;
