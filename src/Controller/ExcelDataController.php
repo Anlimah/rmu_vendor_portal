@@ -5,6 +5,7 @@ namespace Src\Controller;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Src\Controller\AdminController;
+use DateTime;
 
 class ExcelDataController
 {
@@ -283,7 +284,8 @@ class ExcelDataController
             $examMonth = $spreadSheetArray[$i][2];
             $examYear = $spreadSheetArray[$i][3];
             $givenDOB = $spreadSheetArray[$i][4];
-            $formatedDOB = date('Y-m-d', strtotime($givenDOB));
+            $date = DateTime::createFromFormat('d-m-Y', $givenDOB);
+            $formatedDOB = $date->format('Y-m-d');
 
             $names = explode(" ", $spreadSheetArray[$i][5]);
             $mname = "";
