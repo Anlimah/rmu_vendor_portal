@@ -283,7 +283,7 @@ class ExcelDataController
             $examMonth = $spreadSheetArray[$i][2];
             $examYear = $spreadSheetArray[$i][3];
             $givenDOB = $spreadSheetArray[$i][4];
-            $newDOB = date('Y-m-d', strtotime($givenDOB));
+            $formatedDOB = date('Y-m-d', strtotime($givenDOB));
 
             $names = explode(" ", $spreadSheetArray[$i][5]);
             $mname = "";
@@ -301,7 +301,7 @@ class ExcelDataController
                 $lname = $names[1];
             }
 
-            return $admisNum;
+            return $formatedDOB;
 
             // Get all the courses
 
