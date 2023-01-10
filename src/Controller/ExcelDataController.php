@@ -286,7 +286,7 @@ class ExcelDataController
 
             // Get all the courses
 
-            $subjects = array_slice($spreadSheetArray, 5, count($spreadSheetArray));
+            $subjects = array_slice($spreadSheetArray, 5, count($spreadSheetArray) - 6);
             $examResults = array();
 
             return $subjects;
