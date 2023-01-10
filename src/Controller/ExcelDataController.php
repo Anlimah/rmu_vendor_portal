@@ -286,7 +286,7 @@ class ExcelDataController
 
             // Get all the courses
             $examResults = array();
-            return $this->endRow;
+
             $s = 6;
             for ($i = 1; $i < $this->endRow; $i += 2) {
                 if ($spreadSheetArray[$i][$s] == "") break;
