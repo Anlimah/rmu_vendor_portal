@@ -285,13 +285,11 @@ class ExcelDataController
             $examYear = $spreadSheetArray[$i][3];
 
             // Get all the courses
-
-            $subjects = array_slice($spreadSheetArray, 5, count($spreadSheetArray) - 6);
             $examResults = array();
             return $this->endRow;
             $s = 6;
             for ($i = 1; $i < $this->endRow; $i += 2) {
-                if ($subjects[$i] == "") break;
+                if ($spreadSheetArray[$i][$s] == "") break;
                 array_push($examResults, array(
                     "subject" => $spreadSheetArray[$i][$s],
                     "grade" => $spreadSheetArray[$i][($s + 1)]
