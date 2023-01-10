@@ -354,6 +354,7 @@ class ExcelDataController
             if ($result["success"]) $this->successEncountered += 1;
             $count++;
         }
+        return $examResults;
 
         array_push($output, array("total_list" => $count));
         array_push($output, array("success_count" => $this->successEncountered));
