@@ -291,28 +291,40 @@ class ExcelDataController
 
             for ($j = 6; $j < $endRowData; $j += 2) {
                 if ($spreadSheetArray[$i][$j] == "") break;
-                array_push($examResults, array(
-                    "subject" => $spreadSheetArray[$i][$j],
-                    "grade" => $spreadSheetArray[$i][($j + 1)]
-                ));
 
                 if (preg_match("/^english lang$/i", $spreadSheetArray[$i][$j])) {
-                    echo json_encode(array("" => $spreadSheetArray[$i][$j]));
+                    array_push($examResults, array(
+                        "type" => "core",
+                        "subject" => "ENGLISH LANGUAGE",
+                        "grade" => $spreadSheetArray[$i][($j + 1)]
+                    ));
+                } elseif (preg_match("/(?i)\bmathematics\(core\)\b/", $spreadSheetArray[$i][$j])) {
+                    array_push($examResults, array(
+                        "type" => "core",
+                        "subject" => "CORE MATHEMATICS",
+                        "grade" => $spreadSheetArray[$i][($j + 1)]
+                    ));
+                } elseif (preg_match("/^social studies$/i", $spreadSheetArray[$i][$j])) {
+                    array_push($examResults, array(
+                        "type" => "core",
+                        "subject" => "SOCIAL STUDIES",
+                        "grade" => $spreadSheetArray[$i][($j + 1)]
+                    ));
+                } elseif (preg_match("/^integrated science$/i", $spreadSheetArray[$i][$j])) {
+                    array_push($examResults, array(
+                        "type" => "core",
+                        "subject" => "INTEGRATED SCIENCE",
+                        "grade" => $spreadSheetArray[$i][($j + 1)]
+                    ));
+                } else {
+                    array_push($examResults, array(
+                        "type" => "elective",
+                        "subject" => $spreadSheetArray[$i][$j],
+                        "grade" => $spreadSheetArray[$i][($j + 1)]
+                    ));
                 }
-
-                if (preg_match("/(?i)\bmathematics\(core\)\b/", $spreadSheetArray[$i][$j])) {
-                    echo json_encode(array("" => $spreadSheetArray[$i][$j]));
-                }
-
-                if (preg_match("/^social studies$/i", $spreadSheetArray[$i][$j])) {
-                    echo  json_encode(array("" => $spreadSheetArray[$i][$j]));
-                }
-
-                if (preg_match("/^integrated science$/i", $spreadSheetArray[$i][$j])) {
-                    echo  json_encode(array("" => $spreadSheetArray[$i][$j]));
-                }
+                return $examResults;
             }
-            return $examResults;
         }
         //echo "<script>alert('Successfully transfered " . $count . " excel data into DB')</script>";
         //return 1;
