@@ -5,12 +5,15 @@ namespace Src\Controller;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Src\Controller\AdminController;
+use Src\System\DatabaseMethods;
 
 class ExcelDataController
 {
+    private $admin = null;
+    private $dm = null;
+
     private $spreadsheet = null;
     private $writer = null;
-    private $admin = null;
     private $sheet = null;
     private $dataSheet = [];
     private $fileName = null;
@@ -208,6 +211,7 @@ class ExcelDataController
         $this->startRow = (int) $startRow;
         $this->endRow = (int) $endRow;
         $this->admin = new AdminController();
+        $this->dm = new DatabaseMethods();
     }
 
     public function extractAwaitingData()
@@ -259,7 +263,7 @@ class ExcelDataController
         // Get applicant application number/id using index number provide
         $query = "SELECT ab.id FROM applicants_login AS ap, academic_background AS ab
                     WHERE ap.id = ab.app_login AND ab.index_number = ':in'";
-        $appID = $this->admin->getID($query, array(":in" => $indexNumber));
+        $appID = $this->dm->getID($query, array(":in" => $indexNumber));
 
         if (empty($appID)) {
             $this->errorsEncountered += 1;
@@ -276,14 +280,14 @@ class ExcelDataController
             $params = array(":t" => $sbj["type"], ":s" => $sbj["subject"], ":g" => $sbj["grade"], ":ai" => $appID);
             $this->admin->inputData($sql, $params);
         }
-
-        $this->successEncountered += 1;
         return array("success" => true, "index number" => $indexNumber, "success" => "Subjects added!");
     }
 
     public function getExcelDataIntoDB()
     {
+        $error_list = [];
         $output = [];
+
         $Reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
         $spreadSheet = $Reader->load($this->targetPath);
         $excelSheet = $spreadSheet->getActiveSheet();
@@ -342,14 +346,14 @@ class ExcelDataController
             }
 
             $result = $this->saveSubjectAndGrades($indexNum, $examResults);
-            if (!$result["success"]) array_push($output["errors"], $result);
-            else array_push($output["errors"], $result);
+            if (!$result["success"]) array_push($error_list, $result);
+            if ($result["success"]) $this->successEncountered += 1;
             $count++;
         }
 
-        array_push($output["total_list"], $count);
-        array_push($output["success_encountered"], $count);
-        array_push($output["errors_encountered"], $count);
+        array_push($output, array("total_list" => $count));
+        array_push($output, array("success_count" => $this->successEncountered));
+        array_push($output, array("errors_count" => $this->errorsEncountered));
         return $output;
     }
 }
