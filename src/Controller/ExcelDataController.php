@@ -280,7 +280,7 @@ class ExcelDataController
                 } elseif (preg_match("/(?i)mathematics.*core/", $spreadSheetArray[$i][$j])) {
                     array_push($examResults, array(
                         "type" => "core",
-                        "subject" => "CORE MATHEMATICS",
+                        "subject" => "MATHEMATICS (CORE)",
                         "grade" => $spreadSheetArray[$i][($j + 1)]
                     ));
                 } elseif (preg_match("/^social studies$/i", $spreadSheetArray[$i][$j])) {
@@ -331,13 +331,17 @@ class ExcelDataController
             );
         }
 
-        $sql = "INSERT INTO `high_school_results` (`type`, `subject`, `grade`, `acad_back_id`) VALUES (:t, :s, :g, :ai)";
+        // Delete any existing records if any
+        $deleteQuery = "DELETE FROM `high_school_results` WHERE `acad_back_id` = : ai";
+        $this->admin->inputData($deleteQuery, array(":ai" => $appAcaID));
 
+        // Insert exam records
+        $insertQuery = "INSERT INTO `high_school_results` (`type`, `subject`, `grade`, `acad_back_id`) VALUES (:t, :s, :g, :ai)";
         foreach ($subjects as $sbj) {
             $params = array(":t" => $sbj["type"], ":s" => $sbj["subject"], ":g" => $sbj["grade"], ":ai" => $appAcaID);
-            $this->admin->inputData($sql, $params);
+            $this->admin->inputData($insertQuery, $params);
         }
-        return array("message" => "success");
+
         return array("success" => true, "index number" => $indexNumber, "message" => "Subjects added!");
     }
 
