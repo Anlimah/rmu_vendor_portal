@@ -315,6 +315,7 @@ class ExcelDataController
 
     public function saveSubjectAndGrades($indexNumber, $subjects = array())
     {
+        return array("message" => "success");
         if (empty($subjects) || empty($indexNumber)) {
             $this->errorsEncountered += 1;
             return array(
@@ -360,12 +361,12 @@ class ExcelDataController
 
         // add results for each applicant to db
         foreach ($extracted_data as $data) {
-            return $data["exam_results"];
-            $result = $this->saveSubjectAndGrades($data["index_number"], $data["exam_results"]);
+            //$result = $this->saveSubjectAndGrades($data["index_number"], $data["exam_results"]);
+            return $this->saveSubjectAndGrades($data["index_number"], $data["exam_results"]);
 
-            if (!$result["success"]) array_push($error_list, $result);
+            /*if (!$result["success"]) array_push($error_list, $result);
             if ($result["success"]) $this->successEncountered += 1;
-            $count++;
+            $count++;*/
         }
 
         array_push($output, array("total_count" => $count));
