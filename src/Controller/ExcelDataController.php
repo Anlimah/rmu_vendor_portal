@@ -288,13 +288,12 @@ class ExcelDataController
 
             $endRowData = count($spreadSheetArray[$i]);
             $examResults = array();
-            return $endRowData;
-            $s = 6;
-            for ($i = 1; $i < $this->endRow; $i += 2) {
-                if ($spreadSheetArray[$i][$s] == "") break;
+
+            for ($j = 6; $j < $endRowData; $j += 2) {
+                if ($spreadSheetArray[$i][$j] == "") break;
                 array_push($examResults, array(
-                    "subject" => $spreadSheetArray[$i][$s],
-                    "grade" => $spreadSheetArray[$i][($s + 1)]
+                    "subject" => $spreadSheetArray[$i][$j],
+                    "grade" => $spreadSheetArray[$i][($j + 1)]
                 ));
             }
 
