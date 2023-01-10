@@ -290,16 +290,16 @@ class ExcelDataController
             $examResults = array();
 
             return $spreadSheetArray;
-
-            for ($i = 0; $i < count($subjects); $i += 2) {
-                if ($subjects[$i] == "") continue;
+            $s = 6;
+            for ($i = 0; $i < count($spreadSheetArray); $i += 2) {
+                if ($subjects[$i] == "") break;
                 $examResults[$i] = array(
-                    "subject" => $subjects[$i],
-                    "grade" => $subjects[($i + 1)]
+                    "subject" => $spreadSheetArray[$i][$s],
+                    "grade" => $spreadSheetArray[$i][($s + 1)]
                 );
             }
 
-            return $admisNum;
+            return $examResults;
         }
         //echo "<script>alert('Successfully transfered " . $count . " excel data into DB')</script>";
         //return 1;
