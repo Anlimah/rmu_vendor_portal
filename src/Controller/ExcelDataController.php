@@ -283,30 +283,13 @@ class ExcelDataController
             $indexNum = $spreadSheetArray[$i][1];
             $examMonth = $spreadSheetArray[$i][2];
             $examYear = $spreadSheetArray[$i][3];
-            $givenDOB = $spreadSheetArray[$i][4];
-
-            $names = explode(" ", $spreadSheetArray[$i][5]);
-            $mname = "";
-
-            if (count($names) > 3) {
-                $lname = $names[0];
-                $fname = $names[1];
-                $mname = $names[2] . " " . $names[3];
-            } elseif (count($names) > 2) {
-                $lname = $names[0];
-                $fname = $names[1];
-                $mname = $names[2];
-            } elseif (count($names) > 1) {
-                $fname = $names[0];
-                $lname = $names[1];
-            }
-
-            return $givenDOB;
 
             // Get all the courses
 
             $subjects = array_slice($spreadSheetArray, 5, count($spreadSheetArray));
             $examResults = array();
+
+            return json_encode($subjects);
 
             for ($i = 0; $i < count($subjects); $i += 2) {
                 if ($subjects[$i] == "") continue;
