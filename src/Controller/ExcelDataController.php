@@ -298,7 +298,7 @@ class ExcelDataController
                         "subject" => "ENGLISH LANGUAGE",
                         "grade" => $spreadSheetArray[$i][($j + 1)]
                     ));
-                } elseif (preg_match("/(?i)\b(mathematics|core)\b/", $spreadSheetArray[$i][$j])) {
+                } elseif (preg_match("/(?i)mathematics.*core/", $spreadSheetArray[$i][$j])) {
                     array_push($examResults, array(
                         "type" => "core",
                         "subject" => "CORE MATHEMATICS",
