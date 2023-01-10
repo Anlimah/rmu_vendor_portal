@@ -300,7 +300,7 @@ class ExcelDataController
                     echo json_encode(array("" => $spreadSheetArray[$i][$j]));
                 }
 
-                if (preg_match("/\bmathematics(core)\b/i", $spreadSheetArray[$i][$j])) {
+                if (preg_match("/^mathematics(core)$/i", $spreadSheetArray[$i][$j])) {
                     echo json_encode(array("" => $spreadSheetArray[$i][$j]));
                 }
 
@@ -312,7 +312,6 @@ class ExcelDataController
                     echo  json_encode(array("" => $spreadSheetArray[$i][$j]));
                 }
             }
-
             return $examResults;
         }
         //echo "<script>alert('Successfully transfered " . $count . " excel data into DB')</script>";
