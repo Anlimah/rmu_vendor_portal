@@ -249,7 +249,7 @@ class ExcelDataController
         }
     }
 
-    public function saveSubjectAndGrades($subjects = array(), $indexNumber)
+    public function saveSubjectAndGrades($indexNumber, $subjects = array())
     {
         if (empty($subjects) || empty($indexNumber)) {
             $this->errorsEncountered += 1;
