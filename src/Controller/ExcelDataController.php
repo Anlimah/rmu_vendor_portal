@@ -323,8 +323,8 @@ class ExcelDataController
                         "grade" => $spreadSheetArray[$i][($j + 1)]
                     ));
                 }
-                return $examResults;
             }
+            return $examResults;
         }
         //echo "<script>alert('Successfully transfered " . $count . " excel data into DB')</script>";
         //return 1;
