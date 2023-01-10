@@ -208,8 +208,8 @@ class ExcelDataController
     private function __construct_upload_awaiting($fileObj, $startRow, $endRow)
     {
         $this->fileObj = $fileObj;
-        $this->startRow = (int) $startRow;
-        $this->endRow = (int) $endRow;
+        $this->startRow = $startRow;
+        $this->endRow = $endRow;
         $this->admin = new AdminController();
         $this->dm = new DatabaseMethods();
     }
@@ -352,7 +352,7 @@ class ExcelDataController
 
         //extraxt data into array
         $extracted_data = $this->extractExcelData();
-        if (empty($extracted_data)) array("success" => true, "message" => "Extra data could not be extracted!");
+        if (empty($extracted_data)) return array("success" => true, "message" => "Extra data could not be extracted!");
 
         return $extracted_data;
 
