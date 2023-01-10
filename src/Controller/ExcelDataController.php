@@ -278,14 +278,14 @@ class ExcelDataController
         $count = 0;
 
         for ($i = $this->startRow; $i <= $this->endRow - 1; $i++) {
-            $admisNum = $spreadSheetArray[$i][1];
-            $indexNum = $spreadSheetArray[$i][2];
-            $examMonth = $spreadSheetArray[$i][3];
-            $examYear = $spreadSheetArray[$i][4];
-            $givenDOB = $spreadSheetArray[$i][5];
+            $admisNum = $spreadSheetArray[$i][0];
+            $indexNum = $spreadSheetArray[$i][1];
+            $examMonth = $spreadSheetArray[$i][2];
+            $examYear = $spreadSheetArray[$i][3];
+            $givenDOB = $spreadSheetArray[$i][4];
             $newDOB = date('Y-m-d', strtotime($givenDOB));
 
-            $names = explode(" ", $spreadSheetArray[$i][6]);
+            $names = explode(" ", $spreadSheetArray[$i][5]);
             $mname = "";
 
             if (count($names) > 3) {
@@ -305,7 +305,7 @@ class ExcelDataController
 
             // Get all the courses
 
-            $subjects = array_slice($spreadSheetArray, 6, count($spreadSheetArray));
+            $subjects = array_slice($spreadSheetArray, 5, count($spreadSheetArray));
             $examResults = array();
 
             for ($i = 0; $i < count($subjects); $i += 2) {
