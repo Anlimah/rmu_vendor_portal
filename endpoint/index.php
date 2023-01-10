@@ -166,10 +166,11 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
                     die(json_encode(array("success" => false, "message" => "Failed to upload file!")));
                 }
 
-                if (!isset($_POST['startRow']) || empty($_POST['startRow']))
-                    die(json_encode(array("success" => false, "message" => "Invalid input (1)!")));
-                if (!isset($_POST['endRow']) || empty($_POST['endRow']))
-                    die(json_encode(array("success" => false, "message" => "Invalid input (2)!")));
+                $startRow = $expose->validatePhone($_POST['startRow']);
+                if (!$startRow["success"]) die(json_encode($startRow));
+
+                $endRow = $expose->validatePhone($_POST['endRow']);
+                if (!$endRow["success"]) die(json_encode($endRow));
 
                 $excelData = new ExcelDataController($_FILES["awaiting-ds"], $_POST['startRow'], $_POST['endRow']);
                 $result = $excelData->extractAwaitingApplicantsResults();
