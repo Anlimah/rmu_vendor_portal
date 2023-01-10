@@ -354,26 +354,24 @@ class ExcelDataController
         $extracted_data = $this->extractExcelData();
         if (empty($extracted_data)) return array("success" => true, "message" => "Couldn't extract excel data to DB!");
 
-        return $extracted_data;
-
-        /*$error_list = [];
+        $error_list = [];
         $output = [];
         $count = 0;
 
         // add results for each applicant to db
         foreach ($extracted_data as $data) {
-            $result = $this->saveSubjectAndGrades($data["indexNum"], $data["examResults"]);
+            $result = $this->saveSubjectAndGrades($data["index_number"], $data["exam_results"]);
 
             if (!$result["success"]) array_push($error_list, $result);
             if ($result["success"]) $this->successEncountered += 1;
             $count++;
         }
 
-        array_push($output, array("total_list" => $count));
+        array_push($output, array("total_count" => $count));
         array_push($output, array("success_count" => $this->successEncountered));
         array_push($output, array("errors_count" => $this->errorsEncountered));
         array_push($output, array("errors" => $error_list));
 
-        return $output;*/
+        return $output;
     }
 }
