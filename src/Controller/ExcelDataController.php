@@ -332,7 +332,7 @@ class ExcelDataController
         }
 
         // Delete any existing records if any
-        $deleteQuery = "DELETE FROM `high_school_results` WHERE `acad_back_id` = : ai";
+        $deleteQuery = "DELETE FROM `high_school_results` WHERE `acad_back_id` = :ai";
         $this->admin->inputData($deleteQuery, array(":ai" => $appAcaID));
 
         // Insert exam records
