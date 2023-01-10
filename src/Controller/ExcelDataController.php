@@ -277,6 +277,7 @@ class ExcelDataController
         $sql = "INSERT INTO `high_school_results` (`type`, `subject`, `grade`, `acad_back_id`) VALUES (:t, :s, :g, :ai)";
 
         foreach ($subjects as  $sbj) {
+            return $sbj;
             $params = array(":t" => $sbj["type"], ":s" => $sbj["subject"], ":g" => $sbj["grade"], ":ai" => $appID);
             $this->admin->inputData($sql, $params);
         }
