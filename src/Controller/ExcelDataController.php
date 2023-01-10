@@ -288,7 +288,7 @@ class ExcelDataController
 
             $endRowData = count($spreadSheetArray[$i]);
             $examResults = array();
-            return $endRowData;
+            return $spreadSheetArray[$i];
             $s = 6;
             for ($i = 1; $i < $this->endRow; $i += 2) {
                 if ($spreadSheetArray[$i][$s] == "") break;
