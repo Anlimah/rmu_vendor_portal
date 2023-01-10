@@ -360,6 +360,9 @@ class ExcelDataController
 
         // add results for each applicant to db
         foreach ($extracted_data as $data) {
+            return $data;
+            return $data["index_number"];
+            return $data["exam_results"];
             $result = $this->saveSubjectAndGrades($data["index_number"], $data["exam_results"]);
 
             if (!$result["success"]) array_push($error_list, $result);
