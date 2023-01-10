@@ -9,6 +9,7 @@ if (isset($_POST["extractFile"])) {
 
     $start = 1;
     $end = 0;
+
     if (!empty($_POST["start-row"]) && $_POST["start-row"] > 1) {
         $start = $_POST["start-row"];
     }

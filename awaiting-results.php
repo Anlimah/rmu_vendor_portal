@@ -48,8 +48,8 @@ require_once('inc/page-data.php');
                       <div style="display: flex; flex-direction:column; align-items: center">
                         <p id="upload-notification"></p>
                         <form action="" method="post">
-                          <label for="upload-awaiting-ds" class="btn btn-primary">Upload</label>
-                          <input type="file" name="upload-awaiting-ds" id="upload-awaiting-ds" style="display: none;" accept=".xlsx,.xls,pplication/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                          <label for="awaiting-ds" class="btn btn-primary">Upload</label>
+                          <input type="file" name="awaiting-ds" id="awaiting-ds" style="display: none;" accept=".xlsx,.xls,pplication/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
                         </form>
                       </div>
                     </a>
@@ -185,7 +185,7 @@ require_once('inc/page-data.php');
         });
       });
 
-      $("#upload-awaiting-ds").change(function() {
+      $("#awaiting-ds").change(function() {
         $("#upload-notification").text($(this).val()).show("slow");
 
         // Get the form element
@@ -205,7 +205,7 @@ require_once('inc/page-data.php');
             console.log(result);
           },
           error: function() {
-            alert('An error occurred!');
+            alert('Error: Internal server error!');
           }
         });
 

@@ -3,6 +3,7 @@
 namespace Src\Controller;
 
 use Src\Controller\ExposeDataController;
+use Src\Controller\ExcelDataHandler;
 
 class AdminController extends ExposeDataController
 {

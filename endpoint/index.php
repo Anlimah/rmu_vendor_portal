@@ -19,6 +19,7 @@ die(json_encode($input));*/
 require "../bootstrap.php";
 
 use Src\Controller\AdminController;
+use Src\Controller\ExposeDataController;
 
 $expose = new AdminController();
 
@@ -139,9 +140,46 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     }
     //
     elseif ($_GET["url"] == "extra-awaiting-data") {
-        if (isset($_FILES["upload-awaiting-ds"])) {
-            die(json_encode(array("success" => true, "message" => $_FILES["upload-awaiting-ds"]["name"])));
+        if (!isset($_FILES["awaiting-ds"]) || empty($_FILES["awaiting-ds"])) {
+            die(json_encode(array("success" => false, "message" => "Invalid request!")));
         }
+        if ($_FILES["awaiting-ds"]['error']) {
+            die(json_encode(array("success" => false, "message" => "Failed to upload file!")));
+        }
+
+        $allowedFileType = [
+            'application/vnd.ms-excel',
+            'text/xls',
+            'text/xlsx',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        ];
+
+        if (!in_array($_FILES["awaiting-ds"]["type"], $allowedFileType)) {
+            die(json_encode(array("success" => false, "message" => "Invalid file type. Please choose an excel file!")));
+        }
+
+        $result;
+
+        switch ($_GET["action"]) {
+                // download broadsheet dbs
+            case 'dbs':
+                $broadsheet = new ExcelDataController($_GET['c']);
+                $file = $broadsheet->generateFile();
+                $result = $broadsheet->downloadFile($file);
+                break;
+
+                // upload awaiting datasheet uad
+            case 'uad':
+                if (!isset($_GET['t']) || empty($_GET['t'])) break;
+                if (!isset($_GET['s']) || empty($_GET['s'])) break;
+                if (!isset($_GET['e']) || empty($_GET['e'])) break;
+
+                $broadsheet = new ExcelDataController($_GET['t'], $_GET['s'], $_GET['e']);
+                $result = $excelData->getExcelDataIntoDB($_FILES["awaiting-ds"]);
+                break;
+        }
+
+        die(json_encode($result));
     }
 
     // All PUT request will be sent here
