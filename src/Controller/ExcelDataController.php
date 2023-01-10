@@ -5,12 +5,10 @@ namespace Src\Controller;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Src\Controller\AdminController;
-use Src\System\DatabaseMethods;
 
 class ExcelDataController
 {
     private $admin = null;
-    private $dm = null;
 
     private $spreadsheet = null;
     private $writer = null;
@@ -211,7 +209,6 @@ class ExcelDataController
         $this->startRow = (int) $startRow;
         $this->endRow = (int) $endRow;
         $this->admin = new AdminController();
-        $this->dm = new DatabaseMethods();
     }
 
     public function saveDataFile()
@@ -325,7 +322,7 @@ class ExcelDataController
         // Get applicant application number/id using index number provide
         $query = "SELECT ab.id FROM applicants_login AS ap, academic_background AS ab
                     WHERE ap.id = ab.app_login AND ab.index_number = ':in'";
-        $appID = $this->dm->getID($query, array(":in" => $indexNumber));
+        $appID = $this->admin->getID($query, array(":in" => $indexNumber));
 
         return array("message" => "success");
         if (empty($appID)) {
