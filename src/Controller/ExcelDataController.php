@@ -288,9 +288,9 @@ class ExcelDataController
 
             $subjects = array_slice($spreadSheetArray, 5, count($spreadSheetArray) - 6);
             $examResults = array();
-
+            return $this->endRow;
             $s = 6;
-            for ($i = 0; $i < count($spreadSheetArray); $i += 2) {
+            for ($i = 1; $i < $this->endRow; $i += 2) {
                 if ($subjects[$i] == "") break;
                 array_push($examResults, array(
                     "subject" => $spreadSheetArray[$i][$s],
