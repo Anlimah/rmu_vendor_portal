@@ -289,7 +289,7 @@ class ExcelDataController
             $subjects = array_slice($spreadSheetArray, 5, count($spreadSheetArray));
             $examResults = array();
 
-            return json_encode($subjects);
+            return $subjects;
 
             for ($i = 0; $i < count($subjects); $i += 2) {
                 if ($subjects[$i] == "") continue;
