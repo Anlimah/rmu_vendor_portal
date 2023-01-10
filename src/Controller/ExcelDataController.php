@@ -289,7 +289,7 @@ class ExcelDataController
             $subjects = array_slice($spreadSheetArray, 5, count($spreadSheetArray) - 6);
             $examResults = array();
 
-            return $subjects;
+            return $spreadSheetArray;
 
             for ($i = 0; $i < count($subjects); $i += 2) {
                 if ($subjects[$i] == "") continue;
