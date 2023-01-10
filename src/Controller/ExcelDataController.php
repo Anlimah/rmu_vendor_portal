@@ -300,7 +300,7 @@ class ExcelDataController
                     echo json_encode(array("" => $spreadSheetArray[$i][$j]));
                 }
 
-                if (preg_match("/(?i)\bmathematics\b.*^\bcore\b/", $spreadSheetArray[$i][$j])) {
+                if (preg_match("/\bmathematics(core)\b/i", $spreadSheetArray[$i][$j])) {
                     echo json_encode(array("" => $spreadSheetArray[$i][$j]));
                 }
 
