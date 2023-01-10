@@ -52,7 +52,7 @@ require_once('inc/page-data.php');
                           <input type="file" name="awaiting-ds" id="awaiting-ds" style="display: none;" accept=".xlsx,.xls,pplication/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
                           <input type="hidden" name="action" value="uad">
                           <input type="hidden" name="startRow" value="1">
-                          <input type="hidden" name="endRow" value="5">
+                          <input type="hidden" name="endRow" value="0">
                         </form>
                       </div>
                     </a>

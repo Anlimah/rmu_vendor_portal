@@ -204,8 +204,8 @@ class ExcelDataController
     private function __construct_upload_awaiting($fileObj, $startRow, $endRow)
     {
         $this->fileObj = $fileObj;
-        $this->startRow = $startRow;
-        $this->endRow = $endRow;
+        $this->startRow = (int) $startRow;
+        $this->endRow = (int) $endRow;
         $this->admin = new AdminController();
     }
 
@@ -286,7 +286,7 @@ class ExcelDataController
 
             // Get all the courses
 
-            $endRowData = count($spreadSheetArray);
+            $endRowData = count($spreadSheetArray[$i]);
             $examResults = array();
             return $endRowData;
             $s = 6;
