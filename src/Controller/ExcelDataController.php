@@ -238,7 +238,7 @@ class ExcelDataController
             // Move the file to the target directory
             if (move_uploaded_file($this->fileObj['tmp_name'], $this->targetPath)) {
                 //return array("success" => false, "message" => "File upload successful!");
-                return $this->getExcelDataIntoDB($this->targetPath, $this->startRow, $this->endRow);
+                return $this->getExcelDataIntoDB();
             }
         }
     }
@@ -272,12 +272,12 @@ class ExcelDataController
         $excelSheet = $spreadSheet->getActiveSheet();
         $spreadSheetArray = $excelSheet->toArray();
 
-        if ($this->endRow == 0) $endRow = count($spreadSheetArray);
+        if ($this->endRow == 0) $this->endRow = count($spreadSheetArray);
         if ($this->startRow > 1) $this->startRow -= 1;
 
         $count = 0;
 
-        for ($i = $this->startRow; $i <= $endRow - 1; $i++) {
+        for ($i = $this->startRow; $i <= $this->endRow - 1; $i++) {
             $admisNum = $spreadSheetArray[$i][1];
             $indexNum = $spreadSheetArray[$i][2];
             $examMonth = $spreadSheetArray[$i][3];
