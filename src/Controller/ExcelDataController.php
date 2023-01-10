@@ -297,21 +297,20 @@ class ExcelDataController
                 ));
 
                 if (preg_match("/^english lang$/i", $spreadSheetArray[$i][$j])) {
-                    echo $spreadSheetArray[$i][$j];
+                    echo json_encode(array("" => $spreadSheetArray[$i][$j]));
                 }
 
                 if (preg_match("/^mathematics(core)$/i", $spreadSheetArray[$i][$j])) {
-                    echo $spreadSheetArray[$i][$j];
+                    echo json_encode(array("" => $spreadSheetArray[$i][$j]));
                 }
 
                 if (preg_match("/^social studies$/i", $spreadSheetArray[$i][$j])) {
-                    echo $spreadSheetArray[$i][$j];
+                    echo  json_encode(array("" => $spreadSheetArray[$i][$j]));
                 }
 
                 if (preg_match("/^integrated science$/i", $spreadSheetArray[$i][$j])) {
-                    echo $spreadSheetArray[$i][$j];
+                    echo  json_encode(array("" => $spreadSheetArray[$i][$j]));
                 }
-                return $examResults;
             }
 
             return $examResults;
