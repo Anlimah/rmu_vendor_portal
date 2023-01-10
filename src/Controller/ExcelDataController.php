@@ -322,16 +322,14 @@ class ExcelDataController
         // Get applicant application number/id using index number provide
         $query = "SELECT ab.id FROM applicants_login AS ap, academic_background AS ab
                     WHERE ap.id = ab.app_login AND ab.index_number = :i";
-        $param = array(":i" => "'" . $indexNumber . "'");
-        return array("message" => "success" . $param[":i"]);
-        $appID = $this->admin->getID($query, $param);
+        $appID = $this->admin->getID($query, array(":i" => $indexNumber));
+
         if (empty($appID)) {
             $this->errorsEncountered += 1;
             return array(
-                "success" => false, "index_number" => $indexNumber, "message" => "Applicant data not found in DB!",
+                "success" => false, "index number" => $indexNumber, "message" => "Applicant data not found in DB!",
             );
         }
-
         return array("message" => "success$appID");
 
         $sql = "INSERT INTO `high_school_results` (`type`, `subject`, `grade`, `acad_back_id`) VALUES (:t, :s, :g, :ai)";
