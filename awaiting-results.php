@@ -43,19 +43,17 @@ require_once('inc/page-data.php');
               <div class="col-xxl-3 col-md-3" style="width: 500px">
                 <div class="card info-card text-success">
                   <div class="card-body">
-                    <a href="awaiting-results.php" style="text-decoration: none;">
-                      <h5 class="card-title" style="text-align: center;">Uploaded Results Datasheet</h5>
-                      <div style="display: flex; flex-direction:column; align-items: center">
-                        <p id="upload-notification"></p>
-                        <form id="upload-awaiting-form" action="" method="post">
-                          <label for="awaiting-ds" class="btn btn-primary">Upload</label>
-                          <input type="file" name="awaiting-ds" id="awaiting-ds" style="display: none;" accept=".xlsx,.xls,pplication/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
-                          <input type="hidden" name="action" value="uad">
-                          <input type="hidden" name="startRow" value="1">
-                          <input type="hidden" name="endRow" value="0">
-                        </form>
-                      </div>
-                    </a>
+                    <h5 class="card-title" style="text-align: center;">Uploaded Results Datasheet</h5>
+                    <div style="display: flex; flex-direction:column; align-items: center">
+                      <p id="upload-notification"></p>
+                      <form id="upload-awaiting-form" action="" method="post">
+                        <label for="awaiting-ds" class="btn btn-primary">Upload</label>
+                        <input type="file" name="awaiting-ds" id="awaiting-ds" style="display: none;" accept=".xlsx,.xls,pplication/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                        <input type="hidden" name="action" value="uad">
+                        <input type="hidden" name="startRow" value="1">
+                        <input type="hidden" name="endRow" value="0">
+                      </form>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -206,12 +204,25 @@ require_once('inc/page-data.php');
           contentType: false,
           success: function(result) {
             console.log(result);
+            if (result.success) alert();
           },
           error: function() {
             alert('Error: Internal server error!');
           }
         });
 
+      });
+
+      $(document).on({
+        ajaxStart: function() {
+          $("#submitBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
+        },
+        ajaxStop: function() {
+          if (itsForm)
+            $("#submitBtn").prop("disabled", false).html('Check My Work and Continue');
+          else
+            $("#progressStatus").prop("disabled", false).html('All progress saved.');
+        }
       });
 
     });
