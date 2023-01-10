@@ -5,7 +5,6 @@ namespace Src\Controller;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Src\Controller\AdminController;
-use DateTime;
 
 class ExcelDataController
 {
@@ -22,6 +21,8 @@ class ExcelDataController
     private $startRow = null;
     private $endRow = null;
     private $targetPath = null;
+    private $errorsEncountered = 0;
+    private $successEncountered = 0;
 
     public function __construct(...$args)
     {
@@ -244,30 +245,45 @@ class ExcelDataController
         }
     }
 
-    public function saveSubjectAndGrades($subjects = array(), $aca_id)
+    public function saveSubjectAndGrades($subjects = array(), $indexNumber)
     {
-        if (!empty($subjects)) {
-            $sql = "INSERT INTO `high_school_results` (`type`, `subject`, `grade`, `acad_back_id`) VALUES (:t, :s, :g, :ai)";
-
-            // add core subjects
-            for ($i = 0; $i < count($subjects["core"]); $i++) {
-                $params = array(":t" => "core", ":s" => $subjects["core"][$i]["subject"], ":g" => $subjects["core"][$i]["grade"], ":ai" =>  $aca_id);
-                $this->admin->inputData($sql, $params);
-            }
-
-            // add elective subjects
-            for ($i = 0; $i < count($subjects["elective"]); $i++) {
-                $params = array(":t" => "elective", ":s" => $subjects["elective"][$i]["subject"], ":g" => $subjects["elective"][$i]["grade"], ":ai" =>  $aca_id);
-                $this->admin->inputData($sql, $params);
-            }
-
-            return 1;
+        if (empty($subjects) || empty($indexNumber)) {
+            $this->errorsEncountered += 1;
+            return array(
+                "success" => false,
+                "index number" => $indexNumber,
+                "error" => "Empty value inputs!"
+            );
         }
-        return 0;
+
+        // Get applicant application number/id using index number provide
+        $query = "SELECT ab.id FROM applicants_login AS ap, academic_background AS ab
+                    WHERE ap.id = ab.app_login AND ab.index_number = ':in'";
+        $appID = $this->admin->getID($query, array(":in" => $indexNumber));
+
+        if (empty($appID)) {
+            $this->errorsEncountered += 1;
+            return array(
+                "success" => false,
+                "index number" => $indexNumber,
+                "error" => "Applicant data not found in DB!",
+            );
+        }
+
+        $sql = "INSERT INTO `high_school_results` (`type`, `subject`, `grade`, `acad_back_id`) VALUES (:t, :s, :g, :ai)";
+
+        foreach ($subjects as  $sbj) {
+            $params = array(":t" => $sbj["type"], ":s" => $sbj["subject"], ":g" => $sbj["grade"], ":ai" => $appID);
+            $this->admin->inputData($sql, $params);
+        }
+
+        $this->successEncountered += 1;
+        return array("success" => true, "index number" => $indexNumber, "success" => "Subjects added!");
     }
 
     public function getExcelDataIntoDB()
     {
+        $output = [];
         $Reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
         $spreadSheet = $Reader->load($this->targetPath);
         $excelSheet = $spreadSheet->getActiveSheet();
@@ -279,10 +295,10 @@ class ExcelDataController
         $count = 0;
 
         for ($i = $this->startRow; $i <= $this->endRow - 1; $i++) {
-            $admisNum = $spreadSheetArray[$i][0];
+            //$admisNum = $spreadSheetArray[$i][0];
             $indexNum = $spreadSheetArray[$i][1];
-            $examMonth = $spreadSheetArray[$i][2];
-            $examYear = $spreadSheetArray[$i][3];
+            //$examMonth = $spreadSheetArray[$i][2];
+            //$examYear = $spreadSheetArray[$i][3];
 
             // Get all the courses
 
@@ -324,10 +340,16 @@ class ExcelDataController
                     ));
                 }
             }
-            echo json_encode($examResults);
+
+            $result = $this->saveSubjectAndGrades($indexNum, $examResults);
+            if (!$result["success"]) array_push($output["errors"], $result);
+            else array_push($output["errors"], $result);
+            $count++;
         }
-        return;
-        //echo "<script>alert('Successfully transfered " . $count . " excel data into DB')</script>";
-        //return 1;
+
+        array_push($output["total_list"], $count);
+        array_push($output["success_encountered"], $count);
+        array_push($output["errors_encountered"], $count);
+        return $output;
     }
 }
