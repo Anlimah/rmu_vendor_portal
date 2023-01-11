@@ -56,24 +56,24 @@ require_once('inc/page-data.php');
                         </form>
                       </div>
                       <div id="data-process-info" class="mt-4">
-                        <ol class="list-group list-group-horizontal">
+                        <ol class="list-group list-group-horizontal" style="width:100% !important">
                           <li class="list-group-item d-flex justify-content-between align-items-start">
                             <div class="ms-2 me-2">
                               <div class="fw-bold">Total</div>
                             </div>
-                            <span class="badge bg-primary rounded-pill">14</span>
+                            <span class="badge bg-warning rounded-pill">14</span>
                           </li>
                           <li class="list-group-item d-flex justify-content-between align-items-start">
-                            <div class="ms-2 me-auto">
+                            <div class="ms-2 me-2">
                               <div class="fw-bold">Success</div>
                             </div>
-                            <span class="badge bg-primary rounded-pill">14</span>
+                            <span class="badge bg-success rounded-pill">14</span>
                           </li>
                           <li class="list-group-item d-flex justify-content-between align-items-start">
                             <div class="ms-2 me-auto">
                               <div class="fw-bold">Errors</div>
                             </div>
-                            <span class="badge bg-primary rounded-pill">14</span>
+                            <span class="badge bg-danger rounded-pill">14</span>
                           </li>
                         </ol>
                         <div class="error-info">
