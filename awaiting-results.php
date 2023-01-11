@@ -55,8 +55,8 @@ require_once('inc/page-data.php');
                           <input type="hidden" name="endRow" value="0">
                         </form>
                       </div>
-                      <div id="data-process-info">
-                        <ol class="list-group">
+                      <div id="data-process-info" class="mt-4">
+                        <ol class="list-group list-group-horizontal-sm">
                           <li class="list-group-item d-flex justify-content-between align-items-start">
                             <div class="ms-2 me-auto">
                               <div class="fw-bold">Total</div>
