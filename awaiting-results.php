@@ -56,11 +56,26 @@ require_once('inc/page-data.php');
                         </form>
                       </div>
                       <div id="data-process-info">
-                        <ul style="display: flex; flex-direction: row; justify-content:flex-start">
-                          <li>Total: <span>6</span></li>
-                          <li>Success: <span>0</span></li>
-                          <li>Errors: <span>6</span></li>
-                        </ul>
+                        <ol class="list-group">
+                          <li class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                              <div class="fw-bold">Total</div>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">14</span>
+                          </li>
+                          <li class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                              <div class="fw-bold">Success</div>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">14</span>
+                          </li>
+                          <li class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                              <div class="fw-bold">Errors</div>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">14</span>
+                          </li>
+                        </ol>
                         <div class="error-info">
                           <table>
                             <thead>
