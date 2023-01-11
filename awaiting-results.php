@@ -47,7 +47,7 @@ require_once('inc/page-data.php');
                     <div style="display: flex; flex-direction:column; align-items: center">
                       <p id="upload-notification"></p>
                       <form id="upload-awaiting-form" action="" method="post">
-                        <label for="awaiting-ds" class="btn btn-primary">Upload</label>
+                        <label for="awaiting-ds" class="btn btn-primary" id="uploadBtn">Upload</label>
                         <input type="file" name="awaiting-ds" id="awaiting-ds" style="display: none;" accept=".xlsx,.xls,pplication/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
                         <input type="hidden" name="action" value="uad">
                         <input type="hidden" name="startRow" value="1">
@@ -208,21 +208,15 @@ require_once('inc/page-data.php');
           },
           error: function() {
             alert('Error: Internal server error!');
+          },
+          ajaxStart: function() {
+            $("#uploadBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
+          },
+          ajaxStop: function() {
+            $("#uploadBtn").prop("disabled", false).html('Upload');
           }
         });
 
-      });
-
-      $(document).on({
-        ajaxStart: function() {
-          $("#submitBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
-        },
-        ajaxStop: function() {
-          if (itsForm)
-            $("#submitBtn").prop("disabled", false).html('Check My Work and Continue');
-          else
-            $("#progressStatus").prop("disabled", false).html('All progress saved.');
-        }
       });
 
     });
