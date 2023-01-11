@@ -55,8 +55,8 @@ require_once('inc/page-data.php');
                           <input type="hidden" name="endRow" value="0">
                         </form>
                       </div>
-                      <div id="data-process-info" class="mt-4">
-                        <ol class="list-group list-group-horizontal" style="width:100% !important; font-size: 12px !important; font-family: Verdana, Arial, Tahoma, Serif !important;">
+                      <div id="data-process-info" class="mt-4" style="width:100% !important;">
+                        <ol class="list-group list-group-horizontal" style="font-size: 12px !important; font-family: Verdana, Arial, Tahoma, Serif !important;">
                           <li class="list-group-item d-flex justify-content-between align-items-start">
                             <div class="ms-2 me-2">
                               <div class="fw-bold">Total</div>
@@ -76,10 +76,10 @@ require_once('inc/page-data.php');
                             <span class="badge bg-danger rounded-pill">14</span>
                           </li>
                         </ol>
-                        <div class="error-info">
+                        <div class="error-info" style="font-size: 12px !important; font-family: Verdana, Arial, Tahoma, Serif !important;">
                           <table>
                             <thead>
-                              <tr class="table-dark">
+                              <tr>
                                 <th scope="col">#</th>
                                 <th scope="col" colspan="1">Index Number</th>
                                 <th scope="col" colspan="1">Message</th>
