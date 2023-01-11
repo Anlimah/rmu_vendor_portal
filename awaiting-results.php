@@ -219,15 +219,6 @@ require_once('inc/page-data.php');
 
       });
 
-      $(document).on({
-        ajaxStart: function() {
-          $("#uploadBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
-        },
-        ajaxStop: function() {
-          $("#uploadBtn").prop("disabled", false).html('Upload');
-        }
-      });
-
     });
   </script>
 
