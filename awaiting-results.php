@@ -55,7 +55,7 @@ require_once('inc/page-data.php');
                           <input type="hidden" name="endRow" value="0">
                         </form>
                       </div>
-                      <div id="data-process-info" class="mt-4" style="width:100% !important;">
+                      <div id="data-process-info" class="mt-4" style="width:100% !important; display:flex; flex-direction:column; align-items:center">
                         <ol class="list-group list-group-horizontal" style="font-size: 12px !important; font-family: Verdana, Arial, Tahoma, Serif !important;">
                           <li class="list-group-item d-flex justify-content-between align-items-start">
                             <div class="ms-2 me-2">
@@ -82,8 +82,8 @@ require_once('inc/page-data.php');
                             <thead>
                               <tr>
                                 <th scope="col">#</th>
-                                <th scope="col" colspan="1">Index Number</th>
-                                <th scope="col" colspan="1">Message</th>
+                                <th scope="col">Index Number</th>
+                                <th scope="col">Message</th>
                               </tr>
                             </thead>
                             <tbody>
