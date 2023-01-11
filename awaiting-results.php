@@ -44,7 +44,7 @@ require_once('inc/page-data.php');
                 <div class="card info-card">
                   <div class="card-body">
                     <h5 class="card-title" style="text-align: center;">Upload Results Datasheet</h5>
-                    <div style="display: flex; flex-direction:column; align-items: center">
+                    <div style="display: flex; flex-direction:column; align-items: center; justify-content:center;">
                       <div id="data-upload-form">
                         <p id="upload-notification" class="text-success"></p>
                         <form id="upload-awaiting-form" action="" method="post">
@@ -56,7 +56,7 @@ require_once('inc/page-data.php');
                         </form>
                       </div>
                       <div id="data-process-info" class="mt-4">
-                        <ol class="list-group list-group-horizontal" style="width:100% !important">
+                        <ol class="list-group list-group-horizontal" style="width:100% !important; font-size: 12px !important; font-family: Verdana, Arial, Tahoma, Serif !important;">
                           <li class="list-group-item d-flex justify-content-between align-items-start">
                             <div class="ms-2 me-2">
                               <div class="fw-bold">Total</div>
