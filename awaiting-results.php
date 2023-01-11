@@ -58,7 +58,7 @@ require_once('inc/page-data.php');
                       <div id="data-process-info" class="mt-4">
                         <ol class="list-group list-group-horizontal">
                           <li class="list-group-item d-flex justify-content-between align-items-start">
-                            <div class="ms-2 me-auto">
+                            <div class="ms-2 me-2">
                               <div class="fw-bold">Total</div>
                             </div>
                             <span class="badge bg-primary rounded-pill">14</span>
