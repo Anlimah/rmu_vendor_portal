@@ -113,6 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     }
     //
     elseif ($_GET["url"] == "admitAll") {
+        die(json_encode($_POST));
         if (!isset($_POST["cert-type"]) || !isset($_POST["prog-type"])) {
             die(json_encode(array("success" => false, "message" => "Invalid input field")));
         }
