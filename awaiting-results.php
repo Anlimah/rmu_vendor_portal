@@ -41,12 +41,12 @@ require_once('inc/page-data.php');
             <div style="display: flex; flex-direction:row; justify-content:center;">
               <!-- Admitted Students Card -->
               <div class="col-xxl-3 col-md-3" style="width: 500px">
-                <div class="card info-card text-success">
+                <div class="card info-card">
                   <div class="card-body">
                     <h5 class="card-title" style="text-align: center;">Upload Results Datasheet</h5>
                     <div style="display: flex; flex-direction:column; align-items: center">
                       <div id="data-upload-form">
-                        <p id="upload-notification"></p>
+                        <p id="upload-notification" class="text-success"></p>
                         <form id="upload-awaiting-form" action="" method="post">
                           <label for="awaiting-ds" class="btn btn-primary" id="uploadBtn">Upload</label>
                           <input type="file" name="awaiting-ds" id="awaiting-ds" style="display: none;" accept=".xlsx,.xls,pplication/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
@@ -55,8 +55,8 @@ require_once('inc/page-data.php');
                           <input type="hidden" name="endRow" value="0">
                         </form>
                       </div>
-                      <div id="data-process-info" style="display: flex; flex-direction: row; justify-content:flex-start">
-                        <ul>
+                      <div id="data-process-info">
+                        <ul style="display: flex; flex-direction: row; justify-content:flex-start">
                           <li>Total: <span>6</span></li>
                           <li>Success: <span>0</span></li>
                           <li>Errors: <span>6</span></li>
