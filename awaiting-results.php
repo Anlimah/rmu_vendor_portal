@@ -76,7 +76,8 @@ require_once('inc/page-data.php');
                             <span class="badge bg-danger rounded-pill">14</span>
                           </li>
                         </ol>
-                        <div class="error-info" style="font-size: 12px !important; font-family: Verdana, Arial, Tahoma, Serif !important;">
+                        <div class="error-info mt-4" style="font-size: 12px !important; font-family: Verdana, Arial, Tahoma, Serif !important;">
+                          <h3 class="text-danger">Errors Encountered</h3>
                           <table>
                             <thead>
                               <tr>
@@ -87,10 +88,12 @@ require_once('inc/page-data.php');
                             </thead>
                             <tbody>
                               <tr>
+                                <td>1</td>
                                 <td>123456789</td>
                                 <td>Applicant index number doesn't match any record in database</td>
                               </tr>
                               <tr>
+                                <td>2</td>
                                 <td>123456789</td>
                                 <td>Applicant index number doesn't match any record in database</td>
                               </tr>
