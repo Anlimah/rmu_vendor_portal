@@ -56,7 +56,7 @@ require_once('inc/page-data.php');
                         </form>
                       </div>
                       <div id="data-process-info" class="mt-4">
-                        <ol class="list-group list-group-horizontal-sm">
+                        <ol class="list-group list-group-horizontal">
                           <li class="list-group-item d-flex justify-content-between align-items-start">
                             <div class="ms-2 me-auto">
                               <div class="fw-bold">Total</div>
