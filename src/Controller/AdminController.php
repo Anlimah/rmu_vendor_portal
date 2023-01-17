@@ -340,7 +340,7 @@ class AdminController extends ExposeDataController
         $query = "SELECT COUNT(*) AS total 
                 FROM purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, form_type AS ft
                 WHERE ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id AND 
-                pd.form_type = ft.id AND fc.`declaration` = 1 AND fc.`admitted` = :s AND ft.id = :f";
+                pd.form_type = ft.id AND fc.`admitted` = :s AND ft.id = :f";
         return $this->getData($query, array(":s" => (int) $admitted, ":f" => $form_type));
     }
 
