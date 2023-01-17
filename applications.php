@@ -85,7 +85,7 @@ require_once('inc/page-data.php');
                         <img src="./assets/img/icons8-queue-64.png" style="width: 48px;" alt="">
                       </div>
                       <div class="ps-3">
-                        <h6><?= $admin->fetchTotalAwaitingResults(1)[0]["total"]; ?></h6>
+                        <h6><?= $admin->fetchTotalAwaitingResults()[0]["total"]; ?></h6>
                         <span class="text-muted small pt-2 ps-1">awaiting results</span>
                       </div>
                     </div>
@@ -218,7 +218,7 @@ require_once('inc/page-data.php');
                 <button id="apps-awaiting" class="btn btn-outline-primary col toggle-output">
                   Awaiting
                   <span class="badge text-bg-secondary">
-                    <?= $admin->fetchTotalAwaitingResults($_GET["t"])[0]["total"]; ?>
+                    <?= $admin->fetchTotalAwaitingResultsByFormType($_GET["t"])[0]["total"]; ?>
                   </span>
                 </button>
 
