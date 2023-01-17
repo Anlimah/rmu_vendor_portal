@@ -38,6 +38,9 @@ require_once('inc/page-data.php');
     </div><!-- End Page Title -->
 
     <section class="section dashboard">
+
+
+      <!-- Dashboard view -->
       <div class="row" <?= isset($_GET["t"]) ? 'style="display:none"' : "" ?>>
 
         <!-- Left side columns -->
@@ -153,9 +156,9 @@ require_once('inc/page-data.php');
           </div>
         </div><!-- Forms Sales Card  -->
 
-      </div><!-- End Left side columns -->
+      </div> <!-- End of Dashboard view -->
 
-
+      <!-- programs summary view -->
       <div class="row" <?= !isset($_GET["t"]) ? 'style="display:none"' : "" ?>>
 
         <!-- Recent Sales -->
@@ -290,10 +293,7 @@ require_once('inc/page-data.php');
           </div>
         </div><!-- End Recent Sales -->
 
-        <!-- Right side columns -->
-        <!-- End Right side columns -->
-
-      </div>
+      </div> <!-- programs summary view -->
       <!-- Right side columns -->
       <!-- End Right side columns -->
 

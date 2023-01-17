@@ -338,9 +338,9 @@ class AdminController extends ExposeDataController
     public function fetchTotalAdmittedOrUnadmittedApplicants(int $form_type, bool $admitted = true)
     {
         $query = "SELECT COUNT(*) AS total 
-                FROM form_sections_chek AS fc, applicants_login as al, admission_period AS ap, purchase_detail AS pd, form_type AS ft 
-                WHERE pd.`id` = al.`purchase_id` AND pd.`admission_period` = ap.`id` AND al.`id` = fc.`app_login` AND 
-                ap.`active` = 1 AND fc.`admitted` = :s AND ft.id = :f";
+                FROM purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, form_type AS ft
+                WHERE ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id AND 
+                pd.form_type = ft.id AND fc.`admitted` = :s AND ft.id = :f";
         return $this->getData($query, array(":s" => (int) $admitted, ":f" => $form_type));
     }
 
