@@ -340,17 +340,17 @@ class AdminController extends ExposeDataController
         $query = "SELECT COUNT(*) AS total 
                 FROM purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, form_type AS ft
                 WHERE ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id AND 
-                pd.form_type = ft.id AND fc.`admitted` = :s AND ft.id = :f";
+                pd.form_type = ft.idAND fc.`declaration` = 1 AND fc.`admitted` = :s AND ft.id = :f";
         return $this->getData($query, array(":s" => (int) $admitted, ":f" => $form_type));
     }
 
     public function fetchTotalAwaitingResults(int $form_type)
     {
         $query = "SELECT COUNT(*) AS total 
-                FROM form_sections_chek AS fc, applicants_login as al, admission_period AS ap, 
-                    purchase_detail AS pd, `academic_background` AS ab, form_type AS ft 
-                WHERE ab.`app_login` = al.`id` AND pd.`id` = al.`purchase_id` AND pd.`admission_period` = ap.`id` AND al.`id` = fc.`app_login` AND 
-                ap.`active` = 1 AND fc.`declaration` = 1 AND ab.`awaiting_result` = 1 AND ft.id = :f";
+                FROM purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, form_type AS ft
+                academic_background AS ab 
+                WHERE ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id AND 
+                ab.app_login = al.id AND pd.form_type = ft.id AND fc.`declaration` = 1 AND ab.`awaiting_result` = 1 AND ft.id = :f";
         return $this->getData($query, array(":f" => $form_type));
     }
 
