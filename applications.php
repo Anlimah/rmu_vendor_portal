@@ -407,7 +407,7 @@ require_once('inc/page-data.php');
                 type: "GET",
                 url: "endpoint/programs",
                 data: {
-                  "type": $("#type").val(),
+                  "type": getUrlVars()["t"],
                 },
                 success: function(result) {
                   console.log(result);
@@ -433,7 +433,7 @@ require_once('inc/page-data.php');
 
       $(".printer").click(function() {
         let c = "c=" + $("#country").val();
-        let t = "&t=" + $("#type").val();
+        let t = "&t=" + getUrlVars()["t"];
         let p = "&p=" + $("#program").val();
         window.open("print-document.php?" + c + t + p, "_blank");
       });
@@ -469,7 +469,7 @@ require_once('inc/page-data.php');
           data = {
             "action": summary_selected,
             "country": $("#country").val(),
-            "type": $("#type").val(),
+            "type": getUrlVars()["t"],
             "program": $("#program").val(),
           }
           window.open("export-excel.php?w=sdjgskfsd&a=hoh&c=jgkg&t=hjgkj&p=jgksjgks", "_blank");
@@ -481,7 +481,7 @@ require_once('inc/page-data.php');
           data = {
             "action": summary_selected,
             "country": $("#country").val(),
-            "type": $("#type").val(),
+            "type": getUrlVars()["t"],
             "program": $("#program").val(),
           }
           window.open("download-pdf.php?w=apps&t=" + getUrlVars()["t"] + "&a=" + data["action"] + "&c=" + data["country"] + "&t=" + data["type"] + "&p=" + data["program"], "_blank");
