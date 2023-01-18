@@ -310,13 +310,17 @@ require_once('inc/page-data.php');
       // when a summary data button is clicked
       $(".toggle-output").click(function() {
         summary_selected = $(this).attr("id");
+        data = {
+          action: summary_selected,
+          form_t: getUrlVars()["t"]
+        };
+
+        alert(data.form_t);
 
         $.ajax({
           type: "POST",
           url: "endpoint/apps-data",
-          data: {
-            action: summary_selected
-          },
+          data: data,
           success: function(result) {
             console.log(result);
 
