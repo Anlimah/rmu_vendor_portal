@@ -202,7 +202,7 @@ class AdminController extends ExposeDataController
         // and then extract the values of the new array into variables
         extract(array_combine(array_keys($data), array_values($data)));
 
-        $SQL_COND = "AND ";
+        $SQL_COND = "";
         if ($country != "All") $SQL_COND .= " AND p.`nationality` = '$country'";
         if ($type != "All") $SQL_COND .= " AND ft.`id` = $type";
         if ($program != "All") $SQL_COND .= " AND pi.`first_prog` = '$program' OR pi.`second_prog` = '$program'";
