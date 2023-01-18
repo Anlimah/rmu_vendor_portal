@@ -204,7 +204,7 @@ class AdminController extends ExposeDataController
 
         $SQL_COND = "AND ";
         if ($country != "All") $SQL_COND .= " AND p.`nationality` = '$country'";
-        if ($form_type != "All") $SQL_COND .= " AND ft.`id` = $form_type";
+        if ($type != "All") $SQL_COND .= " AND ft.`id` = $type";
         if ($program != "All") $SQL_COND .= " AND pi.`first_prog` = '$program' OR pi.`second_prog` = '$program'";
 
         $SQL_COND;

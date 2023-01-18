@@ -60,8 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         if (!$v_form_t["success"]) die(json_encode($v_form_t));
 
         $data = array(
-            'action' => $v_action["message"], 'form_type' => $v_form_t["message"],
-            'country' => 'All', 'type' => 'All', 'program' => 'All'
+            'action' => $v_action["message"], 'country' => 'All', 'type' => $v_form_t["message"], 'program' => 'All'
         );
         $result = $expose->fetchAppsSummaryData($data);
         if (empty($result)) die(json_encode(array("success" => false, "message" => "Empty result!")));
