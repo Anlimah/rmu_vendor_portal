@@ -383,7 +383,7 @@ require_once('inc/page-data.php');
                 $("tbody").append(
                   '<tr>' +
                   '<th scope="row"><a href="javascript:void()">' + value.id + '</a></th>' +
-                  '<td>' + value.first_name + ' ' + value.last_name + '</td>' +
+                  '<td>' + value.fullname + '</td>' +
                   '<td>' + value.nationality + '</td>' +
                   '<td>' + value.app_type + '</td>' +
                   '<td>' + value.first_prog + '</td>' +
