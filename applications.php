@@ -358,12 +358,12 @@ require_once('inc/page-data.php');
 
       // when 
       $(".form-select").change("blur", function(e) {
-        alert(summary_selected)
         e.preventDefault();
+
         data = {
           "action": summary_selected,
           "country": $("#country").val(),
-          "type": $("#type").val(),
+          "type": getUrlVars()["t"],
           "program": $("#program").val(),
         }
 
