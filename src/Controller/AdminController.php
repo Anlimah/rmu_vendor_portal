@@ -293,11 +293,11 @@ class AdminController extends ExposeDataController
                 FROM 
                     personal_information AS p, applicants_login AS al, 
                     form_type AS ft, purchase_detail AS pd, program_info AS pi, 
-                    form_sections_chek AS fs, admission_period AS ap 
+                    form_sections_chek AS fs, admission_period AS ap, academic_background AS ab 
                 WHERE 
-                    p.app_login = al.id AND pi.app_login = al.id AND fs.app_login = al.id AND
+                    p.app_login = al.id AND pi.app_login = al.id AND fs.app_login = al.id AND ab.app_login = al.id AND
                     pd.admission_period = ap.id AND pd.form_type = ft.id AND pd.id = al.purchase_id AND 
-                    ap.active = 1 AND fs.declaration = 1 AND ab.awaiting_result = 1 $SQL_COND";
+                    ap.active = 1 AND fs.declaration = 1 AND ab.awaiting_result = 1$SQL_COND";
         return $this->getData($query);
     }
 
