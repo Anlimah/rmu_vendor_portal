@@ -230,6 +230,22 @@ require_once('inc/page-data.php');
 
       });
 
+      $("#downloadBtn").click(function() {
+
+        $.ajax({
+          type: "POST",
+          url: "endpoint/downloadAwaiting",
+          data: data,
+          success: function(result) {
+            console.log(result);
+            if (result.success) window.open(result.message, '_blank');
+          },
+          error: function(error) {
+            console.log(error);
+          }
+        });
+      })
+
     });
   </script>
 

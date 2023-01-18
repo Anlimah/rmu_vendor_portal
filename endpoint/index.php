@@ -140,7 +140,12 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         if (empty($_POST["cert-type"])) {
             die(json_encode(array("success" => false, "message" => "Missing input field")));
         }
-        $url = "https://office.rmuictonline.com/download-bs.php?c=" . $_POST["cert-type"];
+        $url = "https://office.rmuictonline.com/download-bs.php?a=bs&c=" . $_POST["cert-type"];
+        die(json_encode(array("success" => true, "message" => $url)));
+    }
+    //
+    elseif ($_GET["url"] == "downloadAwaiting") {
+        $url = "https://office.rmuictonline.com/download-bs.php?a=as&c=awaiting";
         die(json_encode(array("success" => true, "message" => $url)));
     }
     //

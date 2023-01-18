@@ -37,6 +37,19 @@ class AdminController extends ExposeDataController
         return $this->getData($query, array(":i" => $form_type));
     }
 
+    public function fetchAllAwaitingApplicationsBS()
+    {
+        $query = "SELECT pd.id AS AdmissionNumber, ab.index_number AS IndexNumber, 
+                    ab.month_completed AS ExamMonth, ab.year_completed AS ExamYear 
+                FROM 
+                    applicants_login AS al, purchase_detail AS pd, 
+                    admission_period AS ap, academic_background AS ab  
+                WHERE
+                    al.id = ab.app_login AND al.purchase_id = pd.id AND 
+                    ap.id = pd.admission_period AND ab.awaiting_result = 1 AND ap.active = 1";
+        return $this->getData($query);
+    }
+
     /**
      * Fetching forms sale data totals
      */

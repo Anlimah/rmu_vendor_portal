@@ -16,9 +16,11 @@ class Broadsheet
     private $fileName = null;
     private $sheetTitle = null;
     private $cert_type = null;
+    private $action = null;
 
-    public function __construct($cert_type)
+    public function __construct($cert_type, $action = "bs")
     {
+        $this->action = $action;
         $this->cert_type = $cert_type;
         $this->spreadsheet = new Spreadsheet();
         $this->sheet = $this->spreadsheet->getActiveSheet();
@@ -175,6 +177,6 @@ class Broadsheet
     }
 }
 
-$broadsheet = new Broadsheet($_GET['c']);
+$broadsheet = new Broadsheet($_GET["a"], $_GET['c']);
 $file = $broadsheet->generateFile();
 $broadsheet->downloadFile($file);
