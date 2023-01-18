@@ -51,12 +51,18 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 } elseif ($_SERVER['REQUEST_METHOD'] == "POST") {
     //
     if ($_GET["url"] == "apps-data") {
-        if (!isset($_POST["action"])) die(json_encode(array("success" => false, "message" => "Invalid input!")));
-        if (empty($_POST["action"])) die(json_encode(array("success" => false, "message" => "Missing request!")));
+        if (!isset($_POST["action"]) || !isset($_POST["form_t"])) die(json_encode(array("success" => false, "message" => "Invalid input!")));
+        if (empty($_POST["action"]) || empty($_POST["form_t"])) die(json_encode(array("success" => false, "message" => "Missing request!")));
 
-        $v_data = $expose->validateText($_POST["action"]);
-        if (!$v_data["success"]) die(json_encode($v_data));
-        $data = array('action' => $_POST["action"], 'country' => 'All', 'type' => 'All', 'program' => 'All');
+        $v_action = $expose->validateText($_POST["action"]);
+        $v_form_t = $expose->validateNumber($_POST["form_t"]);
+        if (!$v_action["success"]) die(json_encode($v_action));
+        if (!$v_form_t["success"]) die(json_encode($v_form_t));
+
+        $data = array(
+            'action' => $v_action["message"], 'form_type' => $v_form_t["message"],
+            'country' => 'All', 'type' => 'All', 'program' => 'All'
+        );
         $result = $expose->fetchAppsSummaryData($data);
         if (empty($result)) die(json_encode(array("success" => false, "message" => "Empty result!")));
         die(json_encode(array("success" => true, "message" => $result)));

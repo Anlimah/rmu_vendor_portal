@@ -315,8 +315,6 @@ require_once('inc/page-data.php');
           form_t: getUrlVars()["t"]
         };
 
-        alert(data.form_t);
-
         $.ajax({
           type: "POST",
           url: "endpoint/apps-data",
