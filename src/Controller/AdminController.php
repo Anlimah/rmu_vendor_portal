@@ -240,15 +240,15 @@ class AdminController extends ExposeDataController
     public function fetchAllApplication($SQL_COND)
     {
         $query = "SELECT 
-                    a.id, CONCAT(p.first_name, ' ', IFNULL(p.middle_name, ''), ' ', p.last_name) AS fullname, 
+                    al.id, CONCAT(p.first_name, ' ', IFNULL(p.middle_name, ''), ' ', p.last_name) AS fullname, 
                     p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration 
                 FROM 
-                    personal_information AS p, applicants_login AS a, 
+                    personal_information AS p, applicants_login AS al, 
                     form_type AS ft, purchase_detail AS pd, program_info AS pi, 
-                    form_sections_chek AS fs, admission_period AS ap, academic_background AS ab 
+                    form_sections_chek AS fs, admission_period AS ap 
                 WHERE 
-                    p.app_login = a.id AND pi.app_login = a.id AND fs.app_login = a.id AND ab.app_login = a.id AND
-                    pd.admission_period = ap.id AND pd.form_type = ft.id AND pd.id = a.purchase_id AND 
+                    p.app_login = al.id AND pi.app_login = al.id AND fs.app_login = al.id AND
+                    pd.admission_period = ap.id AND pd.form_type = ft.id AND pd.id = al.purchase_id AND 
                     ap.active = 1$SQL_COND";
         return $this->getData($query);
     }
