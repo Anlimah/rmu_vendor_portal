@@ -262,7 +262,7 @@ require_once('inc/page-data.php');
                         $data = $admin->fetchPrograms(0);
                         foreach ($data as $ft) {
                         ?>
-                          <option value="<?= $ft['id'] ?>"><?= $ft['name'] ?></option>
+                          <option value="<?= $ft['name'] ?>"><?= $ft['name'] ?></option>
                         <?php
                         }
                         ?>
