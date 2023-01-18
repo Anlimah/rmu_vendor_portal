@@ -190,6 +190,18 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         die(json_encode($result));
     }
 
+    ///
+    elseif ($_GET["url"] == "admin-forms-price") {
+        if (!isset($_POST["form-type"]) || !isset($_POST["form-price"])) {
+            die(json_encode(array("success" => false, "message" => "Invalid input field")));
+        }
+        if (empty($_POST["form-type"]) || empty($_POST["form-price"])) {
+            die(json_encode(array("success" => false, "message" => "Missing input field")));
+        }
+        
+    }
+
+
     // All PUT request will be sent here
 } else if ($_SERVER['REQUEST_METHOD'] == "PUT") {
     parse_str(file_get_contents("php://input"), $_PUT);

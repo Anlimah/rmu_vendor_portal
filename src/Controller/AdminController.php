@@ -26,6 +26,29 @@ class AdminController extends ExposeDataController
         return $this->getData($query, $param);
     }
 
+    // For admin settings
+    public function fetchAllFormDetails()
+    {
+        $query = "SELECT ft.id, ft.name, fp.amount, fp.admin_period FROM form_type AS ft INNER JOIN form_price AS fp ON ft.id = fp.form_type";
+        return $this->getData($query);
+    }
+
+    public function addUpdateFormPrice($form_type, $form_price)
+    {
+        $query = "REPLACE INTO form_type (id, `name`, alt_name) VALUES()";
+    }
+    public function fetchAllVendorDetails()
+    {
+        return $this->getData("SELECT * FROM vendor_details");
+    }
+
+    public function fetchAllPrograms()
+    {
+        $query = "SELECT p.`id`, p.`name`, f.name AS `type`, p.`weekend`, p.`group` 
+                FROM programs AS p, form_type AS f WHERE p.type = f.id";
+        return $this->getData($query);
+    }
+
     public function fetchAvailableformTypes()
     {
         return $this->getData("SELECT * FROM form_type");
