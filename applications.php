@@ -240,20 +240,6 @@ require_once('inc/page-data.php');
                         <option value="Others">Others</option>
                       </select>
                     </div>
-                    <!--<div class="col-4">
-                      <label for="type" class="form-label">Application Type</label>
-                      <select name="type" id="type" class="form-select">
-                        <option value="All" selected>All</option>
-                        <?php
-                        $data = $admin->getFormTypes();
-                        foreach ($data as $ft) {
-                        ?>
-                          <option value="<?= $ft['id'] ?>"><?= $ft['name'] ?></option>
-                        <?php
-                        }
-                        ?>
-                      </select>
-                    </div>-->
                     <div class="col-4">
                       <label for="program" class="form-label">Programs</label>
                       <select name="program" id="program" class="form-select">

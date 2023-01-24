@@ -4,6 +4,8 @@ namespace Src\Controller;
 
 use Twilio\Rest\Client;
 use Src\System\DatabaseMethods;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 class ExposeDataController extends DatabaseMethods
 {
@@ -12,6 +14,12 @@ class ExposeDataController extends DatabaseMethods
     {
         $digits = $length;
         return rand(pow(10, $digits - 1), pow(10, $digits) - 1);
+    }
+
+    public function genVendorPin(int $length_pin = 12)
+    {
+        $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        return substr(str_shuffle($str_result), 0, $length_pin);
     }
 
     public function validateEmail($input)
@@ -246,14 +254,27 @@ class ExposeDataController extends DatabaseMethods
 
     public function sendEmail($recipient_email, $subject, $message)
     {
-        $headers = 'MIME-Version: 1.0';
-        $headers .= 'Content-Type: text/html; charset=UTF-8';
-        $headers .= 'From: admissions@rmuictonline.com';
-        $headers .= 'To: ' . $recipient_email;
-        $headers .= 'Subject: ' . $subject;
+        //PHPMailer Object
+        $mail = new PHPMailer(true); //Argument true in constructor enables exceptions
 
-        $success = mail($recipient_email, $subject, $message, $headers);
-        if ($success) return 1;
+        //From email address and name
+        $mail->From = "rmuicton@rmuictonline.com";
+        $mail->FromName = "rmuicton";
+
+        //To address and name
+        $mail->addAddress($recipient_email);
+
+        //Send HTML or Plain Text email
+        $mail->isHTML(true);
+
+        $mail->Subject = $subject;
+        $mail->Body = $message;
+
+        try {
+            if ($mail->send()) return 1;
+        } catch (Exception $e) {
+            echo "Mailer Error: " . $mail->ErrorInfo;
+        }
         return 0;
     }
 
@@ -317,11 +338,5 @@ class ExposeDataController extends DatabaseMethods
         FROM `purchase_detail` AS p, `form_type` AS f, `vendor_details` AS v, `admission_period` AS a 
         WHERE p.`form_type` = f.`id` AND p.vendor = v.`id` AND p.`admission_period` = a.`id` AND p.`id` = :i";
         return $this->getData($sql, array(':i' => $transaction_id));
-    }
-
-    public function getCurrentAdmissionPeriodID()
-    {
-        //return $this->dm->getData("SELECT * FROM `admission_period` WHERE `active` = 1 OR deadline <> NOW()");
-        return $this->getID("SELECT `id` FROM `admission_period` WHERE `active` = 1");
     }
 }

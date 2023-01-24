@@ -2,16 +2,30 @@
 
 namespace Src\Controller;
 
+use Src\System\DatabaseMethods;
 use Src\Controller\ExposeDataController;
 
-class AdminController extends ExposeDataController
+class AdminController
 {
+    private $dm = null;
+    private $expose = null;
+
+    public function __construct()
+    {
+        $this->dm = new DatabaseMethods();
+        $this->expose = new ExposeDataController();
+    }
 
     public function getAcademicPeriod()
     {
         $query = "SELECT YEAR(`start_date`) AS start_year, YEAR(`end_date`) AS end_year, info 
                 FROM admission_period WHERE active = 1";
-        return $this->getData($query);
+        return $this->dm->getData($query);
+    }
+
+    public function getCurrentAdmissionPeriodID()
+    {
+        return $this->dm->getID("SELECT `id` FROM `admission_period` WHERE `active` = 1");
     }
 
     public function fetchPrograms(int $type)
@@ -23,41 +37,209 @@ class AdminController extends ExposeDataController
         } else {
             $query = "SELECT * FROM programs";
         }
-        return $this->getData($query, $param);
+        return $this->dm->getData($query, $param);
     }
 
     // For admin settings
-    public function fetchAllFormDetails()
+
+
+    /**
+     * CRUD for form price
+     */
+
+    public function fetchAllFormPriceDetails()
     {
-        $query = "SELECT ft.id, ft.name, fp.amount, fp.admin_period FROM form_type AS ft INNER JOIN form_price AS fp ON ft.id = fp.form_type";
-        return $this->getData($query);
+        $query = "SELECT fp.id, ft.name, fp.amount, fp.admin_period 
+                FROM form_type AS ft, form_price AS fp, admission_period AS ap 
+                WHERE ft.id = fp.form_type AND ap.id = fp.admin_period AND ap.active = 1";
+        return $this->dm->inputData($query);
     }
 
-    public function addUpdateFormPrice($form_type, $form_price)
+    public function fetchFormPrice($form_price_id)
     {
-        $query = "REPLACE INTO form_type (id, `name`, alt_name) VALUES()";
+        $query = "SELECT fp.id AS fp_id, fp.id AS ft_id, ft.name, fp.amount, fp.admin_period 
+                FROM form_type AS ft, form_price AS fp, admission_period AS ap 
+                WHERE ft.id = fp.form_type AND ap.id = fp.admin_period AND 
+                ap.active = 1 AND fp.id = :i";
+        return $this->dm->inputData($query, array(":i" => $form_price_id));
     }
+
+    public function addFormPrice($form_type, $form_price)
+    {
+        $query = "INSERT INTO form_price (form_type, admin_period, amount) VALUES(:ft, :ap, :a)";
+        $params = array(":ft" => $form_type, ":ap" => $this->getCurrentAdmissionPeriodID(), ":a" => $form_price);
+        return $this->dm->inputData($query, $params);
+    }
+
+    public function updateFormPrice($form_type, $form_price)
+    {
+        $query = "UPDATE form_price SET amount = :a WHERE form_type = :ft AND admin_period = :ap";
+        $params = array(":ft" => $form_type, ":ap" => $this->getCurrentAdmissionPeriodID(), ":a" => $form_price);
+        return $this->dm->inputData($query, $params);
+    }
+
+    public function deleteFormPrice($form_price_id)
+    {
+        $query = "DELETE FROM form_price WHERE id = :i";
+        $params = array(":i" => $form_price_id);
+        return $this->dm->inputData($query, $params);
+    }
+
+    /**
+     * CRUD for vendor
+     */
+
     public function fetchAllVendorDetails()
     {
-        return $this->getData("SELECT * FROM vendor_details");
+        return $this->dm->getData("SELECT * FROM vendor_details WHERE `type` <> 'ONLINE'");
     }
+
+    public function fetchVendor($vendor_id)
+    {
+        $query = "SELECT * FROM vendor_details WHERE id = :i";
+        return $this->dm->inputData($query, array(":i" => $vendor_id));
+    }
+
+    public function addVendor($v_name, $v_tin, $v_email, $v_phone, $v_address)
+    {
+        $query = "INSERT INTO vendor_details (`id`, `type`, `vendor_name`, `tin`, `email_address`, `phone_number`, `address`) 
+                VALUES(:id, :tp, :nm, :tn, :ea, :pn, :ad)";
+        $params = array(
+            ":id" => time(), ":tp" => "VENDOR", ":nm" => $v_name, ":tn" => $v_tin,
+            ":ea" => $v_email, ":pn" => $v_phone, ":ad" => $v_address
+        );
+        if ($this->dm->inputData($query, $params)) {
+
+            $username = $v_email;
+            $password = $this->expose->genVendorPin();
+
+            $subject = "RMU Vendor Registration";
+            $message = "Hi " . $v_name . ", </br></br>";
+            $message .= "Thank you for your partnership! Please find below your Login details. </br></br>";
+            $message .= "<div style='width: 100%; height:300px; color: #fff; background-color: #909090; display: flex; flex-direction: column; align-items: center;'>";
+            $message .= "<p style='font-weight: bold; font-size: 24px'>Username: " . $username . "</p>";
+            $message .= "<p style='font-weight: bold; font-size: 24px'>Password: " . $password . "</p>";
+            $message .= "</div> </br></br>";
+            $message .= "<span style='color:red; font-weight:bold'>Don't let anyone see your login password</span>" . $v_name . ", </br>";
+            return $this->expose->sendEmail($v_email, $subject, $message);
+        }
+        return 0;
+    }
+
+    public function updateVendor($v_id, $v_name, $v_tin, $v_email, $v_phone, $v_address)
+    {
+        $query = "UPDATE vendor_details SET `vendor_name` = :nm, `tin` = :tn, 
+                `email_address` = :ea, `phone_number` = :pn, `address` = :ad
+                WHERE id = :id";
+        $params = array(
+            ":id" => $v_id, ":nm" => $v_name, ":tn" => $v_tin,
+            ":ea" => $v_email, ":pn" => $v_phone, ":ad" => $v_address
+        );
+        return $this->dm->inputData($query, $params);
+    }
+
+    public function deleteVendor($form_price_id)
+    {
+        $query = "DELETE FROM vendor_details WHERE id = :i";
+        $params = array(":i" => $form_price_id);
+        return $this->dm->inputData($query, $params);
+    }
+
+    /**
+     * CRUD for programme
+     */
 
     public function fetchAllPrograms()
     {
         $query = "SELECT p.`id`, p.`name`, f.name AS `type`, p.`weekend`, p.`group` 
                 FROM programs AS p, form_type AS f WHERE p.type = f.id";
-        return $this->getData($query);
+        return $this->dm->getData($query);
     }
+
+    public function fetchProgramme($prog_id)
+    {
+        $query = "SELECT p.`id`, p.`name`, f.id AS `type`, p.`weekend`, p.`group` 
+                FROM programs AS p, form_type AS f WHERE p.type = f.id AND p.id = :i";
+        return $this->dm->getData($query, array(":i" => $prog_id));
+    }
+
+    public function addProgramme($prog_name, $prog_type, $prog_wkd, $prog_grp)
+    {
+        $query = "INSERT INTO programs (`name`, `type`, `weekend`, `group`) VALUES(:n, :t, :w, :g)";
+        $params = array(
+            ":n" => strtoupper($prog_name), ":t" => $prog_type, ":w" => $prog_wkd, ":g" => $prog_grp
+        );
+        return $this->dm->inputData($query, $params);
+    }
+
+    public function updateProgramme($prog_id, $prog_name, $prog_type, $prog_wkd, $prog_grp)
+    {
+        $query = "UPDATE programs SET `name` = :n, `type` = :t, `weekend` = :w, `group` = :g WHERE id = :i";
+        $params = array(
+            ":n" => strtoupper($prog_name), ":t" => $prog_type, ":w" => $prog_wkd, ":g" => $prog_grp, ":i" => $prog_id
+        );
+        return $this->dm->inputData($query, $params);
+    }
+
+    public function deleteProgramme($prog_id)
+    {
+        $query = "DELETE FROM programs WHERE id = :i";
+        return $this->dm->inputData($query, array(":i" => $prog_id));
+    }
+
+    /**
+     * CRUD for Admission Period
+     */
+
+    public function fetchCurrentAdmissionPeriod()
+    {
+        return $this->dm->getData("SELECT * FROM admission_period WHERE `active` = 1");
+    }
+
+    public function fetchAdmissionPeriod($adp_id)
+    {
+        $query = "SELECT * FROM admission_period WHERE id = :i";
+        return $this->dm->inputData($query, array(":i" => $adp_id));
+    }
+
+    public function addAdmissionPeriod($adp_start, $adp_end, $adp_info)
+    {
+        if ($this->fetchCurrentAdmissionPeriod()) {
+            return array("success" => false, "message" => "Can't open admission period! One already open.");
+        }
+        $query = "INSERT INTO admission_period (`start_date`, `end_date`, `info`, `active`) 
+                VALUES(:sd, :ed, :i, :a)";
+        $params = array(":sd" => $adp_start, ":ed" => $adp_end, ":i" => $adp_info, ":a" => 1);
+        if ($this->dm->inputData($query, $params)) {
+            return array("success" => true, "message" => "Successfully added vendor!");
+        }
+        return array("success" => false, "message" => "Failed to open new admission!");
+    }
+
+    public function updateAdmissionPeriod($adp_id, $adp_end, $adp_info)
+    {
+        $query = "UPDATE admission_period SET `end_date` = :ed, `info` = :i WHERE id = :id AND active = 1";
+        $params = array(":ed" => $adp_end, ":i" => $adp_info, ":id" => $adp_id);
+        return $this->dm->inputData($query, $params);
+    }
+
+    public function closeAdmissionPeriod($adp_id)
+    {
+        $query = "UPDATE admission_period SET active = 0 WHERE id = :i";
+        return $this->dm->inputData($query, array(":i" => $adp_id));
+    }
+
+    // end of setups
 
     public function fetchAvailableformTypes()
     {
-        return $this->getData("SELECT * FROM form_type");
+        return $this->dm->getData("SELECT * FROM form_type");
     }
 
     public function getFormTypeName(int $form_type)
     {
         $query = "SELECT * FROM form_type WHERE id = :i";
-        return $this->getData($query, array(":i" => $form_type));
+        return $this->dm->getData($query, array(":i" => $form_type));
     }
 
     public function fetchAllAwaitingApplicationsBS()
@@ -70,7 +252,7 @@ class AdminController extends ExposeDataController
                 WHERE
                     al.id = ab.app_login AND al.purchase_id = pd.id AND 
                     ap.id = pd.admission_period AND ab.awaiting_result = 1 AND ap.active = 1";
-        return $this->getData($query);
+        return $this->dm->getData($query);
     }
 
     /**
@@ -86,7 +268,7 @@ class AdminController extends ExposeDataController
                 WHERE
                     pd.form_type = ft.id AND pd.admission_period = ap.id AND 
                     pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1";
-        return $this->getData($query);
+        return $this->dm->getData($query);
     }
 
     public function fetchTotalPostgradsFormsSold()
@@ -99,7 +281,7 @@ class AdminController extends ExposeDataController
             pd.form_type = ft.id AND pd.admission_period = ap.id AND 
             pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
             AND ft.name LIKE '%Post%' OR ft.name LIKE '%Master%'";
-        return $this->getData($query);
+        return $this->dm->getData($query);
     }
 
     public function fetchTotalUdergradsFormsSold()
@@ -112,7 +294,7 @@ class AdminController extends ExposeDataController
             pd.form_type = ft.id AND pd.admission_period = ap.id AND 
             pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
             AND (ft.name LIKE '%Degree%' OR ft.name LIKE '%Diploma%')";
-        return $this->getData($query);
+        return $this->dm->getData($query);
     }
 
     public function fetchTotalShortCoursesFormsSold()
@@ -125,7 +307,7 @@ class AdminController extends ExposeDataController
             pd.form_type = ft.id AND pd.admission_period = ap.id AND 
             pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
             AND ft.name LIKE '%Short%'";
-        return $this->getData($query);
+        return $this->dm->getData($query);
     }
 
     public function fetchTotalVendorsFormsSold()
@@ -138,7 +320,7 @@ class AdminController extends ExposeDataController
             pd.form_type = ft.id AND pd.admission_period = ap.id AND 
             pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
             AND v.vendor_name NOT LIKE '%ONLINE%'";
-        return $this->getData($query);
+        return $this->dm->getData($query);
     }
 
     public function fetchTotalOnlineFormsSold()
@@ -151,7 +333,7 @@ class AdminController extends ExposeDataController
             pd.form_type = ft.id AND pd.admission_period = ap.id AND 
             pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
             AND v.vendor_name LIKE '%ONLINE%'";
-        return $this->getData($query);
+        return $this->dm->getData($query);
     }
 
     /**
@@ -168,7 +350,7 @@ class AdminController extends ExposeDataController
                     pd.form_type = ft.id AND pd.admission_period = ap.id AND 
                     pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
                 GROUP BY pd.vendor";
-        return $this->getData($query);
+        return $this->dm->getData($query);
     }
 
     public function fetchFormsSoldStatsByPaymentMethod()
@@ -182,7 +364,7 @@ class AdminController extends ExposeDataController
                     pd.form_type = ft.id AND pd.admission_period = ap.id AND 
                     pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
                 GROUP BY pd.payment_method";
-        return $this->getData($query);
+        return $this->dm->getData($query);
     }
 
     public function fetchFormsSoldStatsByFormType()
@@ -196,7 +378,7 @@ class AdminController extends ExposeDataController
                     pd.form_type = ft.id AND pd.admission_period = ap.id AND 
                     pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
                 GROUP BY pd.form_type";
-        return $this->getData($query);
+        return $this->dm->getData($query);
     }
 
     public function fetchFormsSoldStatsByCountry()
@@ -210,7 +392,7 @@ class AdminController extends ExposeDataController
                     pd.form_type = ft.id AND pd.admission_period = ap.id AND 
                     pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
                 GROUP BY pd.country_code";
-        return $this->getData($query);
+        return $this->dm->getData($query);
     }
 
     public function fetchFormsSoldStatsByPurchaseStatus()
@@ -224,7 +406,7 @@ class AdminController extends ExposeDataController
                     pd.form_type = ft.id AND pd.admission_period = ap.id AND 
                     pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
                 GROUP BY pd.status";
-        return $this->getData($query);
+        return $this->dm->getData($query);
     }
 
     /**
@@ -286,7 +468,7 @@ class AdminController extends ExposeDataController
                     p.app_login = al.id AND pi.app_login = al.id AND fs.app_login = al.id AND
                     pd.admission_period = ap.id AND pd.form_type = ft.id AND pd.id = al.purchase_id AND 
                     ap.active = 1 $SQL_COND";
-        return $this->getData($query);
+        return $this->dm->getData($query);
     }
 
     public function fetchAllSubmittedOrUnsubmittecApplication(bool $submitted, $SQL_COND)
@@ -302,7 +484,7 @@ class AdminController extends ExposeDataController
                     p.app_login = al.id AND pi.app_login = al.id AND fs.app_login = al.id AND
                     pd.admission_period = ap.id AND pd.form_type = ft.id AND pd.id = al.purchase_id AND 
                     ap.active = 1 AND fs.declaration = :s $SQL_COND";
-        return $this->getData($query, array(":s" => (int) $submitted));
+        return $this->dm->getData($query, array(":s" => (int) $submitted));
     }
 
     public function fetchAllAdmittedOrUnAdmittedApplication(bool $admitted, $SQL_COND)
@@ -318,7 +500,7 @@ class AdminController extends ExposeDataController
                     p.app_login = al.id AND pi.app_login = al.id AND fs.app_login = al.id AND
                     pd.admission_period = ap.id AND pd.form_type = ft.id AND pd.id = al.purchase_id AND 
                     ap.active = 1 AND fs.admitted = :s $SQL_COND";
-        return $this->getData($query, array(":s" => (int) $admitted));
+        return $this->dm->getData($query, array(":s" => (int) $admitted));
     }
 
     public function fetchAllAwaitingApplication($SQL_COND)
@@ -334,7 +516,7 @@ class AdminController extends ExposeDataController
                     p.app_login = al.id AND pi.app_login = al.id AND fs.app_login = al.id AND ab.app_login = al.id AND
                     pd.admission_period = ap.id AND pd.form_type = ft.id AND pd.id = al.purchase_id AND 
                     ap.active = 1 AND fs.declaration = 1 AND ab.awaiting_result = 1$SQL_COND";
-        return $this->getData($query);
+        return $this->dm->getData($query);
     }
 
     public function fetchTotalApplications(int $form_type = 100)
@@ -347,7 +529,7 @@ class AdminController extends ExposeDataController
                 WHERE 
                     ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id 
                     AND pd.form_type = ft.id";
-            return $this->getData($query);
+            return $this->dm->getData($query);
         } else {
             $query = "SELECT 
                     COUNT(*) AS total 
@@ -356,7 +538,7 @@ class AdminController extends ExposeDataController
                 WHERE 
                     ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id 
                     AND pd.form_type = ft.id AND ft.id = :f";
-            return $this->getData($query, array(":f" => $form_type));
+            return $this->dm->getData($query, array(":f" => $form_type));
         }
     }
 
@@ -368,7 +550,7 @@ class AdminController extends ExposeDataController
                 WHERE 
                     ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id 
                 AND pd.form_type = ft.id AND fc.declaration = :s AND ft.id = :f";
-        return $this->getData($query, array(":s" => (int) $submitted, ":f" => $form_type));
+        return $this->dm->getData($query, array(":s" => (int) $submitted, ":f" => $form_type));
     }
 
     public function fetchTotalAdmittedOrUnadmittedApplicants(int $form_type, bool $admitted = true)
@@ -377,7 +559,7 @@ class AdminController extends ExposeDataController
                 FROM purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, form_type AS ft
                 WHERE ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id AND 
                 pd.form_type = ft.id AND fc.`admitted` = :s AND ft.id = :f";
-        return $this->getData($query, array(":s" => (int) $admitted, ":f" => $form_type));
+        return $this->dm->getData($query, array(":s" => (int) $admitted, ":f" => $form_type));
     }
 
     public function fetchTotalAwaitingResultsByFormType(int $form_type)
@@ -387,7 +569,7 @@ class AdminController extends ExposeDataController
                 academic_background AS ab 
                 WHERE ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id AND 
                 ab.app_login = al.id AND pd.form_type = ft.id AND fc.`declaration` = 1 AND ab.`awaiting_result` = 1 AND ft.id = :f";
-        return $this->getData($query, array(":f" => $form_type));
+        return $this->dm->getData($query, array(":f" => $form_type));
     }
 
     public function fetchTotalAwaitingResults()
@@ -397,7 +579,7 @@ class AdminController extends ExposeDataController
                 academic_background AS ab 
                 WHERE ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id AND 
                 ab.app_login = al.id AND pd.form_type = ft.id AND fc.`declaration` = 1 AND ab.`awaiting_result` = 1";
-        return $this->getData($query);
+        return $this->dm->getData($query);
     }
 
     public function getAllAdmitedApplicants($cert_type)
@@ -411,7 +593,7 @@ class AdminController extends ExposeDataController
                 FROM `personal_information` AS p, `applicants_login` AS a, broadsheets AS b, programs AS pg,  academic_background AS ab  
                 WHERE p.app_login = a.id AND b.app_login = a.id AND ab.app_login = a.id AND pg.id = b.program_id AND 
                 a.id IN (SELECT b.app_login AS id FROM broadsheets AS b) $in_query";
-        return $this->getData($query);
+        return $this->dm->getData($query);
     }
 
     public function getAllUnadmitedApplicants($certificate, $progCategory)
@@ -431,7 +613,7 @@ class AdminController extends ExposeDataController
             $param = array(":c" => $certificate);
         }
 
-        return $this->getData($query, $param);
+        return $this->dm->getData($query, $param);
     }
 
     public function getAppCourseSubjects(int $loginID)
@@ -442,13 +624,13 @@ class AdminController extends ExposeDataController
                     academic_background AS a, high_school_results AS r, applicants_login AS l
                 WHERE 
                     l.`id` = a.`app_login` AND r.`acad_back_id` = a.`id` AND a.`id` = :i";
-        return $this->getData($query, array(":i" => $loginID));
+        return $this->dm->getData($query, array(":i" => $loginID));
     }
 
     public function getAppProgDetails($program)
     {
         $query = "SELECT `id`, `type`, `group` FROM programs WHERE `name` = :p";
-        return $this->getData($query, array(":p" => $program));
+        return $this->dm->getData($query, array(":p" => $program));
     }
 
     public function bundleApplicantsData($data, $prog_category = "")
@@ -506,7 +688,7 @@ class AdminController extends ExposeDataController
             ":ts" => $admitted_data["total_score"],
             ":pc" => $prog_choice
         );
-        $this->inputData($query, $params);
+        $this->dm->inputData($query, $params);
     }
 
     /*
@@ -554,12 +736,12 @@ class AdminController extends ExposeDataController
 
             if ($qualified) {
                 $query = "UPDATE `form_sections_chek` SET `admitted` = 1, `$prog_choice` = 1 WHERE `app_login` = :i";
-                $this->getData($query, array(":i" => $app_result["id"]));
+                $this->dm->getData($query, array(":i" => $app_result["id"]));
                 return $qualified;
             }
         } else {
             $query = "UPDATE `form_sections_chek` SET`admitted` = 0,  `$prog_choice` = 1 WHERE `app_login` = :i";
-            $this->getData($query, array(":i" => $app_result["id"]));
+            $this->dm->getData($query, array(":i" => $app_result["id"]));
             return $qualified;
         }
     }
@@ -720,41 +902,6 @@ class AdminController extends ExposeDataController
 
         return $final_result;
     }
-
-    /*
-    * Admit applicants in groups by their certificate category
-    */
-    /*public function admitStudentsByCertCat($cat_A_stds_data, $qualify_cat, $certificate)
-    {
-        $final_result = [];
-        switch ($qualify_cat) {
-            case 'A':
-                foreach ($cat_A_stds_data as $data) {
-                    array_push($final_result, $this->admitByCatA($data, $certificate));
-                }
-                break;
-            case 'B':
-                foreach ($cat_A_stds_data as $data) {
-                    array_push($final_result, $this->admitByCatB($data, $certificate));
-                }
-                break;
-            case 'C':
-                foreach ($cat_A_stds_data as $data) {
-                    array_push($final_result, $this->admitByCatC($data, $certificate));
-                }
-                break;
-            case 'D':
-                foreach ($cat_A_stds_data as $data) {
-                    array_push($final_result, $this->admitByCatD($data, $certificate));
-                }
-                break;
-
-            default:
-                $final_result["message"] = "No match found for this category";
-                break;
-        }
-        return $final_result;
-    }*/
 
     public function admitQualifiedStudents($certificate, $progCategory)
     {
