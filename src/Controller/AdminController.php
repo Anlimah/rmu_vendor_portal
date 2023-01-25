@@ -191,6 +191,11 @@ class AdminController
      * CRUD for Admission Period
      */
 
+    public function fetchAllAdmissionPeriod()
+    {
+        return $this->dm->getData("SELECT * FROM admission_period ORDER BY `end_date` ASC");
+    }
+
     public function fetchCurrentAdmissionPeriod()
     {
         return $this->dm->getData("SELECT * FROM admission_period WHERE `active` = 1");

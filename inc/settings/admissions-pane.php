@@ -16,18 +16,24 @@
                     </thead>
                     <tbody>
                         <?php
-                        $ad_p = $admin->fetchCurrentAdmissionPeriod();
+                        $ad_p = $admin->fetchAllAdmissionPeriod();
                         if (!empty($ad_p)) {
                             foreach ($ad_p as $ad) {
                         ?>
                                 <tr>
                                     <td><?= $ad["start_date"] ?></td>
                                     <td><?= $ad["end_date"] ?></td>
-                                    <td id="<?= $ad["id"] ?>" class="edit-adp"><span style="cursor:pointer;" class="bi bi-pencil-square text-primary" title="Edit admission period"></span></td>
-                                    <td id="<?= $ad["id"] ?>" class="close-adp">
-                                        <button class="btn btn-danger btn-sm">
-                                            <span style="cursor:pointer;" class="bi bi-door-closed text-default" title="Edit admission period"></span> Close
-                                        </button>
+                                    <td>
+                                        <?php if ($ad["active"]) { ?>
+                                            <span id="<?= $ad["id"] ?>" style="cursor:pointer;" class="edit-adp bi bi-pencil-square text-primary" title="Edit admission period"></span>
+                                        <?php } ?>
+                                    </td>
+                                    <td>
+                                        <?php if ($ad["active"]) { ?>
+                                            <button id="<?= $ad["id"] ?>" class="btn btn-danger btn-sm">
+                                                <span style="cursor:pointer;" class="bi bi-door-closed text-default" title="Edit admission period"></span> Close
+                                            </button>
+                                        <?php } ?>
                                     </td>
                                 </tr>
                         <?php }
