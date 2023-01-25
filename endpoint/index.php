@@ -202,7 +202,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     }
     //
     elseif ($_GET["url"] == "downloadAwaiting") {
-        $url = "https://office.rmuictonline.com/download-bs.php?a=as&c=awaiting";
+        $url = "https://office.rmuictonline.com/download-awaiting-ds.php?a=as&c=awaiting";
         die(json_encode(array("success" => true, "message" => $url)));
     }
     //
