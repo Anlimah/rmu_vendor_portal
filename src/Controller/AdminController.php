@@ -640,13 +640,13 @@ class AdminController
                 FROM 
                     academic_background AS a, high_school_results AS r, applicants_login AS l
                 WHERE 
-                    l.`id` = a.`app_login` AND r.`acad_back_id` = a.`id` AND a.`id` = :i";
+                    l.`id` = a.`app_login` AND r.`acad_back_id` = a.`id` AND l.`id` = :i";
         return $this->dm->getData($query, array(":i" => $loginID));
     }
 
     public function getAppProgDetails($program)
     {
-        $query = "SELECT `id`, `type`, `group` FROM programs WHERE `name` = :p";
+        $query = "SELECT `id`, `name` `type`, `group`, `weekend` FROM programs WHERE `name` = :p";
         return $this->dm->getData($query, array(":p" => $program));
     }
 
