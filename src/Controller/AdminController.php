@@ -235,7 +235,7 @@ class AdminController
 
     public function updateAdmissionPeriod($adp_id, $adp_end, $adp_info)
     {
-        $query = "UPDATE admission_period SET `end_date` = :ed, `info` = :i WHERE id = :id AND active = 1";
+        $query = "UPDATE admission_period SET `end_date` = :ed, `info` = :i WHERE id = :id";
         $params = array(":ed" => $adp_end, ":i" => $adp_info, ":id" => $adp_id);
         return $this->dm->inputData($query, $params);
     }

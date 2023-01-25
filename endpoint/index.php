@@ -376,7 +376,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
                 break;
 
             case 'update':
-                $rslt = $admin->updateAdmissionPeriod($_POST["adp-id"], $_POST["adp-start"], $_POST["adp-end"], $_POST["adp-desc"]);
+                $rslt = $admin->updateAdmissionPeriod($_POST["adp-id"], $_POST["adp-start"], $_POST["adp-desc"]);
                 if (!$rslt) {
                     die(json_encode(array("success" => false, "message" => "Failed to update admission information!")));
                 }

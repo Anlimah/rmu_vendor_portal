@@ -49,7 +49,7 @@
                             </div>
                             <div style="display: flex; flex-direction:row; justify-content: space-between">
                                 <div class="mb-2 me-2">
-                                    <label for="v-tin">TIN</label>
+                                    <label for="v-tin">Ghana Card</label>
                                     <input type="text" class="form-control form-control-sm" name="v-tin" id="v-tin" placeholder="TIN">
                                 </div>
                                 <div class="mb-2">
@@ -64,7 +64,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="v-address">Address</label>
-                                    <textarea type="text" rows="1" class="form-control form-control-sm" name="v-address" id="form-address" placeholder="0.00"></textarea>
+                                    <textarea type="text" rows="1" class="form-control form-control-sm" name="v-address" id="form-address" placeholder="Address"></textarea>
                                 </div>
                             </div>
                             <div>

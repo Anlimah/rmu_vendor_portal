@@ -4,12 +4,13 @@
         <div class="row">
             <div class="col-lg-1">
             </div>
-            <div class="col-lg-5">
+            <div class="col-lg-6">
                 <table class="table table-striped">
                     <thead>
                         <tr>
                             <th scope="col">Start Date</th>
                             <th scope="col">End Date</th>
+                            <th scope="col">Description</th>
                             <th scope="col"></th>
                             <th scope="col"></th>
                         </tr>
@@ -23,6 +24,7 @@
                                 <tr>
                                     <td><?= $ad["start_date"] ?></td>
                                     <td><?= $ad["end_date"] ?></td>
+                                    <td><?= $ad["info"] ?></td>
                                     <td>
                                         <?php if ($ad["active"]) { ?>
                                             <span id="<?= $ad["id"] ?>" style="cursor:pointer;" class="edit-adp bi bi-pencil-square text-primary" title="Edit admission period"></span>
@@ -46,7 +48,7 @@
             <div class="col-lg-1">
             </div>
 
-            <div class="col-lg-5">
+            <div class="col-lg-4">
                 <form id="addOrUpdateAdmisPeriodForm" method="post" enctype="multipart/form-data">
                     <div class="card">
                         <h5 class="card-header">Set New Admission Period</h5>
