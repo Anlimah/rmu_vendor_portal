@@ -84,8 +84,31 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
     // All POST request will be sent here
 } elseif ($_SERVER['REQUEST_METHOD'] == "POST") {
+    if ($_GET["url"] == "admin-login") {
+        if (!isset($_SESSION["_adminLogToken"]) || empty($_SESSION["_adminLogToken"]))
+            die(json_encode(array("success" => false, "message" => "Invalid request: 1!")));
+        if (!isset($_POST["_vALToken"]) || empty($_POST["_vALToken"]))
+            die(json_encode(array("success" => false, "message" => "Invalid request: 2!")));
+        if ($_POST["_vALToken"] !== $_SESSION["_adminLogToken"]) {
+            die(json_encode(array("success" => false, "message" => "Invalid request: 3!")));
+        }
+        $username = $expose->validateText($_POST["username"]);
+        $password = $expose->validatePassword($_POST["password"]);
+
+        $result = $admin->verifyAdminLogin($username["message"], $password["message"]);
+
+        if (!$result) {
+            die(json_encode(array("response" => "error", "message" => "Incorrect application username or password! ")));
+        } else {
+            $_SESSION['admin'] = $result["id"];
+            $_SESSION['role'] = $result["type"];
+            $_SESSION['adminLogSuccess'] = true;
+            die(json_encode(array("success" => true)));
+        }
+    }
+
     //
-    if ($_GET["url"] == "apps-data") {
+    elseif ($_GET["url"] == "apps-data") {
         if (!isset($_POST["action"]) || !isset($_POST["form_t"])) die(json_encode(array("success" => false, "message" => "Invalid input!")));
         if (empty($_POST["action"]) || empty($_POST["form_t"])) die(json_encode(array("success" => false, "message" => "Missing request!")));
 

@@ -16,6 +16,18 @@ class AdminController
         $this->expose = new ExposeDataController();
     }
 
+    public function verifyAdminLogin($username, $password)
+    {
+        $sql = "SELECT `user_type`, `id`, `password` FROM `sys_users` WHERE `user_name` = :u";
+        $data = $this->dm->getData($sql, array(':u' => $username));
+        if (!empty($data)) {
+            if (password_verify($password, $data[0]["password"])) {
+                return array("id" => $data[0]["id"], "type" => $data[0]["user_type"]);
+            }
+        }
+        return 0;
+    }
+
     public function getAcademicPeriod()
     {
         $query = "SELECT YEAR(`start_date`) AS start_year, YEAR(`end_date`) AS end_year, info 
