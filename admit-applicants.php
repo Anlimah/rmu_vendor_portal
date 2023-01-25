@@ -1,4 +1,31 @@
 <?php
+session_start();
+//echo $_SERVER["HTTP_USER_AGENT"];
+if (isset($_SESSION["adminLogSuccess"]) && $_SESSION["adminLogSuccess"] == true && isset($_SESSION["admin"]) && !empty($_SESSION["admin"])) {
+} else {
+  header("Location: login.php");
+}
+
+if (isset($_GET['logout'])) {
+  session_destroy();
+  $_SESSION = array();
+  if (ini_get("session.use_cookies")) {
+    $params = session_get_cookie_params();
+    setcookie(
+      session_name(),
+      '',
+      time() - 42000,
+      $params["path"],
+      $params["domain"],
+      $params["secure"],
+      $params["httponly"]
+    );
+  }
+
+  header('Location: login.php');
+}
+?>
+<?php
 require_once('bootstrap.php');
 
 use Src\Controller\AdminController;
