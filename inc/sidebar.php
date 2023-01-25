@@ -10,7 +10,7 @@
         </li><!-- End Dashboard Nav -->
 
         <li class="nav-item">
-            <a class="nav-link collapsed" href="applicants.php">
+            <a class="nav-link collapsed" href="applications.php">
                 <i class="bi bi-people"></i>
                 <span>Application</span>
             </a>

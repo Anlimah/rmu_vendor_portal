@@ -53,6 +53,7 @@ require_once('inc/page-data.php');
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.php">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="applications.php">Applications</a></li>
                     <li class="breadcrumb-item active">Settings</li>
                 </ol>
             </nav>

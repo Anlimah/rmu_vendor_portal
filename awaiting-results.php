@@ -52,7 +52,7 @@ require_once('inc/page-data.php');
       <h1>Awaiting</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item"><a href="index.php">Home</a></li>
           <li class="breadcrumb-item"><a href="applications.php">Applications</a></li>
           <li class="breadcrumb-item active">Awaiting</li>
         </ol>
