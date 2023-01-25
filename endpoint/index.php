@@ -19,7 +19,8 @@ die(json_encode($input));*/
 require "../bootstrap.php";
 
 use Src\Controller\AdminController;
-use Src\Controller\ExcelDataController;
+use Src\Controller\DownloadExcelDataController;
+use Src\Controller\UploadExcelDataController;
 use Src\Controller\ExposeDataController;
 
 $expose = new ExposeDataController();
@@ -216,7 +217,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         switch ($_POST["action"]) {
                 // download broadsheet dbs
             case 'dbs':
-                $broadsheet = new ExcelDataController($_POST['c']);
+                $broadsheet = new DownloadExcelDataController($_POST['c']);
                 $file = $broadsheet->generateFile();
                 $result = $broadsheet->downloadFile($file);
                 break;
@@ -238,7 +239,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
                 $endRow = $expose->validateNumber($_POST['endRow']);
                 if (!$endRow["success"]) die(json_encode($endRow));
 
-                $excelData = new ExcelDataController($_FILES["awaiting-ds"], $_POST['startRow'], $_POST['endRow']);
+                $excelData = new UploadExcelDataController($_FILES["awaiting-ds"], $_POST['startRow'], $_POST['endRow']);
                 $result = $excelData->extractAwaitingApplicantsResults();
                 break;
         }

@@ -72,17 +72,27 @@ require_once('inc/page-data.php');
                   <div class="card-body">
                     <h5 class="card-title" style="text-align: center;"> Download/Upload Awaiting Datasheet</h5>
                     <div style="display: flex; flex-direction:column; align-items: center; justify-content:center;">
+
                       <div id="data-upload-form">
                         <p id="upload-notification" class="text-success"></p>
-                        <label class="btn btn-warning me-4" id="downloadBtn" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Export current list of awaiting applications to an excel file"><i class="bi bi-download"></i> Download</label>
-                        <label for="awaiting-ds" class="btn btn-danger" id="uploadBtn" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Upload data of awaiting applications"><i class="bi bi-upload"></i> Upload</label>
+
+                        <label class="btn btn-warning me-4" id="downloadBtn" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Export current list of awaiting applications to an excel file">
+                          <i class="bi bi-download"></i> Download
+                        </label>
+
+                        <label for="awaiting-ds" class="btn btn-danger" id="uploadBtn" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Upload data of awaiting applications">
+                          <i class="bi bi-upload"></i> Upload
+                        </label>
+
                         <form id="upload-awaiting-form" action="" method="post">
                           <input type="file" name="awaiting-ds" id="awaiting-ds" style="display: none;" accept=".xlsx,.xls,pplication/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
                           <input type="hidden" name="action" value="uad">
                           <input type="hidden" name="startRow" value="1">
                           <input type="hidden" name="endRow" value="0">
                         </form>
+
                       </div>
+
                       <div id="data-process-info" class="mt-4" style="display:none !important; width:100% !important; display:flex; flex-direction:column; align-items:center">
                         <h5 class="text-center">Upload Summary</h5>
                         <ol class="list-group list-group-horizontal" style="font-size: 12px !important; font-family: Verdana, Arial, Tahoma, Serif !important;">
@@ -203,27 +213,6 @@ require_once('inc/page-data.php');
         if (getUrlVars()["exttrid"] != "" || getUrlVars()["exttrid"] != undefined) {}
       }
 
-      $('#admit-all-bs').click(function() {
-        data = {
-          "cert-type": $("#cert-type").val(),
-          "prog-type": $("#prog-type").val(),
-        }
-
-        $.ajax({
-          type: "POST",
-          url: "endpoint/admitAll",
-          data: data,
-          success: function(result) {
-            console.log(result);
-            if (result.success) fetchBroadsheet();
-
-          },
-          error: function(error) {
-            console.log(error);
-          }
-        });
-      });
-
       $("#awaiting-ds").change(function() {
         $("#upload-notification").text($(this).val()).show("slow");
 
@@ -258,6 +247,9 @@ require_once('inc/page-data.php');
       });
 
       $("#downloadBtn").click(function() {
+        let data = {
+          action: "dbs"
+        }
 
         $.ajax({
           type: "POST",
