@@ -126,13 +126,11 @@ class AdminController
             $password = $this->expose->genVendorPin();
 
             $subject = "RMU Vendor Registration";
-            $message = "Hi " . $v_name . ", </br></br>";
-            $message .= "Thank you for your partnership! Please find below your Login details. </br></br>";
-            $message .= "<div style='width: 100%; height:300px; color: #fff; background-color: #909090; display: flex; flex-direction: column; align-items: center;'>";
-            $message .= "<p style='font-weight: bold; font-size: 24px'>Username: " . $username . "</p>";
-            $message .= "<p style='font-weight: bold; font-size: 24px'>Password: " . $password . "</p>";
-            $message .= "</div> </br></br>";
-            $message .= "<span style='color:red; font-weight:bold'>Don't let anyone see your login password</span>" . $v_name . ", </br>";
+            $message = "<p style='margin-bottom: 10px'>Hi," . $v_name . " </p></br>";
+            $message .= "<p style='margin-bottom: 10px'>Find below your Login details.</p></br>";
+            $message .= "<p style='font-weight: bold; font-size: 18px'>Username: " . $username . "</p></br>";
+            $message .= "<p style='font-weight: bold; font-size: 18px'>Password: " . $password . "</p></br>";
+            $message .= "<p style='color:red; font-weight:bold; margin-top: 10px'>Don't let anyone see your login password</p></br>";
             return $this->expose->sendEmail($v_email, $subject, $message);
         }
         return 0;
@@ -244,6 +242,80 @@ class AdminController
     {
         $query = "UPDATE admission_period SET active = 0 WHERE id = :i";
         return $this->dm->inputData($query, array(":i" => $adp_id));
+    }
+
+
+    /**
+     * CRUD for user accounts
+     */
+
+    public function fetchAllSystemUsers()
+    {
+        return $this->dm->getData("SELECT * FROM sys_users");
+    }
+
+    public function fetchSystemUser($user_id)
+    {
+        $query = "SELECT * FROM sys_users WHERE id = :i";
+        return $this->dm->inputData($query, array(":i" => $user_id));
+    }
+
+    public function addSystemUser($first_name, $last_name, $email_addr, $user_type)
+    {
+        $password = $this->expose->genVendorPin();
+        $hashed_pw = password_hash($password, PASSWORD_DEFAULT);
+        $query = "INSERT INTO sys_users (`first_name`, `last_name`, `user_name`, `password`, `user_type`) 
+                VALUES(:fn, ln, :un, :pw, :ut)";
+        $params = array(
+            ":un" => $first_name, ":un" => $last_name, ":un" => $email_addr,
+            ":pw" => $hashed_pw, ":ut" => $user_type
+        );
+        if ($this->dm->inputData($query, $params)) {
+            $subject = "RMU System User";
+            $message = "<p>Hi " . $first_name . ", </p></br>";
+            $message .= "<p>Find below your Login details.</p></br>";
+            $message .= "<p style='font-weight: bold; font-size: 18px'>Username: " . $email_addr . "</p></br>";
+            $message .= "<p style='font-weight: bold; font-size: 18px'>Password: " . $password . "</p></br>";
+            $message .= "<p style='color:red; font-weight:bold'>Don't let anyone see your login password</p></br>";
+            return $this->expose->sendEmail($email_addr, $subject, $message);
+        }
+        return 0;
+    }
+
+    public function updateSystemUser($user_id, $email_addr, $user_type)
+    {
+        $query = "UPDATE sys_users SET `user_name` = :un, `user_type` = :ut WHERE id = :id";
+        $params = array(
+            ":id" => $user_id, ":un" => $email_addr, ":ut" => $user_type
+        );
+        return $this->dm->inputData($query, $params);
+    }
+
+    public function changeSystemUserPassword($user_id, $email_addr, $first_name)
+    {
+        $password = $this->expose->genVendorPin();
+        $hashed_pw = password_hash($password, PASSWORD_DEFAULT);
+        $query = "UPDATE sys_users SET `password` = :pw WHERE id = :id";
+        $params = array(
+            ":id" => $user_id, ":pw" => $hashed_pw
+        );
+        if ($this->dm->inputData($query, $params)) {
+            $subject = "RMU System User";
+            $message = "<p>Hi " . $first_name . ", </p></br>";
+            $message .= "<p>Find below your Login details.</p></br>";
+            $message .= "<p style='font-weight: bold; font-size: 18px'>Username: " . $email_addr . "</p></br>";
+            $message .= "<p style='font-weight: bold; font-size: 18px'>Password: " . $password . "</p></br>";
+            $message .= "<p style='color:red; font-weight:bold'>Don't let anyone see your login password</p></br>";
+            return $this->expose->sendEmail($email_addr, $subject, $message);
+        }
+        return 0;
+    }
+
+    public function deleteSystemUser($form_price_id)
+    {
+        $query = "DELETE FROM vendor_details WHERE id = :i";
+        $params = array(":i" => $form_price_id);
+        return $this->dm->inputData($query, $params);
     }
 
     // end of setups
