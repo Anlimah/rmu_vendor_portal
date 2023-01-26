@@ -138,7 +138,7 @@ class AdminController
             $message .= "<p style='font-weight: bold;'>Username: " . $v_email . "</p>";
             $message .= "<p style='font-weight: bold;'>Password: " . $password . "</p></br>";
             $message .= "<div>Please note the following: </div>";
-            $message .= "<ol style='color:red; font-weight:bold; list-style: none'>";
+            $message .= "<ol style='color:red; font-weight:bold;'>";
             $message .= "<li>Don't let anyone see your login password</li>";
             $message .= "<li>Access the portal and change your password</li>";
             $message .= "</ol></br>";
@@ -293,7 +293,7 @@ class AdminController
             $message .= "<p style='font-weight: bold;'>Username: " . $email_addr . "</p>";
             $message .= "<p style='font-weight: bold;'>Password: " . $password . "</p></br>";
             $message .= "<div>Please note the following: </div>";
-            $message .= "<ol style='color:red; font-weight:bold; list-style: none'>";
+            $message .= "<ol style='color:red; font-weight:bold;'>";
             $message .= "<li>Don't let anyone see your login password</li>";
             $message .= "<li>Access the portal and change your password</li>";
             $message .= "</ol></br>";
