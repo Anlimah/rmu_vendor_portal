@@ -114,23 +114,36 @@ class AdminController
 
     public function addVendor($v_name, $v_tin, $v_email, $v_phone, $v_address)
     {
-        $query = "INSERT INTO vendor_details (`id`, `type`, `vendor_name`, `tin`, `email_address`, `phone_number`, `address`) 
+        $query1 = "INSERT INTO vendor_details (`id`, `type`, `vendor_name`, `tin`, `email_address`, `phone_number`, `address`) 
                 VALUES(:id, :tp, :nm, :tn, :ea, :pn, :ad)";
-        $params = array(
-            ":id" => time(), ":tp" => "VENDOR", ":nm" => $v_name, ":tn" => $v_tin,
+        $vendor_id = time();
+        $params1 = array(
+            ":id" => $vendor_id, ":tp" => "VENDOR", ":nm" => $v_name, ":tn" => $v_tin,
             ":ea" => $v_email, ":pn" => $v_phone, ":ad" => $v_address
         );
-        if ($this->dm->inputData($query, $params)) {
 
-            $username = $v_email;
+        if ($this->dm->inputData($query1, $params1)) {
+
             $password = $this->expose->genVendorPin();
+            $hashed_pw = password_hash($password, PASSWORD_DEFAULT);
+
+            $query2 = "INSERT INTO vendor_login (`user_name`, `password`, `vendor`) VALUES(:un, :pw, :vi)";
+            $params2 = array(":un" => sha1($v_email), ":pw" => $hashed_pw, ":vi" => $vendor_id);
+
+            $this->dm->inputData($query2, $params2);
 
             $subject = "RMU Vendor Registration";
-            $message = "<p style='margin-bottom: 10px'>Hi," . $v_name . " </p></br>";
-            $message .= "<p style='margin-bottom: 10px'>Find below your Login details.</p></br>";
-            $message .= "<p style='font-weight: bold; font-size: 18px'>Username: " . $username . "</p></br>";
-            $message .= "<p style='font-weight: bold; font-size: 18px'>Password: " . $password . "</p></br>";
-            $message .= "<p style='color:red; font-weight:bold; margin-top: 10px'>Don't let anyone see your login password</p></br>";
+            $message = "<p>Hi," . $v_name . " </p></br>";
+            $message .= "<p>Find below your Login details.</p></br>";
+            $message .= "<p style='font-weight: bold;'>Username: " . $v_email . "</p>";
+            $message .= "<p style='font-weight: bold;'>Password: " . $password . "</p></br>";
+            $message .= "<div>Please note the following: </div>";
+            $message .= "<ol style='color:red; font-weight:bold; list-style: none'>";
+            $message .= "<li>Don't let anyone see your login password</li>";
+            $message .= "<li>Access the portal and change your password</li>";
+            $message .= "</ol></br>";
+            $message .= "<p><a href='office.rmuictonline.com'>Click here</a> to access portal.</ol>";
+
             return $this->expose->sendEmail($v_email, $subject, $message);
         }
         return 0;
@@ -264,19 +277,28 @@ class AdminController
     {
         $password = $this->expose->genVendorPin();
         $hashed_pw = password_hash($password, PASSWORD_DEFAULT);
+
         $query = "INSERT INTO sys_users (`first_name`, `last_name`, `user_name`, `password`, `user_type`) 
                 VALUES(:fn, :ln, :un, :pw, :ut)";
         $params = array(
             ":fn" => $first_name, ":ln" => $last_name, ":un" => $email_addr,
             ":pw" => $hashed_pw, ":ut" => $user_type
         );
+
         if ($this->dm->inputData($query, $params)) {
+
             $subject = "RMU System User";
             $message = "<p>Hi " . $first_name . ", </p></br>";
             $message .= "<p>Find below your Login details.</p></br>";
-            $message .= "<p style='font-weight: bold; font-size: 18px'>Username: " . $email_addr . "</p></br>";
-            $message .= "<p style='font-weight: bold; font-size: 18px'>Password: " . $password . "</p></br>";
-            $message .= "<p style='color:red; font-weight:bold'>Don't let anyone see your login password</p></br>";
+            $message .= "<p style='font-weight: bold;'>Username: " . $email_addr . "</p>";
+            $message .= "<p style='font-weight: bold;'>Password: " . $password . "</p></br>";
+            $message .= "<div>Please note the following: </div>";
+            $message .= "<ol style='color:red; font-weight:bold; list-style: none'>";
+            $message .= "<li>Don't let anyone see your login password</li>";
+            $message .= "<li>Access the portal and change your password</li>";
+            $message .= "</ol></br>";
+            $message .= "<p><a href='office.rmuictonline.com'>Click here</a> to access portal.</ol>";
+
             return $this->expose->sendEmail($email_addr, $subject, $message);
         }
         return 0;
