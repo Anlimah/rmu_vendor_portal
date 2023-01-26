@@ -1,9 +1,36 @@
 <?php
+session_start();
+//echo $_SERVER["HTTP_USER_AGENT"];
+if (isset($_SESSION["adminLogSuccess"]) && $_SESSION["adminLogSuccess"] == true && isset($_SESSION["admin"]) && !empty($_SESSION["admin"])) {
+} else {
+  header("Location: login.php");
+}
+
+if (isset($_GET['logout'])) {
+  session_destroy();
+  $_SESSION = array();
+  if (ini_get("session.use_cookies")) {
+    $params = session_get_cookie_params();
+    setcookie(
+      session_name(),
+      '',
+      time() - 42000,
+      $params["path"],
+      $params["domain"],
+      $params["secure"],
+      $params["httponly"]
+    );
+  }
+
+  header('Location: login.php');
+}
+?>
+<?php
 require_once('bootstrap.php');
 
 use Src\Controller\AdminController;
 
-$expose = new AdminController();
+$admin = new AdminController();
 require_once('inc/page-data.php');
 
 ?>
@@ -104,7 +131,7 @@ require_once('inc/page-data.php');
                     <div class="row mb-3">
                       <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
                       <div class="col-md-8 col-lg-9">
-                        <img src="assets/img/profile-img.jpg" alt="Profile">
+                        <img src="assets/img/icons8-circled-user-male-skin-type-5-96.png" alt="Profile">
                         <div class="pt-2">
                           <a href="#" class="btn btn-primary btn-sm" title="Upload new profile image"><i class="bi bi-upload"></i></a>
                           <a href="#" class="btn btn-danger btn-sm" title="Remove my profile image"><i class="bi bi-trash"></i></a>
