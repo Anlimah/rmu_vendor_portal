@@ -129,17 +129,6 @@ require_once('inc/page-data.php');
                   <!-- Profile Edit Form -->
                   <form>
                     <div class="row mb-3">
-                      <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
-                      <div class="col-md-8 col-lg-9">
-                        <img src="assets/img/icons8-circled-user-male-skin-type-5-96.png" alt="Profile">
-                        <div class="pt-2">
-                          <a href="#" class="btn btn-primary btn-sm" title="Upload new profile image"><i class="bi bi-upload"></i></a>
-                          <a href="#" class="btn btn-danger btn-sm" title="Remove my profile image"><i class="bi bi-trash"></i></a>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="row mb-3">
                       <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Full Name</label>
                       <div class="col-md-8 col-lg-9">
                         <input name="fullName" type="text" class="form-control" id="fullName" value="Kevin Anderson">
