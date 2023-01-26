@@ -18,11 +18,11 @@ class AdminController
 
     public function verifyAdminLogin($username, $password)
     {
-        $sql = "SELECT `user_type`, `id`, `password` FROM `sys_users` WHERE `user_name` = :u";
+        $sql = "SELECT * FROM `sys_users` WHERE `user_name` = :u";
         $data = $this->dm->getData($sql, array(':u' => $username));
         if (!empty($data)) {
             if (password_verify($password, $data[0]["password"])) {
-                return array("id" => $data[0]["id"], "type" => $data[0]["user_type"]);
+                return $data;
             }
         }
         return 0;
