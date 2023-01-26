@@ -26,8 +26,8 @@
                                     <td><?= $user["first_name"] . " " . $user["last_name"] ?></td>
                                     <td><?= $user["user_name"] ?></td>
                                     <td><?= $user["user_type"] ?></td>
-                                    <td id="<?= $user["id"] ?>" class="edit-vendor"><span style="cursor:pointer;" class="bi bi-pencil-square text-primary" title="Edit"></span></td>
-                                    <td id="<?= $user["id"] ?>" class="delete-vendor"><span style="cursor:pointer;" class="bi bi-trash text-danger" title="Delete"></span></td>
+                                    <td id="<?= $user["id"] ?>" class="edit-user"><span style="cursor:pointer;" class="bi bi-pencil-square text-primary" title="Edit"></span></td>
+                                    <td id="<?= $user["id"] ?>" class="delete-user"><span style="cursor:pointer;" class="bi bi-trash text-danger" title="Delete"></span></td>
                                 </tr>
                         <?php
                                 $i++;
@@ -39,41 +39,45 @@
                 </table>
             </div>
             <div class="col-lg-5">
-                <form id="addOrUpdateVendorForm" method="post" enctype="multipart/form-data">
+                <form id="addOrUpdateUserForm" method="post" enctype="multipart/form-data">
                     <div class="card">
-                        <h5 class="card-header">Add New Vendor</h5>
+                        <h5 class="card-header">Add New User</h5>
                         <div class="card-body">
                             <div style="display: flex; flex-direction:row; justify-content: space-between">
                                 <div class="mb-2 me-2">
                                     <label for="user-fname">First Name</label>
-                                    <input type="text" class="form-control form-control-sm" name="user-fname" id="user-fname" placeholder="First Name">
+                                    <input type="text" class="form-control form-control-sm" name="user-fname" id="user-fname" placeholder="First Name" required>
                                 </div>
                                 <div class="mb-2">
                                     <label for="user-lname">Last Name</label>
-                                    <input type="text" class="form-control form-control-sm" name="user-lname" id="user-lname" placeholder="Last Name">
+                                    <input type="text" class="form-control form-control-sm" name="user-lname" id="user-lname" placeholder="Last Name" required>
                                 </div>
                             </div>
                             <div style="display: flex; flex-direction:row; justify-content: space-between">
                                 <div class="mb-2 me-2">
-                                    <label for="v-email">Email Address</label>
-                                    <input type="text" class="form-control form-control-sm" name="v-email" id="v-email" placeholder="Email">
+                                    <label for="user-email">Email Address</label>
+                                    <input type="email" class="form-control form-control-sm" name="user-email" id="user-email" placeholder="Email" required>
                                 </div>
                                 <div class="mb-2">
-                                    <label for="v-email">Role</label>
-                                    <select style="width: 100%;" name="prog-type" id="prog-type" class="form-select form-select-sm">
-                                        <option value="0">Choose...</option>
-                                        <option value="Accounts">Accounts</option>
-                                        <option value="Admissions">Admissions</option>
+                                    <label for="user-email">Role</label>
+                                    <select style="width: 100%;" name="user-type" id="user-type" class="form-select form-select-sm" required>
+                                        <option value="" hidden>Choose...</option>
+                                        <option value="Accounts (Super)">Accounts (Super)</option>
+                                        <option value="Accounts (Viewer)">Accounts (Viewer)</option>
+                                        <option value="Admissions (Super)">Admissions (Super)</option>
+                                        <option value="Admissions (Viewer)">Admissions (Viewer)</option>
+                                        <option value="General (Viewer)">General (Viewer)</option>
+                                        <option value="Developer">Developer</option>
                                     </select>
                                 </div>
                             </div>
                             <div>
-                                <button type="submit" class="btn btn-primary btn-sm" id="v-action-btn">Add</button>
+                                <button type="submit" class="btn btn-primary btn-sm" id="user-action-btn">Add</button>
                             </div>
                         </div>
                     </div>
-                    <input type="hidden" name="v-action" id="v-action" value="add">
-                    <input type="hidden" name="v-id" id="v-id" value="">
+                    <input type="hidden" name="user-action" id="user-action" value="add">
+                    <input type="hidden" name="user-id" id="user-id" value="">
                 </form>
 
                 <!-- Add form type modal form-->
@@ -124,21 +128,21 @@
 
 <script>
     $(document).ready(function() {
-        function resetVendorForm() {
-            $("#v-id").val("");
-            $("#v-name").val("");
-            $("#v-tin").val("");
-            $("#v-email").val("");
-            $("#v-phone").val("");
-            $("#v-address").val("");
+        function resetUserForm() {
+            $("#user-id").val("");
+            $("#user-fname").val("");
+            $("#user-lname").val("");
+            $("#user-email").val("");
+            $("#user-type").val("");
+            $("#user-type option:selected").attr("selected", false);
         }
 
-        $("#addOrUpdateVendorForm").on("submit", function(e) {
+        $("#addOrUpdateUserForm").on("submit", function(e) {
             e.preventDefault();
 
             $.ajax({
                 type: "POST",
-                url: "endpoint/vendor-form",
+                url: "endpoint/user-form",
                 data: new FormData(this),
                 contentType: false,
                 cache: false,
@@ -156,30 +160,30 @@
                     console.log(error);
                 }
             });
-            resetVendorForm();
+            resetUserForm();
         });
 
-        $(".edit-vendor").click(function(e) {
+        $(".edit-user").click(function(e) {
             let data = {
-                vendor_key: $(this).attr("id")
+                user_key: $(this).attr("id")
             }
 
             $.ajax({
                 type: "GET",
-                url: "endpoint/vendor-form",
+                url: "endpoint/user-form",
                 data: data,
                 success: function(result) {
                     console.log(result);
                     if (result.success) {
-                        $("#v-action").attr("value", "update");
-                        $(".card-header").text("Update Form Price");
-                        $("#v-action-btn").text("Update");
-                        $("#v-id").val(result.message[0].id);
-                        $("#v-name").val(result.message[0].vendor_name);
-                        $("#v-tin").val(result.message[0].tin);
-                        $("#v-email").val(result.message[0].email_address);
-                        $("#v-phone").val(result.message[0].phone_number);
-                        $("#v-address").val(result.message[0].address);
+                        $("#user-action").attr("value", "update");
+                        $(".card-header").text("Update User");
+                        $("#user-action-btn").text("Update");
+                        $("#user-id").val(result.message[0].id);
+                        $("#user-fname").val(result.message[0].first_name);
+                        $("#user-lname").val(result.message[0].last_name);
+                        $("#user-email").val(result.message[0].user_name);
+                        $("#user-type option:selected").attr("selected", false);
+                        $("#user-type" + " option[value='" + result.message[0].user_type + "']").attr('selected', true);
                     } else {
                         alert(result.message)
                     };
@@ -191,14 +195,14 @@
             });
         });
 
-        $(".delete-vendor").click(function(e) {
+        $(".delete-user").click(function(e) {
             var data = {
-                vendor_key: $(this).attr("id")
+                user_key: $(this).attr("id")
             }
 
             $.ajax({
                 type: "DELETE",
-                url: "endpoint/vendor-form",
+                url: "endpoint/user-form",
                 data: data,
                 success: function(result) {
                     console.log(result);
@@ -213,7 +217,7 @@
                     console.log(error);
                 }
             });
-            resetVendorForm();
+            resetUserForm();
         });
     });
 </script>

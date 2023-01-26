@@ -265,9 +265,9 @@ class AdminController
         $password = $this->expose->genVendorPin();
         $hashed_pw = password_hash($password, PASSWORD_DEFAULT);
         $query = "INSERT INTO sys_users (`first_name`, `last_name`, `user_name`, `password`, `user_type`) 
-                VALUES(:fn, ln, :un, :pw, :ut)";
+                VALUES(:fn, :ln, :un, :pw, :ut)";
         $params = array(
-            ":un" => $first_name, ":un" => $last_name, ":un" => $email_addr,
+            ":fn" => $first_name, ":ln" => $last_name, ":un" => $email_addr,
             ":pw" => $hashed_pw, ":ut" => $user_type
         );
         if ($this->dm->inputData($query, $params)) {
@@ -282,11 +282,14 @@ class AdminController
         return 0;
     }
 
-    public function updateSystemUser($user_id, $email_addr, $user_type)
+    public function updateSystemUser($user_id, $first_name, $last_name, $email_addr, $user_type)
     {
-        $query = "UPDATE sys_users SET `user_name` = :un, `user_type` = :ut WHERE id = :id";
+        $query = "UPDATE sys_users SET 
+                `user_name` = :un, `first_name` = :fn, `last_name` = :ln, `user_type` = :ut 
+                WHERE id = :id";
         $params = array(
-            ":id" => $user_id, ":un" => $email_addr, ":ut" => $user_type
+            ":un" => $email_addr, ":fn" => $first_name, ":ln" => $last_name,
+            ":ut" => $user_type, ":id" => $user_id
         );
         return $this->dm->inputData($query, $params);
     }
@@ -313,7 +316,7 @@ class AdminController
 
     public function deleteSystemUser($form_price_id)
     {
-        $query = "DELETE FROM vendor_details WHERE id = :i";
+        $query = "DELETE FROM sys_users WHERE id = :i";
         $params = array(":i" => $form_price_id);
         return $this->dm->inputData($query, $params);
     }

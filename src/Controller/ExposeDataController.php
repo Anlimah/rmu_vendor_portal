@@ -273,7 +273,7 @@ class ExposeDataController extends DatabaseMethods
         try {
             if ($mail->send()) return 1;
         } catch (Exception $e) {
-            echo "Mailer Error: " . $mail->ErrorInfo;
+            return "Mailer Error: " . $mail->ErrorInfo;
         }
         return 0;
     }

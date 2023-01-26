@@ -82,6 +82,15 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         if (!$rslt) die(json_encode(array("success" => false, "message" => "Error fetching programme informatiion!")));
         die(json_encode(array("success" => true, "message" => $rslt)));
     }
+    //
+    elseif ($_GET["url"] == "user-form") {
+        if (!isset($_GET["user_key"]) || empty($_GET["user_key"])) {
+            die(json_encode(array("success" => false, "message" => "Missing input field")));
+        }
+        $rslt = $admin->fetchSystemUser($_GET["user_key"]);
+        if (!$rslt) die(json_encode(array("success" => false, "message" => "Error fetching programme informatiion!")));
+        die(json_encode(array("success" => true, "message" => $rslt)));
+    }
 
     // All POST request will be sent here
 } elseif ($_SERVER['REQUEST_METHOD'] == "POST") {
@@ -386,6 +395,45 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
         die(json_encode($result));
     }
+    //
+    elseif ($_GET["url"] == "user-form") {
+        if (!isset($_POST["user-fname"]) || empty($_POST["user-fname"])) {
+            die(json_encode(array("success" => false, "message" => "Missing input field: Name")));
+        }
+        if (!isset($_POST["user-lname"]) || empty($_POST["user-lname"])) {
+            die(json_encode(array("success" => false, "message" => "Missing input field: Name")));
+        }
+        if (!isset($_POST["user-email"]) || empty($_POST["user-email"])) {
+            die(json_encode(array("success" => false, "message" => "Missing input field: Type")));
+        }
+        if (!isset($_POST["user-type"]) || empty($_POST["user-type"])) {
+            die(json_encode(array("success" => false, "message" => "Missing input field: Weekend")));
+        }
+
+        $result;
+        switch ($_POST["user-action"]) {
+            case 'add':
+                $rslt = $admin->addSystemUser($_POST["user-fname"], $_POST["user-lname"], $_POST["user-email"], $_POST["user-type"]);
+                if ($rslt == 0) {
+                    $result = array("success" => false, "message" => "Failed to save user information!");
+                } elseif ($rslt == 1) {
+                    $result = array("success" => true, "message" => "Successfully added user account!");
+                } else {
+                    $result = array("success" => false, "message" => "User account created! " . $rslt);
+                }
+                break;
+
+            case 'update':
+                $rslt = $admin->updateSystemUser($_POST["user-id"], $_POST["user-fname"], $_POST["user-lname"], $_POST["user-email"], $_POST["user-type"]);
+                if (!$rslt) {
+                    die(json_encode(array("success" => false, "message" => "Failed to update admission information!")));
+                }
+                $result = array("success" => true, "message" => "Successfully updated admission information!");
+                break;
+        }
+
+        die(json_encode($result));
+    }
 
     // All PUT request will be sent here
 } else if ($_SERVER['REQUEST_METHOD'] == "PUT") {
@@ -449,6 +497,20 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         }
 
         die(json_encode(array("success" => true, "message" => "Successfully deleted programme!")));
+    }
+
+    if ($_GET["url"] == "user-form") {
+        if (!isset($_DELETE["user_key"]) || empty($_DELETE["user_key"])) {
+            die(json_encode(array("success" => false, "message" => "Missing input field")));
+        }
+
+        $rslt = $admin->deleteSystemUser($_DELETE["user_key"]);
+
+        if (!$rslt) {
+            die(json_encode(array("success" => false, "message" => "Failed to delete user account!")));
+        }
+
+        die(json_encode(array("success" => true, "message" => "Successfully deleted user account!")));
     }
 } else {
     http_response_code(405);
