@@ -25,7 +25,7 @@
                                     <th scope="row"><?= $i ?></th>
                                     <td><?= $user["first_name"] . " " . $user["last_name"] ?></td>
                                     <td><?= $user["user_name"] ?></td>
-                                    <td><?= $user["user_type"] ?></td>
+                                    <td><?= $user["role"] ?></td>
                                     <td id="<?= $user["id"] ?>" class="edit-user"><span style="cursor:pointer;" class="bi bi-pencil-square text-primary" title="Edit"></span></td>
                                     <td id="<?= $user["id"] ?>" class="delete-user"><span style="cursor:pointer;" class="bi bi-trash text-danger" title="Delete"></span></td>
                                 </tr>
@@ -69,6 +69,43 @@
                                         <option value="General (Viewer)">General (Viewer)</option>
                                         <option value="Developer">Developer</option>
                                     </select>
+                                </div>
+                            </div>
+                            <hr>
+                            <div style="display: flex; flex-direction:row; justify-content: space-around">
+
+                                <p style="font-weight: bolder;">Privileges: </p>
+                                <div class="mb-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="User can add data">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="prog-wkd" id="prog-wkd">
+                                        <label class="form-check-label" for="prog-wkd">
+                                            View
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="mb-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="User can add data">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="prog-wkd" id="prog-wkd">
+                                        <label class="form-check-label" for="prog-wkd">
+                                            Add
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="mb-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="User can add data">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="prog-wkd" id="prog-wkd">
+                                        <label class="form-check-label" for="prog-wkd">
+                                            Edit
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="mb-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="User can add data">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="prog-wkd" id="prog-wkd">
+                                        <label class="form-check-label" for="prog-wkd">
+                                            Remove
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                             <div>

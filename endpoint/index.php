@@ -418,14 +418,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         $result;
         switch ($_POST["user-action"]) {
             case 'add':
-                $rslt = $admin->addSystemUser($_POST["user-fname"], $_POST["user-lname"], $_POST["user-email"], $_POST["user-type"]);
-                if ($rslt == 0) {
-                    $result = array("success" => false, "message" => "Failed to save user information!");
-                } elseif ($rslt == 1) {
-                    $result = array("success" => true, "message" => "Successfully added user account!");
-                } else {
-                    $result = array("success" => false, "message" => "User account created! " . $rslt);
-                }
+                $result = $admin->addSystemUser($_POST["user-fname"], $_POST["user-lname"], $_POST["user-email"], $_POST["user-type"]);
                 break;
 
             case 'update':

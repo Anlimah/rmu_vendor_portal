@@ -273,45 +273,63 @@ class AdminController
         return $this->dm->inputData($query, array(":i" => $user_id));
     }
 
-    public function addSystemUser($first_name, $last_name, $email_addr, $user_type)
+    public function addSystemUser($first_name, $last_name, $email_addr, $role, $privileges = array())
     {
         $password = $this->expose->genVendorPin();
         $hashed_pw = password_hash($password, PASSWORD_DEFAULT);
 
-        $query = "INSERT INTO sys_users (`first_name`, `last_name`, `user_name`, `password`, `user_type`) 
-                VALUES(:fn, :ln, :un, :pw, :ut)";
-        $params = array(
+        $query1 = "INSERT INTO sys_users (`first_name`, `last_name`, `user_name`, `password`, `role`) 
+                VALUES(:fn, :ln, :un, :pw, :rl)";
+        $params1 = array(
             ":fn" => $first_name, ":ln" => $last_name, ":un" => $email_addr,
-            ":pw" => $hashed_pw, ":ut" => $user_type
+            ":pw" => $hashed_pw, ":rl" => $role
         );
 
-        if ($this->dm->inputData($query, $params)) {
+        $action1 = $this->dm->inputData($query1, $params1);
+        if (!$action1) return array("success" => false, "message" => "Failed to create user account!");
 
-            $subject = "RMU System User";
-            $message = "<p>Hi " . $first_name . ", </p></br>";
-            $message .= "<p>Find below your Login details.</p></br>";
-            $message .= "<p style='font-weight: bold;'>Username: " . $email_addr . "</p>";
-            $message .= "<p style='font-weight: bold;'>Password: " . $password . "</p></br>";
-            $message .= "<div>Please note the following: </div>";
-            $message .= "<ol style='color:red; font-weight:bold;'>";
-            $message .= "<li>Don't let anyone see your login password</li>";
-            $message .= "<li>Access the portal and change your password</li>";
-            $message .= "</ol></br>";
-            $message .= "<p><a href='office.rmuictonline.com'>Click here</a> to access portal.</ol>";
+        $sys_user = $this->verifyAdminLogin($email_addr, $password);
+        if (empty($sys_user)) return array("success" => false, "message" => "Created user account, but failed to verify user account!");
 
-            return $this->expose->sendEmail($email_addr, $subject, $message);
-        }
-        return 0;
+        $query2 = "INSERT INTO `sys_users_privileges` (`user_id`, `select`,`insert`,`update`,`delete`) 
+                VALUES(:ui, :s, :i, :u, :d)";
+        $params2 = array(
+            ":ui" => $sys_user[0]["id"], ":s" => $privileges["select"], ":i" => $$privileges["insert"],
+            ":u" => $$privileges["update"], ":d" => $$privileges["delete"]
+        );
+
+        $action2 = $this->dm->inputData($query2, $params2);
+        if (!$action2) return array("success" => false, "message" => "Failed to create given roles for the user!");
+
+        $subject = "RMU System User";
+        $message = "<p>Hi " . $first_name . ", </p></br>";
+        $message .= "<p>Find below your Login details.</p></br>";
+        $message .= "<p style='font-weight: bold;'>Username: " . $email_addr . "</p>";
+        $message .= "<p style='font-weight: bold;'>Password: " . $password . "</p></br>";
+        $message .= "<div>Please note the following: </div>";
+        $message .= "<ol style='color:red; font-weight:bold;'>";
+        $message .= "<li>Don't let anyone see your login password</li>";
+        $message .= "<li>Access the portal and change your password</li>";
+        $message .= "</ol></br>";
+        $message .= "<p><a href='office.rmuictonline.com'>Click here</a> to access portal.</ol>";
+
+        $emailed = $this->expose->sendEmail($email_addr, $subject, $message);
+        if ($emailed !== 1) return array(
+            "success" => false,
+            "message" => "Created user account, but failed to send email! Error: " . $emailed
+        );
+
+        return array("success" => true, "message" => "Successfully created user account!");
     }
 
-    public function updateSystemUser($user_id, $first_name, $last_name, $email_addr, $user_type)
+    public function updateSystemUser($user_id, $first_name, $last_name, $email_addr, $role)
     {
         $query = "UPDATE sys_users SET 
-                `user_name` = :un, `first_name` = :fn, `last_name` = :ln, `user_type` = :ut 
+                `user_name` = :un, `first_name` = :fn, `last_name` = :ln, `role` = :rl 
                 WHERE id = :id";
         $params = array(
             ":un" => $email_addr, ":fn" => $first_name, ":ln" => $last_name,
-            ":ut" => $user_type, ":id" => $user_id
+            ":rl" => $role, ":id" => $user_id
         );
         return $this->dm->inputData($query, $params);
     }
