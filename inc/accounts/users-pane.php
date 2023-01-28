@@ -60,14 +60,12 @@
                                 </div>
                                 <div class="mb-2">
                                     <label for="user-email">Role</label>
-                                    <select style="width: 100%;" name="user-type" id="user-type" class="form-select form-select-sm" required>
+                                    <select style="width: 100%;" name="user-role" id="user-role" class="form-select form-select-sm" required>
                                         <option value="" hidden>Choose...</option>
-                                        <option value="Accounts (Super)">Accounts (Super)</option>
-                                        <option value="Accounts (Viewer)">Accounts (Viewer)</option>
-                                        <option value="Admissions (Super)">Admissions (Super)</option>
-                                        <option value="Admissions (Viewer)">Admissions (Viewer)</option>
-                                        <option value="General (Viewer)">General (Viewer)</option>
-                                        <option value="Developer">Developer</option>
+                                        <option value="Account">Account</option>
+                                        <option value="Admission">Admission</option>
+                                        <option value="Vendor">Vendor</option>
+                                        <option value="Registrar">Registrar</option>
                                     </select>
                                 </div>
                             </div>
@@ -75,39 +73,40 @@
                             <div style="display: flex; flex-direction:row; justify-content: space-around">
 
                                 <p style="font-weight: bolder;">Privileges: </p>
-                                <div class="mb-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="User can add data">
+                                <div class="mb-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="User can view data">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="prog-wkd" id="prog-wkd">
-                                        <label class="form-check-label" for="prog-wkd">
+                                        <input class="form-check-input" type="checkbox" name="select" id="select" checked disabled>
+                                        <label class="form-check-label" for="select">
                                             View
                                         </label>
                                     </div>
                                 </div>
                                 <div class="mb-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="User can add data">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="prog-wkd" id="prog-wkd">
-                                        <label class="form-check-label" for="prog-wkd">
+                                        <input class="form-check-input" type="checkbox" name="insert" id="insert">
+                                        <label class="form-check-label" for="insert">
                                             Add
                                         </label>
                                     </div>
                                 </div>
-                                <div class="mb-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="User can add data">
+                                <div class="mb-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="User can edit data">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="prog-wkd" id="prog-wkd">
-                                        <label class="form-check-label" for="prog-wkd">
+                                        <input class="form-check-input" type="checkbox" name="update" id="update">
+                                        <label class="form-check-label" for="update">
                                             Edit
                                         </label>
                                     </div>
                                 </div>
-                                <div class="mb-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="User can add data">
+                                <div class="mb-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="User can remove data">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="prog-wkd" id="prog-wkd">
-                                        <label class="form-check-label" for="prog-wkd">
+                                        <input class="form-check-input" type="checkbox" name="delete" id="delete">
+                                        <label class="form-check-label" for="delete">
                                             Remove
                                         </label>
                                     </div>
                                 </div>
                             </div>
+                            <hr>
                             <div>
                                 <button type="submit" class="btn btn-primary btn-sm" id="user-action-btn">Add</button>
                             </div>
@@ -170,8 +169,8 @@
             $("#user-fname").val("");
             $("#user-lname").val("");
             $("#user-email").val("");
-            $("#user-type").val("");
-            $("#user-type option:selected").attr("selected", false);
+            $("#user-role").val("");
+            $("#user-role option:selected").attr("selected", false);
         }
 
         $("#addOrUpdateUserForm").on("submit", function(e) {
@@ -219,8 +218,8 @@
                         $("#user-fname").val(result.message[0].first_name);
                         $("#user-lname").val(result.message[0].last_name);
                         $("#user-email").val(result.message[0].user_name);
-                        $("#user-type option:selected").attr("selected", false);
-                        $("#user-type" + " option[value='" + result.message[0].user_type + "']").attr('selected', true);
+                        $("#user-role option:selected").attr("selected", false);
+                        $("#user-role" + " option[value='" + result.message[0].user_type + "']").attr('selected', true);
                     } else {
                         alert(result.message)
                     };

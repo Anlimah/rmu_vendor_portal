@@ -113,10 +113,6 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
             die(json_encode(array("success" => false, "message" => "Incorrect application username or password! ")));
         } else {
             $_SESSION['admin'] = $result[0]["id"];
-            $_SESSION['first_name'] = $result[0]["first_name"];
-            $_SESSION['last_name'] = $result[0]["last_name"];
-            $_SESSION['user_name'] = $result[0]["user_name"];
-            $_SESSION['role'] = $result[0]["user_type"];
             $_SESSION['adminLogSuccess'] = true;
             die(json_encode(array("success" => true)));
         }

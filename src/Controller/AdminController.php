@@ -52,6 +52,20 @@ class AdminController
         return $this->dm->getData($query, $param);
     }
 
+    public function fetchUserName($user_id)
+    {
+        $sql = "SELECT CONCAT(SUBSTRING(`first_name`, 1, 1), '. ' , `last_name`) AS `userName` 
+                FROM `sys_users` WHERE `id` = :u";
+        return $this->dm->getData($sql, array(':u' => $user_id));
+    }
+
+    public function fetchFullName($user_id)
+    {
+        $sql = "SELECT CONCAT(`first_name`, ' ' , `last_name`) AS `fullName` 
+                FROM `sys_users` WHERE `id` = :u";
+        return $this->dm->getData($sql, array(':u' => $user_id));
+    }
+
     // For admin settings
 
 
