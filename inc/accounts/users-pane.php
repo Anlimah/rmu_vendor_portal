@@ -219,10 +219,10 @@
                         $("#user-email").val(result.message[0].user_name);
                         $("#user-role option:selected").attr("selected", false);
                         $("#user-role" + " option[value='" + result.message[0].role + "']").attr('selected', true);
-                        $("#select").attr('checked', result.message[0].select ? true : false);
-                        $("#insert").attr('checked', result.message[0].insert ? true : false);
-                        $("#update").attr('checked', result.message[0].update ? true : false);
-                        $("#delete").attr('checked', result.message[0].delete ? true : false);
+                        $("#select").attr('checked', parseInt(result.message[0].select) ? true : false);
+                        $("#insert").attr('checked', parseInt(result.message[0].insert) ? true : false);
+                        $("#update").attr('checked', parseInt(result.message[0].update) ? true : false);
+                        $("#delete").attr('checked', parseInt(result.message[0].delete) ? true : false);
 
                     } else {
                         alert(result.message)
