@@ -141,7 +141,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "endpoint/form-price",
+                url: "../endpoint/form-price",
                 data: data,
                 success: function(result) {
                     console.log(result);
@@ -165,7 +165,7 @@
 
             $.ajax({
                 type: "GET",
-                url: "endpoint/form-price",
+                url: "../endpoint/form-price",
                 data: data,
                 success: function(result) {
                     console.log(result);
@@ -192,7 +192,7 @@
             }
             $.ajax({
                 type: "DELETE",
-                url: "endpoint/form-price",
+                url: "../endpoint/form-price",
                 data: data,
                 success: function(result) {
                     console.log(result);

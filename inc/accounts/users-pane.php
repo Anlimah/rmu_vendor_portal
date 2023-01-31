@@ -62,9 +62,9 @@
                                     <label for="user-email">Role</label>
                                     <select style="width: 100%;" name="user-role" id="user-role" class="form-select form-select-sm" required>
                                         <option value="" hidden>Choose...</option>
-                                        <option value="Account">Account</option>
-                                        <option value="Admission">Admission</option>
-                                        <option value="Vendor">Vendor</option>
+                                        <option value="Accounts">Accounts</option>
+                                        <option value="Admissions">Admissions</option>
+                                        <option value="Vendors">Vendors</option>
                                         <option value="Registrar">Registrar</option>
                                     </select>
                                 </div>
@@ -75,7 +75,7 @@
                                 <p style="font-weight: bolder;">Privileges: </p>
                                 <div class="mb-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="User can view data">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="select" id="select" checked disabled>
+                                        <input class="form-check-input" type="checkbox" value="select" name="privileges[]" id="select" checked disabled>
                                         <label class="form-check-label" for="select">
                                             View
                                         </label>
@@ -83,7 +83,7 @@
                                 </div>
                                 <div class="mb-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="User can add data">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="insert" id="insert">
+                                        <input class="form-check-input" type="checkbox" value="insert" name="privileges[]" id="insert">
                                         <label class="form-check-label" for="insert">
                                             Add
                                         </label>
@@ -91,7 +91,7 @@
                                 </div>
                                 <div class="mb-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="User can edit data">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="update" id="update">
+                                        <input class="form-check-input" type="checkbox" value="update" name="privileges[]" id="update">
                                         <label class="form-check-label" for="update">
                                             Edit
                                         </label>
@@ -99,7 +99,7 @@
                                 </div>
                                 <div class="mb-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="User can remove data">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="delete" id="delete">
+                                        <input class="form-check-input" type="checkbox" value="delete" name="privileges[]" id="delete">
                                         <label class="form-check-label" for="delete">
                                             Remove
                                         </label>
@@ -175,10 +175,9 @@
 
         $("#addOrUpdateUserForm").on("submit", function(e) {
             e.preventDefault();
-
             $.ajax({
                 type: "POST",
-                url: "endpoint/user-form",
+                url: "../endpoint/user-form",
                 data: new FormData(this),
                 contentType: false,
                 cache: false,
@@ -206,7 +205,7 @@
 
             $.ajax({
                 type: "GET",
-                url: "endpoint/user-form",
+                url: "../endpoint/user-form",
                 data: data,
                 success: function(result) {
                     console.log(result);
@@ -219,7 +218,12 @@
                         $("#user-lname").val(result.message[0].last_name);
                         $("#user-email").val(result.message[0].user_name);
                         $("#user-role option:selected").attr("selected", false);
-                        $("#user-role" + " option[value='" + result.message[0].user_type + "']").attr('selected', true);
+                        $("#user-role" + " option[value='" + result.message[0].role + "']").attr('selected', true);
+                        $("#select").attr('checked', result.message[0].select ? true : false);
+                        $("#insert").attr('checked', result.message[0].insert ? true : false);
+                        $("#update").attr('checked', result.message[0].update ? true : false);
+                        $("#delete").attr('checked', result.message[0].delete ? true : false);
+
                     } else {
                         alert(result.message)
                     };
@@ -238,7 +242,7 @@
 
             $.ajax({
                 type: "DELETE",
-                url: "endpoint/user-form",
+                url: "../endpoint/user-form",
                 data: data,
                 success: function(result) {
                     console.log(result);

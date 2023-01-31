@@ -152,7 +152,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "endpoint/prog-form",
+                url: "../endpoint/prog-form",
                 data: new FormData(this),
                 contentType: false,
                 cache: false,
@@ -180,7 +180,7 @@
 
             $.ajax({
                 type: "GET",
-                url: "endpoint/prog-form",
+                url: "../endpoint/prog-form",
                 data: data,
                 success: function(result) {
                     console.log(result);
@@ -214,7 +214,7 @@
 
             $.ajax({
                 type: "DELETE",
-                url: "endpoint/prog-form",
+                url: "../endpoint/prog-form",
                 data: data,
                 success: function(result) {
                     console.log(result);

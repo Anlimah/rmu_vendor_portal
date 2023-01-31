@@ -67,26 +67,6 @@ require_once('inc/page-data.php');
 
             <!-- Applications Card -->
             <div class="col-xxl-3 col-md-3">
-              <a href="applications.php">
-                <div class="card info-card sales-card">
-                  <div class="card-body">
-                    <h5 class="card-title">Applications</h5>
-                    <div class="d-flex align-items-center">
-                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                        <i class="bi bi-people"></i>
-                      </div>
-                      <div class="ps-3">
-                        <h6><?= $admin->fetchTotalApplications()[0]["total"]; ?></h6>
-                        <span class="text-muted small pt-2 ps-1">Applications</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </a>
-            </div><!-- End Applications Card -->
-
-            <!-- Applications Card -->
-            <div class="col-xxl-3 col-md-3">
               <a href="https://forms.rmuictonline.com/buy-vendor/">
                 <div class="card info-card sales-card">
                   <div class="card-body">
@@ -124,7 +104,7 @@ require_once('inc/page-data.php');
             </div><!-- End Applications Card -->
 
             <!-- Applications Card -->
-            <!--<div class="col-xxl-3 col-md-3">
+            <div class="col-xxl-3 col-md-3">
               <div class="card info-card sales-card">
                 <div class="card-body">
                   <a href="general-settings.php">
@@ -140,7 +120,7 @@ require_once('inc/page-data.php');
                   </a>
                 </div>
               </div>
-            </div>--><!-- End Applications Card -->
+            </div><!-- End Applications Card -->
 
           </div>
         </div><!-- Forms Sales Card  -->

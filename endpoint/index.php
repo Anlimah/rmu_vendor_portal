@@ -111,10 +111,12 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
         if (!$result) {
             die(json_encode(array("success" => false, "message" => "Incorrect application username or password! ")));
+            $_SESSION['adminLogSuccess'] = false;
         } else {
-            $_SESSION['admin'] = $result[0]["id"];
+            $_SESSION['user'] = $result[0]["id"];
+            $_SESSION['role'] = $result[0]["role"];
             $_SESSION['adminLogSuccess'] = true;
-            die(json_encode(array("success" => true)));
+            die(json_encode(array("success" => true,  "message" => strtolower($result[0]["role"]))));
         }
     }
 
@@ -407,18 +409,27 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         if (!isset($_POST["user-email"]) || empty($_POST["user-email"])) {
             die(json_encode(array("success" => false, "message" => "Missing input field: Type")));
         }
-        if (!isset($_POST["user-type"]) || empty($_POST["user-type"])) {
+        if (!isset($_POST["user-role"]) || empty($_POST["user-role"])) {
             die(json_encode(array("success" => false, "message" => "Missing input field: Weekend")));
+        }
+
+        $privileges = array("select" => 1, "insert" => 0, "update" => 0, "delete" => 0);
+        if (isset($_POST["privileges"]) && !empty($_POST["privileges"])) {
+            foreach ($_POST["privileges"] as $privilege) {
+                if ($privilege == "insert") $privileges["insert"] = 1;
+                if ($privilege == "update") $privileges["update"] = 1;
+                if ($privilege == "delete") $privileges["delete"] = 1;
+            }
         }
 
         $result;
         switch ($_POST["user-action"]) {
             case 'add':
-                $result = $admin->addSystemUser($_POST["user-fname"], $_POST["user-lname"], $_POST["user-email"], $_POST["user-type"]);
+                $result = $admin->addSystemUser($_POST["user-fname"], $_POST["user-lname"], $_POST["user-email"], $_POST["user-role"], $privileges);
                 break;
 
             case 'update':
-                $rslt = $admin->updateSystemUser($_POST["user-id"], $_POST["user-fname"], $_POST["user-lname"], $_POST["user-email"], $_POST["user-type"]);
+                $rslt = $admin->updateSystemUser($_POST["user-id"], $_POST["user-fname"], $_POST["user-lname"], $_POST["user-email"], $_POST["user-role"], $privileges);
                 if (!$rslt) {
                     die(json_encode(array("success" => false, "message" => "Failed to update admission information!")));
                 }

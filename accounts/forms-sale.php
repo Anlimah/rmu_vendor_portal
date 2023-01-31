@@ -1,7 +1,7 @@
 <?php
 session_start();
 //echo $_SERVER["HTTP_USER_AGENT"];
-if (isset($_SESSION["adminLogSuccess"]) && $_SESSION["adminLogSuccess"] == true && isset($_SESSION["admin"]) && !empty($_SESSION["admin"])) {
+if (isset($_SESSION["adminLogSuccess"]) && $_SESSION["adminLogSuccess"] == true && isset($_SESSION["user"]) && !empty($_SESSION["user"])) {
 } else {
   header("Location: login.php");
 }

@@ -138,7 +138,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "endpoint/vendor-form",
+                url: "../endpoint/vendor-form",
                 data: new FormData(this),
                 contentType: false,
                 cache: false,
@@ -166,7 +166,7 @@
 
             $.ajax({
                 type: "GET",
-                url: "endpoint/vendor-form",
+                url: "../endpoint/vendor-form",
                 data: data,
                 success: function(result) {
                     console.log(result);
@@ -198,7 +198,7 @@
 
             $.ajax({
                 type: "DELETE",
-                url: "endpoint/vendor-form",
+                url: "../endpoint/vendor-form",
                 data: data,
                 success: function(result) {
                     console.log(result);

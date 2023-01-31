@@ -1,7 +1,7 @@
 <?php
 session_start();
 //echo $_SERVER["HTTP_USER_AGENT"];
-if (isset($_SESSION["adminLogSuccess"]) && $_SESSION["adminLogSuccess"] == true && isset($_SESSION["admin"]) && !empty($_SESSION["admin"])) {
+if (isset($_SESSION["adminLogSuccess"]) && $_SESSION["adminLogSuccess"] == true && isset($_SESSION["role"]) && !empty($_SESSION["role"])) {
 } else {
   header("Location: login.php");
 }
@@ -38,7 +38,42 @@ require_once('inc/page-data.php');
 <html lang="en">
 
 <head>
-  <?= require_once("inc/head.php") ?>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Dashboard - NiceAdmin Bootstrap Template</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="assets/img/favicon.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <!--<link href="https://fonts.gstatic.com" rel="preconnect">-->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet">
+  <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet">
+  <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="assets/css/style.css" rel="stylesheet">
+  <style>
+    .btn-group-xs>.btn,
+    .btn-xs {
+      padding: 1px 5px;
+      font-size: 12px;
+      line-height: 1.5;
+      border-radius: 3px;
+    }
+  </style>
+  <script src="js/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
@@ -67,7 +102,7 @@ require_once('inc/page-data.php');
             <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
               <img src="assets/img/icons8-circled-user-male-skin-type-5-96.png" alt="Profile" class="rounded-circle">
-              <h2><?= $admin->fetchFullName($_SESSION["admin"])[0]["fullName"] ?></h2>
+              <h2><?= $admin->fetchFullName($_SESSION["user"])[0]["fullName"] ?></h2>
               <h3>Web Designer</h3>
             </div>
           </div>
@@ -100,7 +135,7 @@ require_once('inc/page-data.php');
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label ">Full Name</div>
-                    <div class="col-lg-9 col-md-8"><?= $admin->fetchFullName($_SESSION["admin"])[0]["fullName"] ?></div>
+                    <div class="col-lg-9 col-md-8"><?= $admin->fetchFullName($_SESSION["user"])[0]["fullName"] ?></div>
                   </div>
 
                   <div class="row">

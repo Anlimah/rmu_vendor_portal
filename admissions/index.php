@@ -1,9 +1,9 @@
 <?php
 session_start();
-//echo $_SERVER["HTTP_USER_AGENT"];
-if (isset($_SESSION["adminLogSuccess"]) && $_SESSION["adminLogSuccess"] == true && isset($_SESSION["admin"]) && !empty($_SESSION["admin"])) {
+
+if (isset($_SESSION["adminLogSuccess"]) && $_SESSION["adminLogSuccess"] == true && isset($_SESSION["user"]) && !empty($_SESSION["user"])) {
 } else {
-  header("Location: login.php");
+  header("Location: ../login.php");
 }
 
 if (isset($_GET['logout'])) {
@@ -22,29 +22,29 @@ if (isset($_GET['logout'])) {
     );
   }
 
-  header('Location: login.php');
+  header('Location: ../login.php');
 }
 ?>
 <?php
-require_once('bootstrap.php');
+require_once('../bootstrap.php');
 
 use Src\Controller\AdminController;
 
 $admin = new AdminController();
-require_once('inc/page-data.php');
+require_once('../inc/page-data.php');
 
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <?= require_once("inc/head.php") ?>
+  <?= require_once("../inc/head.php") ?>
 </head>
 
 <body>
-  <?= require_once("inc/header.php") ?>
+  <?= require_once("../inc/header.php") ?>
 
-  <?= require_once("inc/sidebar.php") ?>
+  <?= require_once("../inc/sidebar.php") ?>
 
   <main id="main" class="main">
 
@@ -53,7 +53,7 @@ require_once('inc/page-data.php');
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.php">Dashboard</a></li>
-          <li class="breadcrumb-item <?= !isset($_GET["t"]) ? 'active' : '' ?>"><a href="applications.php">Applications</a></li>
+          <li class="breadcrumb-item">Applications</a></li>
           <?php
           if (isset($_GET["t"])) {
             $form_name = $admin->getFormTypeName($_GET["t"]);
@@ -64,7 +64,7 @@ require_once('inc/page-data.php');
       </nav>
     </div><!-- End Page Title -->
 
-    <section class="section dashboard">
+    <section class=" section dashboard">
 
 
       <!-- Dashboard view -->
@@ -82,11 +82,11 @@ require_once('inc/page-data.php');
               <div class="col-xxl-3 col-md-3">
                 <div class="card info-card sales-card">
                   <div class="card-body">
-                    <a href="applications.php?t=<?= $form_type["id"] ?>">
+                    <a href="?t=<?= $form_type["id"] ?>">
                       <h5 class="card-title"><?= $form_type["name"] ?></h5>
                       <div class="d-flex align-items-center">
                         <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                          <img src="./assets/img/icons8-<?= $form_type["name"] ?>.png" style="width: 48px;" alt="">
+                          <img src="../assets/img/icons8-<?= $form_type["name"] ?>.png" style="width: 48px;" alt="">
                         </div>
                         <div class="ps-3">
                           <h6><?= $admin->fetchTotalApplications($form_type["id"])[0]["total"]; ?></h6>
@@ -109,7 +109,7 @@ require_once('inc/page-data.php');
                     <h5 class="card-title">Awaiting Results</h5>
                     <div class="d-flex align-items-center">
                       <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                        <img src="./assets/img/icons8-queue-64.png" style="width: 48px;" alt="">
+                        <img src="../assets/img/icons8-queue-64.png" style="width: 48px;" alt="">
                       </div>
                       <div class="ps-3">
                         <h6><?= $admin->fetchTotalAwaitingResults()[0]["total"]; ?></h6>
@@ -130,7 +130,7 @@ require_once('inc/page-data.php');
                     <h5 class="card-title">Admit Applicants</h5>
                     <div class="d-flex align-items-center">
                       <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                        <img src="./assets/img/icons8-checked-user-male-96.png" style="width: 48px;" alt="">
+                        <img src="../assets/img/icons8-checked-user-male-96.png" style="width: 48px;" alt="">
                       </div>
                       <div class="ps-3">
                         <span class="text-muted small pt-2 ps-1">Admit qualified applicants</span>
@@ -149,7 +149,7 @@ require_once('inc/page-data.php');
                     <h5 class="card-title">Broadsheet</h5>
                     <div class="d-flex align-items-center">
                       <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                        <img src="./assets/img/icons8-documents-96.png" style="width: 48px;" alt="">
+                        <img src="../assets/img/icons8-documents-96.png" style="width: 48px;" alt="">
                       </div>
                       <div class="ps-3">
                         <span class="text-muted small pt-2 ps-1">Download broadsheets</span>
@@ -169,7 +169,7 @@ require_once('inc/page-data.php');
                     <h5 class="card-title">Settings</h5>
                     <div class="d-flex align-items-center">
                       <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                        <img src="./assets/img/icons8-services-96.png" style="width: 48px;" alt="">
+                        <img src="../assets/img/icons8-services-96.png" style="width: 48px;" alt="">
                       </div>
                       <div class="ps-3">
                         <span class="text-muted small pt-2 ps-1">Statistics</span>
@@ -195,10 +195,10 @@ require_once('inc/page-data.php');
 
             <div class="filter">
               <span class="icon export-excel" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Export Excel">
-                <img src="assets/img/icons8-microsoft-excel-2019-48.png" alt="" style="width: 24px;">
+                <img src="../assets/img/icons8-microsoft-excel-2019-48.png" alt="" style="width: 24px;">
               </span>
               <span class="icon download-pdf" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Download PDF">
-                <img src="assets/img/icons8-pdf-48.png" alt="" style="width: 24px;">
+                <img src="../assets/img/icons8-pdf-48.png" alt="" style="width: 24px;">
               </span>
             </div>
 
@@ -314,8 +314,7 @@ require_once('inc/page-data.php');
 
   </main><!-- End #main -->
 
-  <?= require_once("inc/footer-section.php") ?>
-  <script src="js/jquery-3.6.0.min.js"></script>
+  <?= require_once("../inc/footer-section.php") ?>
 
   <script>
     $(document).ready(function() {
@@ -330,7 +329,7 @@ require_once('inc/page-data.php');
 
         $.ajax({
           type: "POST",
-          url: "endpoint/apps-data",
+          url: "../endpoint/apps-data",
           data: data,
           success: function(result) {
             console.log(result);
@@ -384,7 +383,7 @@ require_once('inc/page-data.php');
 
         $.ajax({
           type: "POST",
-          url: "endpoint/applicants",
+          url: "../endpoint/applicants",
           data: data,
           success: function(result) {
             console.log(result);
@@ -418,7 +417,7 @@ require_once('inc/page-data.php');
             if (id == "type") {
               $.ajax({
                 type: "GET",
-                url: "endpoint/programs",
+                url: "../endpoint/programs",
                 data: {
                   "type": getUrlVars()["t"],
                 },

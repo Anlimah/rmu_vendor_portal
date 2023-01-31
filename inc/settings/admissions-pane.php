@@ -134,7 +134,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "endpoint/adp-form",
+                url: "../endpoint/adp-form",
                 data: new FormData(this),
                 contentType: false,
                 cache: false,
@@ -162,7 +162,7 @@
 
             $.ajax({
                 type: "GET",
-                url: "endpoint/adp-form",
+                url: "../endpoint/adp-form",
                 data: data,
                 success: function(result) {
                     console.log(result);
@@ -193,7 +193,7 @@
 
             $.ajax({
                 type: "PUT",
-                url: "endpoint/adp-form",
+                url: "../endpoint/adp-form",
                 data: data,
                 success: function(result) {
                     console.log(result);

@@ -283,38 +283,43 @@ class AdminController
 
     public function fetchSystemUser($user_id)
     {
-        $query = "SELECT * FROM sys_users WHERE id = :i";
+        $query = "SELECT u.*, p.`select`, p.`insert`, p.`update`, p.`delete` 
+                FROM sys_users AS u, sys_users_privileges AS p 
+                WHERE u.`id` = :i AND u.`id` = p.`user_id`";
         return $this->dm->inputData($query, array(":i" => $user_id));
     }
 
-    public function addSystemUser($first_name, $last_name, $email_addr, $role, $privileges = array())
+    public function addSystemUser($first_name, $last_name, $email_addr, $role, $privileges)
     {
+        // Generate password
         $password = $this->expose->genVendorPin();
+        // Hash password
         $hashed_pw = password_hash($password, PASSWORD_DEFAULT);
-
+        // Create insert query
         $query1 = "INSERT INTO sys_users (`first_name`, `last_name`, `user_name`, `password`, `role`) 
                 VALUES(:fn, :ln, :un, :pw, :rl)";
         $params1 = array(
             ":fn" => $first_name, ":ln" => $last_name, ":un" => $email_addr,
             ":pw" => $hashed_pw, ":rl" => $role
         );
-
+        // execute query
         $action1 = $this->dm->inputData($query1, $params1);
         if (!$action1) return array("success" => false, "message" => "Failed to create user account!");
-
+        // verify and get user account info
         $sys_user = $this->verifyAdminLogin($email_addr, $password);
         if (empty($sys_user)) return array("success" => false, "message" => "Created user account, but failed to verify user account!");
-
+        // Create insert query for user privileges
         $query2 = "INSERT INTO `sys_users_privileges` (`user_id`, `select`,`insert`,`update`,`delete`) 
                 VALUES(:ui, :s, :i, :u, :d)";
         $params2 = array(
-            ":ui" => $sys_user[0]["id"], ":s" => $privileges["select"], ":i" => $$privileges["insert"],
-            ":u" => $$privileges["update"], ":d" => $$privileges["delete"]
+            ":ui" => $sys_user[0]["id"], ":s" => $privileges["select"], ":i" => $privileges["insert"],
+            ":u" => $privileges["update"], ":d" => $privileges["delete"]
         );
-
+        // Execute user privileges 
         $action2 = $this->dm->inputData($query2, $params2);
         if (!$action2) return array("success" => false, "message" => "Failed to create given roles for the user!");
 
+        // Prepare email
         $subject = "RMU System User";
         $message = "<p>Hi " . $first_name . ", </p></br>";
         $message .= "<p>Find below your Login details.</p></br>";
@@ -327,7 +332,9 @@ class AdminController
         $message .= "</ol></br>";
         $message .= "<p><a href='office.rmuictonline.com'>Click here</a> to access portal.</ol>";
 
+        // Send email
         $emailed = $this->expose->sendEmail($email_addr, $subject, $message);
+        // verify email status and return result
         if ($emailed !== 1) return array(
             "success" => false,
             "message" => "Created user account, but failed to send email! Error: " . $emailed
@@ -336,7 +343,7 @@ class AdminController
         return array("success" => true, "message" => "Successfully created user account!");
     }
 
-    public function updateSystemUser($user_id, $first_name, $last_name, $email_addr, $role)
+    public function updateSystemUser($user_id, $first_name, $last_name, $email_addr, $role, $privileges)
     {
         $query = "UPDATE sys_users SET 
                 `user_name` = :un, `first_name` = :fn, `last_name` = :ln, `role` = :rl 
@@ -345,7 +352,20 @@ class AdminController
             ":un" => $email_addr, ":fn" => $first_name, ":ln" => $last_name,
             ":rl" => $role, ":id" => $user_id
         );
-        return $this->dm->inputData($query, $params);
+        if ($this->dm->inputData($query, $params)) {
+            // Create insert query for user privileges
+            $query2 = "UPDATE `sys_users_privileges` SET `select` = :s, `insert` = :i,`update` = :u, `delete`= :d 
+                        WHERE `user_id` = :ui";
+            $params2 = array(
+                ":ui" => $user_id, ":s" => $privileges["select"], ":i" => $privileges["insert"],
+                ":u" => $privileges["update"], ":d" => $privileges["delete"]
+            );
+            // Execute user privileges 
+            $action2 = $this->dm->inputData($query2, $params2);
+            if (!$action2) return array("success" => false, "message" => "Failed to update user account privileges!");
+            return array("success" => true, "message" => "Successfully updated user account information!");
+        }
+        return array("success" => false, "message" => "Failed to update user account information!");
     }
 
     public function changeSystemUserPassword($user_id, $email_addr, $first_name)

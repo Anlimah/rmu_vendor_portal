@@ -1,9 +1,9 @@
 <?php
 session_start();
 //echo $_SERVER["HTTP_USER_AGENT"];
-if (isset($_SESSION["adminLogSuccess"]) && $_SESSION["adminLogSuccess"] == true && isset($_SESSION["admin"]) && !empty($_SESSION["admin"])) {
+if (isset($_SESSION["adminLogSuccess"]) && $_SESSION["adminLogSuccess"] == true && isset($_SESSION["user"]) && !empty($_SESSION["user"])) {
 } else {
-  header("Location: login.php");
+  header("Location: ../login.php");
 }
 
 if (isset($_GET['logout'])) {
@@ -22,29 +22,29 @@ if (isset($_GET['logout'])) {
     );
   }
 
-  header('Location: login.php');
+  header('Location: ../login.php');
 }
 ?>
 <?php
-require_once('bootstrap.php');
+require_once('../bootstrap.php');
 
 use Src\Controller\AdminController;
 
-$expose = new AdminController();
-require_once('inc/page-data.php');
+$admin = new AdminController();
+require_once('../inc/page-data.php');
 
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <?= require_once("inc/head.php") ?>
+  <?= require_once("../inc/head.php") ?>
 </head>
 
 <body>
-  <?= require_once("inc/header.php") ?>
+  <?= require_once("../inc/header.php") ?>
 
-  <?= require_once("inc/sidebar.php") ?>
+  <?= require_once("../inc/sidebar.php") ?>
 
   <main id="main" class="main">
 
@@ -184,7 +184,7 @@ require_once('inc/page-data.php');
 
   </main><!-- End #main -->
 
-  <?= require_once("inc/footer-section.php") ?>
+  <?= require_once("../inc/footer-section.php") ?>
 
   <script>
     $(document).ready(function() {
@@ -225,7 +225,7 @@ require_once('inc/page-data.php');
         // Set up ajax request
         $.ajax({
           type: 'POST',
-          url: "endpoint/extra-awaiting-data",
+          url: "../endpoint/extra-awaiting-data",
           data: formData,
           processData: false,
           contentType: false,
@@ -253,7 +253,7 @@ require_once('inc/page-data.php');
 
         $.ajax({
           type: "POST",
-          url: "endpoint/downloadAwaiting",
+          url: "../endpoint/downloadAwaiting",
           data: data,
           success: function(result) {
             console.log(result);
