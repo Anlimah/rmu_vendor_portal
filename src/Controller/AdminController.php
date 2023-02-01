@@ -66,6 +66,12 @@ class AdminController
         return $this->dm->getData($sql, array(':u' => $user_id));
     }
 
+    public function logActivity(int $user_id, $operation, $description)
+    {
+        $query = "INSERT INTO `activity_logs`(`user_id`, `operation`, `description`) VALUES (:u,:o,:d)";
+        $params = array(":u"=>$user_id,":o"=>$operation,":u"=>$description);
+        $this->dm->inputData($query, $params);
+    }
     // For admin settings
 
 
