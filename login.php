@@ -45,11 +45,48 @@ if (!isset($_SESSION["_adminLogToken"])) {
       line-height: 1.5;
       border-radius: 3px;
     }
+
+    .fp-header {
+      width: 100% !important;
+      background-color: #003262 !important;
+      height: 60px !important;
+    }
+
+    .fp-header>div {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .rmu-logo-letter {
+      font-family: "Ubuntu", sans-serif;
+      font-size: 40px !important;
+      color: #fff;
+    }
+
+    .items {
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center;
+      height: inherit;
+    }
+
+    .items>img,
+    .items>span {
+      padding: 2px 7px !important;
+    }
   </style>
   <script src="js/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
+  <nav class="fp-header">
+    <div class="container">
+      <div class="items">
+        <img src="assets/img/rmu-logo.png" style="width: 60px;">
+        <span class="rmu-logo-letter">RMU</span>
+      </div>
+    </div>
+  </nav>
 
   <main>
     <div class="container">
