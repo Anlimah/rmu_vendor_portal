@@ -69,7 +69,7 @@ class AdminController
     public function logActivity(int $user_id, $operation, $description)
     {
         $query = "INSERT INTO `activity_logs`(`user_id`, `operation`, `description`) VALUES (:u,:o,:d)";
-        $params = array(":u"=>$user_id,":o"=>$operation,":u"=>$description);
+        $params = array(":u" => $user_id, ":o" => $operation, ":d" => $description);
         $this->dm->inputData($query, $params);
     }
     // For admin settings
@@ -84,7 +84,7 @@ class AdminController
         $query = "SELECT fp.id, ft.name, fp.amount, fp.admin_period 
                 FROM form_type AS ft, form_price AS fp, admission_period AS ap 
                 WHERE ft.id = fp.form_type AND ap.id = fp.admin_period AND ap.active = 1";
-        return $this->dm->inputData($query);
+        return $this->dm->getData($query);
     }
 
     public function fetchFormPrice($form_price_id)
@@ -93,28 +93,54 @@ class AdminController
                 FROM form_type AS ft, form_price AS fp, admission_period AS ap 
                 WHERE ft.id = fp.form_type AND ap.id = fp.admin_period AND 
                 ap.active = 1 AND fp.id = :i";
-        return $this->dm->inputData($query, array(":i" => $form_price_id));
+        return $this->dm->getData($query, array(":i" => $form_price_id));
     }
 
     public function addFormPrice($form_type, $form_price)
     {
         $query = "INSERT INTO form_price (form_type, admin_period, amount) VALUES(:ft, :ap, :a)";
-        $params = array(":ft" => $form_type, ":ap" => $this->getCurrentAdmissionPeriodID(), ":a" => $form_price);
-        return $this->dm->inputData($query, $params);
+        $aca_period = $this->getCurrentAdmissionPeriodID();
+        $params = array(":ft" => $form_type, ":ap" => $aca_period, ":a" => $form_price);
+        $query_result = $this->dm->inputData($query, $params);
+
+        if ($query_result)
+            $this->logActivity(
+                $_SESSION["user"],
+                "INSERT",
+                "Added new form price of {$form_price} to form type {$form_type} for academic period {$aca_period}"
+            );
+        return $query_result;
     }
 
     public function updateFormPrice($form_type, $form_price)
     {
         $query = "UPDATE form_price SET amount = :a WHERE form_type = :ft AND admin_period = :ap";
-        $params = array(":ft" => $form_type, ":ap" => $this->getCurrentAdmissionPeriodID(), ":a" => $form_price);
-        return $this->dm->inputData($query, $params);
+        $aca_period = $this->getCurrentAdmissionPeriodID();
+        $params = array(":ft" => $form_type, ":ap" => $aca_period, ":a" => $form_price);
+        $query_result = $this->dm->inputData($query, $params);
+
+        if ($query_result)
+            $this->logActivity(
+                $_SESSION["user"],
+                "UPDATE",
+                "Updated form price to {$form_price} for form type {$form_type} on academic period {$aca_period}"
+            );
+        return $query_result;
     }
 
     public function deleteFormPrice($form_price_id)
     {
         $query = "DELETE FROM form_price WHERE id = :i";
         $params = array(":i" => $form_price_id);
-        return $this->dm->inputData($query, $params);
+        $query_result = $this->dm->inputData($query, $params);
+
+        if ($query_result)
+            $this->logActivity(
+                $_SESSION["user"],
+                "DELETE",
+                "Deleted form price with id {$form_price_id}"
+            );
+        return $query_result;
     }
 
     /**
@@ -149,8 +175,14 @@ class AdminController
 
             $query2 = "INSERT INTO vendor_login (`user_name`, `password`, `vendor`) VALUES(:un, :pw, :vi)";
             $params2 = array(":un" => sha1($v_email), ":pw" => $hashed_pw, ":vi" => $vendor_id);
+            $query_result = $this->dm->inputData($query2, $params2);
 
-            $this->dm->inputData($query2, $params2);
+            if ($query_result)
+                $this->logActivity(
+                    $_SESSION["user"],
+                    "INSERT",
+                    "Added vendor {$vendor_id} with username/email {$v_email}"
+                );
 
             $subject = "RMU Vendor Registration";
             $message = "<p>Hi," . $v_name . " </p></br>";
@@ -178,14 +210,30 @@ class AdminController
             ":id" => $v_id, ":nm" => $v_name, ":tn" => $v_tin,
             ":ea" => $v_email, ":pn" => $v_phone, ":ad" => $v_address
         );
-        return $this->dm->inputData($query, $params);
+        $query_result = $this->dm->inputData($query, $params);
+
+        if ($query_result)
+            $this->logActivity(
+                $_SESSION["user"],
+                "UPDATE",
+                "Updated information for vendor {$v_id}"
+            );
+        return $query_result;
     }
 
-    public function deleteVendor($form_price_id)
+    public function deleteVendor($vendor_id)
     {
         $query = "DELETE FROM vendor_details WHERE id = :i";
-        $params = array(":i" => $form_price_id);
-        return $this->dm->inputData($query, $params);
+        $params = array(":i" => $vendor_id);
+        $query_result = $this->dm->inputData($query, $params);
+
+        if ($query_result)
+            $this->logActivity(
+                $_SESSION["user"],
+                "DELETE",
+                "Deleted vendor {$vendor_id} information"
+            );
+        return $query_result;
     }
 
     /**
@@ -209,25 +257,42 @@ class AdminController
     public function addProgramme($prog_name, $prog_type, $prog_wkd, $prog_grp)
     {
         $query = "INSERT INTO programs (`name`, `type`, `weekend`, `group`) VALUES(:n, :t, :w, :g)";
-        $params = array(
-            ":n" => strtoupper($prog_name), ":t" => $prog_type, ":w" => $prog_wkd, ":g" => $prog_grp
-        );
-        return $this->dm->inputData($query, $params);
+        $params = array(":n" => strtoupper($prog_name), ":t" => $prog_type, ":w" => $prog_wkd, ":g" => $prog_grp);
+        $query_result = $this->dm->inputData($query, $params);
+        if ($query_result)
+            $this->logActivity(
+                $_SESSION["user"],
+                "INSERT",
+                "Added new programme {$prog_name} of programme type {$prog_type}"
+            );
+        return $query_result;
     }
 
     public function updateProgramme($prog_id, $prog_name, $prog_type, $prog_wkd, $prog_grp)
     {
         $query = "UPDATE programs SET `name` = :n, `type` = :t, `weekend` = :w, `group` = :g WHERE id = :i";
-        $params = array(
-            ":n" => strtoupper($prog_name), ":t" => $prog_type, ":w" => $prog_wkd, ":g" => $prog_grp, ":i" => $prog_id
-        );
-        return $this->dm->inputData($query, $params);
+        $params = array(":n" => strtoupper($prog_name), ":t" => $prog_type, ":w" => $prog_wkd, ":g" => $prog_grp, ":i" => $prog_id);
+        $query_result = $this->dm->inputData($query, $params);
+        if ($query_result)
+            $this->logActivity(
+                $_SESSION["user"],
+                "UPDATE",
+                "Updated information for program {$prog_id}"
+            );
+        return $query_result;
     }
 
     public function deleteProgramme($prog_id)
     {
         $query = "DELETE FROM programs WHERE id = :i";
-        return $this->dm->inputData($query, array(":i" => $prog_id));
+        $query_result = $this->dm->inputData($query, array(":i" => $prog_id));
+        if ($query_result)
+            $this->logActivity(
+                $_SESSION["user"],
+                "DELETE",
+                "Deleted programme {$prog_id}"
+            );
+        return $query_result;
     }
 
     /**
@@ -258,23 +323,45 @@ class AdminController
         $query = "INSERT INTO admission_period (`start_date`, `end_date`, `info`, `active`) 
                 VALUES(:sd, :ed, :i, :a)";
         $params = array(":sd" => $adp_start, ":ed" => $adp_end, ":i" => $adp_info, ":a" => 1);
-        if ($this->dm->inputData($query, $params)) {
-            return array("success" => true, "message" => "Successfully added vendor!");
+        $query_result = $this->dm->inputData($query, $params);
+
+        if ($query_result) {
+            $this->logActivity(
+                $_SESSION["user"],
+                "INSERT",
+                "Added admisiion period  with start date {$adp_start} and end date {$adp_end}"
+            );
+
+            return array("success" => true, "message" => "Successfully open new admission period!");
         }
-        return array("success" => false, "message" => "Failed to open new admission!");
+        return array("success" => false, "message" => "Failed to open new admission period!");
     }
 
     public function updateAdmissionPeriod($adp_id, $adp_end, $adp_info)
     {
         $query = "UPDATE admission_period SET `end_date` = :ed, `info` = :i WHERE id = :id";
         $params = array(":ed" => $adp_end, ":i" => $adp_info, ":id" => $adp_id);
-        return $this->dm->inputData($query, $params);
+        $query_result = $this->dm->inputData($query, $params);
+        if ($query_result)
+            $this->logActivity(
+                $_SESSION["user"],
+                "UPDATE",
+                "Updated information for admisiion period {$adp_id}"
+            );
+        return $query_result;
     }
 
     public function closeAdmissionPeriod($adp_id)
     {
         $query = "UPDATE admission_period SET active = 0 WHERE id = :i";
-        return $this->dm->inputData($query, array(":i" => $adp_id));
+        $query_result = $this->dm->inputData($query, array(":i" => $adp_id));
+        if ($query_result)
+            $this->logActivity(
+                $_SESSION["user"],
+                "UPDATE",
+                "Closed admission with id {$adp_id}"
+            );
+        return $query_result;
     }
 
 
@@ -325,6 +412,12 @@ class AdminController
         $action2 = $this->dm->inputData($query2, $params2);
         if (!$action2) return array("success" => false, "message" => "Failed to create given roles for the user!");
 
+        $this->logActivity(
+            $_SESSION["user"],
+            "INSERT",
+            "Added new user account with username/email {$email_addr}"
+        );
+
         // Prepare email
         $subject = "RMU System User";
         $message = "<p>Hi " . $first_name . ", </p></br>";
@@ -369,6 +462,13 @@ class AdminController
             // Execute user privileges 
             $action2 = $this->dm->inputData($query2, $params2);
             if (!$action2) return array("success" => false, "message" => "Failed to update user account privileges!");
+
+            $this->logActivity(
+                $_SESSION["user"],
+                "UPDATE",
+                "Updated user {$user_id} account information and privileges"
+            );
+
             return array("success" => true, "message" => "Successfully updated user account information!");
         }
         return array("success" => false, "message" => "Failed to update user account information!");
@@ -379,10 +479,18 @@ class AdminController
         $password = $this->expose->genVendorPin();
         $hashed_pw = password_hash($password, PASSWORD_DEFAULT);
         $query = "UPDATE sys_users SET `password` = :pw WHERE id = :id";
-        $params = array(
-            ":id" => $user_id, ":pw" => $hashed_pw
-        );
-        if ($this->dm->inputData($query, $params)) {
+        $params = array(":id" => $user_id, ":pw" => $hashed_pw);
+        $query_result = $this->dm->inputData($query, $params);
+
+        if ($query_result) {
+
+            $this->logActivity(
+                $_SESSION["user"],
+                "UPDATE",
+                "Updated user {$user_id} account's password"
+            );
+
+            return $query_result;
             $subject = "RMU System User";
             $message = "<p>Hi " . $first_name . ", </p></br>";
             $message .= "<p>Find below your Login details.</p></br>";
@@ -394,11 +502,18 @@ class AdminController
         return 0;
     }
 
-    public function deleteSystemUser($form_price_id)
+    public function deleteSystemUser($user_id)
     {
         $query = "DELETE FROM sys_users WHERE id = :i";
-        $params = array(":i" => $form_price_id);
-        return $this->dm->inputData($query, $params);
+        $params = array(":i" => $user_id);
+        $query_result = $this->dm->inputData($query, $params);
+        if ($query_result)
+            $this->logActivity(
+                $_SESSION["user"],
+                "DELETE",
+                "Removed user {$user_id} accounts"
+            );
+        return $query_result;
     }
 
     // end of setups
@@ -912,7 +1027,7 @@ class AdminController
                 return $qualified;
             }
         } else {
-            $query = "UPDATE `form_sections_chek` SET`admitted` = 0,  `$prog_choice` = 1 WHERE `app_login` = :i";
+            $query = "UPDATE `form_sections_chek` SET `admitted` = 0,  `$prog_choice` = 1 WHERE `app_login` = :i";
             $this->dm->getData($query, array(":i" => $app_result["id"]));
             return $qualified;
         }
@@ -1008,6 +1123,14 @@ class AdminController
         if ($app_result["admitted"]) {
             $this->saveAdmittedApplicantData($admin_period, $app_result["id"], $data["prog_info"][0]["id"], $app_result["feed"], $data["app_pers"]["prog_category"]);
         }
+
+        $this->logActivity(
+            $_SESSION["user"],
+            "INSERT",
+            "Admitted applicants {$app_result["id"]} through mass admit with following: 
+            admission status(addtitted): {$app_result["admitted"]}, admission period = {$admin_period}, 
+            program id: {$data["prog_info"][0]["id"]}, program category: {$data["app_pers"]["prog_category"]}"
+        );
 
         return $app_result;
     }
