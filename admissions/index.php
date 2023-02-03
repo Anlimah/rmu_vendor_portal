@@ -39,6 +39,12 @@ require_once('../inc/page-data.php');
 
 <head>
   <?= require_once("../inc/head.php") ?>
+  <style>
+    .arrow {
+      display: inline-block;
+      margin-left: 10px;
+    }
+  </style>
 </head>
 
 <body>
@@ -258,7 +264,8 @@ require_once('../inc/page-data.php');
                     <div class="col-4">
                       <label for="country" class="form-label">Country</label>
                       <select name="country" id="country" class="form-select">
-                        <option value="All" selected>All</option>
+                        <option value="" hidden>Choose</option>
+                        <option value="All">All</option>
                         <option value="Cameroun">Cameroun</option>
                         <option value="Ghana">Ghana</option>
                         <option value="Guinea">Guinea</option>
@@ -270,6 +277,7 @@ require_once('../inc/page-data.php');
                     <div class="col-4">
                       <label for="program" class="form-label">Programs</label>
                       <select name="program" id="program" class="form-select">
+                        <option value="" hidden>Choose</option>
                         <option value="All">All</option>
                         <?php
                         $data = $admin->fetchPrograms(0);
@@ -321,6 +329,15 @@ require_once('../inc/page-data.php');
       var summary_selected = "";
       // when a summary data button is clicked
       $(".toggle-output").click(function() {
+        $('.toggle-output').css('border-bottom', 'none');
+        $(this).css('border-bottom', '3px solid #000');
+        // Remove arrow from all buttons
+        $(".arrow").remove();
+        $(".form-select option:selected").attr("selected", false);
+        $(".form-select option[value='All']").attr('selected', true);
+        // Add arrow to selected button
+        $(this).append("<span class='arrow'>&#x25BC;</span>");
+
         summary_selected = $(this).attr("id");
         data = {
           action: summary_selected,
@@ -462,8 +479,6 @@ require_once('../inc/page-data.php');
         }
         return urlparameter;
       }
-
-
 
       if (getUrlVars()["status"] != "" || getUrlVars()["status"] != undefined) {
         if (getUrlVars()["exttrid"] != "" || getUrlVars()["exttrid"] != undefined) {}
