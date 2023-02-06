@@ -336,7 +336,7 @@ require_once('inc/page-data.php');
 
         $.ajax({
           type: "POST",
-          url: "../endpoint/verifyStep1",
+          url: "endpoint/reset-password",
           data: new FormData(this),
           success: function(result) {
             console.log(result);
