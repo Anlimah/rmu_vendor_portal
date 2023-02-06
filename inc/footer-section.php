@@ -19,4 +19,3 @@
 
 <!-- Template Main JS File -->
 <script src="../assets/js/main.js"></script>
-<script src="../js/jquery-3.6.0.min.js"></script>

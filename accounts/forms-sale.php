@@ -105,7 +105,6 @@ require_once('inc/page-data.php');
   </main><!-- End #main -->
 
   <?= require_once("inc/footer-section.php") ?>
-  <script src="js/jquery-3.6.0.min.js"></script>
   <script>
     $("dataTable-top").hide();
   </script>

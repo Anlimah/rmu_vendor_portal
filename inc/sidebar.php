@@ -36,7 +36,7 @@
         if (strtolower($_SESSION["role"]) == "admissions" || strtolower($_SESSION["role"]) == "accounts") {
         ?>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="../admissions/user-account.php">
+                <a class="nav-link collapsed" href="../<?= $_SESSION["role"] ?>/user-account.php">
                     <i class="bi bi-shield-shaded"></i>
                     <span>User Account</span>
                 </a>
