@@ -1,5 +1,5 @@
 <!--Vendors Pane-->
-<div class="tab-pane fade" id="vendors-tab-pane" role="tabpanel" aria-labelledby="vendors-tab" tabindex="0">
+<div class="tab-pane fade <?php $_SESSION["role"] == "accounts" ? "show active" : "" ?>" id="vendors-tab-pane" role="tabpanel" aria-labelledby="vendors-tab" tabindex="0">
     <div class="container mt-4">
         <div class="row">
             <div class="col-lg-6">
