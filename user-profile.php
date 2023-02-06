@@ -228,18 +228,13 @@ require_once('inc/page-data.php');
                   </div>
 
                   <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Department</div>
-                    <div class="col-lg-9 col-md-8">Lueilwitz, Wisoky and Leuschke</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Job</div>
-                    <div class="col-lg-9 col-md-8">Web Designer</div>
+                    <div class="col-lg-3 col-md-4 label">Role</div>
+                    <div class="col-lg-9 col-md-8"><?= $admin->fetchFullName($_SESSION["user"])[0]["user_role"] ?></div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Email</div>
-                    <div class="col-lg-9 col-md-8">k.anderson@example.com</div>
+                    <div class="col-lg-9 col-md-8"><?= $admin->fetchFullName($_SESSION["user"])[0]["email_address"] ?></div>
                   </div>
 
                 </div>

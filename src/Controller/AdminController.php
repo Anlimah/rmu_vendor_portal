@@ -61,7 +61,8 @@ class AdminController
 
     public function fetchFullName($user_id)
     {
-        $sql = "SELECT CONCAT(`first_name`, ' ' , `last_name`) AS `fullName` 
+        $sql = "SELECT CONCAT(`first_name`, ' ' , `last_name`) AS `fullName`, 
+                user_name AS email_address, `role` AS user_role 
                 FROM `sys_users` WHERE `id` = :u";
         return $this->dm->getData($sql, array(':u' => $user_id));
     }
