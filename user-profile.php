@@ -320,8 +320,6 @@ require_once('inc/page-data.php');
   <script src="assets/js/main.js"></script>
   <script>
     $(document).ready(function() {
-      alert("jQuery working")
-
       function resetForm() {
         $("#password").val("");
         $("#newpassword").val("");
