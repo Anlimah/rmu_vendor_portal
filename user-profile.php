@@ -245,8 +245,11 @@ require_once('inc/page-data.php');
                 </div>
 
                 <div class="tab-pane fade pt-3" id="profile-change-password">
+
+                  <div id="flashMessage" class="alert text-center" role="alert"></div>
+
                   <!-- Change Password Form -->
-                  <form>
+                  <form id="cahngePasswordForm" method="post" enctype="multipart/form-data">
 
                     <div class="row mb-3">
                       <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">Current Password</label>
@@ -270,7 +273,7 @@ require_once('inc/page-data.php');
                     </div>
 
                     <div class="text-center">
-                      <button type="submit" class="btn btn-primary">Change Password</button>
+                      <button type="submit" class="btn btn-primary" id="submitBtn">Change Password</button>
                     </div>
                   </form><!-- End Change Password Form -->
 
@@ -315,6 +318,71 @@ require_once('inc/page-data.php');
 
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
+  <script>
+    $(document).ready(function() {
+
+      function resetForm() {
+        $("#password").val("");
+        $("#newpassword").val("");
+        $("#renewpassword").val("");
+      }
+
+      $("#cahngePasswordForm").on("submit", function(e) {
+        e.preventDefault();
+        if ($("#newpassword").val() !== $("#renewpassword").val()) {
+          alert("Password mismatch!");
+          return;
+        }
+
+        $.ajax({
+          type: "POST",
+          url: "../endpoint/verifyStep1",
+          data: new FormData(this),
+          success: function(result) {
+            console.log(result);
+            if (result.success) {
+              flashMessage("alert-danger", result.message);
+              resetForm();
+            } else {
+              flashMessage("alert-danger", result.message);
+            }
+          },
+          error: function(error) {
+            console.log(error.statusText);
+          }
+        });
+      });
+
+      $(document).on({
+        ajaxStart: function() {
+          $("#submitBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
+        },
+        ajaxStop: function() {
+          $("#submitBtn").prop("disabled", false).html('Continue');
+        }
+      });
+
+      function flashMessage(bg_color, message) {
+        const flashMessage = document.getElementById("flashMessage");
+
+        flashMessage.classList.add(bg_color);
+        flashMessage.innerHTML = message;
+
+        setTimeout(() => {
+          flashMessage.style.visibility = "visible";
+          flashMessage.classList.add("show");
+        }, 500);
+
+        setTimeout(() => {
+          flashMessage.classList.remove("show");
+          setTimeout(() => {
+            flashMessage.style.visibility = "hidden";
+          }, 500);
+        }, 5000);
+      }
+
+    });
+  </script>
 
 </body>
 
