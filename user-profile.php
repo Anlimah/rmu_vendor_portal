@@ -80,7 +80,7 @@ require_once('inc/page-data.php');
   <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">
     <div class="d-flex align-items-center justify-content-between">
-      <a href="index.php" class="logo d-flex align-items-center">
+      <a href="<?= strtolower($_SESSION["role"]) ?>/" class="logo d-flex align-items-center">
         <img src="assets/img/rmu-logo.png" alt="">
         <span class="d-none d-lg-block">RMU Admissions</span>
       </a>
