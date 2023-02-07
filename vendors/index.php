@@ -6,7 +6,7 @@ if (isset($_SESSION["adminLogSuccess"]) && $_SESSION["adminLogSuccess"] == true 
     header("Location: ../login.php");
 }
 
-if (isset($_GET['logout'])) {
+if (isset($_GET['logout']) || strtolower($_SESSION["role"]) != "vendors") {
     session_destroy();
     $_SESSION = array();
     if (ini_get("session.use_cookies")) {
@@ -67,7 +67,7 @@ require_once('../inc/page-data.php');
 
                         <!-- Applications Card -->
                         <div class="col-xxl-3 col-md-3">
-                            <a href="https://forms.rmuictonline.com/buy-vendor/">
+                            <a href="sell.php">
                                 <div class="card info-card sales-card">
                                     <div class="card-body">
                                         <h5 class="card-title">Sell Form</h5>
@@ -86,10 +86,10 @@ require_once('../inc/page-data.php');
 
                         <!-- Applications Card -->
                         <div class="col-xxl-3 col-md-3">
-                            <a href="forms-sale.php">
+                            <a href="stats.php">
                                 <div class="card info-card sales-card">
                                     <div class="card-body">
-                                        <h5 class="card-title">Form Sales Stats</h5>
+                                        <h5 class="card-title">Sales Stats</h5>
                                         <div class="d-flex align-items-center">
                                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                                                 <img src="../assets/img/icons8-stocks-growth-96.png" style="width: 48px;" alt="">
@@ -116,7 +116,6 @@ require_once('../inc/page-data.php');
     </main><!-- End #main -->
 
     <?= require_once("../inc/footer-section.php") ?>
-    <script src="js/jquery-3.6.0.min.js"></script>
     <script>
         $("dataTable-top").hide();
     </script>

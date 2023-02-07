@@ -2,7 +2,7 @@
 
 namespace Src\Controller;
 
-use Twilio\Rest\Client;
+use Src\Gateway\CurlGatewayAccess;
 use Src\System\DatabaseMethods;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -278,32 +278,31 @@ class ExposeDataController extends DatabaseMethods
         return 0;
     }
 
-    public function sendSMS($recipient_number, $otp_code, $message, $ISD)
+    public function sendHubtelSMS($url, $payload)
     {
-        $sid = getenv('TWILIO_SID');
-        $token = getenv('TWILIO_TKN');
-        $client = new Client($sid, $token);
+        $client = getenv('HUBTEL_CLIENT');
+        +$secret = getenv('HUBTEL_SECRET');
+        $secret_key = base64_encode($client . ":" . $secret);
 
-        //prepare SMS message
-        $to = $ISD . $recipient_number;
-        $account_phone = getenv('TWILIO_PNM');
-        $from = array('from' => $account_phone, 'body' => $message . ' ' . $otp_code);
-
-        //send SMS
-        $response = $client->messages->create($to, $from);
-        if ($response->sid) {
-            //$_SESSION['sms_sid'] = $response->sid;
-            return $otp_code;
-        } else {
-            return 0;
-        }
+        $httpHeader = array("Authorization: Basic " . $secret_key, "Content-Type: application/json");
+        $gateAccess = new CurlGatewayAccess($url, $httpHeader, $payload);
+        return $gateAccess->initiateProcess();
     }
 
-    public function sendOTP($phone_number, $country_code)
+    public function sendSMS($to, $message)
+    {
+        $url = "https://sms.hubtel.com/v1/messages/send";
+        $payload = json_encode(array("From" => "RMU", "To" => $to, "Content" => $message));
+        return $this->sendHubtelSMS($url, $payload);
+    }
+
+    public function sendOTP($to)
     {
         $otp_code = $this->genCode(4);
-        $message = 'Your OTP verification code is';
-        return $this->sendSMS($phone_number, $otp_code, $message, $country_code);
+        $message = 'Your OTP verification code: ' . $otp_code;
+        $response = json_decode($this->sendSMS($to, $message), true);
+        if (!$response["status"]) $response["otp_code"] = $otp_code;
+        return $response;
     }
 
     public function getVendorPhone($vendor_id)

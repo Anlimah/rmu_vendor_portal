@@ -6,7 +6,8 @@ if (isset($_SESSION["adminLogSuccess"]) && $_SESSION["adminLogSuccess"] == true 
     header("Location: ../login.php");
 }
 
-if (isset($_GET['logout']) && (strtolower($_SESSION["role"]) != "accounts" || strtolower($_SESSION["role"]) != "vendors")) {
+
+if (isset($_GET['logout']) || strtolower($_SESSION["role"]) != "accounts") {
     session_destroy();
     $_SESSION = array();
     if (ini_get("session.use_cookies")) {
@@ -67,7 +68,7 @@ require_once('../inc/page-data.php');
 
                         <!-- Applications Card -->
                         <div class="col-xxl-3 col-md-3">
-                            <a href="https://forms.rmuictonline.com/buy-vendor/">
+                            <a href="sell-forms.php">
                                 <div class="card info-card sales-card">
                                     <div class="card-body">
                                         <h5 class="card-title">Sell Form</h5>

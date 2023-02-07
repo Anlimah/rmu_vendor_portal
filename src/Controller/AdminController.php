@@ -383,24 +383,25 @@ class AdminController
         return $this->dm->inputData($query, array(":i" => $user_id));
     }
 
-    public function addSystemUser($first_name, $last_name, $email_addr, $role, $privileges)
+    public function addSystemUser($user_data, $privileges)
     {
+        //Add users Details to sys_users table
         // Generate password
         $password = $this->expose->genVendorPin();
         // Hash password
         $hashed_pw = password_hash($password, PASSWORD_DEFAULT);
         // Create insert query
-        $query1 = "INSERT INTO sys_users (`first_name`, `last_name`, `user_name`, `password`, `role`) 
-                VALUES(:fn, :ln, :un, :pw, :rl)";
+        $query1 = "INSERT INTO sys_users (`first_name`, `last_name`, `user_name`, `password`, `role`) VALUES(:fn, :ln, :un, :pw, :rl)";
         $params1 = array(
-            ":fn" => $first_name, ":ln" => $last_name, ":un" => $email_addr,
-            ":pw" => $hashed_pw, ":rl" => $role
+            ":fn" => $user_data["first_name"], ":ln" => $user_data["last_name"], ":un" => $user_data["user_name"],
+            ":pw" => $hashed_pw, ":rl" => $user_data["user_role"]
         );
         // execute query
         $action1 = $this->dm->inputData($query1, $params1);
         if (!$action1) return array("success" => false, "message" => "Failed to create user account!");
         // verify and get user account info
-        $sys_user = $this->verifyAdminLogin($email_addr, $password);
+        $sys_user = $this->verifyAdminLogin($user_data["user_name"], $password);
+
         if (empty($sys_user)) return array("success" => false, "message" => "Created user account, but failed to verify user account!");
         // Create insert query for user privileges
         $query2 = "INSERT INTO `sys_users_privileges` (`user_id`, `select`,`insert`,`update`,`delete`) 
@@ -413,17 +414,30 @@ class AdminController
         $action2 = $this->dm->inputData($query2, $params2);
         if (!$action2) return array("success" => false, "message" => "Failed to create given roles for the user!");
 
+        $subject = "RMU - Account User";
+
+        if ($user_data["user_role"] == "Vendors") {
+            $query1 = "INSERT INTO vendor_details (`id`, `type`, `tin`, `phone_number`, `company`, `address`, `user_id`) 
+                    VALUES(:id, :tp, :tn, :pn, :cp, :ad, :ui)";
+            $vendor_id = time();
+            $params1 = array(
+                ":id" => $vendor_id, ":tp" => "VENDOR", ":tn" => $user_data["vendor_tin"], ":pn" => $user_data["vendor_phone"],
+                ":cp" => $user_data["vendor_company"], ":ad" => $user_data["vendor_address"], ":ui" => $sys_user[0]["id"]
+            );
+            $this->dm->inputData($query1, $params1);
+            $subject = "RMU - Vendor Account";
+        }
+
         $this->logActivity(
             $_SESSION["user"],
             "INSERT",
-            "Added new user account with username/email {$email_addr}"
+            "Added new user account with username/email {$user_data["user_name"]}"
         );
 
         // Prepare email
-        $subject = "RMU System User";
-        $message = "<p>Hi " . $first_name . ", </p></br>";
+        $message = "<p>Hi " . $user_data["first_name"] . ", </p></br>";
         $message .= "<p>Find below your Login details.</p></br>";
-        $message .= "<p style='font-weight: bold;'>Username: " . $email_addr . "</p>";
+        $message .= "<p style='font-weight: bold;'>Username: " . $user_data["user_name"] . "</p>";
         $message .= "<p style='font-weight: bold;'>Password: " . $password . "</p></br>";
         $message .= "<div>Please note the following: </div>";
         $message .= "<ol style='color:red; font-weight:bold;'>";
@@ -433,7 +447,7 @@ class AdminController
         $message .= "<p><a href='office.rmuictonline.com'>Click here</a> to access portal.</ol>";
 
         // Send email
-        $emailed = $this->expose->sendEmail($email_addr, $subject, $message);
+        $emailed = $this->expose->sendEmail($user_data["user_name"], $subject, $message);
         // verify email status and return result
         if ($emailed !== 1) return array(
             "success" => false,

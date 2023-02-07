@@ -120,6 +120,34 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         }
     }
 
+    // Send verification code to vendor
+    elseif ($_GET["url"] == "send-v-vc") {
+        if (isset($_SESSION["adminLogSuccess"]) && $_SESSION["adminLogSuccess"] == true && isset($_SESSION["user"]) && !empty($_SESSION["user"])) {
+
+            $vendorPhone = $expose->getVendorPhone($_SESSION["vendor_id"]);
+
+            if (!empty($vendorPhone)) {
+                $to = $vendorPhone[0]["country_code"] . $vendorPhone[0]["phone_number"];
+                $response = $expose->sendOTP($to);
+
+                if (isset($response["otp_code"])) {
+                    $_SESSION['sms_code'] = $response["otp_code"];
+                    $_SESSION['verifySMSCode'] = true;
+                    $data["success"] = true;
+                    $data["message"] = "Verification code sent!";
+                } else {
+                    $_SESSION['verifySMSCode'] = false;
+                    $data["success"] = false;
+                    $data["message"] = $response["statusDescription"];
+                }
+            } else {
+                $data["success"] = false;
+                $data["message"] = "No phone number entry found for this user!";
+            }
+        }
+        die(json_encode($data));
+    }
+
     //
     elseif ($_GET["url"] == "apps-data") {
         if (!isset($_POST["action"]) || !isset($_POST["form_t"])) die(json_encode(array("success" => false, "message" => "Invalid input!")));
@@ -401,17 +429,39 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     //
     elseif ($_GET["url"] == "user-form") {
         if (!isset($_POST["user-fname"]) || empty($_POST["user-fname"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field: Name")));
+            die(json_encode(array("success" => false, "message" => "Missing input field: First name")));
         }
         if (!isset($_POST["user-lname"]) || empty($_POST["user-lname"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field: Name")));
+            die(json_encode(array("success" => false, "message" => "Missing input field: Last name")));
         }
         if (!isset($_POST["user-email"]) || empty($_POST["user-email"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field: Type")));
+            die(json_encode(array("success" => false, "message" => "Missing input field: Email")));
         }
         if (!isset($_POST["user-role"]) || empty($_POST["user-role"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field: Weekend")));
+            die(json_encode(array("success" => false, "message" => "Missing input field: Role")));
         }
+
+        if ($_POST["user-role"] == "Vendors") {
+            if (!isset($_POST["vendor-tin"]) || empty($_POST["vendor-tin"])) {
+                die(json_encode(array("success" => false, "message" => "Missing input field: Ghana Card")));
+            }
+            if (!isset($_POST["vendor-phone"]) || empty($_POST["vendor-phone"])) {
+                die(json_encode(array("success" => false, "message" => "Missing input field: Phone Number")));
+            }
+            if (!isset($_POST["vendor-company"]) || empty($_POST["vendor-company"])) {
+                die(json_encode(array("success" => false, "message" => "Missing input field: Address")));
+            }
+            if (!isset($_POST["vendor-address"]) || empty($_POST["vendor-address"])) {
+                die(json_encode(array("success" => false, "message" => "Missing input field: Address")));
+            }
+        }
+
+        $user_data = array(
+            "first_name" => $_POST["user-fname"], "last_name" => $_POST["user-lname"],
+            "user_name" => $_POST["user-email"], "user_role" => $_POST["user-role"],
+            "vendor_company" => $_POST["vendor-company"], "vendor_tin" => $_POST["vendor-tin"],
+            "vendor_phone" => $_POST["vendor-phone"], "vendor_address" => $_POST["vendor-address"]
+        );
 
         $privileges = array("select" => 1, "insert" => 0, "update" => 0, "delete" => 0);
         if (isset($_POST["privileges"]) && !empty($_POST["privileges"])) {
@@ -425,7 +475,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         $result;
         switch ($_POST["user-action"]) {
             case 'add':
-                $result = $admin->addSystemUser($_POST["user-fname"], $_POST["user-lname"], $_POST["user-email"], $_POST["user-role"], $privileges);
+                $result = $admin->addSystemUser($user_data, $privileges);
                 break;
 
             case 'update':

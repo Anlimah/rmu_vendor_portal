@@ -69,6 +69,30 @@
                                     </select>
                                 </div>
                             </div>
+
+                            <div id="vendor_info" style="display: none">
+                                <hr>
+                                <div style="display: flex; flex-direction:row; justify-content: space-between">
+                                    <div class="mb-2 me-2">
+                                        <label for="vendor-tin">Ghana Card</label>
+                                        <input type="text" class="form-control form-control-sm" name="vendor-tin" id="vendor-tin" placeholder="TIN">
+                                    </div>
+                                    <div class="mb-2 me-2">
+                                        <label for="vendor-phone">Phone No.</label>
+                                        <input type="text" class="form-control form-control-sm" name="vendor-phone" id="vendor-phone" placeholder="02441234567">
+                                    </div>
+                                </div>
+                                <div style="display: flex; flex-direction:row; justify-content: space-between">
+                                    <div class="mb-3">
+                                        <label for="vendor-company">Company</label>
+                                        <input type="text" rows="1" class="form-control form-control-sm" name="vendor-company" id="vendor-company" placeholder="Company">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="vendor-address">Address</label>
+                                        <textarea type="text" rows="1" class="form-control form-control-sm" name="vendor-address" id="vendor-address" placeholder="Address"></textarea>
+                                    </div>
+                                </div>
+                            </div>
                             <hr>
                             <div style="display: flex; flex-direction:row; justify-content: space-around">
 
@@ -172,6 +196,14 @@
             $("#user-role").val("");
             $("#user-role option:selected").attr("selected", false);
         }
+
+        $("#user-role").on("change", function() {
+            if ($(this).val() == "Vendors") {
+                $("#vendor_info").toggle("slow");
+            } else {
+                $("#vendor_info").hide("slow");
+            }
+        });
 
         $("#addOrUpdateUserForm").on("submit", function(e) {
             e.preventDefault();
