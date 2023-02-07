@@ -6,7 +6,9 @@ if (isset($_SESSION["adminLogSuccess"]) && $_SESSION["adminLogSuccess"] == true 
   header("Location: login.php");
 }
 
-if (isset($_GET['logout'])) {
+
+
+if (isset($_GET['logout']) && (strtolower($_SESSION["role"]) != "accounts" || strtolower($_SESSION["role"]) != "vendors")) {
   session_destroy();
   $_SESSION = array();
   if (ini_get("session.use_cookies")) {
@@ -22,29 +24,29 @@ if (isset($_GET['logout'])) {
     );
   }
 
-  header('Location: login.php');
+  header('Location: ../login.php');
 }
 ?>
 <?php
-require_once('bootstrap.php');
+require_once('../bootstrap.php');
 
 use Src\Controller\AdminController;
 
 $expose = new AdminController();
-require_once('inc/page-data.php');
+require_once('../inc/page-data.php');
 
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <?= require_once("inc/head.php") ?>
+  <?= require_once("../inc/head.php") ?>
 </head>
 
 <body>
-  <?= require_once("inc/header.php") ?>
+  <?= require_once("../inc/header.php") ?>
 
-  <?= require_once("inc/sidebar.php") ?>
+  <?= require_once("../inc/sidebar.php") ?>
 
   <main id="main" class="main">
 
@@ -104,7 +106,7 @@ require_once('inc/page-data.php');
 
   </main><!-- End #main -->
 
-  <?= require_once("inc/footer-section.php") ?>
+  <?= require_once("../inc/footer-section.php") ?>
   <script>
     $("dataTable-top").hide();
   </script>
