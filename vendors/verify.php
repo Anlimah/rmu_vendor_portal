@@ -6,14 +6,11 @@ if (isset($_SESSION["adminLogSuccess"]) && $_SESSION["adminLogSuccess"] == true 
     header("Location: login.php");
 }
 
-if (isset($_SESSION['vendor_id']) && !empty($_SESSION['vendor_id'])) {
-    if (!isset($_SESSION["_vendor1Token"])) {
+if (!isset($_SESSION['SMSLogin']) && isset($_SESSION['verifySMSCode']) && $_SESSION['verifySMSCode'] == true) {
+    if (!isset($_SESSION["_verifySMSToken"])) {
         $rstrong = true;
-        $_SESSION["_vendor1Token"] = hash('sha256', bin2hex(openssl_random_pseudo_bytes(64, $rstrong)));
-        $_SESSION["vendor_type"] = "VENDOR";
+        $_SESSION["_verifySMSToken"] = hash('sha256', bin2hex(openssl_random_pseudo_bytes(64, $rstrong)));
     }
-} else {
-    header('Location: index.php');
 }
 
 if (isset($_GET['logout']) || strtolower($_SESSION["role"]) != "vendors") {
@@ -168,81 +165,33 @@ require_once('../inc/page-data.php');
         <section class="section dashboard">
 
             <div id="flashMessage" class="alert text-center" role="alert"></div>
-
+            <!-- Left side columns -->
             <div class="row" style="display:flex !important; flex-direction:row !important; justify-content: center !important; align-items: center">
                 <div class="flex-card">
-
-                    <div class="form-card card" style="max-width: 500px !important;">
-
+                    <div class="form-card card">
                         <div class="purchase-card-header">
                             <h1>Verify Phone Number</h1>
                         </div>
 
                         <hr style="color:#999">
 
-                        <div class="purchase-card-body">
-                            <form id="step1Form" method="post" enctype="multipart/form-data">
-                                <div class="flex-column align-items-center">
-                                    <div class="flex-row justify-space-between">
-                                        <div class="mb-4 me-2">
-                                            <label class="form-label" for="first_name">First Name</label>
-                                            <input name="first_name" id="first_name" title="Provide your first name" class="form-control" type="text" placeholder="Type your first name" required>
-                                        </div>
-                                        <div class="mb-4">
-                                            <label class="form-label" for="last_name">Last Name</label>
-                                            <input name="last_name" id="last_name" title="Provide your last name" class="form-control" type="text" placeholder="Type your last name" required>
-                                        </div>
-                                    </div>
-                                    <div class="flex-row justify-space-between" style="width: 450px">
-                                        <div class="mb-4">
-                                            <label class="form-label" for="gender">Form type</label>
-                                            <select title="Select the type of form you want to purchase." class="form-select form-select-sm" name="form_type" id="form_type" required>
-                                                <option selected disabled value="">Choose...</option>
-                                                <?php
-                                                $data = $admin->getFormTypes();
-                                                foreach ($data as $ft) {
-                                                ?>
-                                                    <option value="<?= $ft['id'] ?>"><?= $ft['name'] ?></option>
-                                                <?php
-                                                }
-                                                ?>
-                                            </select>
-                                        </div>
-                                        <div class="mb-4 hide" id="form-cost-display">
-                                            <label class="form-label" for="gender">Form cost:</label>
-                                            <p style="line-height: normal !important;">
-                                                <b><span id="form-type"></span></b> forms cost <b> GHS<span id="form-cost"></span></b>.
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div class="flex-row justify-space-between" style="padding-left: 10px; padding-right: 10px">
-                                        <div class="mb-4 me-2">
-                                            <label class="form-label" for="country">Country Code</label>
-                                            <select name="country" id="country" value="<?= '(' . COUNTRIES[83]["code"] . ') ' . COUNTRIES[83]["name"]  ?>" title="Choose country and country code" class="form-control" placeholder="Type for options" required>
-                                                <?php
-                                                foreach (COUNTRIES as $cn) { ?>
-                                                    <option value="<?= "(" . $cn["code"] . ") " . $cn["name"] ?>"><?= "(" . $cn["code"] . ") " . $cn["name"] ?></option>
-                                                <?php } ?>
-                                            </select>
-                                        </div>
-                                        <div class="mb-4">
-                                            <label class="form-label" for="phone-number">Phone Number</label>
-                                            <input name="phone_number" id="phone_number" maxlength="10" title="Provide your Provide Number" class="form-control" type="tel" placeholder="0244123123" required>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <button class="btn btn-primary btn-sm" type="submit" id="submitBtn" style="padding: 10px 10px; width:200px" disabled>Submit</button>
-                                        <input type="hidden" name="_v1Token" value="<?= $_SESSION["_vendor1Token"]; ?>">
-                                    </div>
+                        <div class="purchase-card-body" style="margin: 0px 10%;">
+                            <form id="verifyOTPCodeForm" method="post" enctype="multipart/form-data">
+                                <p class="mb-4">Enter the verification code sent to your phone.</p>
+                                <div class="mb-4" style="display:flex !important; flex-direction:row !important; justify-content: space-around !important; align-items:center">
+                                    <input class="form-control num me-2" type="text" maxlength="4" style="padding: 10px 10px;text-align:center" name="code" id="code" placeholder="XXXX" required>
+                                    <button class="btn btn-primary" type="submit" id="verifyCodeBtn" style="padding: 10px 10px;">Verify</button>
                                 </div>
+                                <input class="form-control" type="hidden" name="_vSMSToken" id="_vSMSToken" value="<?= $_SESSION["_verifySMSToken"] ?>">
                             </form>
+                            <div class="purchase-card-footer flex-row" style="align-items: flex-end;">
+                                <span id="timer"></span>
+                                <button id="resend-code" class="btn btn-outline-dark btn-xs hide">Resend code</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
+            </div><!-- End Left side columns -->
         </section>
 
     </main><!-- End #main -->
@@ -250,36 +199,87 @@ require_once('../inc/page-data.php');
     <?= require_once("../inc/footer-section.php") ?>
     <script>
         $(document).ready(function() {
+            //get variable(parameters) from url
+            function getUrlVars() {
+                var vars = {};
+                var parts = window.location.href.replace(
+                    /[?&]+([^=&]+)=([^&]*)/gi,
+                    function(m, key, value) {
+                        vars[key] = value;
+                    }
+                );
+                return vars;
+            }
 
-            $(".form-select").change("blur", function() {
+            var triggeredBy = 0;
+
+            var count = 1;
+            var intervalId = setInterval(() => {
+                $("#timer").html("Resend code <b>(" + count + " sec)</b>");
+                count = count - 1;
+                if (count <= 0) {
+                    clearInterval(intervalId);
+                    $(' #timer').hide();
+                    $('#resend-code').removeClass("hide").addClass("display");
+                    return;
+                }
+            }, 1000);
+
+            $("#resend-code").click(function(e) {
+                e.preventDefault();
+                triggeredBy = 1;
+                let data = {
+                    resend_code: "sms",
+                    _vSMSToken: $("#_vSMSToken").val()
+                };
                 $.ajax({
                     type: "POST",
-                    url: "../endpoint/formInfo",
-                    data: {
-                        form_type: this.value,
-                    },
+                    url: "../endpoint/resend-code",
+                    data: data,
                     success: function(result) {
                         console.log(result);
                         if (result.success) {
-                            $("#form-cost-display").show();
-                            $("#form-type").text(result.message[0]["name"]);
-                            $("#form-cost").text(result.message[0]["amount"]);
-                            $(':input[type="submit"]').prop('disabled', false);
+                            flashMessage("alert-success", result.message);
+                            clearInterval(intervalId);
+                            $("#timer").show();
+                            $('#resend-code').removeClass("display").addClass("hide");
+                            count = 1;
+                            intervalId = setInterval(() => {
+                                $("#timer").html("Resend code <b>(" + count + " sec)</b>");
+                                count = count - 1;
+                                if (count <= 0) {
+                                    clearInterval(intervalId);
+                                    $('#timer').hide();
+                                    $('#resend-code').removeClass("hide").addClass("display").attr("disabled", false);
+                                    return;
+                                }
+                            }, 1000); /**/
+                        } else {
+                            flashMessage("alert-danger", result.message);
                         }
                     },
                     error: function(error) {
-                        console.log(error.statusText);
+                        flashMessage("alert-danger", error);
                     }
                 });
             });
 
-            $("#step1Form").on("submit", function(e) {
+            $("#verifyOTPCodeForm").on("submit", function(e) {
                 e.preventDefault();
-                triggeredBy = 4;
+                triggeredBy = 2;
+
+                var url = "";
+                if (getUrlVars()["verify"] == "vendor") {
+                    url = "verifyVendor";
+                } else if (getUrlVars()["verify"] == "customer") {
+                    url = "verifyCustomer";
+                } else {
+                    return;
+                }
 
                 $.ajax({
                     type: "POST",
-                    url: "../endpoint/sellAction",
+                    url: "../endpoint/" + url,
                     data: new FormData(this),
                     contentType: false,
                     cache: false,
@@ -287,7 +287,10 @@ require_once('../inc/page-data.php');
                     success: function(result) {
                         console.log(result);
                         if (result.success) {
-                            window.location.href = result.message;
+                            if (url == "verifyVendor")
+                                window.location.href = result.message;
+                            else
+                                window.location.href = "confirm.php?status=000&exttrid=" + result.exttrid;
                         } else {
                             flashMessage("alert-danger", result.message);
                         }
@@ -300,10 +303,12 @@ require_once('../inc/page-data.php');
 
             $(document).on({
                 ajaxStart: function() {
-                    $("#submitBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
+                    if (triggeredBy == 1) $("#resend-code").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> sending...');
+                    if (triggeredBy == 2) $("#verifyCodeBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
                 },
                 ajaxStop: function() {
-                    $("#submitBtn").prop("disabled", false).html('Verify');
+                    if (triggeredBy == 1) $("#resend-code").prop("disabled", false).html('Resend code');
+                    if (triggeredBy == 2) $("#verifyCodeBtn").prop("disabled", false).html('Verify');
                 }
             });
 

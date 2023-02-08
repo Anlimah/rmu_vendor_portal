@@ -69,14 +69,16 @@ require_once('../inc/page-data.php');
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#users-tab-pane" type="button" role="tab" aria-controls="users-tab-pane" aria-selected="true">Users</button>
                         </li>
-                        <li class="nav-item" role="presentation">
+                        <!--<li class="nav-item" role="presentation">
                             <button class="nav-link" id="vendors-tab" data-bs-toggle="tab" data-bs-target="#vendors-tab-pane" type="button" role="tab" aria-controls="vendors-tab-pane" aria-selected="false">Vendors</button>
-                        </li>
+                        </li>-->
                     </ul>
 
                     <div class="tab-content" id="myTabContent">
-                        <?php require_once("../inc/accounts/vendors-pane.php"); ?>
-                        <?php require_once("../inc/accounts/users-pane.php"); ?>
+                        <?php require_once("../inc/accounts/users-pane.php");
+                        ?>
+                        <?php //require_once("../inc/accounts/vendors-pane.php"); 
+                        ?>
                     </div>
                 </div>
             </div>

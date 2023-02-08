@@ -4,6 +4,7 @@ namespace Src\Controller;
 
 use Src\System\DatabaseMethods;
 use Src\Controller\ExposeDataController;
+use Src\Controller\PaymentController;
 
 class AdminController
 {
@@ -14,6 +15,12 @@ class AdminController
     {
         $this->dm = new DatabaseMethods();
         $this->expose = new ExposeDataController();
+    }
+
+    public function processVendorPay($data)
+    {
+        $payConfirm = new PaymentController();
+        return $payConfirm->vendorPaymentProcess($data);
     }
 
     public function verifyAdminLogin($username, $password)
@@ -50,6 +57,11 @@ class AdminController
             $query = "SELECT * FROM programs";
         }
         return $this->dm->getData($query, $param);
+    }
+
+    public function getFormTypes()
+    {
+        return $this->dm->getData("SELECT * FROM `form_type`");
     }
 
     public function fetchUserName($user_id)

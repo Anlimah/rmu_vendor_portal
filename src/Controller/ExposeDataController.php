@@ -36,75 +36,56 @@ class ExposeDataController extends DatabaseMethods
 
     public function validateInput($input)
     {
-        if (empty($input)) return array("success" => false, "message" => "Input required!");
-
+        if (empty($input)) die(json_encode(array("success" => false, "message" => "Input required!")));
         $user_input = htmlentities(htmlspecialchars($input));
         $validated_input = (bool) preg_match('/^[A-Za-z0-9]/', $user_input);
-
-        if ($validated_input) return array("success" => true, "message" => $user_input);
-
-        return array("success" => false, "message" => "Invalid input!");
+        if ($validated_input) return $user_input;
+        die(json_encode(array("success" => false, "message" => "Invalid input!")));
     }
 
     public function validateCountryCode($input)
     {
-        if (empty($input)) return array("success" => false, "message" => "Input required!");
-
+        if (empty($input)) die(json_encode(array("success" => false, "message" => "Input required!")));
         $user_input = htmlentities(htmlspecialchars($input));
         $validated_input = (bool) preg_match('/^[A-Za-z0-9()+]/', $user_input);
-
-        if ($validated_input) return array("success" => true, "message" => $user_input);
-
-        return array("success" => false, "message" => "Invalid input!");
+        if ($validated_input) return $user_input;
+        die(json_encode(array("success" => false, "message" => "Invalid input!")));
     }
 
     public function validatePassword($input)
     {
-        if (empty($input)) return array("success" => false, "message" => "Input required!");
-
+        if (empty($input)) die(json_encode(array("success" => false, "message" => "Input required!")));
         $user_input = htmlentities(htmlspecialchars($input));
         $validated_input = (bool) preg_match('/^[A-Za-z0-9()+@#.-_=$&!`]/', $user_input);
-
-        if ($validated_input) return array("success" => true, "message" => $user_input);
-
-        return array("success" => false, "message" => "Invalid input!");
+        if ($validated_input) return $user_input;
+        die(json_encode(array("success" => false, "message" => "Invalid input!")));
     }
 
     public function validatePhone($input)
     {
-        if (empty($input)) return array("success" => false, "message" => "Input required!");
-
+        if (empty($input)) die(json_encode(array("success" => false, "message" => "Input required!")));
         $user_input = htmlentities(htmlspecialchars($input));
         $validated_input = (bool) preg_match('/^[0-9]/', $user_input);
-
-        if ($validated_input) return array("success" => true, "message" => $user_input);
-
-        return array("success" => false, "message" => "Invalid input!");
+        if ($validated_input) return $user_input;
+        die(json_encode(array("success" => false, "message" => "Invalid input!")));
     }
-
 
     public function validateNumber($input)
     {
-        if ($input == "") return array("success" => false, "message" => "Input required!");
-
+        if (empty($input)) die(json_encode(array("success" => false, "message" => "Input required!")));
         $user_input = htmlentities(htmlspecialchars($input));
         $validated_input = (bool) preg_match('/^[0-9]/', $user_input);
-
-        if ($validated_input) return array("success" => true, "message" => $user_input);
-
-        return array("success" => false, "message" => "Invalid input!");
+        if ($validated_input) return $user_input;
+        die(json_encode(array("success" => false, "message" => "Invalid input!")));
     }
 
     public function validateText($input)
     {
-        if (empty($input)) return array("success" => false, "message" => "Input required!");
-
+        if (empty($input)) die(json_encode(array("success" => false, "message" => "Input required!")));
         $user_input = htmlentities(htmlspecialchars($input));
         $validated_input = (bool) preg_match('/^[A-Za-z]/', $user_input);
-
-        if ($validated_input) return array("success" => true, "message" => $user_input);
-
-        return array("success" => false, "message" => "Invalid Input!");
+        if ($validated_input) return $user_input;
+        die(json_encode(array("success" => false, "message" => "Invalid input!")));
     }
 
     public function validateDate($date)
@@ -218,14 +199,26 @@ class ExposeDataController extends DatabaseMethods
         return $_SERVER['HTTP_USER_AGENT'];
     }
 
-    public function getFormPrice(string $form_type)
+    public function getFormPriceAndFormName(string $form_type, int $admin_period)
     {
-        return $this->getData("SELECT `amount` FROM `form_type` WHERE `name` LIKE '%$form_type%'");
+        return $this->getData(
+            "SELECT p.`amount`, t.`name` FROM `form_price` AS p, `form_type` AS t 
+                WHERE p.`form_type` = :ft AND p.`admin_period` = :ap AND t.`id` = p.`form_type`",
+            array(":ft" => $form_type, ":ap" => $admin_period)
+        );
+    }
+
+    public function getFormPrice(int $form_type, int $admin_period)
+    {
+        return $this->getData(
+            "SELECT `amount` FROM `form_price` WHERE `form_type` = :ft AND admin_period = :ap",
+            array(":ft" => $form_type, ":ap" => $admin_period)
+        );
     }
 
     public function getAdminYearCode()
     {
-        $sql = "SELECT EXTRACT(YEAR FROM (SELECT `start_date` FROM admission_period)) AS 'year'";
+        $sql = "SELECT EXTRACT(YEAR FROM (SELECT `start_date` FROM admission_period WHERE `active` = 1)) AS 'year'";
         $year = (string) $this->getData($sql)[0]['year'];
         return (int) substr($year, 2, 2);
     }
@@ -281,7 +274,7 @@ class ExposeDataController extends DatabaseMethods
     public function sendHubtelSMS($url, $payload)
     {
         $client = getenv('HUBTEL_CLIENT');
-        +$secret = getenv('HUBTEL_SECRET');
+        $secret = getenv('HUBTEL_SECRET');
         $secret_key = base64_encode($client . ":" . $secret);
 
         $httpHeader = array("Authorization: Basic " . $secret_key, "Content-Type: application/json");
@@ -311,6 +304,13 @@ class ExposeDataController extends DatabaseMethods
         return $this->getData($sql, array(':i' => $vendor_id));
     }
 
+    public function getVendorPhoneByUserID($user_id)
+    {
+        $sql = "SELECT v.`id`, v.`phone_number` FROM `vendor_details` AS v, `sys_users` AS u 
+                WHERE u.`id` = v.`user_id` AND u.`id`=:i";
+        return $this->getData($sql, array(':i' => $user_id));
+    }
+
     public function vendorExist($vendor_id)
     {
         $str = "SELECT `id` FROM `vendor_details` WHERE `id`=:i";
@@ -333,9 +333,14 @@ class ExposeDataController extends DatabaseMethods
 
     public function getApplicationInfo(int $transaction_id)
     {
-        $sql = "SELECT p.`app_number`, p.`pin_number`, f.`name`, f.`amount`, v.`vendor_name`, a.`info`, f.`name`  
-        FROM `purchase_detail` AS p, `form_type` AS f, `vendor_details` AS v, `admission_period` AS a 
-        WHERE p.`form_type` = f.`id` AND p.vendor = v.`id` AND p.`admission_period` = a.`id` AND p.`id` = :i";
+        $sql = "SELECT p.`app_number`, p.`pin_number`, f.`name`, fp.`amount`, v.`company`, a.`info`, f.`name`  
+        FROM `purchase_detail` AS p, `form_type` AS f, `vendor_details` AS v, `admission_period` AS a, form_price AS fp  
+        WHERE f.`id` = fp.`form_type` AND fp.`admin_period` = a.`id` AND p.`form_type` = f.`id` AND p.vendor = v.`id` AND p.`admission_period` = a.`id` AND p.`id` = :i";
         return $this->getData($sql, array(':i' => $transaction_id));
+    }
+
+    public function getCurrentAdmissionPeriodID()
+    {
+        return $this->getID("SELECT `id` FROM `admission_period` WHERE `active` = 1");
     }
 }

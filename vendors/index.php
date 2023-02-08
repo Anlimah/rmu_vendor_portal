@@ -24,8 +24,7 @@ if (isset($_GET['logout']) || strtolower($_SESSION["role"]) != "vendors") {
 
     header('Location: ../login.php');
 }
-?>
-<?php
+
 require_once('../bootstrap.php');
 
 use Src\Controller\AdminController;
@@ -67,7 +66,7 @@ require_once('../inc/page-data.php');
 
                         <!-- Applications Card -->
                         <div class="col-xxl-3 col-md-3">
-                            <a href="sell.php">
+                            <a href="javascript:void()" id="verify-vendor">
                                 <div class="card info-card sales-card">
                                     <div class="card-body">
                                         <h5 class="card-title">Sell Form</h5>
@@ -117,7 +116,31 @@ require_once('../inc/page-data.php');
 
     <?= require_once("../inc/footer-section.php") ?>
     <script>
-        $("dataTable-top").hide();
+        $(document).ready(function() {
+            $("#verify-vendor").click("submit", function(e) {
+                e.preventDefault();
+                triggeredBy = 2;
+                let data = {
+                    action: "sendVC"
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "../endpoint/send-vendor-vc",
+                    data: data,
+                    success: function(result) {
+                        console.log(result);
+                        if (result.success) {
+                            window.location.href = result.message;
+                        } else {
+                            flashMessage("alert-danger", result.message);
+                        }
+                    },
+                    error: function(error) {
+                        flashMessage("alert-danger", error);
+                    }
+                });
+            });
+        });
     </script>
 
 </body>
