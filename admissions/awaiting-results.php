@@ -231,7 +231,16 @@ require_once('../inc/page-data.php');
           contentType: false,
           success: function(result) {
             console.log(result);
-            if (result.success) alert();
+            if (result.errors_count) {
+              $("#data-process-info").toggle();
+              return;
+            } else if (result.success_count) {
+              alert("Data successfully uploaded!");
+              return;
+            } else {
+              alert("Fatal Error: Unexpected error occured during data processing!");
+              return;
+            }
           },
           error: function() {
             alert('Error: Internal server error!');
