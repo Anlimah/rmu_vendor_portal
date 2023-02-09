@@ -1097,7 +1097,7 @@ class AdminController
 
             if ($result["type"] == "core") {
                 if (strtoupper($result["subject"]) == "CORE MATHEMATICS" || strtoupper($result["subject"]) == "ENGLISH LANGUAGE") {
-                    die(json_encode(array("subject" => ["subject"], "score" => $score)));
+                    die(json_encode(array("subject" => $result["subject"], "score" => $score)));
                     if ($score != 7) {
                         $required_core_passed += 1;
                         $total_core_score += $score;
