@@ -1111,7 +1111,7 @@ class AdminController
                 }
             }
 
-            if ($result["type"] == "elective") {
+            if (strtoupper($result["type"]) == "ELECTIVE") {
                 if ($score != 7) {
                     $any_three_elective_passed += 1;
                     array_push($any_three_elective_scores, $score);
