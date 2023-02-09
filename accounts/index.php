@@ -67,7 +67,7 @@ require_once('../inc/page-data.php');
                     <div class="row">
 
                         <!-- Applications Card -->
-                        <div class="col-xxl-3 col-md-3">
+                        <!--<div class="col-xxl-3 col-md-3">
                             <a href="sell-forms.php">
                                 <div class="card info-card sales-card">
                                     <div class="card-body">
@@ -83,7 +83,7 @@ require_once('../inc/page-data.php');
                                     </div>
                                 </div>
                             </a>
-                        </div><!-- End Applications Card -->
+                        </div>--><!-- End Applications Card -->
 
                         <!-- Applications Card -->
                         <div class="col-xxl-3 col-md-3">
