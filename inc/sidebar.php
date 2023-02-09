@@ -32,9 +32,7 @@
                     <span>Broadsheet</span>
                 </a>
             </li><!-- End Application Page Nav -->
-        <?php }
-        if (strtolower($_SESSION["role"]) == "admissions" || strtolower($_SESSION["role"]) == "accounts") {
-        ?>
+
             <li class="nav-item">
                 <a class="nav-link collapsed" href="../<?= strtolower($_SESSION["role"]) ?>/user-account.php">
                     <i class="bi bi-shield-shaded"></i>
