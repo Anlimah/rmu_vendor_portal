@@ -132,7 +132,7 @@ class UploadExcelDataController
         }
 
         // Get applicant application number/id using index number provide
-        $query = "SELECT ab.id FROM applicants_login AS ap, academic_background AS ab
+        $query = "SELECT ab.`id` AS acaID, ap.`id` AS appID FROM applicants_login AS ap, academic_background AS ab
                     WHERE ap.id = ab.app_login AND ab.index_number = :i";
         $appAcaID = $this->dm->getID($query, array(":i" => $indexNumber));
 
@@ -145,17 +145,22 @@ class UploadExcelDataController
 
         // Delete any existing records if any
         $deleteQuery = "DELETE FROM `high_school_results` WHERE `acad_back_id` = :ai";
-        $this->dm->inputData($deleteQuery, array(":ai" => $appAcaID));
+        $this->dm->inputData($deleteQuery, array(":ai" => $appAcaID[0]["acaID"]));
 
         // Insert exam records
         $insertQuery = "INSERT INTO `high_school_results` (`type`, `subject`, `grade`, `acad_back_id`) VALUES (:t, :s, :g, :ai)";
         foreach ($subjects as $sbj) {
-            $params = array(":t" => $sbj["type"], ":s" => $sbj["subject"], ":g" => $sbj["grade"], ":ai" => $appAcaID);
+            $params = array(":t" => $sbj["type"], ":s" => $sbj["subject"], ":g" => $sbj["grade"], ":ai" => $appAcaID[0]["acaID"]);
             $this->dm->inputData($insertQuery, $params);
         }
-        $query = "UPDATE academic_background SET `awaiting_result` = 0 WHERE `id` = :ai AND index_number = :im";
-        $appAcaID = $this->dm->getID($query, array(":ai" => $appAcaID, ":im" => $indexNumber));
+
         // Update Acagemic backgorund, set awaiting to 0
+        $query = "UPDATE academic_background SET `awaiting_result` = 0 WHERE `id` = :ai AND index_number = :im";
+        $this->dm->getID($query, array(":ai" => $appAcaID[0]["acaID"], ":im" => $indexNumber));
+
+        // Update form_check, set declaration to 1
+        $query = "UPDATE form_sections_chek SET `declaration` = 1 WHERE `app_login` = :al";
+        $this->dm->getID($query, array(":al" => $appAcaID[0]["appID"]));
 
         return array("success" => true, "index number" => $indexNumber, "message" => "Subjects added!");
     }
