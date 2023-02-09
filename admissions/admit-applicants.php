@@ -110,7 +110,7 @@ require_once('../inc/page-data.php');
                     <th scope="col" colspan="1">Programme: (<span class="pro-choice">1<sup>st</sup></span>) Choice</th>
                     <th scope="col" colspan="4" style="text-align: center;">Core Subjects</th>
                     <th scope="col" colspan="4" style="text-align: center;">Elective Subjects</th>
-                    <th scope="col" colspan="1" style="text-align: center;">Status</th>
+                    <!--<th scope="col" colspan="1" style="text-align: center;">Status</th>-->
                   </tr>
                   <tr class="table-grey">
                     <th scope="col"></th>
@@ -124,7 +124,7 @@ require_once('../inc/page-data.php');
                     <th scope="col" style="background-color: #999; text-align: center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Elective 2">E2</th>
                     <th scope="col" style="background-color: #999; text-align: center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Elective 3">E3</th>
                     <th scope="col" style="background-color: #999; text-align: center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Elective 4">E4</th>
-                    <th scope="col"></th>
+                    <!--<th scope="col"></th>-->
                   </tr>
                 </thead>
                 <tbody>
@@ -168,7 +168,7 @@ require_once('../inc/page-data.php');
             if (result.success) {
               $("tbody").html('');
               $.each(result.message, function(index, value) {
-                let status = value.declaration == 1 ? '<span class="badge text-bg-success">Q</span>' : '<span class="badge text-bg-danger">F</span>';
+                //let status = value.declaration == 1 ? '<span class="badge text-bg-success">Q</span>' : '<span class="badge text-bg-danger">F</span>';
                 $("tbody").append(
                   '<tr>' +
                   '<th scope="row">' + (index + 1) + '</th>' +
@@ -182,7 +182,7 @@ require_once('../inc/page-data.php');
                   '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[5].subject + '">' + value.sch_rslt[5].grade + '</td>' +
                   '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[6].subject + '">' + value.sch_rslt[6].grade + '</td>' +
                   '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[7].subject + '">' + value.sch_rslt[7].grade + '</td>' +
-                  '<td style="text-align: center">' + status + '</td>' +
+                  //'<td style="text-align: center">' + status + '</td>' +
                   '</tr>');
               });
 
