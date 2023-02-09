@@ -1096,19 +1096,20 @@ class AdminController
             }
 
             if ($result["type"] == "core") {
-                if (strtoupper($result["subject"]) == "CORE MATHEMATICS" || strtoupper($result["subject"]) == "ENGLISH LANGUAGE") {
-                    if ($score != 7) {
+                if ($score <= 6 && $score >= 1) {
+                    if (strtoupper($result["subject"]) == "CORE MATHEMATICS" || strtoupper($result["subject"]) == "ENGLISH LANGUAGE") {
                         $required_core_passed += 1;
                         $total_core_score += $score;
-                    }
-                } else {
-                    if (!empty($any_one_core_passed)) {
-                        $total_core_score -= $any_one_core_score;
-                        $total_core_score += $score;
-                    }
-                    if (empty($any_one_core_passed)) {
+                    } else {
                         $any_one_core_passed += 1;
-                        $any_one_core_score = $score;
+
+                        if (!empty($any_one_core_passed)) {
+                            $total_core_score -= $any_one_core_score;
+                        }
+                        if (empty($any_one_core_passed)) {
+                            $any_one_core_score = $score;
+                        }
+                        $total_core_score += $score;
                     }
                 }
             }
