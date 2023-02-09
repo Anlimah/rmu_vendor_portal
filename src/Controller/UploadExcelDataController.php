@@ -153,6 +153,9 @@ class UploadExcelDataController
             $params = array(":t" => $sbj["type"], ":s" => $sbj["subject"], ":g" => $sbj["grade"], ":ai" => $appAcaID);
             $this->dm->inputData($insertQuery, $params);
         }
+        $query = "UPDATE academic_background SET `awaiting_result` = 0 WHERE `id` = :ai AND index_number = :im";
+        $appAcaID = $this->dm->getID($query, array(":ai" => $appAcaID, ":im" => $indexNumber));
+        // Update Acagemic backgorund, set awaiting to 0
 
         return array("success" => true, "index number" => $indexNumber, "message" => "Subjects added!");
     }
