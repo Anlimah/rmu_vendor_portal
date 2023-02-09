@@ -97,7 +97,7 @@ require_once('../inc/page-data.php');
                     </select>
                   </div>
                   <div class="col-2">
-                    <button type="submit" class="btn mb-4 btn-primary" style="margin-top: 30px;">Fetch Data</button>
+                    <button type="submit" class="btn mb-4 btn-primary" style="margin-top: 30px;" id="submitBtn">Fetch Data</button>
                   </div>
                 </div>
               </form>
@@ -203,12 +203,16 @@ require_once('../inc/page-data.php');
         });
       }
 
+      let triggeredBy = 0;
+
       $("#fetchDataForm").on("submit", function(e) {
         e.preventDefault();
+        triggeredBy = 1;
         fetchBroadsheet();
       });
 
       $('#admit-all-bs').click(function() {
+        triggeredBy = 2;
         data = {
           "cert-type": $("#cert-type").val(),
           "prog-type": $("#prog-type").val(),
@@ -227,6 +231,17 @@ require_once('../inc/page-data.php');
             console.log(error);
           }
         });
+      });
+
+      $(document).on({
+        ajaxStart: function() {
+          if (triggeredBy == 1) $("#submitBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> sending...');
+          if (triggeredBy == 2) $("#admit-all-bs").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...');
+        },
+        ajaxStop: function() {
+          if (triggeredBy == 1) $("#submitBtn").prop("disabled", false).html('Resend code');
+          if (triggeredBy == 2) $("#admit-all-bs").prop("disabled", false).html('Admit All Qualified');
+        }
       });
 
     });
