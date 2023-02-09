@@ -1095,12 +1095,12 @@ class AdminController
                 }
             }
 
-            if ($result["type"] == "core") {
-                if ($score <= 6 && $score >= 1) {
+            if ($score <= 6 && $score >= 1) {
+                if (strtoupper($result["type"]) == "CORE") {
                     if (strtoupper($result["subject"]) == "CORE MATHEMATICS" || strtoupper($result["subject"]) == "ENGLISH LANGUAGE") {
                         $required_core_passed += 1;
                         $total_core_score += $score;
-                    } else {
+                    } /*else {
                         $any_one_core_passed += 1;
 
                         if (!empty($any_one_core_passed)) {
@@ -1110,14 +1110,14 @@ class AdminController
                             $any_one_core_score = $score;
                         }
                         $total_core_score += $score;
-                    }
+                    }*/
                 }
-            }
 
-            if (strtoupper($result["type"]) == "ELECTIVE") {
-                if ($score != 7) {
-                    $any_three_elective_passed += 1;
-                    array_push($any_three_elective_scores, $score);
+                if (strtoupper($result["type"]) == "ELECTIVE") {
+                    if ($score != 7) {
+                        $any_three_elective_passed += 1;
+                        array_push($any_three_elective_scores, $score);
+                    }
                 }
             }
         }
