@@ -1101,7 +1101,6 @@ class AdminController
                         $required_core_passed += 1;
                         $total_core_score += $score;
                     }
-                    die(json_encode(array("subject" => $result["subject"], "score" => $score, "total_core_score" => $total_core_score)));
                 } else {
                     if ($score < $any_one_core_score) {
                         if (!empty($any_one_core_passed)) $total_core_score -= $any_one_core_score;
