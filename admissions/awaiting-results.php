@@ -231,10 +231,10 @@ require_once('../inc/page-data.php');
           contentType: false,
           success: function(result) {
             console.log(result);
-            if (result.errors_count) {
+            if (result[2].errors_count) {
               $("#data-process-info").toggle();
               return;
-            } else if (result.success_count) {
+            } else if (result[1].success_count) {
               alert("Data successfully uploaded!");
               return;
             } else {
