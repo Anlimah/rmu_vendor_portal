@@ -72,7 +72,7 @@ class ExposeDataController extends DatabaseMethods
 
     public function validateNumber($input)
     {
-        if (empty($input)) die(json_encode(array("success" => false, "message" => "Input required!")));
+        if ($input == "") die(json_encode(array("success" => false, "message" => "Input required!")));
         $user_input = htmlentities(htmlspecialchars($input));
         $validated_input = (bool) preg_match('/^[0-9]/', $user_input);
         if ($validated_input) return $user_input;
