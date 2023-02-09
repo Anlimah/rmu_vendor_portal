@@ -230,7 +230,7 @@ require_once('../inc/page-data.php');
           processData: false,
           contentType: false,
           success: function(result) {
-            console.log(result[0]);
+            console.log(result);
             if (result.errors_count) {
               $("#data-process-info").toggle();
               return;
