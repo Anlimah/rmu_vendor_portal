@@ -1120,19 +1120,19 @@ class AdminController
                     }
                 }
             }
-        }
 
-        die(json_encode(
-            array(
-                "total_core_score" => $total_core_score,
-                "required_core_passed" => $required_core_passed,
-                "any_one_core_passed" => $any_one_core_passed,
-                "any_one_core_score" => $any_one_core_score,
-                "any_three_elective_passed" => $any_three_elective_passed,
-                "total_elective_score" => $total_elective_score,
-                "any_three_elective_scores" => $any_three_elective_scores,
-            )
-        ));
+            die(json_encode(
+                array(
+                    "total_core_score" => $total_core_score,
+                    "required_core_passed" => $required_core_passed,
+                    "any_one_core_passed" => $any_one_core_passed,
+                    "any_one_core_score" => $any_one_core_score,
+                    "any_three_elective_passed" => $any_three_elective_passed,
+                    "total_elective_score" => $total_elective_score,
+                    "any_three_elective_scores" => $any_three_elective_scores,
+                )
+            ));
+        }
 
         $array_before_sort = $any_three_elective_scores;
         asort($any_three_elective_scores);
