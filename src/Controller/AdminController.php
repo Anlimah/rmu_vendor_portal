@@ -1096,7 +1096,7 @@ class AdminController
             }
 
             if ($result["type"] == "core") {
-                if ($result["subject"] == "CORE MATHEMATICS" || $result["subject"] == "ENGLISH LANGUAGE") {
+                if (strtoupper($result["subject"]) == "CORE MATHEMATICS" || strtoupper($result["subject"]) == "ENGLISH LANGUAGE") {
                     if ($score != 7) {
                         $required_core_passed += 1;
                         $total_core_score += $score;
