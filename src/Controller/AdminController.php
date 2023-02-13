@@ -1324,8 +1324,8 @@ class AdminController
         if (!empty($data[0]["email_address"])) {
             $e_message = '<p>Hi ' . $data[0]["first_name"] . ",</p>";
             $e_message .= '<p>Your RMU Online Application login details. </p>';
-            $e_message .= '<p>APPLICATION NUMBER: RMU-' . $data[0]['app_number'] . '</br>';
-            $e_message .= 'PIN: ' . $data[0]['pin_number'] . "</br></p>";
+            $e_message .= '<p>APPLICATION NUMBER: RMU-' . $data[0]['app_number'] . '</p>';
+            $e_message .= '<p>PIN: ' . $data[0]['pin_number'] . "</p>";
             $e_message .= '<p>Follow the link, https://admissions.rmuictonline.com to complete application process.</p>';
             $to = $data[0]["country_code"] . $data[0]["phone_number"];
 
@@ -1337,7 +1337,7 @@ class AdminController
 
         $output = "";
         if ($smsSent && $sentEmail) $output = "Successfully, sent purchase details via SMS and email!";
-        else $output = "Successfully, sent purchase details!!";
+        else $output = "Successfully, sent purchase details!";
 
         $this->logActivity(
             $_SESSION["user"],

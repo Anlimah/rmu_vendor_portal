@@ -193,7 +193,7 @@ require_once('../inc/page-data.php');
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <div class="alert alert-danger alert-dismissible fade show infoFeed" role="alert">
+              <div class="alert alert-danger alert-dismissible infoFeed" style="display:none" role="alert">
                 <span id="msgContent">Holy guacamole! You should check in on some of those fields below.</span>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
               </div>
@@ -292,6 +292,8 @@ require_once('../inc/page-data.php');
   <script>
     $(document).ready(function() {
 
+      var triggeredBy = 0;
+
       // when 
       $(".form-select, .form-control").change("blur", function(e) {
         e.preventDefault();
@@ -300,7 +302,7 @@ require_once('../inc/page-data.php');
 
       $("#reportsForm").on("submit", function(e) {
         e.preventDefault();
-
+        triggeredBy = 1;
         $.ajax({
           type: "POST",
           url: "../endpoint/salesReport",
@@ -348,7 +350,7 @@ require_once('../inc/page-data.php');
       });
 
       $(document).on("click", ".openPurchaseInfo", function() {
-
+        triggeredBy = 2;
         let data = {
           _data: $(this).attr("id")
         }
@@ -386,6 +388,7 @@ require_once('../inc/page-data.php');
 
       $("#sendPurchaseInfoForm").on("submit", function(e) {
         e.preventDefault();
+        triggeredBy = 3;
         $.ajax({
           type: "POST",
           url: "../endpoint/send-purchase-info",
@@ -395,16 +398,30 @@ require_once('../inc/page-data.php');
           success: function(result) {
             console.log(result);
 
+            $("#msgContent").text(result.message);
             if (result.success) {
-
-            } else {}
+              $(".infoFeed").removeClass("alert-danger").addClass("alert-success").toggle();
+            } else {
+              $(".infoFeed").removeClass("alert-success").addClass("alert-danger").toggle();
+            }
 
           },
           error: function(error) {
             console.log(error);
           }
         });
-      })
+      });
+
+      $(document).on({
+        ajaxStart: function() {
+          if (triggeredBy == 3) $("#sendTransIDBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> processing...');
+          else $("#alert-output").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
+        },
+        ajaxStop: function() {
+          if (triggeredBy == 3) $("#sendTransIDBtn").prop("disabled", false).html('Send application login info');
+          else $("#alert-output").html('');
+        }
+      });
 
 
 
