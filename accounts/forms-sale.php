@@ -38,13 +38,18 @@ require_once('../inc/page-data.php');
 <html lang="en">
 
 <head>
-  <?= require_once("../inc/head.php") ?>
+  <?php require_once("../inc/head.php") ?>
+  <style>
+    ._textD {
+      font-weight: 600;
+    }
+  </style>
 </head>
 
 <body>
-  <?= require_once("../inc/header.php") ?>
+  <?php require_once("../inc/header.php") ?>
 
-  <?= require_once("../inc/sidebar.php") ?>
+  <?php require_once("../inc/sidebar.php") ?>
 
   <main id="main" class="main">
 
@@ -153,7 +158,7 @@ require_once('../inc/page-data.php');
               </div>
 
               <div style="margin-top: 50px !important">
-                <table class="table table-borderless table-striped table-hover">
+                <table class="table table-borderless table-striped table-hover" id="dataT">
 
                   <thead class="table-dark">
                     <tr>
@@ -188,17 +193,21 @@ require_once('../inc/page-data.php');
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+              <div class="alert alert-danger alert-dismissible fade show infoFeed" role="alert">
+                <span id="msgContent">Holy guacamole! You should check in on some of those fields below.</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
               <div class="mb-4 row">
                 <div class="mb-3 col-5">
                   <div class="input-group">
                     <span class="input-group-text" id="basic-addon3">Trans. ID: </span>
-                    <input disabled type="text" class="form-control" id="p-transID" aria-describedby="basic-addon3">
+                    <input disabled type="text" class="form-control _textD" id="p-transID" aria-describedby="basic-addon3">
                   </div>
                 </div>
                 <div class="mb-3 col-7">
                   <div class="input-group">
                     <span class="input-group-text" id="basic-addon3">Admission Period: </span>
-                    <input disabled type="text" class="form-control" id="p-admisP" aria-describedby="basic-addon3">
+                    <input disabled type="text" class="form-control _textD" id="p-admisP" aria-describedby="basic-addon3">
                   </div>
                 </div>
               </div>
@@ -207,21 +216,21 @@ require_once('../inc/page-data.php');
                 <div class="row">
                   <div class="mb-3 col">
                     <label for="p-name" class="form-label">Name</label>
-                    <input disabled type="text" class="form-control" id="p-name">
+                    <input disabled type="text" class="form-control _textD" id="p-name">
                   </div>
                   <div class="mb-3 col">
                     <label for="p-country" class="form-label">Country</label>
-                    <input disabled type="text" class="form-control" id="p-country">
+                    <input disabled type="text" class="form-control _textD" id="p-country">
                   </div>
                 </div>
                 <div class="row">
                   <div class="mb-3 col">
                     <label for="p-email" class="form-label">Email Address</label>
-                    <input disabled type="text" class="form-control" id="p-email">
+                    <input disabled type="text" class="form-control _textD" id="p-email">
                   </div>
                   <div class="mb-3 col">
                     <label for="p-phoneN" class="form-label">Phone Number</label>
-                    <input disabled type="text" class="form-control" id="p-phoneN">
+                    <input disabled type="text" class="form-control _textD" id="p-phoneN">
                   </div>
                 </div>
               </fieldset>
@@ -230,40 +239,43 @@ require_once('../inc/page-data.php');
                 <div class="row">
                   <div class="mb-3 col">
                     <label for="p-appN" class="form-label">App Number</label>
-                    <input disabled type="text" class="form-control" id="p-appN">
+                    <input disabled type="text" class="form-control _textD" id="p-appN">
                   </div>
                   <div class="mb-3 col">
                     <label for="p-pin" class="form-label">PIN</label>
-                    <input disabled type="text" class="form-control" id="p-pin">
+                    <input disabled type="text" class="form-control _textD" id="p-pin">
                   </div>
                   <div class="mb-3 col">
                     <label for="p-status" class="form-label">Status</label>
-                    <input disabled type="text" class="form-control" id="p-status">
+                    <input disabled type="text" class="form-control _textD" id="p-status">
                   </div>
                 </div>
                 <div class="row">
                   <div class="mb-3 col">
                     <label for="p-vendor" class="form-label">Vendor</label>
-                    <input disabled type="text" class="form-control" id="p-vendor">
+                    <input disabled type="text" class="form-control _textD" id="p-vendor">
                   </div>
                   <div class="mb-3 col">
                     <label for="p-formT" class="form-label">Form Type</label>
-                    <input disabled type="text" class="form-control" id="p-formT">
+                    <input disabled type="text" class="form-control _textD" id="p-formT">
                   </div>
                   <div class="mb-3 col">
                     <label for="p-payM" class="form-label">Payment Method</label>
-                    <input disabled type="text" class="form-control" id="p-payM">
+                    <input disabled type="text" class="form-control _textD" id="p-payM">
                   </div>
+                </div>
+              </fieldset>
+              <fieldset>
+                <div class="row" style="width:100% !important">
+                  <form id="sendPurchaseInfoForm" method="post" style="display: flex; justify-content:center">
+                    <button id="sendTransIDBtn" type="submit" class="btn btn-success" style="padding:15px !important">Send application login info</button>
+                    <input type="hidden" name="sendTransID" id="sendTransID" value="">
+                  </form>
                 </div>
               </fieldset>
             </div>
             <div class="modal-footer">
-              <div class="row" style="width:100% !important">
-                <form id="sendPurchaseInfo" method="post" style="display: flex; justify-content:center">
-                  <button type="submit" class="btn btn-success" style="padding:15px !important">Send application login info</button>
-                  <input type="hidden" name="sendTransID" id="sendTransID" value="">
-                </form>
-              </div>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
           </div>
         </div>
@@ -335,12 +347,12 @@ require_once('../inc/page-data.php');
         });
       });
 
-      $(".openPurchaseInfo").click(function(e) {
+      $(document).on("click", ".openPurchaseInfo", function() {
 
         let data = {
           _data: $(this).attr("id")
         }
-        console.log(this.id)
+
         $.ajax({
           type: "POST",
           url: "../endpoint/purchaseInfo",
@@ -349,19 +361,19 @@ require_once('../inc/page-data.php');
             console.log(result);
 
             if (result.success) {
-              $("#p-transID, #").val(result.message.transID);
-              $("#p-admisP").val(result.message.admisP);
-              $("#p-name").val(result.message.name);
-              $("#p-country").val(result.message.country);
-              $("#p-email").val(result.message.email);
-              $("#p-phoneN").val(result.message.phoneN);
-              $("#p-appN").val(result.message.appN);
-              $("#p-pin").val(result.message.pin);
-              $("#p-status").val(result.message.status);
-              $("#p-vendor").val(result.message.vendor);
-              $("#p-formT").val(result.message.formT);
-              $("#p-payM").val(result.message.payM);
-              $("#sendTransID").val(result.message.transID);
+              $("#p-transID").val(result.message[0].transID);
+              $("#p-admisP").val(result.message[0].admisP);
+              $("#p-name").val(result.message[0].fullName);
+              $("#p-country").val(result.message[0].country);
+              $("#p-email").val(result.message[0].email);
+              $("#p-phoneN").val(result.message[0].phoneN);
+              $("#p-appN").val(result.message[0].appN);
+              $("#p-pin").val(result.message[0].pin);
+              $("#p-status").val(result.message[0].status);
+              $("#p-vendor").val(result.message[0].vendor);
+              $("#p-formT").val(result.message[0].formT);
+              $("#p-payM").val(result.message[0].payM);
+              $("#sendTransID").val(result.message[0].transID);
             } else {
               alert(result.message);
             }
@@ -371,6 +383,30 @@ require_once('../inc/page-data.php');
           }
         });
       });
+
+      $("#sendPurchaseInfoForm").on("submit", function(e) {
+        e.preventDefault();
+        $.ajax({
+          type: "POST",
+          url: "../endpoint/send-purchase-info",
+          data: new FormData(this),
+          processData: false,
+          contentType: false,
+          success: function(result) {
+            console.log(result);
+
+            if (result.success) {
+
+            } else {}
+
+          },
+          error: function(error) {
+            console.log(error);
+          }
+        });
+      })
+
+
 
     });
   </script>

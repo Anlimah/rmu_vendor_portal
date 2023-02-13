@@ -1291,11 +1291,60 @@ class AdminController
     }
     public function fetchFormPurchaseDetailsByTranID(int $transID)
     {
-        $query = "SELECT pd.`id`, CONCAT(pd.`first_name`, ' ', pd.`last_name`) AS fullName, vd.`company` AS vendor, vd.`email_address`, 
-                 CONCAT('(', pd.`country_code`,') ', pd.`phone_number`) AS phoneNumber, pd.`country_name`, pd.`app_number`, pd.`pin_number`, 
-                 pd.`status`, pd.`added_at`, ft.`name` AS formType, ap.`info` AS admissionPeriod, pd.`payment_method` AS paymentMethod 
-                 FROM `purchase_detail` AS pd, `admission_period` AS ap, `form_type` AS ft, vendor_details AS vd 
-                 WHERE pd.admission_period = ap.`id` AND pd.form_type = ft.id AND pd.vendor = vd.`id` AND pd.`id` = :ti";
+        $query = "SELECT pd.`id` AS transID, CONCAT(pd.`first_name`, ' ', pd.`last_name`) AS fullName, 
+                pd.`email_address` AS email,  CONCAT('(', pd.`country_code`,') ', pd.`phone_number`) AS phoneN, 
+                pd.`country_name` AS country, pd.`app_number` AS appN, pd.`pin_number` AS pin, 
+                pd.`status`, pd.`added_at`, ft.`name` AS formT, pd.`payment_method` AS payM, 
+                vd.`company` AS vendor, ap.`info` AS admisP 
+                FROM `purchase_detail` AS pd, `admission_period` AS ap, `form_type` AS ft, vendor_details AS vd 
+                WHERE pd.`admission_period` = ap.`id` AND pd.`form_type` = ft.`id` AND pd.`vendor` = vd.`id` AND pd.`id` = :ti";
         return $this->dm->getData($query, array(":ti" => $transID));
+    }
+
+    public function sendPurchaseInfo(int $transID)
+    {
+        $data = $this->dm->getData("SELECT * FROM purchase_detail WHERE id = :ti", array(":ti" => $transID));
+        if (empty($data)) return array("success" => false, "message" => "No data foound for this transaction!");
+
+        $message = 'Your RMU Online Application login details. ';
+        $message .= 'APPLICATION NUMBER: RMU-' . $data[0]['app_number'];
+        $message .= '    PIN: ' . $data[0]['pin_number'] . ".";
+        $message .= ' Follow the link, https://admissions.rmuictonline.com to complete application process.';
+        $to = $data[0]["country_code"] . $data[0]["phone_number"];
+
+        $sentEmail = false;
+        $smsSent = false;
+
+        $response = json_decode($this->expose->sendSMS($to, $message));
+
+        if (!$response->status) {
+            $smsSent = true;
+        }
+
+        if (!empty($data[0]["email_address"])) {
+            $e_message = '<p>Hi ' . $data[0]["first_name"] . ",</p>";
+            $e_message .= '<p>Your RMU Online Application login details. </p>';
+            $e_message .= '<p>APPLICATION NUMBER: RMU-' . $data[0]['app_number'] . '</br>';
+            $e_message .= 'PIN: ' . $data[0]['pin_number'] . "</br></p>";
+            $e_message .= '<p>Follow the link, https://admissions.rmuictonline.com to complete application process.</p>';
+            $to = $data[0]["country_code"] . $data[0]["phone_number"];
+
+            $e_response = $this->expose->sendEmail($data[0]["email_address"], 'ONLINE APPLICATION PORTAL LOGIN INFORMATION', $e_message);
+            if ($e_response) {
+                $sentEmail = true;
+            }
+        }
+
+        $output = "";
+        if ($smsSent && $sentEmail) $output = "Successfully, sent purchase details via SMS and email!";
+        else $output = "Successfully, sent purchase details!!";
+
+        $this->logActivity(
+            $_SESSION["user"],
+            "INSERT",
+            "Account user {$_SESSION["user"]} sent purchase details with transaction ID {$transID}"
+        );
+
+        return array("success" => true, "message" => $output);
     }
 }

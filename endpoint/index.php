@@ -707,10 +707,18 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     elseif ($_GET["url"] == "purchaseInfo") {
         if (!isset($_POST["_data"]) || empty($_POST["_data"]))
             die(json_encode(array("success" => false, "message" => "Invalid request!")));
-        $data = $expose->validateNumber($_POST["_data"]);
-        $result = $admin->fetchAllFormPurchases();
-        if (empty($result)) die(json_encode(array("success" => false, "message" => "No result found in database!")));
+        $transID = $expose->validateNumber($_POST["_data"]);
+        $result = $admin->fetchFormPurchaseDetailsByTranID($transID);
+        if (empty($result)) die(json_encode(array("success" => false, "message" => "No result found!")));
         die(json_encode(array("success" => true, "message" => $result)));
+    }
+
+    // send purchase info
+    elseif ($_GET["url"] == "send-purchase-info") {
+        if (!isset($_POST["sendTransID"]) || empty($_POST["sendTransID"]))
+            die(json_encode(array("success" => false, "message" => "Invalid request!")));
+        $transID = $expose->validateNumber($_POST["sendTransID"]);
+        die(json_encode($admin->sendPurchaseInfo($transID)));
     }
 
     // All PUT request will be sent here
