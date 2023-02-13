@@ -686,6 +686,33 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         die(json_encode($result));
     }
 
+    // For sales report on accounts dashboard
+    elseif ($_GET["url"] == "salesReport") {
+        if (!isset($_POST["admission-period"])) die(json_encode(array("success" => false, "message" => "Invalid input request for admission period!")));
+        if (!isset($_POST["from-date"])) die(json_encode(array("success" => false, "message" => "Invalid input request for from date!")));
+        if (!isset($_POST["to-date"])) die(json_encode(array("success" => false, "message" => "Invalid input request for to date!")));
+        if (!isset($_POST["form-type"])) die(json_encode(array("success" => false, "message" => "Invalid input request for form type!")));
+        if (!isset($_POST["purchase-status"])) die(json_encode(array("success" => false, "message" => "Invalid input request for purchase status!")));
+        if (!isset($_POST["payment-method"])) die(json_encode(array("success" => false, "message" => "Invalid input request for payment method!")));
+
+        if ((!empty($_POST["from-date"]) && empty($_POST["to-date"])) || (!empty($_POST["to-date"]) && empty($_POST["from-date"])))
+            die(json_encode(array("success" => false, "message" => "Date range (From - To) must be set!")));
+
+        $result = $admin->fetchAllFormPurchases($_POST);
+        if (empty($result)) die(json_encode(array("success" => false, "message" => "No result found for given parameters!")));
+        die(json_encode(array("success" => true, "message" => $result)));
+    }
+
+    //
+    elseif ($_GET["url"] == "purchaseInfo") {
+        if (!isset($_POST["_data"]) || empty($_POST["_data"]))
+            die(json_encode(array("success" => false, "message" => "Invalid request!")));
+        $data = $expose->validateNumber($_POST["_data"]);
+        $result = $admin->fetchAllFormPurchases();
+        if (empty($result)) die(json_encode(array("success" => false, "message" => "No result found in database!")));
+        die(json_encode(array("success" => true, "message" => $result)));
+    }
+
     // All PUT request will be sent here
 } else if ($_SERVER['REQUEST_METHOD'] == "PUT") {
     parse_str(file_get_contents("php://input"), $_PUT);

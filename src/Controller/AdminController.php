@@ -1060,8 +1060,15 @@ class AdminController
         }
     }
 
+    private function admitWASSCELike($data)
+    {
+    }
+
     public function admitByCatA($data)
     {
+        foreach ($data["sch_rslt"] as $result) {
+            die(json_encode($result));
+        }
 
         // set all qualified grades
         $grade_range = array(
@@ -1095,13 +1102,12 @@ class AdminController
                 }
             }
 
-            if ($score <= 6 && $score >= 1) {
-                if (strtoupper($result["type"]) == "CORE") {
-                    if (strtoupper($result["subject"]) == "CORE MATHEMATICS" || strtoupper($result["subject"]) == "ENGLISH LANGUAGE") {
+            if ($score >= 1 && $score <= 6) {
+                if (strtolower($result["type"]) == "core") {
+                    if (strtolower($result["subject"]) == "core mathematics" || strtolower($result["subject"]) == "english language") {
                         $required_core_passed += 1;
                         $total_core_score += $score;
-                    } /*else {
-                        $any_one_core_passed += 1;
+                    } else {
 
                         if (!empty($any_one_core_passed)) {
                             $total_core_score -= $any_one_core_score;
@@ -1109,15 +1115,14 @@ class AdminController
                         if (empty($any_one_core_passed)) {
                             $any_one_core_score = $score;
                         }
+                        $any_one_core_passed += 1;
                         $total_core_score += $score;
-                    }*/
+                    }
                 }
 
-                if (strtoupper($result["type"]) == "ELECTIVE") {
-                    if ($score != 7) {
-                        $any_three_elective_passed += 1;
-                        array_push($any_three_elective_scores, $score);
-                    }
+                if (strtolower($result["type"]) == "elective") {
+                    $any_three_elective_passed += 1;
+                    array_push($any_three_elective_scores, $score);
                 }
             }
 
@@ -1243,7 +1248,7 @@ class AdminController
     public function admitQualifiedStudents($certificate, $progCategory)
     {
         $students_bs_data = $this->fetchAllUnadmittedApplicantsData($certificate, $progCategory);
-
+        die(json_encode($students_bs_data));
         if (!empty($students_bs_data)) {
             $qualifications = array(
                 "A" => array('WASSCE', 'SSSCE', 'GBCE', 'NECO'),
@@ -1256,5 +1261,41 @@ class AdminController
         }
 
         return 0;
+    }
+
+
+    /**
+     * For accounts officers
+     */
+
+    public function fetchAllFormPurchases($data = array())
+    {
+        $QUERY_CON = "";
+        if (strtolower($data["admission-period"]) != "all" && !empty($data["admission-period"]))
+            $QUERY_CON .= " AND pd.`admission_period` = '" . $data["admission-period"] . "'";
+        if (!empty($data["from-date"])  && !empty($data["to-date"]))
+            $QUERY_CON .= " AND pd.`added_at` BETWEEN '" . $data["from-date"] . "' AND '" . $data["to-date"] . "'";
+        if (strtolower($data["form-type"]) != "all" && !empty($data["form-type"]))
+            $QUERY_CON .= " AND pd.`form_type` = '" . $data["form-type"] . "'";
+        if (strtolower($data["purchase-status"]) != "all" && !empty($data["purchase-status"]))
+            $QUERY_CON .= " AND pd.`status` = '" . $data["purchase-status"] . "'";
+        if (strtolower($data["payment-method"]) != "all" && !empty($data["payment-method"]))
+            $QUERY_CON .= " AND pd.`payment_method` = '" . $data["payment-method"] . "'";
+
+        $query = "SELECT pd.`id`, CONCAT(pd.`first_name`, ' ', pd.`last_name`) AS fullName, 
+                 CONCAT('(', pd.`country_code`,') ', pd.`phone_number`) AS phoneNumber, 
+                 pd.`status`, pd.`added_at`, ft.`name` AS formType, ap.`info` AS admissionPeriod, pd.`payment_method` AS paymentMethod 
+                 FROM `purchase_detail` AS pd, `admission_period` AS ap, `form_type` AS ft, vendor_details AS vd 
+                 WHERE pd.admission_period = ap.`id` AND pd.form_type = ft.id AND pd.vendor = vd.`id`$QUERY_CON";
+        return $this->dm->getData($query, array());
+    }
+    public function fetchFormPurchaseDetailsByTranID(int $transID)
+    {
+        $query = "SELECT pd.`id`, CONCAT(pd.`first_name`, ' ', pd.`last_name`) AS fullName, vd.`company` AS vendor, vd.`email_address`, 
+                 CONCAT('(', pd.`country_code`,') ', pd.`phone_number`) AS phoneNumber, pd.`country_name`, pd.`app_number`, pd.`pin_number`, 
+                 pd.`status`, pd.`added_at`, ft.`name` AS formType, ap.`info` AS admissionPeriod, pd.`payment_method` AS paymentMethod 
+                 FROM `purchase_detail` AS pd, `admission_period` AS ap, `form_type` AS ft, vendor_details AS vd 
+                 WHERE pd.admission_period = ap.`id` AND pd.form_type = ft.id AND pd.vendor = vd.`id` AND pd.`id` = :ti";
+        return $this->dm->getData($query, array(":ti" => $transID));
     }
 }

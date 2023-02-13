@@ -148,7 +148,7 @@ require_once('../inc/page-data.php');
                         <option value="All">All</option>
                         <option value="Cameroun">Cameroun</option>
                         <option value="Ghana">Ghana</option>
-                        <option value="Guinea">Guinea</option>
+                        <option value="Gambia">Gambia</option>
                         <option value="Liberia">Liberia</option>
                         <option value="Sierra Leone">Sierra Leone</option>
                         <option value="Others">Others</option>
@@ -176,7 +176,7 @@ require_once('../inc/page-data.php');
                   <thead class="table-dark">
                     <tr>
                       <th scope="col">#</th>
-                      <th scope="col">Name</th>
+                      <th scope="col" style="width:150px">Name</th>
                       <th scope="col">Country</th>
                       <th scope="col">Application Type</th>
                       <th scope="col">Programme (1<sup>st</sup> Choice)</th>
@@ -205,7 +205,10 @@ require_once('../inc/page-data.php');
   <?= require_once("../inc/footer-section.php") ?>
 
   <script>
-    $(document).ready(function() {
+    // when 
+    $(".form-select").change("blur", function(e) {
+      e.preventDefault();
+
       var summary_selected = "";
       // when a summary data button is clicked
       $(".toggle-output").click(function() {
