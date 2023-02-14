@@ -1287,7 +1287,7 @@ class AdminController
                  pd.`status`, pd.`added_at`, ft.`name` AS formType, ap.`info` AS admissionPeriod, pd.`payment_method` AS paymentMethod 
                  FROM `purchase_detail` AS pd, `admission_period` AS ap, `form_type` AS ft, vendor_details AS vd 
                  WHERE pd.admission_period = ap.`id` AND pd.form_type = ft.id AND pd.vendor = vd.`id`$QUERY_CON";
-        return $this->dm->getData($query, array());
+        return $this->dm->getData($query);
     }
     public function fetchFormPurchaseDetailsByTranID(int $transID)
     {
@@ -1346,5 +1346,33 @@ class AdminController
         );
 
         return array("success" => true, "message" => $output);
+    }
+
+    public function prepareDownloadQuery($data)
+    {
+        $QUERY_CON = "";
+        if (strtolower($data["admission-period"]) != "all" && !empty($data["admission-period"]))
+            $QUERY_CON .= " AND pd.`admission_period` = '" . $data["admission-period"] . "'";
+        if (!empty($data["from-date"])  && !empty($data["to-date"]))
+            $QUERY_CON .= " AND pd.`added_at` BETWEEN '" . $data["from-date"] . "' AND '" . $data["to-date"] . "'";
+        if (strtolower($data["form-type"]) != "all" && !empty($data["form-type"]))
+            $QUERY_CON .= " AND pd.`form_type` = '" . $data["form-type"] . "'";
+        if (strtolower($data["purchase-status"]) != "all" && !empty($data["purchase-status"]))
+            $QUERY_CON .= " AND pd.`status` = '" . $data["purchase-status"] . "'";
+        if (strtolower($data["payment-method"]) != "all" && !empty($data["payment-method"]))
+            $QUERY_CON .= " AND pd.`payment_method` = '" . $data["payment-method"] . "'";
+
+        $_SESSION["downloadQuery"] = "SELECT pd.`id`, CONCAT(pd.`first_name`, ' ', pd.`last_name`) AS fullName, 
+                 CONCAT('(', pd.`country_code`,') ', pd.`phone_number`) AS phoneNumber, 
+                 pd.`status`, pd.`added_at`, ft.`name` AS formType, ap.`info` AS admissionPeriod, pd.`payment_method` AS paymentMethod 
+                 FROM `purchase_detail` AS pd, `admission_period` AS ap, `form_type` AS ft, vendor_details AS vd 
+                 WHERE pd.admission_period = ap.`id` AND pd.form_type = ft.id AND pd.vendor = vd.`id`$QUERY_CON";
+        if (isset($_SESSION["downloadQuery"]) && !empty($_SESSION["downloadQuery"])) return 1;
+        return 0;
+    }
+
+    public function executeDownloadQuery()
+    {
+        return $this->dm->getData($_SESSION["downloadQuery"]);
     }
 }

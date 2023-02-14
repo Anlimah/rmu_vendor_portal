@@ -1,10 +1,10 @@
 <?php
-
-use Src\Controller\AdminController;
-
 session_start();
-
-//if (!isset($_SESSION["admin_user"])) header("Location: index.php");
+//echo $_SERVER["HTTP_USER_AGENT"];
+if (isset($_SESSION["adminLogSuccess"]) && $_SESSION["adminLogSuccess"] == true && isset($_SESSION["user"]) && !empty($_SESSION["user"])) {
+} else {
+    header("Location: login.php");
+}
 
 if (!isset($_GET["w"])) {
     if (isset($_SERVER['HTTP_REFERER'])) {
@@ -13,6 +13,8 @@ if (!isset($_GET["w"])) {
         exit;
     }
 }
+
+use Src\Controller\AdminController;
 
 require_once "./bootstrap.php";
 
@@ -47,7 +49,13 @@ switch ($_GET["w"]) {
                 break;
         }
         break;
-
+    case 'pdfFileDownload':
+        $result = $admin->executeDownloadQuery();
+        unset($_SESSION["downloadQuery"]);
+        break;
+    case 'excelFileDownload':
+        echo "Excel";
+        break;
     default:
         # code...
         break;
@@ -61,28 +69,57 @@ switch ($_GET["w"]) {
 <div>
     <h2 style="text-align: center;" class="m-4">List of all <?= $title_var ?> Applications</h2>
     <table class="table table-borderless datatable table-striped table-hover" style="font-size: 12px;">
-        <thead class="table-dark">
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Name</th>
-                <th scope="col">Country</th>
-                <th scope="col">Application Type</th>
-                <th scope="col">Programme (1<sup>st</sup> Choice)</th>
-                <th scope="col">Programme (2<sup>nd</sup> Choice)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($result as $ft) { ?>
+        <?php if ($_GET["w"] == 'pdfFileDownload') { ?>
+            <thead class="table-secondary">
                 <tr>
-                    <th scope="row"><?= $ft['id'] ?></th>
-                    <td style="font-size: 12px;"><?= $ft["fullname"] ?></td>
-                    <td><?= $ft["nationality"] ?></td>
-                    <td><?= $ft["app_type"] ?></td>
-                    <td><?= $ft["first_prog"] ?></td>
-                    <td><?= $ft["second_prog"] ?></td>
+                    <th scope="col">Transaction ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Phone Number</th>
+                    <th scope="col">Admission Period</th>
+                    <th scope="col">Form Type</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Payment Method</th>
+                    <th scope="col">Date</th>
                 </tr>
-            <?php } ?>
-        </tbody>
+            </thead>
+            <tbody>
+                <?php foreach ($result as $row) { ?>
+                    <tr>
+                        <td><?= $row["id"] ?></td>
+                        <td><?= $row["fullName"] ?></td>
+                        <td><?= $row["phoneNumber"] ?></td>
+                        <td><?= $row["admissionPeriod"] ?></td>
+                        <td><?= $row["formType"] ?></td>
+                        <td><?= $row["status"] ?></td>
+                        <td><?= $row["paymentMethod"] ?></td>
+                        <td><?= $row["added_at"] ?></td>
+                    </tr>
+                <?php } ?>
+            </tbody>
+        <?php } else { ?>
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Country</th>
+                    <th scope="col">Application Type</th>
+                    <th scope="col">Programme (1<sup>st</sup> Choice)</th>
+                    <th scope="col">Programme (2<sup>nd</sup> Choice)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($result as $ft) { ?>
+                    <tr>
+                        <th scope="row"><?= $ft['id'] ?></th>
+                        <td style="font-size: 12px;"><?= $ft["fullname"] ?></td>
+                        <td><?= $ft["nationality"] ?></td>
+                        <td><?= $ft["app_type"] ?></td>
+                        <td><?= $ft["first_prog"] ?></td>
+                        <td><?= $ft["second_prog"] ?></td>
+                    </tr>
+                <?php } ?>
+            </tbody>
+        <?php } ?>
     </table>
 </div>
 <script>

@@ -721,6 +721,15 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         die(json_encode($admin->sendPurchaseInfo($transID)));
     }
 
+    // download PDF
+    elseif ($_GET["url"] == "download-file") {
+        $result = $admin->prepareDownloadQuery($_POST);
+        if (!$result) die(json_encode(array("success" => false, "message" => "Fatal error: server generated error!")));
+        die(json_encode(array("success" => true, "message" => "successfully!")));
+    }
+
+
+
     // All PUT request will be sent here
 } else if ($_SERVER['REQUEST_METHOD'] == "PUT") {
     parse_str(file_get_contents("php://input"), $_PUT);
