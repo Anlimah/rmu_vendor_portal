@@ -1375,4 +1375,36 @@ class AdminController
     {
         return $this->dm->getData($_SESSION["downloadQuery"]);
     }
+
+    public function fetchFormPurchasesGroupReport($data)
+    {
+        $query = "";
+        if ($data == "PayMethod") {
+            $query = "SELECT pm.id, pd.payment_method AS title, COUNT(pd.payment_method) AS total_num_sold, SUM(fp.amount) AS total_amount_sold
+                    FROM purchase_detail AS pd, vendor_details AS vd, admission_period AS ap, form_type AS ft, form_price AS fp, payment_method AS pm   
+                    WHERE pd.admission_period = ap.id AND pd.vendor = vd.id AND pd.form_type = ft.id AND pd.payment_method = pm.name 
+                    AND ft.id = fp.form_type AND pd.`status` = 'COMPLETED' GROUP BY pd.payment_method";
+        }
+        if ($data == "Vendors") {
+            $query = "SELECT vd.id, vd.company AS title, COUNT(pd.vendor) AS total_num_sold, SUM(fp.amount) AS total_amount_sold
+                    FROM purchase_detail AS pd, vendor_details AS vd, admission_period AS ap, form_type AS ft, form_price AS fp, payment_method AS pm 
+                    WHERE pd.admission_period = ap.id AND pd.vendor = vd.id AND pd.form_type = ft.id AND pd.payment_method = pm.name 
+                    AND ft.id = fp.form_type AND pd.`status` = 'COMPLETED' GROUP BY pd.vendor";
+        }
+        return $this->dm->getData($query);
+    }
+
+    public function fetchFormPurchasesGroupReportInfo(int $i, $t)
+    {
+        $query = "";
+        if ($t == "PayMethod") {
+            $query = "SELECT * FROM purchase_detail AS pd, payment_method AS pm 
+                    WHERE pd.payment_method = pm.name AND pm.id = :i AND pd.`status` = 'COMPLETED'";
+        }
+        if ($t == "Vendors") {
+            $query = "SELECT * FROM purchase_detail AS pd, vendor_details AS vd 
+                    WHERE pd.vendor = vd.id AND vd.id = :i AND pd.`status` = 'COMPLETED'";
+        }
+        return $this->dm->getData($query, array(":i" => $i));
+    }
 }

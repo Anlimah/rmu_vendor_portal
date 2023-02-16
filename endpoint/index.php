@@ -721,6 +721,30 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         die(json_encode($admin->sendPurchaseInfo($transID)));
     }
 
+    // fetch group sales data
+    elseif ($_GET["url"] == "group-sales-report") {
+        if (!isset($_POST["_data"])) die(json_encode(array("success" => false, "message" => "Invalid input request!")));
+        $_data = $expose->validateText($_POST["_data"]);
+        $result = $admin->fetchFormPurchasesGroupReport($_data);
+        if (empty($result)) die(json_encode(array("success" => false, "message" => "No result found for given parameters!")));
+        die(json_encode(array("success" => true, "message" => $result)));
+    }
+
+    // fetch group sales data
+    elseif ($_GET["url"] == "group-sales-report-list") {
+        if (!isset($_POST["_dataI"]) || empty($_POST["_dataI"]))
+            die(json_encode(array("success" => false, "message" => "Invalid input request!")));
+        if (!isset($_POST["_dataT"]) || empty($_POST["_dataT"]))
+            die(json_encode(array("success" => false, "message" => "Invalid input request!")));
+
+        $_dataI = $expose->validateNumber($_POST["_dataI"]);
+        $_dataT = $expose->validateText($_POST["_dataT"]);
+
+        $result = $admin->fetchFormPurchasesGroupReportInfo($_dataI, $_dataT);
+        if (empty($result)) die(json_encode(array("success" => false, "message" => "No result found for given parameters!")));
+        die(json_encode(array("success" => true, "message" => $result)));
+    }
+
     // download PDF
     elseif ($_GET["url"] == "download-file") {
         $result = $admin->prepareDownloadQuery($_POST);

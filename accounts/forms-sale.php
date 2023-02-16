@@ -153,8 +153,7 @@ require_once('../inc/page-data.php');
 
               <div class="mt-4" style="margin-top: 50px !important; display: flex; justify-content: space-between">
                 <h4>Total: <span id="totalData"></span></h4>
-                <div id="alert-output">
-                </div>
+                <div id="alert-output"></div>
               </div>
 
               <div style="margin-top: 50px !important">
@@ -360,7 +359,7 @@ require_once('../inc/page-data.php');
                     '<td>' + value.paymentMethod + '</td>' +
                     '<td>' + value.added_at + '</td>' +
                     '<td>' +
-                    '<button id="' + value.id + '" class="btn btn-xs btn-primary openPurchaseInfo" data-bs-toggle="modal" data-bs-target="#purchaseInfoModal">View</button>' +
+                    '<button id="' + value.id + '" class="btn btn-xs btn-primary openPurchaseInfo" data-bs-toggle="modal" data-bs-target="#purchaseInfoModal">Open</button>' +
                     '</td>' +
                     '</tr>'
                   );
@@ -453,7 +452,6 @@ require_once('../inc/page-data.php');
         },
         ajaxStop: function() {
           if (triggeredBy == 3) $("#sendTransIDBtn").prop("disabled", false).html('Send application login info');
-          else $("#alert-output").html('');
         }
       });
 
