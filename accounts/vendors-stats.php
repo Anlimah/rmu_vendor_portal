@@ -84,30 +84,34 @@ require_once('../inc/page-data.php');
 
               <div class="mt-4 row">
                 <div class="col-6 col-md-6 col-sm-12 mt-2">
-                  <h6 style="font-weight: 600;">Total Purchase: <span id="totalPurchase"></span></h6>
-                  <h6 style="font-weight: 600;">Total Amount: <span id="totalAmount"></span></h6>
-                  <div id="alert-output"></div>
+                  <div class="row">
+                    <h6 style="font-weight: 600;">Total Purchase: <span id="totalPurchase"></span></h6>
+                    <h6 style="font-weight: 600;">Total Amount: <span id="totalAmount"></span></h6>
+                    <div id="alert-output"></div>
+                  </div>
                 </div>
 
-                <div class="col-6 col-md-6 col-sm-12 mt-2" style="margin-top: 50px !important; display: flex; justify-content: space-between; align-content:baseline">
+                <div class="col-6 col-md-6 col-sm-12 mt-2">
                   <form action="" method="post">
-                    <div>
-                      <label for="from-date" class="form-label">Filter By</label>
-                      <select name="report-by" id="report-by" class="form-select">
-                        <option value="" selected disabled>Choose</option>
-                        <option value="PayMethod">Payment Method</option>
-                        <option value="Vendors">Vendors</option>
-                      </select>
-                    </div>
+                    <div style="margin-top: 50px !important; display: flex; justify-content: space-between; align-content:baseline">
+                      <div>
+                        <label for="from-date" class="form-label">Filter By</label>
+                        <select name="report-by" id="report-by" class="form-select">
+                          <option value="" selected disabled>Choose</option>
+                          <option value="PayMethod">Payment Method</option>
+                          <option value="Vendors">Vendors</option>
+                        </select>
+                      </div>
 
-                    <div>
-                      <label for="from-date" class="form-label">From (Date)</label>
-                      <input type="date" name="from-date" id="from-date" class="form-control">
-                    </div>
+                      <div>
+                        <label for="from-date" class="form-label">From (Date)</label>
+                        <input type="date" name="from-date" id="from-date" class="form-control">
+                      </div>
 
-                    <div>
-                      <label for="to-date" class="form-label">To (Date)</label>
-                      <input type="date" name="to-date" id="to-date" class="form-control">
+                      <div>
+                        <label for="to-date" class="form-label">To (Date)</label>
+                        <input type="date" name="to-date" id="to-date" class="form-control">
+                      </div>
                     </div>
                   </form>
                 </div>
