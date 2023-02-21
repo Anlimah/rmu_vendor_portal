@@ -212,10 +212,12 @@ require_once('../inc/page-data.php');
       $(".toggle-output").click(function() {
         $('.toggle-output').css('border-bottom', 'none');
         $(this).css('border-bottom', '3px solid #000');
+
         // Remove arrow from all buttons
         $(".arrow").remove();
         $(".form-select option:selected").attr("selected", false);
         $(".form-select option[value='All']").attr('selected', true);
+
         // Add arrow to selected button
         $(this).append("<span class='arrow'>&#x25BC;</span>");
 
@@ -238,7 +240,7 @@ require_once('../inc/page-data.php');
                 let status = value.declaration == 1 ? '<span class="badge text-bg-success">Submitted</span>' : '<span class="badge text-bg-danger">In Progress</span>';
                 $("tbody").append(
                   '<tr>' +
-                  '<th scope="row"><a href="javascript:void()">' + value.id + '</a></th>' +
+                  '<th scope="row"><a href="javascript:void()">' + (index + 1) + '</a></th>' +
                   '<td>' + value.fullname + '</td>' +
                   '<td>' + value.nationality + '</td>' +
                   '<td>' + value.app_type + '</td>' +
@@ -292,7 +294,7 @@ require_once('../inc/page-data.php');
                 let status = value.declaration == 1 ? '<span class="badge text-bg-success">Submitted</span>' : '<span class="badge text-bg-danger">In Progress</span>';
                 $("tbody").append(
                   '<tr>' +
-                  '<th scope="row"><a href="javascript:void()">' + value.id + '</a></th>' +
+                  '<th scope="row"><a href="javascript:void()">' + (index + 1) + '</a></th>' +
                   '<td>' + value.fullname + '</td>' +
                   '<td>' + value.nationality + '</td>' +
                   '<td>' + value.app_type + '</td>' +
