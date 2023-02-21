@@ -206,9 +206,7 @@ require_once('../inc/page-data.php');
 
   <script>
     // when 
-    $(".form-select").change("blur", function(e) {
-      e.preventDefault();
-
+    $(document).ready(function() {
       var summary_selected = "";
       // when a summary data button is clicked
       $(".toggle-output").click(function() {
