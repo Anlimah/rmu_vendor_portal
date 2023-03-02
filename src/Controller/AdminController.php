@@ -1268,13 +1268,78 @@ class AdminController
      * For accounts officers
      */
 
+    // fetch dashboards stats
+    public function fetchInitialSummaryRecord()
+    {
+        $result = array();
+        $result["transactions"] = [];
+        $result["collections"] = [];
+
+        $query1 = "SELECT COUNT(*) AS total_trans FROM purchase_detail AS pd, admission_period AS ap 
+                WHERE pd.admission_period = ap.id AND ap.active = 1";
+        $query2 = "SELECT COUNT(*) AS completed_trans FROM purchase_detail AS pd, admission_period AS ap 
+                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.status = 'COMPLETED'";
+        $query3 = "SELECT COUNT(*) AS pending_trans FROM purchase_detail AS pd, admission_period AS ap 
+                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.status = 'PENDING'";
+        $query4 = "SELECT COUNT(*) AS failed_trans FROM purchase_detail AS pd, admission_period AS ap 
+                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.status = 'FAILED'";
+
+        $result["transactions"]["total_trans"] = $this->dm->getData($query1)[0]["total_trans"];
+        $result["transactions"]["completed_trans"] = $this->dm->getData($query2)[0]["completed_trans"];
+        $result["transactions"]["pending_trans"] = $this->dm->getData($query3)[0]["pending_trans"];
+        $result["transactions"]["failed_trans"] = $this->dm->getData($query4)[0]["failed_trans"];
+
+        $query5 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount 
+                FROM purchase_detail AS pd, admission_period AS ap 
+                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.status = 'COMPLETED'";
+        $query6 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount 
+                FROM purchase_detail AS pd, admission_period AS ap, vendor_details AS vd  
+                WHERE pd.admission_period = ap.id AND pd.vendor = vd.id AND vd.type <> 'ONLINE' AND ap.active = 1 AND pd.status = 'COMPLETED'";
+        $query7 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount 
+                FROM purchase_detail AS pd, admission_period AS ap, vendor_details AS vd  
+                WHERE pd.admission_period = ap.id AND pd.vendor = vd.id AND vd.type = 'ONLINE' AND ap.active = 1 AND pd.status = 'COMPLETED'";
+        $query8 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount 
+                FROM purchase_detail AS pd, admission_period AS ap, vendor_details AS vd  
+                WHERE pd.admission_period = ap.id AND pd.vendor = vd.id AND vd.type = 'ONLINE' AND ap.active = 1 AND pd.status = 'COMPLETED'";
+
+        $result["collections"]["collect"] = $this->dm->getData($query5)[0];
+        $result["collections"]["vendor"] = $this->dm->getData($query6)[0];
+        $result["collections"]["online"] = $this->dm->getData($query7)[0];
+        $result["collections"]["provider"] = $this->dm->getData($query8)[0];
+
+        $query9 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount 
+                FROM purchase_detail AS pd, admission_period AS ap, form_type AS ft  
+                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.form_type = ft.id 
+                AND pd.status = 'COMPLETED' AND ft.name = 'Masters'";
+        $query10 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount 
+                FROM purchase_detail AS pd, admission_period AS ap, form_type AS ft  
+                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.form_type = ft.id 
+                AND pd.status = 'COMPLETED' AND ft.name = 'Degree'";
+        $query11 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount 
+                FROM purchase_detail AS pd, admission_period AS ap, form_type AS ft  
+                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.form_type = ft.id 
+                AND pd.status = 'COMPLETED' AND ft.name = 'Diploma'";
+        $query12 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount 
+                FROM purchase_detail AS pd, admission_period AS ap, form_type AS ft  
+                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.form_type = ft.id 
+                AND pd.status = 'COMPLETED' AND ft.name = 'Short Courses'";
+
+        $result["form-types"]["masters"] = $this->dm->getData($query9)[0];
+        $result["form-types"]["degree"] = $this->dm->getData($query10)[0];
+        $result["form-types"]["diploma"] = $this->dm->getData($query11)[0];
+        $result["form-types"]["short"] = $this->dm->getData($query12)[0];
+
+
+        return $result;
+    }
+
     public function fetchAllFormPurchases($data = array())
     {
         $QUERY_CON = "";
         if (strtolower($data["admission-period"]) != "all" && !empty($data["admission-period"]))
             $QUERY_CON .= " AND pd.`admission_period` = '" . $data["admission-period"] . "'";
         if (!empty($data["from-date"])  && !empty($data["to-date"]))
-            $QUERY_CON .= " AND pd.`added_at` BETWEEN '" . $data["from-date"] . "' AND '" . $data["to-date"] . "'";
+            $QUERY_CON .= " AND pd.`added_at` BETWEEN '" . $data["from-date"] . "'" . " AND '" . $data["to-date"] . "'";
         if (strtolower($data["form-type"]) != "all" && !empty($data["form-type"]))
             $QUERY_CON .= " AND pd.`form_type` = '" . $data["form-type"] . "'";
         if (strtolower($data["purchase-status"]) != "all" && !empty($data["purchase-status"]))
@@ -1289,6 +1354,7 @@ class AdminController
                  WHERE pd.admission_period = ap.`id` AND pd.form_type = ft.id AND pd.vendor = vd.`id`$QUERY_CON";
         return $this->dm->getData($query);
     }
+
     public function fetchFormPurchaseDetailsByTranID(int $transID)
     {
         $query = "SELECT pd.`id` AS transID, CONCAT(pd.`first_name`, ' ', pd.`last_name`) AS fullName, 
@@ -1303,9 +1369,13 @@ class AdminController
 
     public function sendPurchaseInfo(int $transID)
     {
+        // Get purchase data
         $data = $this->dm->getData("SELECT * FROM purchase_detail WHERE id = :ti", array(":ti" => $transID));
         if (empty($data)) return array("success" => false, "message" => "No data foound for this transaction!");
 
+
+
+        // Prepare SMS message
         $message = 'Your RMU Online Application login details. ';
         $message .= 'APPLICATION NUMBER: RMU-' . $data[0]['app_number'];
         $message .= '    PIN: ' . $data[0]['pin_number'] . ".";
@@ -1315,36 +1385,46 @@ class AdminController
         $sentEmail = false;
         $smsSent = false;
 
+        // Send SMS message
         $response = json_decode($this->expose->sendSMS($to, $message));
 
+        // Set SMS response status
         if (!$response->status) {
             $smsSent = true;
         }
 
+        // Check if email address was provided
         if (!empty($data[0]["email_address"])) {
+
+            // Prepare email message
             $e_message = '<p>Hi ' . $data[0]["first_name"] . ",</p>";
             $e_message .= '<p>Your RMU Online Application login details. </p>';
             $e_message .= '<p>APPLICATION NUMBER: RMU-' . $data[0]['app_number'] . '</p>';
             $e_message .= '<p>PIN: ' . $data[0]['pin_number'] . "</p>";
             $e_message .= '<p>Follow the link, https://admissions.rmuictonline.com to complete application process.</p>';
-            $to = $data[0]["country_code"] . $data[0]["phone_number"];
 
+            // Send email message
             $e_response = $this->expose->sendEmail($data[0]["email_address"], 'ONLINE APPLICATION PORTAL LOGIN INFORMATION', $e_message);
+
+            // Ste email reponse status
             if ($e_response) {
                 $sentEmail = true;
             }
         }
 
+        // Set output message
         $output = "";
         if ($smsSent && $sentEmail) $output = "Successfully, sent purchase details via SMS and email!";
         else $output = "Successfully, sent purchase details!";
 
+        // Log activity
         $this->logActivity(
             $_SESSION["user"],
             "INSERT",
             "Account user {$_SESSION["user"]} sent purchase details with transaction ID {$transID}"
         );
 
+        // return output message
         return array("success" => true, "message" => $output);
     }
 
