@@ -1307,27 +1307,28 @@ class AdminController
         $result["collections"]["online"] = $this->dm->getData($query7)[0];
         $result["collections"]["provider"] = $this->dm->getData($query8)[0];
 
-        $query9 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount 
-                FROM purchase_detail AS pd, admission_period AS ap, form_type AS ft  
-                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.form_type = ft.id 
-                AND pd.status = 'COMPLETED' AND ft.name = 'Masters'";
-        $query10 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount 
-                FROM purchase_detail AS pd, admission_period AS ap, form_type AS ft  
-                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.form_type = ft.id 
-                AND pd.status = 'COMPLETED' AND ft.name = 'Degree'";
-        $query11 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount 
-                FROM purchase_detail AS pd, admission_period AS ap, form_type AS ft  
-                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.form_type = ft.id 
-                AND pd.status = 'COMPLETED' AND ft.name = 'Diploma'";
-        $query12 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount 
-                FROM purchase_detail AS pd, admission_period AS ap, form_type AS ft  
-                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.form_type = ft.id 
-                AND pd.status = 'COMPLETED' AND ft.name = 'Short Courses'";
+        $query9 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount, fp.amount AS unit_price 
+                FROM purchase_detail AS pd, admission_period AS ap, form_type AS ft, form_price AS fp 
+                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.form_type = ft.id AND fp.form_type = ft.id 
+                AND pd.status = 'COMPLETED' AND ft.name = 'Masters' AND fp.admin_period = ap.id";
+        $query10 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount, fp.amount AS unit_price 
+                FROM purchase_detail AS pd, admission_period AS ap, form_type AS ft, form_price AS fp 
+                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.form_type = ft.id AND fp.form_type = ft.id 
+                AND pd.status = 'COMPLETED' AND ft.name = 'Degree' AND fp.admin_period = ap.id";
+        $query11 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount, fp.amount AS unit_price 
+                FROM purchase_detail AS pd, admission_period AS ap, form_type AS ft, form_price AS fp 
+                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.form_type = ft.id AND fp.form_type = ft.id 
+                AND pd.status = 'COMPLETED' AND ft.name = 'Diploma' AND fp.admin_period = ap.id";
+        $query12 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount, fp.amount AS unit_price 
+                FROM purchase_detail AS pd, admission_period AS ap, form_type AS ft, form_price AS fp 
+                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.form_type = ft.id AND fp.form_type = ft.id 
+                AND pd.status = 'COMPLETED' AND ft.name = 'Short Courses' AND fp.admin_period = ap.id";
 
         $result["form-types"]["masters"] = $this->dm->getData($query9)[0];
         $result["form-types"]["degree"] = $this->dm->getData($query10)[0];
         $result["form-types"]["diploma"] = $this->dm->getData($query11)[0];
         $result["form-types"]["short"] = $this->dm->getData($query12)[0];
+
 
 
         return $result;

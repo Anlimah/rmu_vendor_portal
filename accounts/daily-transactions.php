@@ -205,70 +205,30 @@ require_once('../inc/page-data.php');
             }
 
             //collections
-            if (isset($summary["collections"]) && !empty($summary["collections"]["collect"])) {
-              $collect_total = $summary["collections"]["collect"]["total_num"];
-              $collect_amount = $summary["collections"]["collect"]["total_amount"];
-            } else {
-              $collect_total = 0;
-              $collect_amount = 0.00;
-            }
+            $collect_total = $summary["collections"]["collect"]["total_num"] ? $summary["collections"]["collect"]["total_num"] : "0";
+            $collect_amount = $summary["collections"]["collect"]["total_amount"] ? $summary["collections"]["collect"]["total_amount"] : "0.00";
 
-            if (isset($summary["collections"]) && !empty($summary["collections"]["vendor"])) {
-              $vendor_total = $summary["collections"]["vendor"]["total_num"];
-              $vendor_amount = $summary["collections"]["vendor"]["total_amount"];
-            } else {
-              $vendor_total = 0;
-              $vendor_amount = 0.00;
-            }
+            $vendor_total = $summary["collections"]["vendor"]["total_num"] ? $summary["collections"]["vendor"]["total_num"] : "0";
+            $vendor_amount = $summary["collections"]["vendor"]["total_amount"] ? $summary["collections"]["vendor"]["total_amount"] : "0.00";
 
-            if (isset($summary["collections"]) && !empty($summary["collections"]["online"])) {
-              $online_total = $summary["collections"]["online"]["total_num"];
-              $online_amount = $summary["collections"]["online"]["total_amount"];
-            } else {
-              $online_total = 0;
-              $online_amount = 0.00;
-            }
+            $online_total = $summary["collections"]["online"]["total_num"] ? $summary["collections"]["online"]["total_num"] : "0";
+            $online_amount = $summary["collections"]["online"]["total_amount"] ? $summary["collections"]["online"]["total_amount"] : "0.00";
 
-            if (isset($summary["collections"]) && !empty($summary["collections"]["provider"])) {
-              $provider_total = $summary["collections"]["provider"]["total_num"];
-              $provider_amount = $summary["collections"]["provider"]["total_amount"];
-            } else {
-              $provider_total = 0;
-              $provider_amount = 0.00;
-            }
+            $provider_total = $summary["collections"]["provider"]["total_num"] ? $summary["collections"]["provider"]["total_num"] : "0";
+            $provider_amount = $summary["collections"]["provider"]["total_amount"] ? $summary["collections"]["provider"]["total_amount"] : "0.00";
 
             // form types
-            if (isset($summary["form-types"]) && !empty($summary["form-types"]["masters"])) {
-              $masters_total = $summary["form-types"]["masters"]["total_num"];
-              $masters_amount = $summary["form-types"]["masters"]["total_amount"];
-            } else {
-              $masters_total = 0;
-              $masters_amount = 0.00;
-            }
+            $masters_total = $summary["form-types"]["masters"]["total_num"] ? $summary["form-types"]["masters"]["total_num"] : "0";
+            $masters_amount = $summary["form-types"]["masters"]["total_amount"] ? $summary["form-types"]["masters"]["total_amount"] : "0.00";
 
-            if (isset($summary["form-types"]) && !empty($summary["form-types"]["degree"])) {
-              $degree_total = $summary["form-types"]["degree"]["total_num"];
-              $degree_amount = $summary["form-types"]["degree"]["total_amount"];
-            } else {
-              $degree_total = 0;
-              $degree_amount = 0.00;
-            }
+            $degree_total = $summary["form-types"]["degree"]["total_num"] ? $summary["form-types"]["degree"]["total_num"] : "0";
+            $degree_amount = $summary["form-types"]["degree"]["total_amount"] ? $summary["form-types"]["degree"]["total_amount"] : "0.00";
 
-            if (isset($summary["form-types"]) && !empty($summary["form-types"]["diploma"])) {
-              $diploma_total = $summary["form-types"]["diploma"]["total_num"];
-              $diploma_amount = $summary["form-types"]["diploma"]["total_amount"];
-            } else {
-              $diploma_total = 0;
-              $diploma_amount = 0.00;
-            }
+            $diploma_total = $summary["form-types"]["diploma"]["total_num"] ? $summary["form-types"]["diploma"]["total_num"] : "0";
+            $diploma_amount = $summary["form-types"]["diploma"]["total_amount"] ? $summary["form-types"]["diploma"]["total_amount"] : "0.00";
 
-            if (isset($summary["form-types"]) && !empty($summary["form-types"]["short"])) {
-              $short_total = $summary["form-types"]["short"]["total_num"];
-              $short_amount = $summary["form-types"]["short"]["total_amount"];
-            } else {
-              $short_total = 0;
-              $short_amount = 0.00;
-            }
+            $short_total = $summary["form-types"]["short"]["total_num"] ? $summary["form-types"]["short"]["total_num"] : "0";
+            $short_amount = $summary["form-types"]["short"]["total_amount"] ? $summary["form-types"]["short"]["total_amount"] : "0.00";
 
             ?>
 
