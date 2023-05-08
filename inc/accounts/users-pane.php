@@ -26,8 +26,12 @@
                                     <td><?= $user["first_name"] . " " . $user["last_name"] ?></td>
                                     <td><?= $user["user_name"] ?></td>
                                     <td><?= $user["role"] ?></td>
-                                    <td id="<?= $user["id"] ?>" class="edit-user"><span style="cursor:pointer;" class="bi bi-pencil-square text-primary" title="Edit"></span></td>
-                                    <td id="<?= $user["id"] ?>" class="delete-user"><span style="cursor:pointer;" class="bi bi-trash text-danger" title="Delete"></span></td>
+                                    <td>
+                                        <span id="<?= $user["id"] ?>" style="cursor:pointer;" class="bi bi-pencil-square text-primary edit-user" title="Edit"></span>
+                                    </td>
+                                    <td>
+                                        <span id="<?= $user["id"] ?>" style="cursor:pointer;" class="bi bi-trash text-danger delete-user" title="Delete"></span>
+                                    </td>
                                 </tr>
                         <?php
                                 $i++;
@@ -43,94 +47,108 @@
                     <div class="card">
                         <h5 class="card-header">Add New User</h5>
                         <div class="card-body">
-                            <div style="display: flex; flex-direction:row; justify-content: space-between">
-                                <div class="mb-2 me-2">
-                                    <label for="user-fname">First Name</label>
-                                    <input type="text" class="form-control form-control-sm" name="user-fname" id="user-fname" placeholder="First Name" required>
+                            <fieldset>
+                                <legend>Personal Detail</legend>
+                                <div style="display: flex; flex-direction:row; justify-content: space-between">
+                                    <div class="mb-2 me-2">
+                                        <label for="user-fname">First Name</label>
+                                        <input type="text" class="form-control form-control-sm" name="user-fname" id="user-fname" placeholder="First Name" required>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label for="user-lname">Last Name</label>
+                                        <input type="text" class="form-control form-control-sm" name="user-lname" id="user-lname" placeholder="Last Name" required>
+                                    </div>
                                 </div>
-                                <div class="mb-2">
-                                    <label for="user-lname">Last Name</label>
-                                    <input type="text" class="form-control form-control-sm" name="user-lname" id="user-lname" placeholder="Last Name" required>
+                                <div style="display: flex; flex-direction:row; justify-content: space-between">
+                                    <div class="mb-2 me-2">
+                                        <label for="user-email">Email Address</label>
+                                        <input type="email" class="form-control form-control-sm" name="user-email" id="user-email" placeholder="Email" required>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label for="user-role">Role</label>
+                                        <select style="width: 100%;" name="user-role" id="user-role" class="form-select form-select-sm" required>
+                                            <option value="" hidden>Choose...</option>
+                                            <option value="Accounts">Accounts</option>
+                                            <option value="Admissions">Admissions</option>
+                                            <option value="Vendors">Vendors</option>
+                                            <option value="Registrar">Registrar</option>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                            <div style="display: flex; flex-direction:row; justify-content: space-between">
-                                <div class="mb-2 me-2">
-                                    <label for="user-email">Email Address</label>
-                                    <input type="email" class="form-control form-control-sm" name="user-email" id="user-email" placeholder="Email" required>
-                                </div>
-                                <div class="mb-2">
-                                    <label for="user-email">Role</label>
-                                    <select style="width: 100%;" name="user-role" id="user-role" class="form-select form-select-sm" required>
-                                        <option value="" hidden>Choose...</option>
-                                        <option value="Accounts">Accounts</option>
-                                        <option value="Admissions">Admissions</option>
-                                        <option value="Vendors">Vendors</option>
-                                        <option value="Registrar">Registrar</option>
-                                    </select>
-                                </div>
-                            </div>
+                            </fieldset>
 
                             <div id="vendor_info" style="display: none">
                                 <hr>
-                                <div style="display: flex; flex-direction:row; justify-content: space-between">
-                                    <div class="mb-2 me-2">
-                                        <label for="vendor-tin">Ghana Card</label>
-                                        <input type="text" class="form-control form-control-sm" name="vendor-tin" id="vendor-tin" placeholder="TIN">
-                                    </div>
-                                    <div class="mb-2 me-2">
-                                        <label for="vendor-phone">Phone No.</label>
-                                        <input type="text" class="form-control form-control-sm" name="vendor-phone" id="vendor-phone" placeholder="02441234567">
-                                    </div>
-                                </div>
-                                <div style="display: flex; flex-direction:row; justify-content: space-between">
-                                    <div class="mb-3">
-                                        <label for="vendor-company">Company</label>
-                                        <input type="text" rows="1" class="form-control form-control-sm" name="vendor-company" id="vendor-company" placeholder="Company">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="vendor-address">Address</label>
-                                        <textarea type="text" rows="1" class="form-control form-control-sm" name="vendor-address" id="vendor-address" placeholder="Address"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr>
-                            <div style="display: flex; flex-direction:row; justify-content: space-around">
 
-                                <p style="font-weight: bolder;">Privileges: </p>
-                                <div class="mb-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="User can view data">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="select" name="privileges[]" id="select" checked disabled>
-                                        <label class="form-check-label" for="select">
-                                            View
-                                        </label>
+                                <fieldset>
+                                    <legend>Vendor Business Detail</legend>
+                                    <div style="display: flex; flex-direction:row; justify-content: space-between">
+                                        <div class="mb-2 me-2">
+                                            <label for="vendor-tin">Ghana Card</label>
+                                            <input type="text" class="form-control form-control-sm" name="vendor-tin" id="vendor-tin" placeholder="TIN">
+                                        </div>
+                                        <div class="mb-2 me-2">
+                                            <label for="vendor-phone">Phone No.</label>
+                                            <input type="text" class="form-control form-control-sm" name="vendor-phone" id="vendor-phone" placeholder="02441234567">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="mb-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="User can add data">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="insert" name="privileges[]" id="insert">
-                                        <label class="form-check-label" for="insert">
-                                            Add
-                                        </label>
+                                    <div style="display: flex; flex-direction:row; justify-content: space-between">
+                                        <div class="mb-3">
+                                            <label for="vendor-company">Company</label>
+                                            <input type="text" rows="1" class="form-control form-control-sm" name="vendor-company" id="vendor-company" placeholder="Company">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="vendor-address">Address</label>
+                                            <textarea type="text" rows="1" class="form-control form-control-sm" name="vendor-address" id="vendor-address" placeholder="Address"></textarea>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="mb-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="User can edit data">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="update" name="privileges[]" id="update">
-                                        <label class="form-check-label" for="update">
-                                            Edit
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="mb-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="User can remove data">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="delete" name="privileges[]" id="delete">
-                                        <label class="form-check-label" for="delete">
-                                            Remove
-                                        </label>
-                                    </div>
-                                </div>
+                                </fieldset>
                             </div>
+
                             <hr>
+
+                            <fieldset>
+                                <div style="display: flex; flex-direction:row; justify-content: space-around">
+
+                                    <p style="font-weight: bolder;">Privileges: </p>
+                                    <div class="mb-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="User can view data">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="select" name="privileges[]" id="select" checked disabled>
+                                            <label class="form-check-label" for="select">
+                                                View
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="User can add data">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="insert" name="privileges[]" id="insert">
+                                            <label class="form-check-label" for="insert">
+                                                Add
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="User can edit data">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="update" name="privileges[]" id="update">
+                                            <label class="form-check-label" for="update">
+                                                Edit
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="User can remove data">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="delete" name="privileges[]" id="delete">
+                                            <label class="form-check-label" for="delete">
+                                                Remove
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </fieldset>
+
+                            <hr>
+
                             <div>
                                 <button type="submit" class="btn btn-primary btn-sm" id="user-action-btn">Add</button>
                             </div>
@@ -268,6 +286,9 @@
         });
 
         $(".delete-user").click(function(e) {
+            let conf = confirm("Are you sure you want to delete this user's account?");
+            if (!conf) return;
+
             var data = {
                 user_key: $(this).attr("id")
             }

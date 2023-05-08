@@ -486,7 +486,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     ///
     elseif ($_GET["url"] == "form-price") {
         if (!isset($_POST["form_type"]) || !isset($_POST["form_price"])) {
-            die(json_encode(array("success" => false, "message" => "Invalid input field")));
+            die(json_encode(array("success" => false, "message" => "Missing input field")));
         }
         if (empty($_POST["form_type"]) || empty($_POST["form_price"])) {
             die(json_encode(array("success" => false, "message" => "Missing input field")));
@@ -591,16 +591,42 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         die(json_encode($result));
     }
     //
-    elseif ($_GET["url"] == "adp-form") {
+    elseif ($_GET["url"] == "adp-form-verify" && $_POST["adp-action"] == 'add') {
         if (!isset($_POST["adp-start"]) || empty($_POST["adp-start"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field: Name")));
+            die(json_encode(array("success" => false, "message" => "Missing input field: Start Date")));
         }
         if (!isset($_POST["adp-end"]) || empty($_POST["adp-end"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field: Type")));
+            die(json_encode(array("success" => false, "message" => "Missing input field: End Date")));
         }
-        if (!isset($_POST["adp-desc"]) || empty($_POST["adp-desc"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field: Weekend")));
+        if (!isset($_POST["adp-desc"])) {
+            die(json_encode(array("success" => false, "message" => "Missing input field: Description")));
         }
+
+        $desc = '';
+        if (isset($_POST["adp-desc"]) && !empty($_POST["adp-desc"])) $desc = $_POST["adp-desc"];
+
+        if ($admin->fetchCurrentAdmissionPeriod()) {
+            die(json_encode(array(
+                "success" => false,
+                "message" => "An admission period is currently open! Do you want to still continue?"
+            )));
+        }
+        die(json_encode(array("success" => true, "message" => "add")));
+    }
+
+    //
+    elseif ($_GET["url"] == "adp-form") {
+        if (!isset($_POST["adp-start"]) || empty($_POST["adp-start"])) {
+            die(json_encode(array("success" => false, "message" => "Missing input field: Start Date")));
+        }
+        if (!isset($_POST["adp-end"]) || empty($_POST["adp-end"])) {
+            die(json_encode(array("success" => false, "message" => "Missing input field: End Date")));
+        }
+        if (!isset($_POST["adp-desc"])) {
+            die(json_encode(array("success" => false, "message" => "Missing input field: Description")));
+        }
+
+        if (isset($_POST["adp-desc"]) && empty($_POST["adp-desc"])) $desc = '';
 
         $result;
         switch ($_POST["adp-action"]) {

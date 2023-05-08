@@ -161,7 +161,7 @@ $data = $expose->getApplicationInfo($_GET["exttrid"]);
             <h1>Forms Sale</h1>
             <nav>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item"><a href="index.php">Home</a></li>
                     <li class="breadcrumb-item active">Sell Forms</li>
                 </ol>
             </nav>

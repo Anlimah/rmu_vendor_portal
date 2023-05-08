@@ -46,7 +46,7 @@
                         <h5 class="card-header">Add Form Price</h5>
                         <div class="card-body">
                             <div class="mb-2">
-                                <label for="form-name">Form Name</label>
+                                <label for="form-type">Form Type</label>
                                 <div style="display:flex; flex-direction:row; justify-content:baseline; align-items:baseline;">
                                     <select name="form-type" id="form-type" class="form-select form-select-sm">
                                         <option value="0">Select</option>
@@ -61,6 +61,10 @@
                                     </select>
                                     <span class="bi bi-plus-circle-fill text-success" style="margin-inline-start: 5px;" data-bs-toggle="modal" data-bs-target="#addFormType"></span>
                                 </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="form-name">Form Title/Name</label>
+                                <input type="text" class="form-control form-control-sm" name="form-name" id="form-name" placeholder="Form Title/Name">
                             </div>
                             <div class="mb-3">
                                 <label for="form-price">Price</label>
@@ -145,8 +149,8 @@
                 data: data,
                 success: function(result) {
                     console.log(result);
+                    alert(result.message);
                     if (result.success) {
-                        alert(result.message);
                         window.location.reload();
                     }
                 },

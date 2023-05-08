@@ -65,59 +65,59 @@
                             </div>
                             <div class="mb-3">
                                 <label for="adp-desc">Description</label>
-                                <input type="text" class="form-control form-control-sm" name="adp-desc" id="adp-desc" placeholder="Programme Name">
+                                <input type="text" class="form-control form-control-sm" name="adp-desc" id="adp-desc" placeholder="Description">
                             </div>
                             <div>
-                                <button type="submit" class="btn btn-primary btn-sm" id="adp-action-btn">Add</button>
+                                <button type="submit" class="btn btn-primary btn-sm" id="adp-action-btn">Open</button>
                             </div>
                         </div>
                     </div>
                     <input type="hidden" name="adp-action" id="adp-action" value="add">
                     <input type="hidden" name="adp-id" id="adp-id" value="">
                 </form>
+            </div>
 
-                <!-- Add form type modal form-->
-                <div class="modal fade" id="addFormType" tabindex="-1" aria-labelledby="addFormTypeLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="staticBackdropLabel">Form Type</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form id="formTypeForm" action="#" method="post" class="">
-                                    <div class="card">
-                                        <h5 class="card-header">Add Form</h5>
-                                        <div class="card-body">
-                                            <div class="mb-2">
-                                                <label for="form-name">Action</label>
-                                                <div style="display:flex; flex-direction:row; justify-content:baseline; align-items:baseline;">
-                                                    <select name="form-type" id="form-type" class="form-select form-select-sm">
-                                                        <option value="add">Add</option>
-                                                        <option value="Update">Update</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="form-price">Form Name</label>
-                                                <input type="text" class="form-control form-control-sm" name="form-price" id="form-price" placeholder="0.00">
-                                            </div>
-                                            <div>
-                                                <button type="submit" class="btn btn-primary btn-sm">Add</button>
+            <!-- Add form type modal form-->
+            <div class="modal fade" id="addFormType" tabindex="-1" aria-labelledby="addFormTypeLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Form Type</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="formTypeForm" action="#" method="post" class="">
+                                <div class="card">
+                                    <h5 class="card-header">Add Form</h5>
+                                    <div class="card-body">
+                                        <div class="mb-2">
+                                            <label for="form-name">Action</label>
+                                            <div style="display:flex; flex-direction:row; justify-content:baseline; align-items:baseline;">
+                                                <select name="form-type" id="form-type" class="form-select form-select-sm">
+                                                    <option value="add">Add</option>
+                                                    <option value="Update">Update</option>
+                                                </select>
                                             </div>
                                         </div>
+                                        <div class="mb-3">
+                                            <label for="form-price">Form Name</label>
+                                            <input type="text" class="form-control form-control-sm" name="form-price" id="form-price" placeholder="0.00">
+                                        </div>
+                                        <div>
+                                            <button type="submit" class="btn btn-primary btn-sm">Add</button>
+                                        </div>
                                     </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary">Understood</button>
-                            </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">Understood</button>
                         </div>
                     </div>
                 </div>
-
             </div>
+
         </div>
     </div>
 </div>
@@ -131,6 +131,11 @@
 
         $("#addOrUpdateAdmisPeriodForm").on("submit", function(e) {
             e.preventDefault();
+            alert("ADD")
+
+            if ($("#adp-action").val() == "add") {
+                alert("ADD")
+            }
 
             $.ajax({
                 type: "POST",

@@ -24,15 +24,35 @@ if (isset($_GET['logout'])  || strtolower($_SESSION["role"]) != "admissions") {
 
   header('Location: ../login.php');
 }
+if (!isset($_GET['t']) || empty($_GET['t'])) header("Location: index.php");
+if (!isset($_GET['q']) || empty($_GET['q'])) header("Location: applications.php?t={$_GET['t']}");
 ?>
+
 <?php
 require_once('../bootstrap.php');
-
-use Src\Controller\AdminController;
-
-$admin = new AdminController();
 require_once('../inc/page-data.php');
 
+use Src\Controller\AdminController;
+use Src\Controller\UsersController;
+
+$admin = new AdminController();
+$user = new UsersController();
+
+$photo = $user->fetchApplicantPhoto($_GET['q']);
+$personal = $user->fetchApplicantPersI($_GET['q']);
+$appStatus = $user->getApplicationStatus($_GET['q']);
+
+$pre_uni_rec = $user->fetchApplicantPreUni($_GET['q']);
+$academic_BG = $user->fetchApplicantAcaB($_GET['q']);
+$app_type = $user->getApplicationType($_GET['q']);
+
+$personal_AB = $user->fetchApplicantProgI($_GET['q']);
+$about_us = $user->fetchHowYouKnowUs($_GET['q']);
+
+$uploads = $user->fetchUploadedDocs($_GET['q']);
+
+$form_name = $admin->getFormTypeName($_GET["t"]);
+$app_number = $admin->getApplicantAppNum($_GET["q"]);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -59,12 +79,8 @@ require_once('../inc/page-data.php');
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.php">Dashboard</a></li>
-          <?php
-          if (isset($_GET["t"])) {
-            $form_name = $admin->getFormTypeName($_GET["t"]);
-            echo '<li class="breadcrumb-item active">' . $form_name[0]["name"] . '</li>';
-          }
-          ?>
+          <li class="breadcrumb-item"><a href="applications.php?t=<?= $_GET["t"] ?>"><?= $form_name[0]["name"] ?></a></li>
+          <li class="breadcrumb-item active"><?= $app_number[0]["app_number"] ?></li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
@@ -72,121 +88,36 @@ require_once('../inc/page-data.php');
     <section class=" section dashboard">
 
       <!-- programs summary view -->
-      <div class="row" <?= !isset($_GET["t"]) ? 'style="display:none"' : "" ?>>
+      <div class="row">
 
         <!-- Recent Sales -->
         <div class="col-12">
 
           <div class="card recent-sales overflow-auto">
 
-            <div class="filter">
-              <span class="icon export-excel" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Export Excel">
-                <img src="../assets/img/icons8-microsoft-excel-2019-48.png" alt="" style="width: 24px;">
-              </span>
-              <span class="icon download-pdf" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Download PDF">
-                <img src="../assets/img/icons8-pdf-48.png" alt="" style="width: 24px;">
-              </span>
-            </div>
-
             <div class="card-body">
-              <h5 class="card-title">Applicantions</h5>
-
-              <div class="row mx-auto">
-                <!-- summary data buttons -->
-                <button id="apps-total" class="btn btn-outline-primary col me-2 toggle-output">
-                  Total
-                  <span class="badge text-bg-secondary">
-                    <?= isset($_GET["t"]) ? $admin->fetchTotalApplications($_GET["t"])[0]["total"] : ""; ?>
-                  </span>
-                </button>
-
-                <button id="apps-submitted" class="btn btn-outline-primary col me-2 toggle-output">
-                  Submitted
-                  <span class="badge text-bg-secondary">
-                    <?= isset($_GET["t"]) ? $admin->fetchTotalSubmittedOrUnsubmittedApps($_GET["t"], true)[0]["total"] : ""; ?>
-                  </span>
-                </button>
-
-                <button id="apps-in-progress" class="btn btn-outline-primary col me-2 toggle-output">
-                  In Progress
-                  <span class="badge text-bg-secondary">
-                    <?= isset($_GET["t"]) ? $admin->fetchTotalSubmittedOrUnsubmittedApps($_GET["t"], false)[0]["total"] : ""; ?>
-                  </span>
-                </button>
-
-                <button id="apps-admitted" class="btn btn-outline-primary col me-2 toggle-output">
-                  Admitted
-                  <span class="badge text-bg-secondary">
-                    <?= isset($_GET["t"]) ? $admin->fetchTotalAdmittedOrUnadmittedApplicants($_GET["t"], true)[0]["total"] : ""; ?>
-                  </span>
-                </button>
-
-                <button id="apps-unadmitted" class="btn btn-outline-primary col me-2 toggle-output">
-                  Unadmitted
-                  <span class="badge text-bg-secondary">
-                    <?= isset($_GET["t"]) ? $admin->fetchTotalAdmittedOrUnadmittedApplicants($_GET["t"], false)[0]["total"] : ""; ?>
-                  </span>
-                </button>
-
-                <button id="apps-awaiting" class="btn btn-outline-primary col toggle-output">
-                  Awaiting
-                  <span class="badge text-bg-secondary">
-                    <?= isset($_GET["t"]) ? $admin->fetchTotalAwaitingResultsByFormType($_GET["t"])[0]["total"] : ""; ?>
-                  </span>
-                </button>
-
-              </div>
-              <div class="collapse" id="toggle-output">
-                <hr class="mb-4">
-
-                <form action="" class="mb-4 mt-4" id="form-filter">
-                  <div class="row">
-                    <div class="col-4">
-                      <label for="country" class="form-label">Country</label>
-                      <select name="country" id="country" class="form-select">
-                        <option value="" hidden>Choose</option>
-                        <option value="All">All</option>
-                        <option value="Cameroun">Cameroun</option>
-                        <option value="Ghana">Ghana</option>
-                        <option value="Gambia">Gambia</option>
-                        <option value="Liberia">Liberia</option>
-                        <option value="Sierra Leone">Sierra Leone</option>
-                        <option value="Others">Others</option>
-                      </select>
-                    </div>
-                    <div class="col-4">
-                      <label for="program" class="form-label">Programs</label>
-                      <select name="program" id="program" class="form-select">
-                        <option value="" hidden>Choose</option>
-                        <option value="All">All</option>
-                        <?php
-                        $data = $admin->fetchPrograms(0);
-                        foreach ($data as $ft) {
-                        ?>
-                          <option value="<?= $ft['name'] ?>"><?= $ft['name'] ?></option>
-                        <?php
-                        }
-                        ?>
-                      </select>
-                    </div>
+              <h5 class="card-title">Applications</h5>
+              <div class="row">
+                <div class="col-2">
+                  <div class="photo-display">
+                    <img id="app-photo" src="<?= $_SERVER["DOCUMENT_ROOT"] . '/rmu_admissions/apply/photos/1664974457.251.jpg' ?>" alt="">
                   </div>
-                </form>
-                <div id="info-output"></div>
-                <table class="table table-borderless datatable table-striped table-hover">
-                  <thead class="table-dark">
-                    <tr>
-                      <th scope="col">#</th>
-                      <th scope="col" style="width:150px">Name</th>
-                      <th scope="col">Country</th>
-                      <th scope="col">Application Type</th>
-                      <th scope="col">Programme (1<sup>st</sup> Choice)</th>
-                      <th scope="col">Status</th>
-                      <th scope="col">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                  </tbody>
-                </table>
+                </div>
+
+                <div class="col-10 bg-info">
+                  <div class="row">
+                    <div class="col-6 bg-success">
+                      <h1>Personal Information</h1>
+                      <span>Name:</span>
+                    </div>
+                    <div class="col-6 bg-warning">
+                      <h1>Guardian/Parent Information</h1>
+                      Guardian/Parent Info
+                    </div>
+                    
+                  </div>
+                </div>
+
               </div>
 
             </div>
@@ -237,29 +168,17 @@ require_once('../inc/page-data.php');
             if (result.success) {
               $("tbody").html('');
               $.each(result.message, function(index, value) {
-                if (value.declaration) {
-                  $("tbody").append(
-                    '<tr>' +
-                    '<th scope="row"><a href="javascript:void()">' + (index + 1) + '</a></th>' +
-                    '<td>' + value.fullname + '</td>' +
-                    '<td>' + value.nationality + '</td>' +
-                    '<td>' + value.app_type + '</td>' +
-                    '<td>' + value.first_prog + '</td>' +
-                    '<td><span class="badge text-bg-success">Submitted</span></td>' +
-                    '<td><b><a href="applicant-info.php?t=' + getUrlVars()["t"] + '&q=' + value.id + '">Open</a></b></td>' +
-                    '</tr>');
-                } else {
-                  $("tbody").append(
-                    '<tr>' +
-                    '<th scope="row"><a href="javascript:void()">' + (index + 1) + '</a></th>' +
-                    '<td>' + value.fullname + '</td>' +
-                    '<td>' + value.nationality + '</td>' +
-                    '<td>' + value.app_type + '</td>' +
-                    '<td>' + value.first_prog + '</td>' +
-                    '<td><span class="badge text-bg-danger">In Progress</span></td>' +
-                    '</tr>');
-                }
-
+                let status = value.declaration == 1 ? '<span class="badge text-bg-success">Submitted</span>' : '<span class="badge text-bg-danger">In Progress</span>';
+                $("tbody").append(
+                  '<tr>' +
+                  '<th scope="row"><a href="javascript:void()">' + (index + 1) + '</a></th>' +
+                  '<td>' + value.fullname + '</td>' +
+                  '<td>' + value.nationality + '</td>' +
+                  '<td>' + value.app_type + '</td>' +
+                  '<td>' + value.first_prog + '</td>' +
+                  '<td>' + status + '</td>' +
+                  '<td><b><a href="applicant-info.php?q=' + value.id + '">Open</a></b></td>' +
+                  '</tr>');
               });
 
             } else {

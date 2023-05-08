@@ -156,7 +156,7 @@ require_once('../inc/page-data.php');
             <h1>Forms Sale</h1>
             <nav>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item"><a href="index.php">Home</a></li>
                     <li class="breadcrumb-item active">Sell Forms</li>
                 </ol>
             </nav>
@@ -170,14 +170,14 @@ require_once('../inc/page-data.php');
                 <div class="flex-card">
                     <div class="form-card card">
                         <div class="purchase-card-header">
-                            <h1>Verify Phone Number</h1>
+                            <h1>Verify <span class="heading-title"></span> Phone Number</h1>
                         </div>
 
                         <hr style="color:#999">
 
                         <div class="purchase-card-body" style="margin: 0px 10%;">
                             <form id="verifyOTPCodeForm" method="post" enctype="multipart/form-data">
-                                <p class="mb-4">Enter the verification code sent to your phone.</p>
+                                <p class="mb-4">Enter the verification code sent to <span class="heading-title"></span> your phone number.</p>
                                 <div class="mb-4" style="display:flex !important; flex-direction:row !important; justify-content: space-around !important; align-items:center">
                                     <input class="form-control num me-2" type="text" maxlength="4" style="padding: 10px 10px;text-align:center" name="code" id="code" placeholder="XXXX" required>
                                     <button class="btn btn-primary" type="submit" id="verifyCodeBtn" style="padding: 10px 10px;">Verify</button>
@@ -211,8 +211,17 @@ require_once('../inc/page-data.php');
                 return vars;
             }
 
+            // Set the verification identity type
+            if (getUrlVars()["verify"] == "vendor") {
+                $(".heading-title").text("Vendor's");
+            } else if (getUrlVars()["verify"] == "customer") {
+                $(".heading-title").text("Customer's");
+            }
+
+            // identifies which buttons were clicked: used for loading
             var triggeredBy = 0;
 
+            // set count interval for resending code
             var count = 1;
             var intervalId = setInterval(() => {
                 $("#timer").html("Resend code <b>(" + count + " sec)</b>");
@@ -312,7 +321,7 @@ require_once('../inc/page-data.php');
                 }
             });
 
-            $("#num1").focus();
+            $("#code").focus();
 
             $(".num").on("keyup", function() {
                 if (this.value.length == 4) {

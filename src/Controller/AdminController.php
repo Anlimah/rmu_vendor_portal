@@ -330,9 +330,6 @@ class AdminController
 
     public function addAdmissionPeriod($adp_start, $adp_end, $adp_info)
     {
-        if ($this->fetchCurrentAdmissionPeriod()) {
-            return array("success" => false, "message" => "Can't open admission period! One already open.");
-        }
         $query = "INSERT INTO admission_period (`start_date`, `end_date`, `info`, `active`) 
                 VALUES(:sd, :ed, :i, :a)";
         $params = array(":sd" => $adp_start, ":ed" => $adp_end, ":i" => $adp_info, ":a" => 1);
@@ -554,6 +551,13 @@ class AdminController
     {
         $query = "SELECT * FROM form_type WHERE id = :i";
         return $this->dm->getData($query, array(":i" => $form_type));
+    }
+
+    public function getApplicantAppNum(int $app_num)
+    {
+        $query = "SELECT pd.`app_number` FROM `purchase_detail` AS pd, `applicants_login` AS al 
+                WHERE pd.`id` = al.`purchase_id` AND al.`id` = :i";
+        return $this->dm->getData($query, array(":i" => $app_num));
     }
 
     public function fetchAllAwaitingApplicationsBS()
