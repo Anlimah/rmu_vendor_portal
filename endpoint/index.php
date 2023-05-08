@@ -524,7 +524,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
             die(json_encode(array("success" => false, "message" => "Missing input field: Vendor Name")));
         }
         if (!isset($_POST["v-tin"]) || empty($_POST["v-tin"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field: TIN")));
+            die(json_encode(array("success" => false, "message" => "Missing input field: Ghana Card")));
         }
         if (!isset($_POST["v-email"]) || empty($_POST["v-email"])) {
             die(json_encode(array("success" => false, "message" => "Missing input field: Email Address")));

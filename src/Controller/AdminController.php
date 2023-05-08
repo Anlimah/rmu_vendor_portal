@@ -199,6 +199,7 @@ class AdminController
 
             $subject = "RMU Vendor Registration";
             $message = "<p>Hi," . $v_name . " </p></br>";
+            $message .= "<p>Your account to access RMU Admissions Portal as a vendor was successful.</p>";
             $message .= "<p>Find below your Login details.</p></br>";
             $message .= "<p style='font-weight: bold;'>Username: " . $v_email . "</p>";
             $message .= "<p style='font-weight: bold;'>Password: " . $password . "</p></br>";
@@ -445,6 +446,7 @@ class AdminController
 
         // Prepare email
         $message = "<p>Hi " . $user_data["first_name"] . ", </p></br>";
+        $message .= "<p>Your account to access RMU Admissions Portal as a " . $user_data["user_role"] . " officer was successful.</p>";
         $message .= "<p>Find below your Login details.</p></br>";
         $message .= "<p style='font-weight: bold;'>Username: " . $user_data["user_name"] . "</p>";
         $message .= "<p style='font-weight: bold;'>Password: " . $password . "</p></br>";
