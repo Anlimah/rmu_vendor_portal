@@ -778,6 +778,24 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         die(json_encode(array("success" => true, "message" => "successfully!")));
     }
 
+    // backup database
+    elseif ($_GET["url"] == "backup-data") {
+        $dbs = ["rmu_admissions"];
+        $user = "root";
+        $pass = "";
+        $host = "localhost";
+
+        if (!file_exists("../Backups")) mkdir("../Backups");
+
+        foreach ($dbs as $db) {
+            if (!file_exists("../Backups/$db")) mkdir("../Backups/$db");
+            $file_name = $db . "_" . date("F_d_Y") . "@" . date("g_ia") . uniqid("_", false);
+            $folder = "../Backups/$db/$file_name" . ".sql";
+            $d = exec("mysqldump --user={$user} --password={$pass} --host={$host} {$db} --result-file={$folder}", $output);
+            die(json_encode(array("success" => true, "message" => $output)));
+        }
+    }
+
 
 
     // All PUT request will be sent here

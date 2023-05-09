@@ -19,17 +19,24 @@
         <?php
         if (strtolower($_SESSION["role"]) == "admissions") {
         ?>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link collapsed" href="admit-applicants.php">
                     <i class="bi bi-files"></i>
                     <span>Admit Applicants</span>
                 </a>
-            </li><!-- End Broadsheet Page Nav -->
+            </li>End Admit Applicants Page Nav -->
 
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link collapsed" href="broadsheet.php">
                     <i class="bi bi-person-check"></i>
                     <span>Broadsheet</span>
+                </a>
+            </li>End Application Page Nav -->
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="backup.php">
+                    <i class="bi bi-database-fill-down"></i>
+                    <span>Backup Database</span>
                 </a>
             </li><!-- End Application Page Nav -->
         <?php } ?>
@@ -40,17 +47,10 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="../<?= strtolower($_SESSION["role"]) ?>/user-account.php">
                     <i class="bi bi-shield-shaded"></i>
-                    <span>User Account</span>
+                    <span>User Accounts</span>
                 </a>
             </li><!-- End User Account Page Nav -->
         <?php } ?>
-
-        <!-- <li class="nav-item">
-            <a class="nav-link collapsed" href="user-profile.php">
-                <i class="bi bi-person"></i>
-                <span>Profile</span>
-            </a>
-        </li>End Profile Page Nav -->
 
     </ul>
 </aside><!-- End Sidebar-->
