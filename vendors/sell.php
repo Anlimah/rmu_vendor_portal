@@ -172,7 +172,7 @@ require_once('../inc/page-data.php');
             <div class="row" style="display:flex !important; flex-direction:row !important; justify-content: center !important; align-items: center">
                 <div class="flex-card">
 
-                    <div class="form-card card" style="max-width: 500px !important;">
+                    <div class="form-card card" style="max-width: 600px !important;">
 
                         <div class="purchase-card-header">
                             <h1>Provide customer details</h1>
@@ -182,61 +182,62 @@ require_once('../inc/page-data.php');
 
                         <div class="purchase-card-body">
                             <form id="step1Form" method="post" enctype="multipart/form-data">
-                                <div class="flex-column align-items-center">
-                                    <div class="flex-row justify-space-between">
-                                        <div class="mb-4 me-2">
+                                <div class="flex-column" style="padding:10px 30px">
+                                    <div class="row mb-4">
+                                        <div class="col">
                                             <label class="form-label" for="first_name">First Name</label>
                                             <input name="first_name" id="first_name" title="Provide your first name" class="form-control" type="text" placeholder="Type your first name" required>
                                         </div>
-                                        <div class="mb-4">
+                                        <div class="col">
                                             <label class="form-label" for="last_name">Last Name</label>
                                             <input name="last_name" id="last_name" title="Provide your last name" class="form-control" type="text" placeholder="Type your last name" required>
                                         </div>
                                     </div>
-                                    <div class="flex-row justify-space-between" style="width: 450px">
+                                    <div class="row mb-2">
                                         <div class="mb-4">
-                                            <label class="form-label" for="gender">Form type</label>
-                                            <select title="Select the type of form you want to purchase." class="form-select form-select-sm" name="form_type" id="form_type" required>
+                                            <label class="form-label" for="gender">Form</label>
+                                            <select name="formSold" id="formSold" title="Select the type of form you want to purchase." class="form-select" required>
                                                 <option selected disabled value="">Choose...</option>
                                                 <?php
-                                                $data = $admin->getFormTypes();
-                                                foreach ($data as $ft) {
+                                                $data = $admin->getAvailableForms();
+                                                foreach ($data as $fp) {
                                                 ?>
-                                                    <option value="<?= $ft['id'] ?>"><?= $ft['name'] ?></option>
+                                                    <option value="<?= $fp['id'] ?>"><?= $fp['name'] ?></option>
                                                 <?php
                                                 }
                                                 ?>
                                             </select>
                                         </div>
-                                        <div class="mb-4 hide" id="form-cost-display">
+                                        <div id="form-cost-display" style="display: none">
                                             <label class="form-label" for="gender">Form cost:</label>
                                             <p style="line-height: normal !important;">
-                                                <b><span id="form-type"></span></b> forms cost <b> GHS<span id="form-cost"></span></b>.
+                                                <b><span id="form-name"></span></b> forms cost <b> GHS<span id="form-cost"></span></b>.
                                             </p>
                                         </div>
                                     </div>
-
-                                    <div class="flex-row justify-space-between" style="padding-left: 10px; padding-right: 10px">
-                                        <div class="mb-4 me-2">
+                                    <div class="row mb-4">
+                                        <div class="col">
                                             <label class="form-label" for="country">Country Code</label>
-                                            <select name="country" id="country" value="<?= '(' . COUNTRIES[83]["code"] . ') ' . COUNTRIES[83]["name"]  ?>" title="Choose country and country code" class="form-control" placeholder="Type for options" required>
+                                            <select name="country" id="country" value="<?= '(' . COUNTRIES[83]["code"] . ') ' . COUNTRIES[83]["name"]  ?>" title="Choose country and country code" class="form-control" required>
                                                 <?php
                                                 foreach (COUNTRIES as $cn) { ?>
                                                     <option value="<?= "(" . $cn["code"] . ") " . $cn["name"] ?>"><?= "(" . $cn["code"] . ") " . $cn["name"] ?></option>
                                                 <?php } ?>
                                             </select>
                                         </div>
-                                        <div class="mb-4">
+                                        <div class="col">
                                             <label class="form-label" for="phone-number">Phone Number</label>
                                             <input name="phone_number" id="phone_number" maxlength="10" title="Provide your Provide Number" class="form-control" type="tel" placeholder="0244123123" required>
                                         </div>
                                     </div>
 
-                                    <div>
-                                        <button class="btn btn-primary btn-sm" type="submit" id="submitBtn" style="padding: 10px 10px; width:200px" disabled>Submit</button>
-                                        <input type="hidden" name="_v1Token" value="<?= $_SESSION["_vendor1Token"]; ?>">
+                                    <div class="flex-row justify-content-center mt-4">
+                                        <button class="btn btn-primary btn-sm" type="submit" id="submitBtn" style="padding: 10px 10px; width:200px" disabled>Sell</button>
                                     </div>
                                 </div>
+                                <input type="hidden" name="_v1Token" value="<?= $_SESSION["_vendor1Token"]; ?>">
+                                <input type="hidden" name="form_price" id="form_price" value="0">
+                                <input type="hidden" name="form_type" id="form_type" value="0">
                             </form>
                         </div>
                     </div>
@@ -256,14 +257,16 @@ require_once('../inc/page-data.php');
                     type: "POST",
                     url: "../endpoint/formInfo",
                     data: {
-                        form_type: this.value,
+                        form_id: this.value,
                     },
                     success: function(result) {
                         console.log(result);
                         if (result.success) {
                             $("#form-cost-display").show();
-                            $("#form-type").text(result.message[0]["name"]);
+                            $("#form-name").text(result.message[0]["name"]);
                             $("#form-cost").text(result.message[0]["amount"]);
+                            $("#form_price").val(result.message[0]["amount"]);
+                            $("#form_type").val(result.message[0]["form_type"]);
                             $(':input[type="submit"]').prop('disabled', false);
                         }
                     },
@@ -304,7 +307,7 @@ require_once('../inc/page-data.php');
                     $("#submitBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
                 },
                 ajaxStop: function() {
-                    $("#submitBtn").prop("disabled", false).html('Verify');
+                    $("#submitBtn").prop("disabled", false).html('Sell');
                 }
             });
 

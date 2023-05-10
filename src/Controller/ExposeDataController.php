@@ -199,13 +199,25 @@ class ExposeDataController extends DatabaseMethods
         return $_SERVER['HTTP_USER_AGENT'];
     }
 
-    public function getFormPriceAndFormName(string $form_type, int $admin_period)
+    /*public function getFormPriceAndFormName(string $form_type, int $admin_period)
     {
         return $this->getData(
             "SELECT p.`amount`, t.`name` FROM `form_price` AS p, `form_type` AS t 
                 WHERE p.`form_type` = :ft AND p.`admin_period` = :ap AND t.`id` = p.`form_type`",
             array(":ft" => $form_type, ":ap" => $admin_period)
         );
+    }*/
+
+    public function getFormPriceA(int $form_id, int $admin_period)
+    {
+        $sql = "SELECT * FROM `form_price` WHERE `id` = :fi AND `admin_period` = :ap";
+        return $this->getData($sql, array(":fi" => $form_id, ":ap" => $admin_period));
+    }
+
+    public function getFormPriceDataByFormID(int $form_id)
+    {
+        $sql = "SELECT * FROM `form_price` WHERE `id` = :fi";
+        return $this->getData($sql, array(":fi" => $form_id));
     }
 
     public function getFormPrice(int $form_type, int $admin_period)

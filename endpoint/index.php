@@ -181,85 +181,73 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
     // Get details on form
     elseif ($_GET["url"] == "formInfo") {
-        if (isset($_POST["form_type"]) && !empty($_POST["form_type"])) {
-            $form_type = $expose->validateInput($_POST["form_type"]);
-            $result = $expose->getFormPriceAndFormName($form_type, $expose->getCurrentAdmissionPeriodID());
-            if (!empty($result)) {
-                $data["success"] = true;
-                $data["message"] = $result;
-            } else {
-                $data["success"] = false;
-                $data["message"] = "Amount not set";
-            }
-        } else {
-            $data["success"] = false;
-            $data["message"] = "Amount not set";
+        if (!isset($_POST["form_id"]) || empty($_POST["form_id"])) {
+            die(json_encode(array("success" => false, "message" => "Error: Form has not been set properly in database!")));
         }
-        die(json_encode($data));
+
+        $form_id = $expose->validateInput($_POST["form_id"]);
+        $result = $expose->getFormPriceA($form_id, $expose->getCurrentAdmissionPeriodID());
+
+        if (empty($result)) die(json_encode(array("success" => false, "message" => "Forms' price has not set in the database!")));
+        die(json_encode(array("success" => true, "message" => $result)));
     }
 
     //Vendor endpoint
     elseif ($_GET["url"] == "sellAction") {
         if (isset($_SESSION["_vendor1Token"]) && !empty($_SESSION["_vendor1Token"]) && isset($_POST["_v1Token"]) && !empty($_POST["_v1Token"]) && $_POST["_v1Token"] == $_SESSION["_vendor1Token"]) {
 
-            if (!isset($_POST["form_type"]) || empty($_POST["form_type"]));
-            if (!isset($_POST["first_name"]) || empty($_POST["first_name"]));
-            if (!isset($_POST["last_name"]) || empty($_POST["last_name"]));
-            if (isset($_POST["country"]) || empty($_POST["country"]));
-            if (isset($_POST["phone_number"]) || empty($_POST["phone_number"]));
+            if (!isset($_POST["first_name"]) || empty($_POST["first_name"])) {
+                die(json_encode(array("success" => false, "message" => "Customer first name is required!")));
+            }
+            if (!isset($_POST["last_name"]) || empty($_POST["last_name"])) {
+                die(json_encode(array("success" => false, "message" => "Customer last name is required!")));
+            }
+            if (!isset($_POST["formSold"]) || empty($_POST["formSold"])) {
+                die(json_encode(array("success" => false, "message" => "Choose a type of form to sell!")));
+            }
+            if (!isset($_POST["country"]) || empty($_POST["country"])) {
+                die(json_encode(array("success" => false, "message" => "Phone number's country code is required!")));
+            }
+            if (!isset($_POST["phone_number"]) || empty($_POST["phone_number"])) {
+                die(json_encode(array("success" => false, "message" => "Customer's phone number is required!")));
+            }
 
             $first_name = $expose->validateText($_POST["first_name"]);
             $last_name = $expose->validateText($_POST["last_name"]);
             $phone_number = $expose->validatePhone($_POST["phone_number"]);
             $country = $expose->validateCountryCode($_POST["country"]);
+            $form_sold = $expose->validateNumber($_POST["formSold"]);
+            $form_type = $expose->validateNumber($_POST["form_type"]);
+            $form_price = $_POST["form_price"];
 
             $charPos = strpos($country, ")");
             $country_name = substr($country, ($charPos + 2));
             $country_code = substr($country, 1, ($charPos - 1));
 
-            $form_type = $expose->validateInput($_POST["form_type"]);
-            $amount = $expose->getFormPrice($form_type, $_SESSION["admin_period"]);
+            $_SESSION["vendorData"] = array(
+                "first_name" => $first_name,
+                "last_name" => $last_name,
+                "country_name" => $country_name,
+                "country_code" => $country_code,
+                "phone_number" => $phone_number,
+                "email_address" => "",
+                "form_type" => $form_type,
+                "pay_method" => "CASH",
+                "amount" => $form_price,
+                "vendor_id" => $_SESSION["vendor_id"],
+                "admin_period" => $_SESSION["admin_period"]
+            );
 
-            if (!empty($amount)) {
-                $_SESSION["vendorData"] = array(
-                    "first_name" => $first_name,
-                    "last_name" => $last_name,
-                    "country_name" => $country_name,
-                    "country_code" => $country_code,
-                    "phone_number" => $phone_number,
-                    "email_address" => "",
-                    "form_type" => $form_type,
-                    "pay_method" => "CASH",
-                    "amount" => $amount[0]["amount"],
-                    "vendor_id" => $_SESSION["vendor_id"],
-                    "admin_period" => $_SESSION["admin_period"]
-                );
+            if (!isset($_SESSION["vendorData"]) || empty($_SESSION["vendorData"]))
+                die(json_encode(array("success" => false, "message" => "Failed in preparing data payload submitted!")));
 
-                if (!empty($_SESSION["vendorData"])) {
-                    if (isset($_SESSION["vendorData"]) && !empty($_SESSION["vendorData"])) {
-                        if ($expose->vendorExist($_SESSION["vendorData"]["vendor_id"])) {
-                            $data = $admin->processVendorPay($_SESSION["vendorData"]);
-                        } else {
-                            $data["success"] = false;
-                            $data["message"] = "Process can only be performed by a vendor!";
-                        }
-                    } else {
-                        $data["success"] = false;
-                        $data["message"] = "Empty data payload!";
-                    }
-                } else {
-                    $data["success"] = false;
-                    $data["message"] = "Failed in preparing data submitted!";
-                }
-            } else {
-                $data["success"] = false;
-                $data["message"] = "Unset data values!";
-            }
+            if (!$expose->vendorExist($_SESSION["vendorData"]["vendor_id"]))
+                die(json_encode(array("success" => false, "message" => "Process can only be performed by a vendor!")));
+
+            die(json_encode($admin->processVendorPay($_SESSION["vendorData"])));
         } else {
-            $data["success"] = false;
-            $data["message"] = "Invalid request!1";
+            die(json_encode(array("success" => false, "message" => "Invalid request!")));
         }
-        die(json_encode($data));
     }
 
     //
