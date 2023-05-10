@@ -9,7 +9,7 @@ if (isset($_SESSION["adminLogSuccess"]) && $_SESSION["adminLogSuccess"] == true 
     header("Location: ../login.php");
 }
 
-if (isset($_SESSION["loginSuccess"]) && $_SESSION["loginSuccess"] == true && isset($_SESSION["vendor_id"]) && !empty($_SESSION["vendor_id"]))
+if (isset($_SESSION["vendor_id"]) && !empty($_SESSION["vendor_id"]))
     $trans_id = $_GET["exttrid"];
 else header("Location: index.php");
 
@@ -224,149 +224,7 @@ $data = $expose->getApplicationInfo($_GET["exttrid"]);
     <?= require_once("../inc/footer-section.php") ?>
     <script>
         $(document).ready(function() {
-            //get variable(parameters) from url
-            function getUrlVars() {
-                var vars = {};
-                var parts = window.location.href.replace(
-                    /[?&]+([^=&]+)=([^&]*)/gi,
-                    function(m, key, value) {
-                        vars[key] = value;
-                    }
-                );
-                return vars;
-            }
 
-            var triggeredBy = 0;
-
-            var count = 1;
-            var intervalId = setInterval(() => {
-                $("#timer").html("Resend code <b>(" + count + " sec)</b>");
-                count = count - 1;
-                if (count <= 0) {
-                    clearInterval(intervalId);
-                    $(' #timer').hide();
-                    $('#resend-code').removeClass("hide").addClass("display");
-                    return;
-                }
-            }, 1000);
-
-            $("#resend-code").click(function(e) {
-                e.preventDefault();
-                triggeredBy = 1;
-                let data = {
-                    resend_code: "sms",
-                    _vSMSToken: $("#_vSMSToken").val()
-                };
-                $.ajax({
-                    type: "POST",
-                    url: "../endpoint/resend-code",
-                    data: data,
-                    success: function(result) {
-                        console.log(result);
-                        if (result.success) {
-                            flashMessage("alert-success", result.message);
-                            clearInterval(intervalId);
-                            $("#timer").show();
-                            $('#resend-code').removeClass("display").addClass("hide");
-                            count = 1;
-                            intervalId = setInterval(() => {
-                                $("#timer").html("Resend code <b>(" + count + " sec)</b>");
-                                count = count - 1;
-                                if (count <= 0) {
-                                    clearInterval(intervalId);
-                                    $('#timer').hide();
-                                    $('#resend-code').removeClass("hide").addClass("display").attr("disabled", false);
-                                    return;
-                                }
-                            }, 1000); /**/
-                        } else {
-                            flashMessage("alert-danger", result.message);
-                        }
-                    },
-                    error: function(error) {
-                        flashMessage("alert-danger", error);
-                    }
-                });
-            });
-
-            $("#verifyOTPCodeForm").on("submit", function(e) {
-                e.preventDefault();
-                triggeredBy = 2;
-
-                var url = "";
-                if (getUrlVars()["verify"] == "vendor") {
-                    url = "verifyVendor";
-                } else if (getUrlVars()["verify"] == "customer") {
-                    url = "verifyCustomer";
-                } else {
-                    return;
-                }
-
-                $.ajax({
-                    type: "POST",
-                    url: "../endpoint/" + url,
-                    data: new FormData(this),
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                    success: function(result) {
-                        console.log(result);
-                        if (result.success) {
-                            if (url == "verifyVendor")
-                                window.location.href = result.message;
-                            else
-                                window.location.href = "confirm.php?status=000&exttrid=" + result.exttrid;
-                        } else {
-                            flashMessage("alert-danger", result.message);
-                        }
-                    },
-                    error: function(error) {
-                        flashMessage("alert-danger", error);
-                    }
-                });
-            });
-
-            $(document).on({
-                ajaxStart: function() {
-                    if (triggeredBy == 1) $("#resend-code").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> sending...');
-                    if (triggeredBy == 2) $("#verifyCodeBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
-                },
-                ajaxStop: function() {
-                    if (triggeredBy == 1) $("#resend-code").prop("disabled", false).html('Resend code');
-                    if (triggeredBy == 2) $("#verifyCodeBtn").prop("disabled", false).html('Verify');
-                }
-            });
-
-            $("#num1").focus();
-
-            $(".num").on("keyup", function() {
-                if (this.value.length == 4) {
-                    $(this).next(":input").focus().select(); //.val(''); and as well clesr
-                }
-            });
-
-            $("input[type='text']").on("click", function() {
-                $(this).select();
-            });
-
-            function flashMessage(bg_color, message) {
-                const flashMessage = document.getElementById("flashMessage");
-
-                flashMessage.classList.add(bg_color);
-                flashMessage.innerHTML = message;
-
-                setTimeout(() => {
-                    flashMessage.style.visibility = "visible";
-                    flashMessage.classList.add("show");
-                }, 500);
-
-                setTimeout(() => {
-                    flashMessage.classList.remove("show");
-                    setTimeout(() => {
-                        flashMessage.style.visibility = "hidden";
-                    }, 500);
-                }, 5000);
-            }
         });
     </script>
 

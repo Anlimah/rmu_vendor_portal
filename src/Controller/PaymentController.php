@@ -17,11 +17,8 @@ class PaymentController
     {
         if (!empty($data)) {
             $trans_id = time();
-            if ($trans_id) {
-                return $this->voucher->SaveFormPurchaseData($data, $trans_id);
-            } else {
-                return array("success" => false, "message" => "Transaction ID failed!");
-            }
+            if (!$trans_id) return array("success" => false, "message" => "Transaction ID failed!");
+            return $this->voucher->SaveFormPurchaseData($data, $trans_id);
         }
     }
 

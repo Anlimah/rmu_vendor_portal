@@ -175,7 +175,7 @@ require_once('../inc/page-data.php');
                     <div class="form-card card" style="max-width: 500px !important;">
 
                         <div class="purchase-card-header">
-                            <h1>Verify Phone Number</h1>
+                            <h1>Provide customer details</h1>
                         </div>
 
                         <hr style="color:#999">
@@ -287,7 +287,8 @@ require_once('../inc/page-data.php');
                     success: function(result) {
                         console.log(result);
                         if (result.success) {
-                            window.location.href = result.message;
+                            //window.location.href = result.message;
+                            window.location.href = "confirm.php?status=000&exttrid=" + result.exttrid;
                         } else {
                             flashMessage("alert-danger", result.message);
                         }
