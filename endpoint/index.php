@@ -126,37 +126,6 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         die(json_encode(array("success" => true,  "message" => strtolower($result[0]["role"]))));
     }
 
-    // Send OTP verification code to vendor to verify vendor
-    /*elseif ($_GET["url"] == "send-vendor-vc") {
-        if (isset($_SESSION["adminLogSuccess"]) && $_SESSION["adminLogSuccess"] == true && isset($_SESSION["user"]) && !empty($_SESSION["user"])) {
-
-            //redirect if user already verifed and session not closed
-            if (isset($_SESSION["vendor_id"]) && !empty($_SESSION["vendor_id"])) {
-                $data["success"] = true;
-                $data["message"] = "sell.php";
-            } else {
-                $vendorPhone = $expose->getVendorPhoneByUserID($_SESSION["user"]);
-                if (!empty($vendorPhone)) {
-                    $response = $expose->sendOTP($vendorPhone[0]["phone_number"]);
-
-                    if (isset($response["otp_code"])) {
-                        $_SESSION['sms_code'] = $response["otp_code"];
-                        $_SESSION['verifySMSCode'] = true;
-                        $data["success"] = true;
-                        $data["message"] = "verify.php?verify=vendor";
-                    } else {
-                        $data["success"] = false;
-                        $data["message"] = $response["statusDescription"];
-                    }
-                } else {
-                    $data["success"] = false;
-                    $data["message"] = "No phone number entry found for this user!";
-                }
-            }
-        }
-        die(json_encode($data));
-    }*/
-
     // Resend verification code
     elseif ($_GET["url"] == "resend-code") {
         if (!isset($_POST["resend_code"])) die(json_encode(array("success" => false, "message" => "Invalid request!")));
@@ -209,35 +178,6 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         }
         die(json_encode($data));
     }
-
-    //After a successfull login, verify vendor mobile phone before redirection to home page
-    /*elseif ($_GET["url"] == "verifyVendor") {
-        if (isset($_SESSION["_verifySMSToken"]) && !empty($_SESSION["_verifySMSToken"]) && isset($_POST["_vSMSToken"]) && !empty($_POST["_vSMSToken"]) && $_POST["_vSMSToken"] == $_SESSION["_verifySMSToken"]) {
-            if (isset($_POST["code"]) && !empty($_POST["code"])) {
-
-                $otp_code = $expose->validatePhone($_POST["code"]);
-
-                if ($otp_code == $_SESSION['sms_code']) {
-                    $_SESSION["admin_period"] = $expose->getCurrentAdmissionPeriodID();
-                    $_SESSION["vendor_id"] = $expose->getVendorPhoneByUserID($_SESSION["user"])[0]["id"];
-                    $_SESSION["SMSLogin"] = true;
-                    $_SESSION["loginSuccess"] = true;
-                    $data["success"] = true;
-                    $data["message"] = "sell.php";
-                } else {
-                    $data["success"] = false;
-                    $data["message"] = "Entry did not match OTP code sent!!";
-                }
-            } else {
-                $data["success"] = false;
-                $data["message"] = "Code entries are needed!";
-            }
-        } else {
-            $data["success"] = false;
-            $data["message"] = "Invalid request!";
-        }
-        die(json_encode($data));
-    }*/
 
     // Get details on form
     elseif ($_GET["url"] == "formInfo") {
@@ -307,19 +247,6 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
                         $data["success"] = false;
                         $data["message"] = "Empty data payload!";
                     }
-                    /*$to = $_SESSION["vendorData"]["country_code"] . $_SESSION["vendorData"]["phone_number"];
-                    $response = $expose->sendOTP($to);
-
-                    if (isset($response["otp_code"])) {
-                        $_SESSION['sms_code'] = $response["otp_code"];
-                        $_SESSION['verifySMSCode'] = true;
-                        $data["success"] = true;
-                        $data["message"] = "verify.php?verify=customer";
-                    } else {
-                        $_SESSION['verifySMSCode'] = false;
-                        $data["success"] = false;
-                        $data["message"] = $response["statusDescription"];
-                    }*/
                 } else {
                     $data["success"] = false;
                     $data["message"] = "Failed in preparing data submitted!";
@@ -334,40 +261,6 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         }
         die(json_encode($data));
     }
-
-    //Verify customer phone number before sending Application login details
-    /*elseif ($_GET["url"] == "verifyCustomer") {
-        if (isset($_SESSION["_verifySMSToken"]) && !empty($_SESSION["_verifySMSToken"]) && isset($_POST["_vSMSToken"]) && !empty($_POST["_vSMSToken"]) && $_POST["_vSMSToken"] == $_SESSION["_verifySMSToken"]) {
-
-            if (isset($_POST["code"]) && !empty($_POST["code"])) {
-                $otp_code = $expose->validatePhone($_POST["code"]);
-
-                if ($otp_code == $_SESSION['sms_code']) {
-                    if (isset($_SESSION["vendorData"]) && !empty($_SESSION["vendorData"])) {
-                        if ($expose->vendorExist($_SESSION["vendorData"]["vendor_id"])) {
-                            $data = $admin->processVendorPay($_SESSION["vendorData"]);
-                        } else {
-                            $data["success"] = false;
-                            $data["message"] = "Process can only be performed by a vendor!";
-                        }
-                    } else {
-                        $data["success"] = false;
-                        $data["message"] = "Empty data payload!";
-                    }
-                } else {
-                    $data["success"] = false;
-                    $data["message"] = "Entry did not match OTP code sent!";
-                }
-            } else {
-                $data["success"] = false;
-                $data["message"] = "Code entries are needed!";
-            }
-        } else {
-            $data["success"] = false;
-            $data["message"] = "Invalid request!";
-        }
-        die(json_encode($data));
-    }*/
 
     //
     elseif ($_GET["url"] == "apps-data") {
