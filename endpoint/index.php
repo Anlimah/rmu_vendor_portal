@@ -390,12 +390,15 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         if (empty($_POST["form_type"]) || empty($_POST["form_price"])) {
             die(json_encode(array("success" => false, "message" => "Missing input field")));
         }
+        if (empty($_POST["form_name"]) || empty($_POST["form_name"])) {
+            die(json_encode(array("success" => false, "message" => "Missing input field")));
+        }
 
         $result = [];
 
         switch ($_POST["action"]) {
             case 'add':
-                $rslt = $admin->addFormPrice($_POST["form_type"], $_POST["form_price"]);
+                $rslt = $admin->addFormPrice($_POST["form_type"], $_POST["form_name"], $_POST["form_price"]);
                 if (!$rslt) {
                     die(json_encode(array("success" => false, "message" => "Failed to add price!")));
                 }
@@ -403,7 +406,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
                 break;
 
             case 'update':
-                $rslt = $admin->updateFormPrice($_POST["form_type"], $_POST["form_price"]);
+                $rslt = $admin->updateFormPrice($_POST["form_id"], $_POST["form_type"], $_POST["form_name"], $_POST["form_price"]);
                 if (!$rslt) {
                     die(json_encode(array("success" => false, "message" => "Failed to update price!")));
                 }
@@ -419,11 +422,11 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     }
     //
     elseif ($_GET["url"] == "vendor-form") {
+        if (!isset($_POST["v-action"]) || empty($_POST["v-action"])) {
+            die(json_encode(array("success" => false, "message" => "Missing input field: Ghana Card")));
+        }
         if (!isset($_POST["v-name"]) || empty($_POST["v-name"])) {
             die(json_encode(array("success" => false, "message" => "Missing input field: Vendor Name")));
-        }
-        if (!isset($_POST["v-tin"]) || empty($_POST["v-tin"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field: Ghana Card")));
         }
         if (!isset($_POST["v-email"]) || empty($_POST["v-email"])) {
             die(json_encode(array("success" => false, "message" => "Missing input field: Email Address")));
@@ -435,9 +438,21 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         $result;
         switch ($_POST["v-action"]) {
             case 'add':
-                $rslt = $admin->addVendor($_POST["v-name"], $_POST["v-tin"], $_POST["v-email"], $_POST["v-phone"], $_POST["v-address"]);
+                $rslt = $admin->addVendor($_POST["v-name"], $_POST["v-email"], $_POST["v-phone"], 'MAIN');
                 if (!$rslt) {
                     die(json_encode(array("success" => false, "message" => "Failed to add vendor!")));
+                }
+
+                if (isset($_FILES["other-branches"]) || empty($_FILES["other-branches"])) {
+
+                    if ($_FILES["other-branches"]['error']) {
+                        $result = array("success" => false, "message" => "Successfully added vendor. But failed to upload file!");
+                    } else {
+                        $startRow = 1;
+                        $endRow = 0;
+                        $excelData = $admin->uploadCompanyBranchesData($_FILES["other-branches"], $startRow, $endRow);
+                        $result = array("success" => true, "message" => "Successfully added vendor. Successfully added vendor!");
+                    }
                 }
                 $result = array("success" => true, "message" => "Successfully added vendor!");
                 break;

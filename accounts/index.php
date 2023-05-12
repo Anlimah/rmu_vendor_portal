@@ -71,13 +71,13 @@ require_once('../inc/page-data.php');
                             <a href="daily-transactions.php">
                                 <div class="card info-card sales-card">
                                     <div class="card-body">
-                                        <h5 class="card-title">Daily Sales</h5>
+                                        <h5 class="card-title">Reports</h5>
                                         <div class="d-flex align-items-center">
                                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                                                 <img src="../assets/img/icons8-stocks-growth-96.png" style="width: 48px;" alt="">
                                             </div>
                                             <div class="ps-3">
-                                                <span class="text-muted small pt-2 ps-1">Statistics</span>
+                                                <span class="text-muted small pt-2 ps-1">Sales summary & reports</span>
                                             </div>
                                         </div>
                                     </div>
@@ -96,7 +96,26 @@ require_once('../inc/page-data.php');
                                                 <img src="../assets/img/icons8-chart-96.png" style="width: 48px;" alt="">
                                             </div>
                                             <div class="ps-3">
-                                                <span class="text-muted small pt-2 ps-1">Statistics</span>
+                                                <span class="text-muted small pt-2 ps-1">Vendors' sales summary & reports</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div><!-- End Applications Card -->
+
+                        <!-- Applications Card -->
+                        <div class="col-xxl-3 col-md-3">
+                            <a href="vendors-account.php">
+                                <div class="card info-card sales-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Vendors</h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <img src="../assets/img/icons8-male-female-user-group-96.png" style="width: 48px;" alt="">
+                                            </div>
+                                            <div class="ps-3">
+                                                <span class="text-muted small pt-2 ps-1">Add, edit, remove vendors information</span>
                                             </div>
                                         </div>
                                     </div>

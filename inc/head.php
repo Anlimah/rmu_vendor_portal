@@ -34,5 +34,11 @@
         line-height: 1.5;
         border-radius: 3px;
     }
+
+    input.transform-text,
+    select.transform-text,
+    textarea.transform-text {
+        text-transform: uppercase !important;
+    }
 </style>
 <script src="../js/jquery-3.6.0.min.js"></script>

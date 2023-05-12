@@ -1,31 +1,34 @@
 <!--Vendors Pane-->
-<div class="tab-pane fade <?php strtolower($_SESSION["role"]) == "accounts" ? "show active" : "" ?>" id="vendors-tab-pane" role="tabpanel" aria-labelledby="vendors-tab" tabindex="0">
+<div class="tab-pane fade show active" id="vendors-tab-pane" role="tabpanel" aria-labelledby="vendors-tab" tabindex="0">
     <div class="container mt-4">
         <div class="row">
+
             <div class="col-lg-6">
                 <table class="table table-striped">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col" style="width: 250px;">Vendor Name</th>
+                            <th scope="col" style="width: 250px;">Company</th>
                             <th scope="col">Phone Number</th>
+                            <th scope="col"></th>
                             <th scope="col"></th>
                             <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
-                        $vendors = $admin->fetchAllVendorDetails();
+                        $vendors = $admin->fetchAllVendorsMainBranch();
                         if (!empty($vendors)) {
                             $i = 1;
                             foreach ($vendors as $vendor) {
                         ?>
                                 <tr>
                                     <th scope="row"><?= $i ?></th>
-                                    <td><?= $vendor["vendor_name"] ?></td>
+                                    <td><?= $vendor["company"] ?></td>
                                     <td><?= $vendor["phone_number"] ?></td>
-                                    <td id="<?= $vendor["id"] ?>" class="edit-vendor"><span style="cursor:pointer;" class="bi bi-pencil-square text-primary" title="Edit <?= $vendor["vendor_name"] ?>"></span></td>
-                                    <td id="<?= $vendor["id"] ?>" class="delete-vendor"><span style="cursor:pointer;" class="bi bi-trash text-danger" title="Delete <?= $vendor["vendor_name"] ?>"></span></td>
+                                    <td id="<?= $vendor["id"] ?>" class="view-vendor"><span style="cursor:pointer;" class="bi bi-eye text-success" title="View <?= $vendor["company"] ?> Information"></span></td>
+                                    <td id="<?= $vendor["id"] ?>" class="edit-vendor"><span style="cursor:pointer;" class="bi bi-pencil-square text-primary" title="Edit <?= $vendor["company"] ?>"></span></td>
+                                    <td id="<?= $vendor["id"] ?>" class="delete-vendor"><span style="cursor:pointer;" class="bi bi-trash text-danger" title="Delete <?= $vendor["company"] ?>"></span></td>
                                 </tr>
                         <?php
                                 $i++;
@@ -36,88 +39,57 @@
                     </tbody>
                 </table>
             </div>
+
             <div class="col-lg-1">
             </div>
+
             <div class="col-lg-5">
                 <form id="addOrUpdateVendorForm" method="post" enctype="multipart/form-data">
                     <div class="card">
-                        <h5 class="card-header">Add New Vendor</h5>
+                        <h5 class="card-header">New Vendor</h5>
                         <div class="card-body">
-                            <div class="mb-2">
-                                <label for="v-name">Name</label>
-                                <input type="text" class="form-control form-control-sm" name="v-name" id="v-name" placeholder="Name">
+                            <div class="mb-4 mt-4">
+                                <label for="v-name">Company Name</label>
+                                <input type="text" class="transform-text form-control form-control-sm" name="v-name" id="v-name" placeholder="Name">
                             </div>
-                            <div style="display: flex; flex-direction:row; justify-content: space-between">
-                                <div class="mb-2 me-2">
-                                    <label for="v-tin">Ghana Card</label>
-                                    <input type="text" class="form-control form-control-sm" name="v-tin" id="v-tin" placeholder="TIN">
-                                </div>
-                                <div class="mb-2">
+
+                            <div class="row mt-4">
+                                <h4><u>Main Branch Account (Admin)</u> </h4>
+                                <div class="col">
                                     <label for="v-email">Email</label>
                                     <input type="text" class="form-control form-control-sm" name="v-email" id="v-email" placeholder="Email">
                                 </div>
-                            </div>
-                            <div style="display: flex; flex-direction:row; justify-content: space-between">
-                                <div class="mb-2 me-2">
+                                <div class="col">
                                     <label for="v-phone">Phone No.</label>
                                     <input type="text" class="form-control form-control-sm" name="v-phone" id="v-phone" placeholder="02441234567">
                                 </div>
-                                <div class="mb-3">
-                                    <label for="v-address">Address</label>
-                                    <textarea type="text" rows="1" class="form-control form-control-sm" name="v-address" id="form-address" placeholder="Address"></textarea>
+                            </div>
+
+                            <div class="row mt-4 mb-4">
+                                <h4><u>Other Branches Account</u> </h4>
+                                <div class="col">
+                                    <input type="file" name="other-branches" id="other-branches" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                                    <div class="alert alert-warning mt-4" role="alert">
+                                        <h4 class="alert-heading">Instruction for File Upload!</h4>
+                                        <p>Please follow the instructions below to successfully upload company's branches data</p>
+                                        <hr>
+                                        <ul>
+                                            <li>The allow file type are <b>.xlsx</b> and <b>.xls</b></li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
+
                             <div>
-                                <button type="submit" class="btn btn-primary btn-sm" id="v-action-btn">Add</button>
+                                <button type="submit" class="btn btn-primary btn-sm" id="v-action-btn">Save</button>
                             </div>
                         </div>
                     </div>
                     <input type="hidden" name="v-action" id="v-action" value="add">
                     <input type="hidden" name="v-id" id="v-id" value="">
                 </form>
-
-                <!-- Add form type modal form-->
-                <div class="modal fade" id="addFormType" tabindex="-1" aria-labelledby="addFormTypeLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="staticBackdropLabel">Form Type</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form id="formTypeForm" action="#" method="post" class="">
-                                    <div class="card">
-                                        <h5 class="card-header">Add Form</h5>
-                                        <div class="card-body">
-                                            <div class="mb-2">
-                                                <label for="form-name">Action</label>
-                                                <div style="display:flex; flex-direction:row; justify-content:baseline; align-items:baseline;">
-                                                    <select name="form-type" id="form-type" class="form-select form-select-sm">
-                                                        <option value="add">Add</option>
-                                                        <option value="Update">Update</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="form-price">Form Name</label>
-                                                <input type="text" class="form-control form-control-sm" name="form-price" id="form-price" placeholder="0.00">
-                                            </div>
-                                            <div>
-                                                <button type="submit" class="btn btn-primary btn-sm">Add</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary">Understood</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
+
         </div>
     </div>
 </div>

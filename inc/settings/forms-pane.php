@@ -24,10 +24,10 @@
                         ?>
                                 <tr>
                                     <th scope="row"><?= $i ?></th>
-                                    <td><?= $form["name"] ?></td>
+                                    <td><?= $form["form_name"] ?></td>
                                     <td><?= $form["amount"] ?></td>
-                                    <td id="<?= $form["id"] ?>" class="edit-form"><span style="cursor:pointer;" class="bi bi-pencil-square text-primary" title="Edit <?= $form["name"] ?>"></span></td>
-                                    <td id="<?= $form["id"] ?>" class="delete-form"><span style="cursor:pointer;" class="bi bi-trash text-danger" title="Delete <?= $form["name"] ?>"></span></td>
+                                    <td id="<?= $form["id"] ?>" class="edit-form"><span style="cursor:pointer;" class="bi bi-pencil-square text-primary" title="Edit <?= $form["form_name"] ?>"></span></td>
+                                    <td id="<?= $form["id"] ?>" class="delete-form"><span style="cursor:pointer;" class="bi bi-trash text-danger" title="Delete <?= $form["form_name"] ?>"></span></td>
                                 </tr>
                         <?php
                                 $i++;
@@ -140,7 +140,9 @@
             var data = {
                 action: $("#p-action").val(),
                 form_type: $("#form-type").val(),
+                form_name: $("#form-name").val(),
                 form_price: $("#form-price").val(),
+                form_id: $("#p-action").val() == "update" ? $("#p-id").val() : 0
             }
 
             $.ajax({
@@ -178,6 +180,7 @@
                         $(".card-header").text("Update Form Price");
                         $("#fp-action-btn").text("Update");
                         $("#p-id").attr("value", result.message[0].fp_id);
+                        $("#form-name").val(result.message[0].fp_name);
                         $("#form-price").val(result.message[0].amount);
                         $("#form-type option:selected").attr("selected", false);
                         $("#form-type" + " option[value='" + result.message[0].ft_id + "']").attr('selected', true);
@@ -191,9 +194,12 @@
         });
 
         $(".delete-form").click(function(e) {
+            if (!confirm("Are you sure you want to delete this form?")) return;
+
             var data = {
                 form_key: $(this).attr("id")
             }
+
             $.ajax({
                 type: "DELETE",
                 url: "../endpoint/form-price",

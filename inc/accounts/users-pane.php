@@ -16,7 +16,7 @@
                     </thead>
                     <tbody>
                         <?php
-                        $sys_users = $admin->fetchAllSystemUsers();
+                        $sys_users = $admin->fetchAllVendorSystemUsers();
                         if (!empty($sys_users)) {
                             $i = 1;
                             foreach ($sys_users as $user) {
@@ -59,19 +59,16 @@
                                         <input type="text" class="form-control form-control-sm" name="user-lname" id="user-lname" placeholder="Last Name" required>
                                     </div>
                                 </div>
-                                <div style="display: flex; flex-direction:row; justify-content: space-between">
-                                    <div class="mb-2 me-2">
+                                <div class="row">
+                                    <div class="col mb-2 me-2">
                                         <label for="user-email">Email Address</label>
                                         <input type="email" class="form-control form-control-sm" name="user-email" id="user-email" placeholder="Email" required>
                                     </div>
-                                    <div class="mb-2">
+                                    <div class="col mb-2">
                                         <label for="user-role">Role</label>
                                         <select style="width: 100%;" name="user-role" id="user-role" class="form-select form-select-sm" required>
                                             <option value="" hidden>Choose...</option>
                                             <option value="Accounts">Accounts</option>
-                                            <option value="Admissions">Admissions</option>
-                                            <option value="Vendors">Vendors</option>
-                                            <option value="Registrar">Registrar</option>
                                         </select>
                                     </div>
                                 </div>
@@ -82,22 +79,22 @@
 
                                 <fieldset>
                                     <legend>Vendor Business Detail</legend>
-                                    <div style="display: flex; flex-direction:row; justify-content: space-between">
-                                        <div class="mb-2 me-2">
+                                    <div class="row">
+                                        <div class="col mb-2 me-2">
                                             <label for="vendor-tin">Ghana Card</label>
                                             <input type="text" class="form-control form-control-sm" name="vendor-tin" id="vendor-tin" placeholder="TIN">
                                         </div>
-                                        <div class="mb-2 me-2">
+                                        <div class="col mb-2 me-2">
                                             <label for="vendor-phone">Phone No.</label>
                                             <input type="text" class="form-control form-control-sm" name="vendor-phone" id="vendor-phone" placeholder="02441234567">
                                         </div>
                                     </div>
-                                    <div style="display: flex; flex-direction:row; justify-content: space-between">
-                                        <div class="mb-3">
+                                    <div class="row">
+                                        <div class="col mb-3">
                                             <label for="vendor-company">Company</label>
                                             <input type="text" rows="1" class="form-control form-control-sm" name="vendor-company" id="vendor-company" placeholder="Company">
                                         </div>
-                                        <div class="mb-3">
+                                        <div class="col mb-3">
                                             <label for="vendor-address">Address</label>
                                             <textarea type="text" rows="1" class="form-control form-control-sm" name="vendor-address" id="vendor-address" placeholder="Address"></textarea>
                                         </div>

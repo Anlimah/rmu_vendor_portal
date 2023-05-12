@@ -99,56 +99,51 @@ class AdminController
 
     public function fetchAllFormPriceDetails()
     {
-        $query = "SELECT fp.id, ft.name, fp.amount, fp.admin_period 
-                FROM form_type AS ft, form_price AS fp, admission_period AS ap 
-                WHERE ft.id = fp.form_type AND ap.id = fp.admin_period AND ap.active = 1";
+        $query = "SELECT f.id, f.name AS form_name, ft.name AS form_type_name, f.amount 
+                FROM form_type AS ft, forms AS f WHERE ft.id = f.form_type";
         return $this->dm->getData($query);
     }
 
     public function fetchFormPrice($form_price_id)
     {
-        $query = "SELECT fp.id AS fp_id, fp.id AS ft_id, ft.name, fp.amount, fp.admin_period 
-                FROM form_type AS ft, form_price AS fp, admission_period AS ap 
-                WHERE ft.id = fp.form_type AND ap.id = fp.admin_period AND 
-                ap.active = 1 AND fp.id = :i";
+        $query = "SELECT fp.id AS fp_id, ft.id AS ft_id, ft.name AS ft_name, fp.name AS fp_name, fp.amount 
+                FROM form_type AS ft, forms AS fp WHERE ft.id = fp.form_type AND fp.id = :i";
         return $this->dm->getData($query, array(":i" => $form_price_id));
     }
 
-    public function addFormPrice($form_type, $form_price)
+    public function addFormPrice($form_type, $form_name, $form_price)
     {
-        $query = "INSERT INTO form_price (form_type, admin_period, amount) VALUES(:ft, :ap, :a)";
-        $aca_period = $this->getCurrentAdmissionPeriodID();
-        $params = array(":ft" => $form_type, ":ap" => $aca_period, ":a" => $form_price);
+        $query = "INSERT INTO forms (form_type, `name`, amount) VALUES(:ft, :fn, :fp)";
+        $params = array(":ft" => $form_type, ":fn" => $form_name, ":fp" => $form_price);
         $query_result = $this->dm->inputData($query, $params);
 
         if ($query_result)
             $this->logActivity(
                 $_SESSION["user"],
                 "INSERT",
-                "Added new form price of {$form_price} to form type {$form_type} for academic period {$aca_period}"
+                "Added new {$form_name} form costing {$form_price} to form type {$form_type}"
             );
         return $query_result;
     }
 
-    public function updateFormPrice($form_type, $form_price)
+    public function updateFormPrice(int $form_id, $form_type, $form_name, $form_price)
     {
-        $query = "UPDATE form_price SET amount = :a WHERE form_type = :ft AND admin_period = :ap";
-        $aca_period = $this->getCurrentAdmissionPeriodID();
-        $params = array(":ft" => $form_type, ":ap" => $aca_period, ":a" => $form_price);
+        $query = "UPDATE forms SET amount = :fp, form_type = :ft, `name` = :fn WHERE id = :i";
+        $params = array(":i" => $form_id, ":ft" => $form_type, ":fn" => $form_name, ":fp" => $form_price);
         $query_result = $this->dm->inputData($query, $params);
 
         if ($query_result)
             $this->logActivity(
                 $_SESSION["user"],
                 "UPDATE",
-                "Updated form price to {$form_price} for form type {$form_type} on academic period {$aca_period}"
+                "Updated {$form_name} form costing {$form_price} to form type {$form_type}"
             );
         return $query_result;
     }
 
     public function deleteFormPrice($form_price_id)
     {
-        $query = "DELETE FROM form_price WHERE id = :i";
+        $query = "DELETE FROM forms WHERE id = :i";
         $params = array(":i" => $form_price_id);
         $query_result = $this->dm->inputData($query, $params);
 
@@ -156,7 +151,7 @@ class AdminController
             $this->logActivity(
                 $_SESSION["user"],
                 "DELETE",
-                "Deleted form price with id {$form_price_id}"
+                "Deleted form with id {$form_price_id}"
             );
         return $query_result;
     }
@@ -164,6 +159,16 @@ class AdminController
     /**
      * CRUD for vendor
      */
+
+    public function fetchAllVendorsMainBranch()
+    {
+        return $this->dm->getData("SELECT * FROM vendor_details WHERE `type` <> 'ONLINE' AND branch = 'MAIN'");
+    }
+
+    public function fetchVendorsBranches($company)
+    {
+        return $this->dm->getData("SELECT * FROM vendor_details WHERE `company` = :c", array(":c" => $company));
+    }
 
     public function fetchAllVendorDetails()
     {
@@ -176,14 +181,13 @@ class AdminController
         return $this->dm->inputData($query, array(":i" => $vendor_id));
     }
 
-    public function addVendor($v_name, $v_tin, $v_email, $v_phone, $v_address)
+    public function addVendor($v_name, $v_email, $v_phone, $branch)
     {
-        $query1 = "INSERT INTO vendor_details (`id`, `type`, `vendor_name`, `tin`, `email_address`, `phone_number`, `address`) 
+        $query1 = "INSERT INTO vendor_details (`id`, `type`, `company`, `branch`, `phone_number`) 
                 VALUES(:id, :tp, :nm, :tn, :ea, :pn, :ad)";
         $vendor_id = time();
         $params1 = array(
-            ":id" => $vendor_id, ":tp" => "VENDOR", ":nm" => $v_name, ":tn" => $v_tin,
-            ":ea" => $v_email, ":pn" => $v_phone, ":ad" => $v_address
+            ":id" => $vendor_id, ":tp" => "VENDOR", ":nm" => $v_name, ":ea" => $v_email, ":pn" => $v_phone
         );
 
         if ($this->dm->inputData($query1, $params1)) {
@@ -218,6 +222,55 @@ class AdminController
             return $this->expose->sendEmail($v_email, $subject, $message);
         }
         return 0;
+    }
+
+    public function uploadCompanyBranchesData($fileObj, $v_name)
+    {
+        $allowedFileType = [
+            'application/vnd.ms-excel',
+            'text/xls',
+            'text/xlsx',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        ];
+
+        if (!in_array($fileObj["type"], $allowedFileType)) {
+            return array("success" => false, "message" => "Invalid file type. Please choose an excel file!");
+        }
+
+        if ($fileObj['error'] == UPLOAD_ERR_OK) {
+
+            // Create a unique file name
+            $name = time() . '-' . 'branches.xlsx';
+
+            // Create the full path to the file
+            $targetPath = UPLOAD_DIR . "/branches/" . $name;
+
+            // Delete file if exsists
+            if (file_exists($targetPath)) {
+                unlink($targetPath);
+            }
+
+            // Move the file to the target directory
+            if (!move_uploaded_file($fileObj['tmp_name'], $targetPath))
+                return array("success" => false, "message" => "Failed to upload file!");
+            //return array("success" => true, "message" => "Failed to upload file!");
+
+            $Reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+            $spreadSheet = $Reader->load($targetPath);
+            $excelSheet = $spreadSheet->getActiveSheet();
+            $spreadSheetArray = $excelSheet->toArray();
+
+            $startRow = 1;
+            $endRow = count($spreadSheetArray);
+
+            for ($i = $startRow; $i <= $endRow - 1; $i++) {
+
+                $branch = $spreadSheetArray[$i][1];
+                $v_email = $spreadSheetArray[$i][2];
+                $v_phone = $spreadSheetArray[$i][3];
+                $this->addVendor($v_name, $v_email, $v_phone, $branch);
+            }
+        }
     }
 
     public function updateVendor($v_id, $v_name, $v_tin, $v_email, $v_phone, $v_address)
@@ -385,9 +438,14 @@ class AdminController
      * CRUD for user accounts
      */
 
+    public function fetchAllVendorSystemUsers()
+    {
+        return $this->dm->getData("SELECT * FROM `sys_users` WHERE `role` = 'Accounts'");
+    }
+
     public function fetchAllSystemUsers()
     {
-        return $this->dm->getData("SELECT * FROM sys_users");
+        return $this->dm->getData("SELECT * FROM `sys_users`");
     }
 
     public function fetchSystemUser($user_id)
