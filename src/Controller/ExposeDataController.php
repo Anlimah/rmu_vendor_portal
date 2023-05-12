@@ -208,15 +208,15 @@ class ExposeDataController extends DatabaseMethods
         );
     }*/
 
-    public function getFormPriceA(int $form_id, int $admin_period)
+    public function getFormPriceA(int $form_id)
     {
-        $sql = "SELECT * FROM `form_price` WHERE `id` = :fi AND `admin_period` = :ap";
-        return $this->getData($sql, array(":fi" => $form_id, ":ap" => $admin_period));
+        $sql = "SELECT * FROM `forms` WHERE `id` = :fi";
+        return $this->getData($sql, array(":fi" => $form_id));
     }
 
     public function getFormPriceDataByFormID(int $form_id)
     {
-        $sql = "SELECT * FROM `form_price` WHERE `id` = :fi";
+        $sql = "SELECT * FROM `forms` WHERE `id` = :fi";
         return $this->getData($sql, array(":fi" => $form_id));
     }
 
@@ -345,9 +345,9 @@ class ExposeDataController extends DatabaseMethods
 
     public function getApplicationInfo(int $transaction_id)
     {
-        $sql = "SELECT p.`app_number`, p.`pin_number`, f.`name`, fp.`amount`, v.`company`, a.`info`, f.`name`  
-        FROM `purchase_detail` AS p, `form_type` AS f, `vendor_details` AS v, `admission_period` AS a, form_price AS fp  
-        WHERE f.`id` = fp.`form_type` AND fp.`admin_period` = a.`id` AND p.`form_type` = f.`id` AND p.vendor = v.`id` AND p.`admission_period` = a.`id` AND p.`id` = :i";
+        $sql = "SELECT p.`id`, p.`app_number`, p.`pin_number`, f.`name`, f.`amount`, v.`company`, a.`info`, f.`name`  
+        FROM `purchase_detail` AS p, `forms` AS f, `vendor_details` AS v, `admission_period` AS a 
+        WHERE p.`form_id` = f.`id` AND p.vendor = v.`id` AND p.`admission_period` = a.`id` AND p.`id` = :i";
         return $this->getData($sql, array(':i' => $transaction_id));
     }
 

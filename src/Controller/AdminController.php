@@ -61,7 +61,7 @@ class AdminController
 
     public function getAvailableForms()
     {
-        return $this->dm->getData("SELECT * FROM `form_price`");
+        return $this->dm->getData("SELECT * FROM `forms`");
     }
 
     public function getFormTypes()

@@ -186,7 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         }
 
         $form_id = $expose->validateInput($_POST["form_id"]);
-        $result = $expose->getFormPriceA($form_id, $expose->getCurrentAdmissionPeriodID());
+        $result = $expose->getFormPriceA($form_id);
 
         if (empty($result)) die(json_encode(array("success" => false, "message" => "Forms' price has not set in the database!")));
         die(json_encode(array("success" => true, "message" => $result)));
@@ -216,8 +216,8 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
             $last_name = $expose->validateText($_POST["last_name"]);
             $phone_number = $expose->validatePhone($_POST["phone_number"]);
             $country = $expose->validateCountryCode($_POST["country"]);
-            $form_sold = $expose->validateNumber($_POST["formSold"]);
-            $form_type = $expose->validateNumber($_POST["form_type"]);
+            $form_id = $expose->validateNumber($_POST["formSold"]);
+            //$form_type = $expose->validateNumber($_POST["form_type"]);
             $form_price = $_POST["form_price"];
 
             $charPos = strpos($country, ")");
@@ -231,7 +231,8 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
                 "country_code" => $country_code,
                 "phone_number" => $phone_number,
                 "email_address" => "",
-                "form_type" => $form_type,
+                "form_id" => $form_id,
+                //"form_type" => $form_type,
                 "pay_method" => "CASH",
                 "amount" => $form_price,
                 "vendor_id" => $_SESSION["vendor_id"],

@@ -45,13 +45,13 @@ class VoucherPurchase
         return 0;
     }
 
-    private function saveVendorPurchaseData(int $ti, int $vd, int $ft, int $ap, $pm, float $am, $fn, $ln, $em, $cn, $cc, $pn)
+    private function saveVendorPurchaseData(int $ti, int $vd, int $fi, int $ap, $pm, float $am, $fn, $ln, $em, $cn, $cc, $pn)
     {
-        $sql = "INSERT INTO `purchase_detail` (`id`, `vendor`, `form_type`, `admission_period`, `payment_method`, `first_name`, `last_name`, `email_address`, `country_name`, `country_code`, `phone_number`, `amount`) 
-                VALUES(:ti, :vd, :ft, :ap, :pm, :fn, :ln, :em, :cn, :cc, :pn, :am)";
+        $sql = "INSERT INTO `purchase_detail` (`id`, `vendor`, `form_id`, `admission_period`, `payment_method`, `amount`, `first_name`, `last_name`, `email_address`, `country_name`, `country_code`, `phone_number`) 
+                VALUES(:ti, :vd, :fi, :ap, :pm, :am, :fn, :ln, :em, :cn, :cc, :pn)";
         $params = array(
-            ':ti' => $ti, ':vd' => $vd, ':ft' => $ft, ':pm' => $pm, ':ap' => $ap, ':fn' => $fn, ':ln' => $ln,
-            ':em' => $em, ':cn' => $cn, ':cc' => $cc, ':pn' => $pn, ':am' => $am
+            ':ti' => $ti, ':vd' => $vd, ':fi' => $fi, ':pm' => $pm, ':am' => $am, ':ap' => $ap,
+            ':fn' => $fn, ':ln' => $ln, ':em' => $em, ':cn' => $cn, ':cc' => $cc, ':pn' => $pn
         );
         if ($this->dm->inputData($sql, $params)) return $ti;
         return 0;
@@ -157,7 +157,7 @@ class VoucherPurchase
             $cc = $data['country_code'];
             $pn = $data['phone_number'];
             $am = $data['amount'];
-            $ft = $data['form_type'];
+            $fi = $data['form_id'];
             $vd = $data['vendor_id'];
 
             if ($data['pay_method'] == 'MOM') $pay_method = "MOMO";
@@ -166,10 +166,9 @@ class VoucherPurchase
             $pm = $pay_method;
 
             $ap_id = $data['admin_period'];
-            //$pm_id = $this->getPaymentMethodID($pm);
 
             // For on premises purchases, generate app number and pin and send immediately
-            $purchase_id = $this->saveVendorPurchaseData($trans_id, $vd, $ft, $ap_id, $pm, $am, $fn, $ln, $em, $cn, $cc, $pn);
+            $purchase_id = $this->saveVendorPurchaseData($trans_id, $vd, $fi, $ap_id, $pm, $am, $fn, $ln, $em, $cn, $cc, $pn);
             if ($purchase_id) {
                 if ($pm == "CASH") {
                     return $this->genLoginsAndSend($purchase_id);
@@ -199,7 +198,8 @@ class VoucherPurchase
     private function getAppPurchaseData(int $trans_id)
     {
         // get form_type, country code, phone number
-        $sql = "SELECT `form_type`, `country_code`, `phone_number`, `email_address` FROM `purchase_detail` WHERE `id` = :t";
+        $sql = "SELECT f.`form_type`, pd.`country_code`, pd.`phone_number`, pd.`email_address` 
+                FROM `purchase_detail` AS pd, forms AS f WHERE pd.`id` = :t AND f.`id` = pd.`form_id`";
         return $this->dm->getData($sql, array(':t' => $trans_id));
     }
 
@@ -211,7 +211,7 @@ class VoucherPurchase
 
         $app_type = 0;
 
-        if ($data[0]["form_type"] == 2 || $data[0]["form_type"] == 3 || $data[0]["form_type"] == 4) {
+        if ($data[0]["form_type"] >= 2) {
             $app_type = 1;
         } else if ($data[0]["form_type"] == 1) {
             $app_type = 2;

@@ -15,14 +15,12 @@ class PaymentController
 
     public function vendorPaymentProcess($data)
     {
-        if (!empty($data)) {
-            $trans_id = time();
-            if (!$trans_id) return array("success" => false, "message" => "Transaction ID failed!");
-            return $this->voucher->SaveFormPurchaseData($data, $trans_id);
-        }
+        $trans_id = time();
+        if (!$trans_id) return array("success" => false, "message" => "Transaction ID generation failed!");
+        return $this->voucher->SaveFormPurchaseData($data, $trans_id);
     }
 
-    public function verifyVendorPurchase(int $vendor_id, int $transaction_id)
+    /*public function verifyVendorPurchase(int $vendor_id, int $transaction_id)
     {
-    }
+    }*/
 }

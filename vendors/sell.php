@@ -237,7 +237,7 @@ require_once('../inc/page-data.php');
                                 </div>
                                 <input type="hidden" name="_v1Token" value="<?= $_SESSION["_vendor1Token"]; ?>">
                                 <input type="hidden" name="form_price" id="form_price" value="0">
-                                <input type="hidden" name="form_type" id="form_type" value="0">
+                                <!--<input type="hidden" name="form_type" id="form_type" value="0">-->
                             </form>
                         </div>
                     </div>
@@ -266,7 +266,7 @@ require_once('../inc/page-data.php');
                             $("#form-name").text(result.message[0]["name"]);
                             $("#form-cost").text(result.message[0]["amount"]);
                             $("#form_price").val(result.message[0]["amount"]);
-                            $("#form_type").val(result.message[0]["form_type"]);
+                            //$("#form_type").val(result.message[0]["form_type"]);
                             $(':input[type="submit"]').prop('disabled', false);
                         }
                     },
@@ -294,9 +294,11 @@ require_once('../inc/page-data.php');
                             window.location.href = "confirm.php?status=000&exttrid=" + result.exttrid;
                         } else {
                             flashMessage("alert-danger", result.message);
+                            console.log("success area: ", result.message);
                         }
                     },
                     error: function(error) {
+                        console.log("error area: ", error);
                         flashMessage("alert-danger", error);
                     }
                 });

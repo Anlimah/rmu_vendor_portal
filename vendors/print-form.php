@@ -1,8 +1,7 @@
 <?php
 session_start();
 
-if (!isset($_GET['status']) || !isset($_GET['exttrid'])) header('Location: index.php?status=invalid');
-if (empty($_GET['status']) || empty($_GET['exttrid'])) header('Location: index.php?status=invalid');
+if (!isset($_GET['exttrid']) || empty($_GET['exttrid'])) header('Location: index.php?msg=Invalid request');
 
 if (isset($_SESSION["adminLogSuccess"]) && $_SESSION["adminLogSuccess"] == true && isset($_SESSION["user"]) && !empty($_SESSION["user"])) {
 } else {
@@ -49,8 +48,19 @@ $data = $expose->getApplicationInfo($_GET["exttrid"]);
 <html lang="en">
 
 <head>
-    <?= require_once("../inc/head.php") ?>
     <style>
+        body {
+            /*was 000*/
+            font-family: "Ubuntu", sans-serif !important;
+            font-weight: 300;
+            -webkit-overflow-scrolling: touch;
+            overflow: auto;
+            line-height: 1;
+            background-color: #f9f9f9 !important;
+            color: #282828 !important;
+            font-size: 16px !important;
+        }
+
         .hide {
             display: none;
         }
@@ -139,7 +149,6 @@ $data = $expose->getApplicationInfo($_GET["exttrid"]);
         .purchase-card-step-info {
             color: #003262;
             padding: 0px;
-            font-size: 14px;
             font-weight: 400;
             width: 100%;
         }
@@ -147,71 +156,76 @@ $data = $expose->getApplicationInfo($_GET["exttrid"]);
         .purchase-card-footer {
             width: 100% !important;
         }
+
+        .bg-img {
+            width: 100%;
+            height: 100%;
+            background-image: url(../assets/img/logo.png);
+            background-repeat: no-repeat;
+            background-position: contain;
+            background-size: 10%;
+            background-color: rgba(255, 255, 255, 0.5);
+            opacity: 0.5;
+            z-index: 9999;
+            position: absolute;
+        }
     </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&family=Roboto+Mono:wght@700&family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <?= require_once("../inc/header.php") ?>
-
-    <?= require_once("../inc/sidebar.php") ?>
 
     <main id="main" class="main">
-
-        <div class="pagetitle">
-            <h1>Forms Sale</h1>
-            <nav>
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-                    <li class="breadcrumb-item active">Sell Forms</li>
-                </ol>
-            </nav>
-        </div><!-- End Page Title -->
 
         <section class="section dashboard">
             <div class="flex-card">
                 <div class="form-card card" style="max-width: 800px !important;">
 
-                    <div class="purchase-card-header flex-row">
-                        <h1>Applicant Receipt</h1>
-                        <b><span class="bi bi-x-lg me-5 text-danger" style="cursor: pointer;" onclick="window.location.href = 'sell.php'"></span></b>
+                    <div class="flex-column">
+                        <div class="purchase-card-header flex-row" style="align-items:baseline; justify-content: space-between">
+                            <h1>REGIONAL MARITIME UNIVERSITY</h1>
+                            <h1 style="font-size:medium !important;">Receipt Number: RMUHF<?= $data[0]["id"] ?></h1>
+                        </div>
+                        <div class="flex-row" style="align-items: baseline; justify-content:space-around;">
+                            <p style="font-size:medium !important;">Date Issued: <?= date("jS F, Y") . " - " . date("h:i:s A") ?></p>
+                        </div>
                     </div>
 
-                    <hr style="color:#999">
-
                     <div class="purchase-card-body">
-                        <div class="pay-status" style="margin: 0px 5%;" style="align-items: baseline;">
+                        <div class="pay-status" style="align-items: baseline;">
                             <?php if (!empty($data)) { ?>
-                                <table style="width:100%;border: 1px solid rgb(155, 155, 155); border-collapse: collapse;" class="mb-4">
+                                <table style="width:100%;border-collapse: collapse;" class="mb-4">
                                     <tr>
-                                        <td style="width: 120px; background: #f1f1f1;text-align: right; padding: 5px; font-size: 11px;"><b>VENDOR:</b></td>
-                                        <td colspan="2" style="text-align: left; padding: 5px; font-size: 11px;"><b><?= $data[0]["company"] ?></b></td>
+                                        <td style="width: 150px; background: #f1f1f1;text-align: right; padding: 10px;"><b>VENDOR:</b></td>
+                                        <td colspan="2" style="text-align: left; padding: 10px;"><b><?= $data[0]["company"] ?></b></td>
                                     </tr>
                                     <tr>
-                                        <td style="background: #f1f1f1;text-align: right; padding: 5px; font-size: 11px;"><b>PRICE:</b></td>
-                                        <td style="text-align: left; padding: 5px; font-size: 11px;"><b><?= $data[0]["amount"] ?></b></td>
+                                        <td style="background: #f1f1f1;text-align: right; padding: 10px;"><b>PRICE:</b></td>
+                                        <td style="text-align: left; padding: 10px;"><b><?= $data[0]["amount"] ?></b></td>
                                     </tr>
                                     <tr>
-                                        <td style="background: #f1f1f1;text-align: right; padding: 5px; font-size: 11px;"><b>APPLICATION NO:</b></td>
-                                        <td style="text-align: left; padding: 5px; font-size: 11px;"><b><?= "RMU-" . $data[0]["app_number"] ?></b></td>
+                                        <td style="background: #f1f1f1;text-align: right; padding: 10px;"><b>APPLICATION NO:</b></td>
+                                        <td style="text-align: left; padding: 10px;"><b><?= "RMU-" . $data[0]["app_number"] ?></b></td>
                                     </tr>
                                     <tr>
-                                        <td style="background: #f1f1f1;text-align: right; padding: 5px; font-size: 11px;"><b>PIN NO:</b></td>
-                                        <td style="text-align: left; padding: 5px; font-size: 11px;"><b><?= $data[0]["pin_number"] ?></b></td>
+                                        <td style="background: #f1f1f1;text-align: right; padding: 10px;"><b>PIN NO:</b></td>
+                                        <td style="text-align: left; padding: 10px;"><b><?= $data[0]["pin_number"] ?></b></td>
                                     </tr>
                                     <tr style="border-top: 1px solid rgb(155, 155, 155)">
-                                        <td style="background: #f1f1f1;text-align: right; padding: 5px; font-size: 11px; padding-top:30px">INSTITUTION:</td>
-                                        <td style="text-align: left; padding: 5px; font-size: 11px;"><b>REGIONAL MARITIME UNIVERSITY</b></td>
+                                        <td style="background: #f1f1f1;text-align: right; padding: 10px;">INSTITUTION:</td>
+                                        <td style="text-align: left; padding: 10px;"><b>REGIONAL MARITIME UNIVERSITY</b></td>
                                     </tr>
                                     <tr>
-                                        <td style="background: #f1f1f1;text-align: right; padding: 5px; font-size: 11px">FORM NAME:</td>
-                                        <td style="text-align: left; padding: 5px; font-size: 11px;"><b><?= $data[0]["info"] . " - " . strtoupper($data[0]["name"]) ?></b></td>
+                                        <td style="background: #f1f1f1;text-align: right; padding: 10px;">CAMPUS:</td>
+                                        <td style="text-align: left; padding: 10px;"><b>MAIN</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background: #f1f1f1;text-align: right; padding: 10px;">FORM NAME:</td>
+                                        <td style="text-align: left; padding: 10px;"><b><?= $data[0]["info"] . " - " . strtoupper($data[0]["name"]) ?></b></td>
                                     </tr>
                                 </table>
-                                <center>
-                                    <button class="btn btn-primary" id="printReciptBtn"><b>Print</b></button>
-                                </center>
-                            <?php } else { ?>
-                                <div style="width: 100%;height: 100%; text-align:center">No Data available</div>
                             <?php } ?>
                         </div>
                     </div>
@@ -221,25 +235,12 @@ $data = $expose->getApplicationInfo($_GET["exttrid"]);
 
     </main><!-- End #main -->
 
-    <?= require_once("../inc/footer-section.php") ?>
     <script>
-        $(document).ready(function() {
-            //get variable(parameters) from url
-            function getUrlVars() {
-                var vars = {};
-                var parts = window.location.href.replace(
-                    /[?&]+([^=&]+)=([^&]*)/gi,
-                    function(m, key, value) {
-                        vars[key] = value;
-                    }
-                );
-                return vars;
-            }
-
-            $("#printReciptBtn").click(function() {
-                window.open("print-form.php?exttrid=" + getUrlVars()["exttrid"], "_blank", "width=800,height=600");
-            })
-        });
+        document.addEventListener("DOMContentLoaded", () => {
+            window.print();
+            window.close();
+            
+        })
     </script>
 
 </body>
