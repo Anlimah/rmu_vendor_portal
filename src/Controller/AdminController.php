@@ -181,14 +181,18 @@ class AdminController
         return $this->dm->inputData($query, array(":i" => $vendor_id));
     }
 
+    public function verifyVendorByCompanyAndBranch($company, $branch)
+    {
+        $query = "SELECT `id` FROM `vendor_details` WHERE `company` = :c AND `branch` = :b";
+        return $this->dm->inputData($query, array(":c" => $company, ":b" => $branch));
+    }
+
     public function addVendor($v_name, $v_email, $v_phone, $branch)
     {
-        $query1 = "INSERT INTO vendor_details (`id`, `type`, `company`, `branch`, `phone_number`) 
-                VALUES(:id, :tp, :nm, :tn, :ea, :pn, :ad)";
+        
+        $query1 = "INSERT INTO vendor_details (`id`, `type`, `company`, `branch`, `phone_number`) VALUES(:id, :tp, :nm, :pn, :b)";
         $vendor_id = time();
-        $params1 = array(
-            ":id" => $vendor_id, ":tp" => "VENDOR", ":nm" => $v_name, ":ea" => $v_email, ":pn" => $v_phone
-        );
+        $params1 = array(":id" => $vendor_id, ":tp" => "VENDOR", ":nm" => $v_name, ":pn" => $v_phone, ":b" => $branch);
 
         if ($this->dm->inputData($query1, $params1)) {
 
