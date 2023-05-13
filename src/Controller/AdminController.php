@@ -281,7 +281,6 @@ class AdminController
 
             $startRow = 1;
             $endRow = count($spreadSheetArray);
-            die(json_encode($targetPath));
 
             $successCount = 0;
             $errorCount = 0;
