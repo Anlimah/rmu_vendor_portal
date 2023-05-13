@@ -5,6 +5,8 @@ namespace Src\Controller;
 use Src\System\DatabaseMethods;
 use Src\Controller\ExposeDataController;
 use Src\Controller\PaymentController;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class AdminController
 {
@@ -187,12 +189,25 @@ class AdminController
         return $this->dm->inputData($query, array(":c" => $company, ":b" => $branch));
     }
 
+    public function verifyVendorSysUserExists($email)
+    {
+        $query = "SELECT `id` FROM `vendor_details` WHERE `username` = :u";
+        return $this->dm->inputData($query, array(":u" => $email));
+    }
+
     public function addVendor($v_name, $v_email, $v_phone, $branch)
     {
-        
-        $query1 = "INSERT INTO vendor_details (`id`, `type`, `company`, `branch`, `phone_number`) VALUES(:id, :tp, :nm, :pn, :b)";
+        // verify if a vendor with this email exists
+        if ($this->verifyVendorSysUserExists($v_email)) {
+            return array("success" => false, "message" => "A user with this email exists already exists!");
+        }
+
+
+
+        // if not prepare query and save the details 
+        $query1 = "INSERT INTO vendor_details (`id`, `type`, `company`, `branch`, `phone_number`) VALUES(:id, :tp, :nm, :b, :pn)";
         $vendor_id = time();
-        $params1 = array(":id" => $vendor_id, ":tp" => "VENDOR", ":nm" => $v_name, ":pn" => $v_phone, ":b" => $branch);
+        $params1 = array(":id" => $vendor_id, ":tp" => "VENDOR", ":nm" => $v_name, ":b" => $branch, ":pn" => $v_phone);
 
         if ($this->dm->inputData($query1, $params1)) {
 
@@ -247,7 +262,7 @@ class AdminController
             $name = time() . '-' . 'branches.xlsx';
 
             // Create the full path to the file
-            $targetPath = UPLOAD_DIR . "/branches/" . $name;
+            $targetPath = UPLOAD_DIR . "branches/" . $name;
 
             // Delete file if exsists
             if (file_exists($targetPath)) {
@@ -266,14 +281,28 @@ class AdminController
 
             $startRow = 1;
             $endRow = count($spreadSheetArray);
+            die(json_encode($targetPath));
+
+            $successCount = 0;
+            $errorCount = 0;
 
             for ($i = $startRow; $i <= $endRow - 1; $i++) {
 
-                $branch = $spreadSheetArray[$i][1];
+                $v_branch = $spreadSheetArray[$i][1];
                 $v_email = $spreadSheetArray[$i][2];
                 $v_phone = $spreadSheetArray[$i][3];
-                $this->addVendor($v_name, $v_email, $v_phone, $branch);
+
+                $user_data = array(
+                    "first_name" => $v_name, "last_name" => $v_branch, "user_name" => $v_email,
+                    "user_role" => "Vendors", "vendor_company" => $v_name,
+                    "vendor_phone" => $v_phone, "vendor_branch" => $v_branch
+                );
+
+                $privileges = array("select" => 1, "insert" => 1, "update" => 0, "delete" => 0);
+                if ($this->addSystemUser($user_data, $privileges)) $successCount += 1;
+                else $errorCount += 1;
             }
+            return array("success" => true, "message" => "Successfully added MAIN branch account and {$successCount} branches with {$errorCount} unsuccessful!");
         }
     }
 
@@ -460,26 +489,40 @@ class AdminController
         return $this->dm->inputData($query, array(":i" => $user_id));
     }
 
+    public function verifySysUserByEmail($email)
+    {
+        $query = "SELECT `id` FROM `vendor_details` WHERE `username` = :u";
+        return $this->dm->inputData($query, array(":u" => $email));
+    }
+
     public function addSystemUser($user_data, $privileges)
     {
-        //Add users Details to sys_users table
+        // verify if a vendor with this email exists
+        if ($this->verifySysUserByEmail($user_data["user_name"])) {
+            return array("success" => false, "message" => "A user with this email exists already exists!");
+        }
+
         // Generate password
         $password = $this->expose->genVendorPin();
+
         // Hash password
         $hashed_pw = password_hash($password, PASSWORD_DEFAULT);
+
         // Create insert query
         $query1 = "INSERT INTO sys_users (`first_name`, `last_name`, `user_name`, `password`, `role`) VALUES(:fn, :ln, :un, :pw, :rl)";
         $params1 = array(
             ":fn" => $user_data["first_name"], ":ln" => $user_data["last_name"], ":un" => $user_data["user_name"],
             ":pw" => $hashed_pw, ":rl" => $user_data["user_role"]
         );
+
         // execute query
         $action1 = $this->dm->inputData($query1, $params1);
         if (!$action1) return array("success" => false, "message" => "Failed to create user account!");
+
         // verify and get user account info
         $sys_user = $this->verifyAdminLogin($user_data["user_name"], $password);
-
         if (empty($sys_user)) return array("success" => false, "message" => "Created user account, but failed to verify user account!");
+
         // Create insert query for user privileges
         $query2 = "INSERT INTO `sys_users_privileges` (`user_id`, `select`,`insert`,`update`,`delete`) 
                 VALUES(:ui, :s, :i, :u, :d)";
@@ -487,22 +530,22 @@ class AdminController
             ":ui" => $sys_user[0]["id"], ":s" => $privileges["select"], ":i" => $privileges["insert"],
             ":u" => $privileges["update"], ":d" => $privileges["delete"]
         );
+
         // Execute user privileges 
         $action2 = $this->dm->inputData($query2, $params2);
         if (!$action2) return array("success" => false, "message" => "Failed to create given roles for the user!");
 
-        $subject = "RMU - Account User";
+        $subject = "Regional Maritime University - User Account";
 
         if ($user_data["user_role"] == "Vendors") {
-            $query1 = "INSERT INTO vendor_details (`id`, `type`, `tin`, `phone_number`, `company`, `address`, `user_id`) 
-                    VALUES(:id, :tp, :tn, :pn, :cp, :ad, :ui)";
+            $query1 = "INSERT INTO vendor_details (`id`, `type`, `company`, `branch`, `phone_number`, `user_id`) VALUES(:id, :tp, :cp, :b, :pn, :ui)";
             $vendor_id = time();
             $params1 = array(
-                ":id" => $vendor_id, ":tp" => "VENDOR", ":tn" => $user_data["vendor_tin"], ":pn" => $user_data["vendor_phone"],
-                ":cp" => $user_data["vendor_company"], ":ad" => $user_data["vendor_address"], ":ui" => $sys_user[0]["id"]
+                ":id" => $vendor_id, ":tp" => "VENDOR", ":cp" => $user_data["vendor_company"],
+                ":b" => $user_data["vendor_branch"], ":pn" => $user_data["vendor_phone"], ":ui" => $sys_user[0]["id"]
             );
             $this->dm->inputData($query1, $params1);
-            $subject = "RMU - Vendor Account";
+            $subject = "Regional Maritime University - Vendor Account";
         }
 
         $this->logActivity(
@@ -512,8 +555,8 @@ class AdminController
         );
 
         // Prepare email
-        $message = "<p>Hi " . $user_data["first_name"] . ", </p></br>";
-        $message .= "<p>Your account to access RMU Admissions Portal as a " . $user_data["user_role"] . " officer was successful.</p>";
+        $message = "<p>Hi " . $user_data["first_name"] . " " . $user_data["last_name"] . ", </p></br>";
+        $message .= "<p>Your account to access Regional Maritime University's Admissions Portal as a " . $user_data["user_role"] . " officer was created successfully.</p>";
         $message .= "<p>Find below your Login details.</p></br>";
         $message .= "<p style='font-weight: bold;'>Username: " . $user_data["user_name"] . "</p>";
         $message .= "<p style='font-weight: bold;'>Password: " . $password . "</p></br>";
@@ -522,10 +565,11 @@ class AdminController
         $message .= "<li>Don't let anyone see your login password</li>";
         $message .= "<li>Access the portal and change your password</li>";
         $message .= "</ol></br>";
-        $message .= "<p><a href='office.rmuictonline.com'>Click here</a> to access portal.</ol>";
+        $message .= "<p><a href='office.rmuictonline.com'>Click here to access portal</a>.</p>";
 
         // Send email
         $emailed = $this->expose->sendEmail($user_data["user_name"], $subject, $message);
+
         // verify email status and return result
         if ($emailed !== 1) return array(
             "success" => false,

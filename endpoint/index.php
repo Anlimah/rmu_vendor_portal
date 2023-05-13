@@ -422,6 +422,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     }
     //
     elseif ($_GET["url"] == "vendor-form") {
+
         if (!isset($_POST["v-action"]) || empty($_POST["v-action"])) {
             die(json_encode(array("success" => false, "message" => "Missing input field: Ghana Card")));
         }
@@ -435,10 +436,17 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
             die(json_encode(array("success" => false, "message" => "Missing input field: Phone Number")));
         }
 
+        $user_data = array(
+            "first_name" => $_POST["v-name"], "last_name" => "MAIN", "user_name" => $_POST["v-email"], "user_role" => "Vendors",
+            "vendor_company" => $_POST["v-name"], "vendor_phone" => $_POST["v-phone"], "vendor_branch" => "MAIN"
+        );
+
+        $privileges = array("select" => 1, "insert" => 1, "update" => 0, "delete" => 0);
+
         $result;
         switch ($_POST["v-action"]) {
             case 'add':
-                $rslt = $admin->addVendor($_POST["v-name"], $_POST["v-email"], $_POST["v-phone"], 'MAIN');
+                $rslt = $admin->addSystemUser($user_data, $privileges);
                 if (!$rslt) {
                     die(json_encode(array("success" => false, "message" => "Failed to add vendor!")));
                 }
@@ -450,8 +458,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
                     } else {
                         $startRow = 1;
                         $endRow = 0;
-                        $excelData = $admin->uploadCompanyBranchesData($_FILES["other-branches"], $startRow, $endRow);
-                        $result = array("success" => true, "message" => "Successfully added vendor. Successfully added vendor!");
+                        $result = $admin->uploadCompanyBranchesData($_FILES["other-branches"], $startRow, $endRow);
                     }
                 }
                 $result = array("success" => true, "message" => "Successfully added vendor!");
