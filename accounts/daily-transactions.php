@@ -119,7 +119,7 @@ require_once('../inc/page-data.php');
                       <option value="" hidden>Choose</option>
                       <option value="All">All</option>
                       <?php
-                      $result = $admin->getFormTypes();
+                      $result = $admin->getAvailableForms();
                       foreach ($result as $value) {
                       ?>
                         <option value="<?= $value["id"] ?>"><?= $value["name"] ?></option>

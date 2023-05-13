@@ -536,7 +536,7 @@ class AdminController
 
         $subject = "Regional Maritime University - User Account";
 
-        if ($user_data["user_role"] == "Vendors") {
+        if (strtoupper($user_data["user_role"]) == "VENDORS") {
             $query1 = "INSERT INTO vendor_details (`id`, `type`, `company`, `branch`, `phone_number`, `user_id`) VALUES(:id, :tp, :cp, :b, :pn, :ui)";
             $vendor_id = time();
             $params1 = array(
@@ -656,12 +656,12 @@ class AdminController
 
     public function fetchAvailableformTypes()
     {
-        return $this->dm->getData("SELECT * FROM form_type");
+        return $this->dm->getData("SELECT * FROM forms");
     }
 
     public function getFormTypeName(int $form_type)
     {
-        $query = "SELECT * FROM form_type WHERE id = :i";
+        $query = "SELECT * FROM forms WHERE id = :i";
         return $this->dm->getData($query, array(":i" => $form_type));
     }
 
@@ -692,12 +692,8 @@ class AdminController
     public function fetchTotalFormsSold()
     {
         $query = "SELECT COUNT(pd.id) AS total 
-                FROM 
-                    purchase_detail AS pd, form_type AS ft, form_price AS fp, 
-                    admission_period AS ap, vendor_details AS v  
-                WHERE
-                    pd.form_type = ft.id AND pd.admission_period = ap.id AND 
-                    pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1";
+                FROM purchase_detail AS pd, forms AS ft, admission_period AS ap, vendor_details AS v  
+                WHERE pd.form_id = ft.id AND pd.admission_period = ap.id AND pd.vendor = v.id AND ap.active = 1";
         return $this->dm->getData($query);
     }
 
@@ -705,12 +701,10 @@ class AdminController
     {
         $query = "SELECT COUNT(pd.id) AS total 
         FROM 
-            purchase_detail AS pd, form_type AS ft, form_price AS fp, 
-            admission_period AS ap, vendor_details AS v  
+            purchase_detail AS pd, forms AS ft, admission_period AS ap, vendor_details AS v  
         WHERE
-            pd.form_type = ft.id AND pd.admission_period = ap.id AND 
-            pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
-            AND ft.name LIKE '%Post%' OR ft.name LIKE '%Master%'";
+            pd.form_id = ft.id AND pd.admission_period = ap.id AND 
+            pd.vendor = v.id AND ap.active = 1 AND ft.name LIKE '%Post%' OR ft.name LIKE '%Master%'";
         return $this->dm->getData($query);
     }
 
@@ -718,12 +712,10 @@ class AdminController
     {
         $query = "SELECT COUNT(pd.id) AS total 
         FROM 
-            purchase_detail AS pd, form_type AS ft, form_price AS fp, 
-            admission_period AS ap, vendor_details AS v  
+            purchase_detail AS pd, forms AS ft, admission_period AS ap, vendor_details AS v  
         WHERE
-            pd.form_type = ft.id AND pd.admission_period = ap.id AND 
-            pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
-            AND (ft.name LIKE '%Degree%' OR ft.name LIKE '%Diploma%')";
+            pd.form_id = ft.id AND pd.admission_period = ap.id AND 
+            pd.vendor = v.id AND ap.active = 1 AND (ft.name LIKE '%Degree%' OR ft.name LIKE '%Diploma%')";
         return $this->dm->getData($query);
     }
 
@@ -731,12 +723,10 @@ class AdminController
     {
         $query = "SELECT COUNT(pd.id) AS total 
         FROM 
-            purchase_detail AS pd, form_type AS ft, form_price AS fp, 
-            admission_period AS ap, vendor_details AS v  
+            purchase_detail AS pd, forms AS ft, admission_period AS ap, vendor_details AS v  
         WHERE
-            pd.form_type = ft.id AND pd.admission_period = ap.id AND 
-            pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
-            AND ft.name LIKE '%Short%'";
+            pd.form_id = ft.id AND pd.admission_period = ap.id AND 
+            pd.vendor = v.id AND ap.active = 1 AND ft.name LIKE '%Short%'";
         return $this->dm->getData($query);
     }
 
@@ -744,12 +734,11 @@ class AdminController
     {
         $query = "SELECT COUNT(pd.id) AS total 
         FROM 
-            purchase_detail AS pd, form_type AS ft, form_price AS fp, 
+            purchase_detail AS pd, forms AS ft, 
             admission_period AS ap, vendor_details AS v  
         WHERE
-            pd.form_type = ft.id AND pd.admission_period = ap.id AND 
-            pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
-            AND v.vendor_name NOT LIKE '%ONLINE%'";
+            pd.form_id = ft.id AND pd.admission_period = ap.id AND 
+            pd.vendor = v.id AND ap.active = 1 AND v.vendor_name NOT LIKE '%ONLINE%'";
         return $this->dm->getData($query);
     }
 
@@ -757,12 +746,11 @@ class AdminController
     {
         $query = "SELECT COUNT(pd.id) AS total 
         FROM 
-            purchase_detail AS pd, form_type AS ft, form_price AS fp, 
+            purchase_detail AS pd, forms AS ft, 
             admission_period AS ap, vendor_details AS v  
         WHERE
-            pd.form_type = ft.id AND pd.admission_period = ap.id AND 
-            pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
-            AND v.vendor_name LIKE '%ONLINE%'";
+            pd.form_id = ft.id AND pd.admission_period = ap.id AND 
+            pd.vendor = v.id AND ap.active = 1 AND v.vendor_name LIKE '%ONLINE%'";
         return $this->dm->getData($query);
     }
 
@@ -772,13 +760,13 @@ class AdminController
     public function fetchFormsSoldStatsByVendor()
     {
         $query = "SELECT 
-                    v.vendor_name, COUNT(pd.id) AS total, SUM(fp.amount) AS amount 
+                    v.vendor_name, COUNT(pd.id) AS total, SUM(ft.amount) AS amount 
                 FROM 
-                    purchase_detail AS pd, form_type AS ft, form_price AS fp, 
+                    purchase_detail AS pd, forms AS ft, 
                     admission_period AS ap, vendor_details AS v  
                 WHERE
-                    pd.form_type = ft.id AND pd.admission_period = ap.id AND 
-                    pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
+                    pd.form_id = ft.id AND pd.admission_period = ap.id AND 
+                    pd.vendor = v.id AND ap.active = 1 
                 GROUP BY pd.vendor";
         return $this->dm->getData($query);
     }
@@ -786,13 +774,13 @@ class AdminController
     public function fetchFormsSoldStatsByPaymentMethod()
     {
         $query = "SELECT 
-                    pd.payment_method, COUNT(pd.id) AS total, SUM(fp.amount) AS amount 
+                    pd.payment_method, COUNT(pd.id) AS total, SUM(ft.amount) AS amount 
                 FROM 
-                    purchase_detail AS pd, form_type AS ft, form_price AS fp, 
+                    purchase_detail AS pd, forms AS ft, 
                     admission_period AS ap, vendor_details AS v  
                 WHERE
-                    pd.form_type = ft.id AND pd.admission_period = ap.id AND 
-                    pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
+                    pd.form_id = ft.id AND pd.admission_period = ap.id AND 
+                    pd.vendor = v.id AND ap.active = 1 
                 GROUP BY pd.payment_method";
         return $this->dm->getData($query);
     }
@@ -800,27 +788,27 @@ class AdminController
     public function fetchFormsSoldStatsByFormType()
     {
         $query = "SELECT 
-                    ft.name, COUNT(pd.id) AS total, SUM(fp.amount) AS amount 
+                    ft.name, COUNT(pd.id) AS total, SUM(ft.amount) AS amount 
                 FROM 
-                    purchase_detail AS pd, form_type AS ft, form_price AS fp, 
+                    purchase_detail AS pd, forms AS ft, 
                     admission_period AS ap, vendor_details AS v  
                 WHERE
-                    pd.form_type = ft.id AND pd.admission_period = ap.id AND 
-                    pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
-                GROUP BY pd.form_type";
+                    pd.form_id = ft.id AND pd.admission_period = ap.id AND 
+                    pd.vendor = v.id AND ap.active = 1 
+                GROUP BY pd.form_id";
         return $this->dm->getData($query);
     }
 
     public function fetchFormsSoldStatsByCountry()
     {
         $query = "SELECT 
-                    pd.country_name, pd.country_code, COUNT(pd.id) AS total, SUM(fp.amount) AS amount 
+                    pd.country_name, pd.country_code, COUNT(pd.id) AS total, SUM(ft.amount) AS amount 
                 FROM 
-                    purchase_detail AS pd, form_type AS ft, form_price AS fp, 
+                    purchase_detail AS pd, forms AS ft, 
                     admission_period AS ap, vendor_details AS v  
                 WHERE
-                    pd.form_type = ft.id AND pd.admission_period = ap.id AND 
-                    pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
+                    pd.form_id = ft.id AND pd.admission_period = ap.id AND 
+                    pd.vendor = v.id AND ap.active = 1 
                 GROUP BY pd.country_code";
         return $this->dm->getData($query);
     }
@@ -828,13 +816,13 @@ class AdminController
     public function fetchFormsSoldStatsByPurchaseStatus()
     {
         $query = "SELECT 
-                    pd.status, COUNT(pd.id) AS total, SUM(fp.amount) AS amount 
+                    pd.status, COUNT(pd.id) AS total, SUM(ft.amount) AS amount 
                 FROM 
-                    purchase_detail AS pd, form_type AS ft, form_price AS fp, 
+                    purchase_detail AS pd, forms AS ft, 
                     admission_period AS ap, vendor_details AS v  
                 WHERE
-                    pd.form_type = ft.id AND pd.admission_period = ap.id AND 
-                    pd.vendor = v.id AND fp.form_type = ft.id AND ap.active = 1 
+                    pd.form_id = ft.id AND pd.admission_period = ap.id AND 
+                    pd.vendor = v.id AND ap.active = 1 
                 GROUP BY pd.status";
         return $this->dm->getData($query);
     }
@@ -892,11 +880,11 @@ class AdminController
                     p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration 
                 FROM 
                     personal_information AS p, applicants_login AS al, 
-                    form_type AS ft, purchase_detail AS pd, program_info AS pi, 
+                    forms AS ft, purchase_detail AS pd, program_info AS pi, 
                     form_sections_chek AS fs, admission_period AS ap 
                 WHERE 
                     p.app_login = al.id AND pi.app_login = al.id AND fs.app_login = al.id AND
-                    pd.admission_period = ap.id AND pd.form_type = ft.id AND pd.id = al.purchase_id AND 
+                    pd.admission_period = ap.id AND pd.form_id = ft.id AND pd.id = al.purchase_id AND 
                     ap.active = 1 $SQL_COND";
         return $this->dm->getData($query);
     }
@@ -908,11 +896,11 @@ class AdminController
                     p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration 
                 FROM 
                     personal_information AS p, applicants_login AS al, 
-                    form_type AS ft, purchase_detail AS pd, program_info AS pi, 
+                    forms AS ft, purchase_detail AS pd, program_info AS pi, 
                     form_sections_chek AS fs, admission_period AS ap 
                 WHERE 
                     p.app_login = al.id AND pi.app_login = al.id AND fs.app_login = al.id AND
-                    pd.admission_period = ap.id AND pd.form_type = ft.id AND pd.id = al.purchase_id AND 
+                    pd.admission_period = ap.id AND pd.form_id = ft.id AND pd.id = al.purchase_id AND 
                     ap.active = 1 AND fs.declaration = :s $SQL_COND";
         return $this->dm->getData($query, array(":s" => (int) $submitted));
     }
@@ -924,11 +912,11 @@ class AdminController
                     p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration 
                 FROM 
                     personal_information AS p, applicants_login AS al, 
-                    form_type AS ft, purchase_detail AS pd, program_info AS pi, 
+                    forms AS ft, purchase_detail AS pd, program_info AS pi, 
                     form_sections_chek AS fs, admission_period AS ap 
                 WHERE 
                     p.app_login = al.id AND pi.app_login = al.id AND fs.app_login = al.id AND
-                    pd.admission_period = ap.id AND pd.form_type = ft.id AND pd.id = al.purchase_id AND 
+                    pd.admission_period = ap.id AND pd.form_id = ft.id AND pd.id = al.purchase_id AND 
                     ap.active = 1 AND fs.admitted = :s $SQL_COND";
         return $this->dm->getData($query, array(":s" => (int) $admitted));
     }
@@ -940,11 +928,11 @@ class AdminController
                     p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration 
                 FROM 
                     personal_information AS p, applicants_login AS al, 
-                    form_type AS ft, purchase_detail AS pd, program_info AS pi, 
+                    forms AS ft, purchase_detail AS pd, program_info AS pi, 
                     form_sections_chek AS fs, admission_period AS ap, academic_background AS ab 
                 WHERE 
                     p.app_login = al.id AND pi.app_login = al.id AND fs.app_login = al.id AND ab.app_login = al.id AND
-                    pd.admission_period = ap.id AND pd.form_type = ft.id AND pd.id = al.purchase_id AND 
+                    pd.admission_period = ap.id AND pd.form_id = ft.id AND pd.id = al.purchase_id AND 
                     ap.active = 1 AND fs.declaration = 1 AND ab.awaiting_result = 1$SQL_COND";
         return $this->dm->getData($query);
     }
@@ -955,19 +943,19 @@ class AdminController
             $query = "SELECT 
                     COUNT(*) AS total 
                 FROM 
-                    purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, form_type AS ft
+                    purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, forms AS ft
                 WHERE 
                     ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id 
-                    AND pd.form_type = ft.id";
+                    AND pd.form_id = ft.id";
             return $this->dm->getData($query);
         } else {
             $query = "SELECT 
                     COUNT(*) AS total 
                 FROM 
-                    purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, form_type AS ft
+                    purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, forms AS ft
                 WHERE 
                     ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id 
-                    AND pd.form_type = ft.id AND ft.id = :f";
+                    AND pd.form_id = ft.id AND ft.id = :f";
             return $this->dm->getData($query, array(":f" => $form_type));
         }
     }
@@ -976,39 +964,39 @@ class AdminController
     {
         $query = "SELECT COUNT(*) AS total 
                 FROM 
-                    purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, form_type AS ft
+                    purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, forms AS ft
                 WHERE 
                     ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id 
-                AND pd.form_type = ft.id AND fc.declaration = :s AND ft.id = :f";
+                AND pd.form_id = ft.id AND fc.declaration = :s AND ft.id = :f";
         return $this->dm->getData($query, array(":s" => (int) $submitted, ":f" => $form_type));
     }
 
     public function fetchTotalAdmittedOrUnadmittedApplicants(int $form_type, bool $admitted = true)
     {
         $query = "SELECT COUNT(*) AS total 
-                FROM purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, form_type AS ft
+                FROM purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, forms AS ft
                 WHERE ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id AND 
-                pd.form_type = ft.id AND fc.`admitted` = :s AND ft.id = :f";
+                pd.form_id = ft.id AND fc.`admitted` = :s AND ft.id = :f";
         return $this->dm->getData($query, array(":s" => (int) $admitted, ":f" => $form_type));
     }
 
     public function fetchTotalAwaitingResultsByFormType(int $form_type)
     {
         $query = "SELECT COUNT(*) AS total 
-                FROM purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, form_type AS ft, 
+                FROM purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, forms AS ft, 
                 academic_background AS ab 
                 WHERE ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id AND 
-                ab.app_login = al.id AND pd.form_type = ft.id AND fc.`declaration` = 1 AND ab.`awaiting_result` = 1 AND ft.id = :f";
+                ab.app_login = al.id AND pd.form_id = ft.id AND fc.`declaration` = 1 AND ab.`awaiting_result` = 1 AND ft.id = :f";
         return $this->dm->getData($query, array(":f" => $form_type));
     }
 
     public function fetchTotalAwaitingResults()
     {
         $query = "SELECT COUNT(*) AS total 
-                FROM purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, form_type AS ft, 
+                FROM purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, forms AS ft, 
                 academic_background AS ab 
                 WHERE ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id AND 
-                ab.app_login = al.id AND pd.form_type = ft.id AND fc.`declaration` = 1 AND ab.`awaiting_result` = 1";
+                ab.app_login = al.id AND pd.form_id = ft.id AND fc.`declaration` = 1 AND ab.`awaiting_result` = 1";
         return $this->dm->getData($query);
     }
 
@@ -1423,22 +1411,22 @@ class AdminController
         $result["collections"]["online"] = $this->dm->getData($query7)[0];
         $result["collections"]["provider"] = $this->dm->getData($query8)[0];
 
-        $query9 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount, fp.amount AS unit_price 
-                FROM purchase_detail AS pd, admission_period AS ap, form_type AS ft, form_price AS fp 
-                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.form_type = ft.id AND fp.form_type = ft.id 
-                AND pd.status = 'COMPLETED' AND ft.name = 'Masters' AND fp.admin_period = ap.id";
-        $query10 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount, fp.amount AS unit_price 
-                FROM purchase_detail AS pd, admission_period AS ap, form_type AS ft, form_price AS fp 
-                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.form_type = ft.id AND fp.form_type = ft.id 
-                AND pd.status = 'COMPLETED' AND ft.name = 'Degree' AND fp.admin_period = ap.id";
-        $query11 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount, fp.amount AS unit_price 
-                FROM purchase_detail AS pd, admission_period AS ap, form_type AS ft, form_price AS fp 
-                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.form_type = ft.id AND fp.form_type = ft.id 
-                AND pd.status = 'COMPLETED' AND ft.name = 'Diploma' AND fp.admin_period = ap.id";
-        $query12 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount, fp.amount AS unit_price 
-                FROM purchase_detail AS pd, admission_period AS ap, form_type AS ft, form_price AS fp 
-                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.form_type = ft.id AND fp.form_type = ft.id 
-                AND pd.status = 'COMPLETED' AND ft.name = 'Short Courses' AND fp.admin_period = ap.id";
+        $query9 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount, ft.amount AS unit_price 
+                FROM purchase_detail AS pd, admission_period AS ap, forms AS ft 
+                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.form_id = ft.id 
+                AND pd.status = 'COMPLETED' AND ft.name LIKE 'Masters%'";
+        $query10 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount, ft.amount AS unit_price 
+                FROM purchase_detail AS pd, admission_period AS ap, forms AS ft 
+                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.form_id = ft.id 
+                AND pd.status = 'COMPLETED' AND ft.name LIKE 'Degree%'";
+        $query11 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount, ft.amount AS unit_price 
+                FROM purchase_detail AS pd, admission_period AS ap, forms AS ft 
+                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.form_id = ft.id 
+                AND pd.status = 'COMPLETED' AND ft.name LIKE 'Diploma%'";
+        $query12 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount, ft.amount AS unit_price 
+                FROM purchase_detail AS pd, admission_period AS ap, forms AS ft 
+                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.form_id = ft.id 
+                AND pd.status = 'COMPLETED' AND ft.name LIKE 'Short Courses%' OR ft.name LIKE 'Other%'";
 
         $result["form-types"]["masters"] = $this->dm->getData($query9)[0];
         $result["form-types"]["degree"] = $this->dm->getData($query10)[0];
@@ -1468,7 +1456,7 @@ class AdminController
                  CONCAT('(', pd.`country_code`,') ', pd.`phone_number`) AS phoneNumber, 
                  pd.`status`, pd.`added_at`, ft.`name` AS formType, ap.`info` AS admissionPeriod, pd.`payment_method` AS paymentMethod 
                  FROM `purchase_detail` AS pd, `admission_period` AS ap, `form_type` AS ft, vendor_details AS vd 
-                 WHERE pd.admission_period = ap.`id` AND pd.form_type = ft.id AND pd.vendor = vd.`id`$QUERY_CON";
+                 WHERE pd.admission_period = ap.`id` AND pd.form_id = ft.id AND pd.vendor = vd.`id`$QUERY_CON";
         return $this->dm->getData($query);
     }
 
@@ -1563,7 +1551,7 @@ class AdminController
                  CONCAT('(', pd.`country_code`,') ', pd.`phone_number`) AS phoneNumber, 
                  pd.`status`, pd.`added_at`, ft.`name` AS formType, ap.`info` AS admissionPeriod, pd.`payment_method` AS paymentMethod 
                  FROM `purchase_detail` AS pd, `admission_period` AS ap, `form_type` AS ft, vendor_details AS vd 
-                 WHERE pd.admission_period = ap.`id` AND pd.form_type = ft.id AND pd.vendor = vd.`id`$QUERY_CON";
+                 WHERE pd.admission_period = ap.`id` AND pd.form_id = ft.id AND pd.vendor = vd.`id`$QUERY_CON";
         if (isset($_SESSION["downloadQuery"]) && !empty($_SESSION["downloadQuery"])) return 1;
         return 0;
     }
@@ -1578,14 +1566,14 @@ class AdminController
         $query = "";
         if ($data == "PayMethod") {
             $query = "SELECT pm.id, pd.payment_method AS title, COUNT(pd.payment_method) AS total_num_sold, SUM(fp.amount) AS total_amount_sold
-                    FROM purchase_detail AS pd, vendor_details AS vd, admission_period AS ap, form_type AS ft, form_price AS fp, payment_method AS pm   
-                    WHERE pd.admission_period = ap.id AND pd.vendor = vd.id AND pd.form_type = ft.id AND pd.payment_method = pm.name 
+                    FROM purchase_detail AS pd, vendor_details AS vd, admission_period AS ap, forms AS ft, payment_method AS pm   
+                    WHERE pd.admission_period = ap.id AND pd.vendor = vd.id AND pd.form_id = ft.id AND pd.payment_method = pm.name 
                     AND ft.id = fp.form_type AND pd.`status` = 'COMPLETED' GROUP BY pd.payment_method";
         }
         if ($data == "Vendors") {
             $query = "SELECT vd.id, vd.company AS title, COUNT(pd.vendor) AS total_num_sold, SUM(fp.amount) AS total_amount_sold
-                    FROM purchase_detail AS pd, vendor_details AS vd, admission_period AS ap, form_type AS ft, form_price AS fp, payment_method AS pm 
-                    WHERE pd.admission_period = ap.id AND pd.vendor = vd.id AND pd.form_type = ft.id AND pd.payment_method = pm.name 
+                    FROM purchase_detail AS pd, vendor_details AS vd, admission_period AS ap, forms AS ft, payment_method AS pm 
+                    WHERE pd.admission_period = ap.id AND pd.vendor = vd.id AND pd.form_id = ft.id AND pd.payment_method = pm.name 
                     AND ft.id = fp.form_type AND pd.`status` = 'COMPLETED' GROUP BY pd.vendor";
         }
         return $this->dm->getData($query);

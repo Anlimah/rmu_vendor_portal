@@ -74,7 +74,7 @@ require_once('../inc/page-data.php');
           <div class="row">
 
             <?php
-            $form_types = $admin->fetchAvailableformTypes();
+            $form_types = $admin->getAvailableForms();
             foreach ($form_types as $form_type) {
             ?>
               <!-- Applications Card -->
