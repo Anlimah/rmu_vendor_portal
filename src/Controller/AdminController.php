@@ -491,7 +491,7 @@ class AdminController
 
     public function verifySysUserByEmail($email)
     {
-        $query = "SELECT `id` FROM `vendor_details` WHERE `user_name` = :u";
+        $query = "SELECT `id` FROM `sys_users` WHERE `user_name` = :u";
         return $this->dm->inputData($query, array(":u" => $email));
     }
 
