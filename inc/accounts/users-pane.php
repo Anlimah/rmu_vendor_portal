@@ -69,6 +69,7 @@
                                         <select style="width: 100%;" name="user-role" id="user-role" class="form-select form-select-sm" required>
                                             <option value="" hidden>Choose...</option>
                                             <option value="Accounts">Accounts</option>
+                                            <option value="Admissions">Admissions</option>
                                         </select>
                                     </div>
                                 </div>
