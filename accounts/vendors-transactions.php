@@ -57,8 +57,8 @@ require_once('../inc/page-data.php');
       <h1>Forms Sale</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-          <li class="breadcrumb-item active">Forms Sale</li>
+          <li class="breadcrumb-item"><a href="index.php">Dashboard</a></li>
+          <li class="breadcrumb-item active">Vendors Statistics</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->

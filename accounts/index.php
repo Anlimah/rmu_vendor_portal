@@ -109,13 +109,13 @@ require_once('../inc/page-data.php');
                             <a href="vendors-account.php">
                                 <div class="card info-card sales-card">
                                     <div class="card-body">
-                                        <h5 class="card-title">Vendors</h5>
+                                        <h5 class="card-title">Vendors Account</h5>
                                         <div class="d-flex align-items-center">
                                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                                                 <img src="../assets/img/icons8-male-female-user-group-96.png" style="width: 48px;" alt="">
                                             </div>
                                             <div class="ps-3">
-                                                <span class="text-muted small pt-2 ps-1">Add, edit, remove vendors information</span>
+                                                <span class="text-muted small pt-2 ps-1">Add, edit, and remove vendors account</span>
                                             </div>
                                         </div>
                                     </div>
@@ -128,13 +128,13 @@ require_once('../inc/page-data.php');
                             <div class="card info-card sales-card">
                                 <div class="card-body">
                                     <a href="settings.php">
-                                        <h5 class="card-title">Settings</h5>
+                                        <h5 class="card-title">Forms</h5>
                                         <div class="d-flex align-items-center">
                                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                                                 <img src="../assets/img/icons8-services-96.png" style="width: 48px;" alt="">
                                             </div>
                                             <div class="ps-3">
-                                                <span class="text-muted small pt-2 ps-1">General settings</span>
+                                                <span class="text-muted small pt-2 ps-1">Add, edit, and remove forms</span>
                                             </div>
                                         </div>
                                     </a>

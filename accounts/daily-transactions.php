@@ -68,141 +68,18 @@ require_once('../inc/page-data.php');
       <div class="row">
         <div class="col-12">
           <div class="card recent-sales overflow-auto">
-            <div class="card-header">
-              <h5>Daily Transactions</h5>
-            </div>
 
-            <div class="filter">
+            <!--<div class="filter">
               <span class="icon download-file" id="excelFileDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Export as Excel file">
                 <img src="../assets/img/icons8-microsoft-excel-2019-48.png" alt="Download as Excel file" style="cursor:pointer;width: 22px;">
               </span>
               <span class="icon download-file" id="pdfFileDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Download as PDF file">
                 <img src="../assets/img/icons8-pdf-48.png" alt="Download as PDF file" style="width: 22px;cursor:pointer;">
               </span>
-            </div>
-
-            <div class="card-body">
-              <p>Filter transactions by: </p>
-              <!-- Left side columns -->
-              <form id="reportsForm" method="post">
-                <div class="row">
-
-                  <div class="col-2 col-md-2 col-sm-12 mt-2">
-                    <label for="admission-period" class="form-label">Admission Period</label>
-                    <select name="admission-period" id="admission-period" class="form-select">
-                      <option value="" hidden>Choose</option>
-                      <option value="All">All</option>
-                      <?php
-                      $result = $admin->fetchAllAdmissionPeriod();
-                      foreach ($result as $value) {
-                      ?>
-                        <option value="<?= $value["id"] ?>"><?= $value["info"] ?></option>
-                      <?php
-                      }
-                      ?>
-                    </select>
-                  </div>
-
-                  <div class="col-2 col-md-2 col-sm-12 mt-2">
-                    <label for="from-date" class="form-label">From (Date)</label>
-                    <input type="date" name="from-date" id="from-date" class="form-control">
-                  </div>
-
-                  <div class="col-2 col-md-2 col-sm-12 mt-2">
-                    <label for="to-date" class="form-label">To (Date)</label>
-                    <input type="date" name="to-date" id="to-date" class="form-control">
-                  </div>
-
-                  <div class="col-2 col-md-2 col-sm-12 mt-2">
-                    <label for="form-type" class="form-label">Form Type</label>
-                    <select name="form-type" id="form-type" class="form-select">
-                      <option value="" hidden>Choose</option>
-                      <option value="All">All</option>
-                      <?php
-                      $result = $admin->getAvailableForms();
-                      foreach ($result as $value) {
-                      ?>
-                        <option value="<?= $value["id"] ?>"><?= $value["name"] ?></option>
-                      <?php
-                      }
-                      ?>
-                    </select>
-                  </div>
-
-                  <div class="col-2 col-md-2 col-sm-12 mt-2">
-                    <label for="purchase-status" class="form-label">Purchase Status</label>
-                    <select name="purchase-status" id="purchase-status" class="form-select">
-                      <option value="" hidden>Choose</option>
-                      <option value="All">All</option>
-                      <option value="COMPLETED">COMPLETED</option>
-                      <option value="FAILED">FAILED</option>
-                      <option value="PENDING">PENDING</option>
-                    </select>
-                  </div>
-
-                  <div class="col-2 col-md-2 col-sm-12 mt-2">
-                    <label for="payment-method" class="form-label">Payment Method</label>
-                    <select name="payment-method" id="payment-method" class="form-select">
-                      <option value="" hidden>Choose</option>
-                      <option value="All">All</option>
-                      <option value="CARD">CARD</option>
-                      <option value="CASH">CASH</option>
-                      <option value="MOMO">MOMO</option>
-                    </select>
-                  </div>
-
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div><!-- End Transactions fitering row -->
-
-      <div class="row">
-        <div class="col-12">
-          <div class="card recent-sales overflow-auto">
-
-            <div class="filter">
-              <span class="icon download-file" id="excelFileDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Export as Excel file">
-                <img src="../assets/img/icons8-microsoft-excel-2019-48.png" alt="Download as Excel file" style="cursor:pointer;width: 22px;">
-              </span>
-              <span class="icon download-file" id="pdfFileDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Download as PDF file">
-                <img src="../assets/img/icons8-pdf-48.png" alt="Download as PDF file" style="width: 22px;cursor:pointer;">
-              </span>
-            </div>
+            </div>-->
 
             <?php
             $summary = $admin->fetchInitialSummaryRecord();
-
-            // transactions
-            if (isset($summary["transactions"]) && !empty($summary["transactions"]["total_trans"]))
-              $total_trans = $summary["transactions"]["total_trans"];
-            else
-              $total_trans = 0;
-
-            if (isset($summary["transactions"]) && !empty($summary["transactions"]["completed_trans"])) {
-              $completed_trans = $summary["transactions"]["completed_trans"];
-              $completed_trans_percent = ($completed_trans / $total_trans) * 100;
-            } else {
-              $completed_trans = 0;
-              $completed_trans_percent = ($completed_trans / $total_trans) * 100;
-            }
-
-            if (isset($summary["transactions"]) && !empty($summary["transactions"]["pending_trans"])) {
-              $pending_trans = $summary["transactions"]["pending_trans"];
-              $pending_trans_percent = ($pending_trans / $total_trans) * 100;
-            } else {
-              $pending_trans = 0;
-              $pending_trans_percent = ($pending_trans / $total_trans) * 100;
-            }
-
-            if (isset($summary["transactions"]) && !empty($summary["transactions"]["failed_trans"])) {
-              $failed_trans = $summary["transactions"]["failed_trans"];
-              $failed_trans_percent = ($failed_trans / $total_trans) * 100;
-            } else {
-              $failed_trans = 0;
-              $failed_trans_percent = ($failed_trans / $total_trans) * 100;
-            }
 
             //collections
             $collect_total = $summary["collections"]["collect"]["total_num"] ? $summary["collections"]["collect"]["total_num"] : "0";
@@ -216,20 +93,6 @@ require_once('../inc/page-data.php');
 
             $provider_total = $summary["collections"]["provider"]["total_num"] ? $summary["collections"]["provider"]["total_num"] : "0";
             $provider_amount = $summary["collections"]["provider"]["total_amount"] ? $summary["collections"]["provider"]["total_amount"] : "0.00";
-
-            // form types
-            $masters_total = $summary["form-types"]["masters"]["total_num"] ? $summary["form-types"]["masters"]["total_num"] : "0";
-            $masters_amount = $summary["form-types"]["masters"]["total_amount"] ? $summary["form-types"]["masters"]["total_amount"] : "0.00";
-
-            $degree_total = $summary["form-types"]["degree"]["total_num"] ? $summary["form-types"]["degree"]["total_num"] : "0";
-            $degree_amount = $summary["form-types"]["degree"]["total_amount"] ? $summary["form-types"]["degree"]["total_amount"] : "0.00";
-
-            $diploma_total = $summary["form-types"]["diploma"]["total_num"] ? $summary["form-types"]["diploma"]["total_num"] : "0";
-            $diploma_amount = $summary["form-types"]["diploma"]["total_amount"] ? $summary["form-types"]["diploma"]["total_amount"] : "0.00";
-
-            $short_total = $summary["form-types"]["short"]["total_num"] ? $summary["form-types"]["short"]["total_num"] : "0";
-            $short_amount = $summary["form-types"]["short"]["total_amount"] ? $summary["form-types"]["short"]["total_amount"] : "0.00";
-
             ?>
 
             <div class="card-body">
@@ -237,72 +100,46 @@ require_once('../inc/page-data.php');
 
               <!-- Transactions cards-->
               <div class="transactions">
-
                 <div class="row">
 
-                  <!-- Total transactions Card -->
-                  <div class="col-xxl-3 col-md-3">
-                    <div class="card">
-                      <div class="card-body">
-                        <h5 class="card-title" style="font-size: 22px; margin-bottom: 0 !important; padding-bottom: 5px !important; font-weight:300 !important "><?= $total_trans ?></h5>
-                        <h6 style="font-size: 18px; font-weight: 650;">Total transactions</h6>
-                        <div class="progress mb-2 mt-2" role="progressbar" aria-label="Info example" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                          <div class="progress-bar bg-info" style="width: 100%"></div>
-                        </div>
-                        <span class="text-muted mt-4">Daily total transactions</span>
-                      </div>
-                    </div>
-                  </div><!-- End Total transactions Card -->
+                  <?php
+                  $total_trans = (int) $summary["transactions"][0]["total"];
+                  foreach ($summary["transactions"] as $transaction) {
 
-                  <!-- Successful Transactions Card -->
-                  <div class="col-xxl-3 col-md-3">
-                    <div class="card">
-                      <div class="card-body">
-                        <h5 class="card-title" style="font-size: 22px; margin-bottom: 0 !important; padding-bottom: 5px !important; font-weight:300 !important "><?= $completed_trans ?></h5>
-                        <h6 style="font-size: 18px; font-weight: 650;">Successful Transactions</h6>
-                        <div class="progress mb-2 mt-2" role="progressbar" aria-label="Info example" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                          <div class="progress-bar bg-success" style="width: <?= $completed_trans_percent ?>%"></div>
-                        </div>
-                        <span class="text-muted mt-4">Daily successful transactions</span>
-                      </div>
-                    </div>
-                  </div><!-- End Successful Transactions Card -->
+                    $status = isset($transaction["status"]) ?  $transaction["status"] : "TOTAL";
 
-                  <!-- Pending Transactions Card -->
-                  <div class="col-xxl-3 col-md-3">
-                    <div class="card">
-                      <div class="card-body">
-                        <h5 class="card-title" style="font-size: 22px; margin-bottom: 0 !important; padding-bottom: 5px !important; font-weight:300 !important "><?= $pending_trans ?></h5>
-                        <h6 style="font-size: 18px; font-weight: 650;">Pending Transactions</h6>
-                        <div class="progress mb-2 mt-2" role="progressbar" aria-label="Info example" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                          <div class="progress-bar bg-warning" style="width: <?= $pending_trans_percent ?>%"></div>
-                        </div>
-                        <span class="text-muted mt-4">Daily pending transactions</span>
-                      </div>
-                    </div>
-                  </div><!-- End Pending Transactions Card -->
+                    $status_color = match ($status) {
+                      "TOTAL" => "info",
+                      "COMPLETED" => "success",
+                      "PENDING" => "warning",
+                      "FAILED" => "danger"
+                    };
 
-                  <!-- Failed Transactions Card -->
-                  <div class="col-xxl-3 col-md-3">
-                    <div class="card">
-                      <div class="card-body">
-                        <h5 class="card-title" style="font-size: 22px; margin-bottom: 0 !important; padding-bottom: 5px !important; font-weight:300 !important "><?= $failed_trans ?></h5>
-                        <h6 style="font-size: 18px; font-weight: 650;">Failed Transactions</h6>
-                        <div class="progress mb-2 mt-2" role="progressbar" aria-label="Info example" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                          <div class="progress-bar bg-danger" style="width: <?= $failed_trans_percent ?>%"></div>
+                    $trans = $transaction["total"] ? $transaction["total"] : 0;
+                    $trans_percent = ($trans / $total_trans) * 100;
+                  ?>
+
+                    <!-- Pending Transactions Card -->
+                    <div class="col-xxl-3 col-md-3">
+                      <div class="card">
+                        <div class="card-body">
+                          <h5 class="card-title" style="font-size: 22px; margin-bottom: 0 !important; padding-bottom: 5px !important; font-weight:300 !important "><?= $trans ?></h5>
+                          <h6 style="font-size: 18px; font-weight: 650;"><?= $status ?> Transactions</h6>
+                          <div class="progress mb-2 mt-2" role="progressbar" aria-label="Info example" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                            <div class="progress-bar bg-<?= $status_color ?>" style="width: <?= $trans_percent ?>%"></div>
+                          </div>
+                          <span class="text-muted mt-4">Daily <?= $status ?> transactions</span>
                         </div>
-                        <span class="text-muted mt-4">Daily failed transactions</span>
                       </div>
-                    </div>
-                  </div><!-- End Failed Transactions Card -->
+                    </div><!-- End Pending Transactions Card -->
+
+                  <?php } ?>
 
                 </div>
-
               </div>
 
               <!-- Collections -->
               <div class="collections">
-
                 <div class="row">
 
                   <!-- Successful Collections Card -->
@@ -386,121 +223,43 @@ require_once('../inc/page-data.php');
                   </div><!-- End Provider Payouts Card -->
 
                 </div>
-
               </div>
 
-
+              <!-- Form Types -->
               <div class="form-types">
-
                 <div class="row">
 
-                  <!-- Masters Card -->
-                  <div class="col-xxl-3 col-md-3">
-                    <div class="card">
-                      <div class="card-body">
-                        <h6 style="font-size: 18px; font-weight: 650; margin-top:20px">Masters</h6>
-                        <div class="mt-2" style="display:flex; justify-content:space-between">
+                  <?php foreach ($summary["form-types"] as $form) { ?>
+                    <!-- Masters Card -->
+                    <div class="col-xxl-3 col-md-3">
+                      <div class="card">
+                        <div class="card-body">
+                          <h6 style="font-size: 18px; font-weight: 650; margin-top:20px"><?= $form["name"] ?></h6>
+                          <div class="mt-2" style="display:flex; justify-content:space-between">
 
-                          <div style="display: flex; flex-direction:column; justify-content:flex-start">
-                            <span style="font-size: 16px;"><?= $masters_total ?></span>
-                            <span class="text-muted small">COUNT</span>
+                            <div style="display: flex; flex-direction:column; justify-content:flex-start">
+                              <span style="font-size: 16px;"><?= $form["total_num"] ?></span>
+                              <span class="text-muted small">COUNT</span>
+                            </div>
+
+                            <div style="display: flex; flex-direction:column; justify-content:flex-start">
+                              <h5 style="padding-bottom: 0; margin-bottom:0;">
+                                <span class="small">GH</span>&#162;<span class="small"><?= $form["total_amount"] ? $form["total_amount"] : "0.00" ?></span>
+                              </h5>
+                              <span class="text-muted small">AMOUNT</span>
+                            </div>
+
                           </div>
-
-                          <div style="display: flex; flex-direction:column; justify-content:flex-start">
-                            <h5 style="padding-bottom: 0; margin-bottom:0;">
-                              <span class="small">GH</span>&#162;<span class="small"><?= $masters_amount ?></span>
-                            </h5>
-                            <span class="text-muted small">AMOUNT</span>
-                          </div>
-
                         </div>
                       </div>
-                    </div>
-                  </div><!-- End Masters Card -->
-
-                  <!-- Degree Masters Card -->
-                  <div class="col-xxl-3 col-md-3">
-                    <div class="card">
-                      <div class="card-body">
-                        <h6 style="font-size: 18px; font-weight: 650;margin-top:20px">Degree</h6>
-                        <div class="mt-2" style="display:flex; justify-content:space-between">
-
-                          <div style="display: flex; flex-direction:column; justify-content:flex-start">
-                            <span style="font-size: 16px;"><?= $degree_total ?></span>
-                            <span class="text-muted small">COUNT</span>
-                          </div>
-
-                          <div style="display: flex; flex-direction:column; justify-content:flex-start">
-                            <h5 style="padding-bottom: 0; margin-bottom:0;">
-                              <span class="small">GH</span>&#162;<span class="small"><?= $degree_amount ?></span>
-                            </h5>
-                            <span class="text-muted small">AMOUNT</span>
-                          </div>
-
-                        </div>
-                      </div>
-                    </div>
-                  </div><!-- End Degree Masters Card -->
-
-                  <!-- Diploma Card -->
-                  <div class="col-xxl-3 col-md-3">
-                    <div class="card">
-                      <div class="card-body">
-                        <h6 style="font-size: 18px; font-weight: 650; margin-top:20px;">Diploma</h6>
-                        <div class="mt-2" style="display:flex; justify-content:space-between">
-
-                          <div style="display: flex; flex-direction:column; justify-content:flex-start">
-                            <span style="font-size: 16px;"><?= $diploma_total ?></span>
-                            <span class="text-muted small">COUNT</span>
-                          </div>
-
-                          <div style="display: flex; flex-direction:column; justify-content:flex-start">
-                            <h5 style="padding-bottom: 0; margin-bottom:0;">
-                              <span class="small">GH</span>&#162;<span class="small"><?= $diploma_amount ?></span>
-                            </h5>
-                            <span class="text-muted small">AMOUNT</span>
-                          </div>
-
-                        </div>
-                      </div>
-                    </div>
-                  </div><!-- End Diploma Card -->
-
-                  <!-- Short Courses Card -->
-                  <div class="col-xxl-3 col-md-3">
-                    <div class="card">
-                      <div class="card-body">
-                        <h6 style="font-size: 18px; font-weight: 650;margin-top:20px">Short Courses</h6>
-                        <div class="mt-2" style="display:flex; justify-content:space-between">
-
-                          <div style="display: flex; flex-direction:column; justify-content:flex-start">
-                            <span style="font-size: 16px;"><?= $short_total ?></span>
-                            <span class="text-muted small">COUNT</span>
-                          </div>
-
-                          <div style="display: flex; flex-direction:column; justify-content:flex-start">
-                            <h5 style="padding-bottom: 0; margin-bottom:0;">
-                              <span class="small">GH</span>&#162;<span class="small"><?= $short_amount ?></span>
-                            </h5>
-                            <span class="text-muted small">AMOUNT</span>
-                          </div>
-
-                        </div>
-                      </div>
-                    </div>
-                  </div><!-- End Short Courses Card -->
+                    </div><!-- End Masters Card -->
+                  <?php } ?>
 
                 </div>
-
               </div>
 
               <div class="payment-methods">
 
-              </div>
-
-              <div style="display: flex; justify-content: space-between">
-                <h4>Total: <span id="totalData"></span></h4>
-                <div id="alert-output"></div>
               </div>
 
             </div>
@@ -508,6 +267,96 @@ require_once('../inc/page-data.php');
         </div>
       </div><!-- End Transactions Summary row -->
 
+      <div class="row">
+        <div class="col-12">
+          <div class="card recent-sales overflow-auto">
+
+            <div class="card-body">
+              <h5 class="card-title">Daily Transactions</h5>
+              <p>Filter transactions by: </p>
+              <!-- Left side columns -->
+              <form id="reportsForm" method="post">
+                <div class="row">
+
+                  <div class="col-2 col-md-2 col-sm-12 mt-2">
+                    <label for="admission-period" class="form-label">Admission Period</label>
+                    <select name="admission-period" id="admission-period" class="form-select">
+                      <option value="" hidden>Choose</option>
+                      <option value="All">All</option>
+                      <?php
+                      $result = $admin->fetchAllAdmissionPeriod();
+                      foreach ($result as $value) {
+                      ?>
+                        <option value="<?= $value["id"] ?>"><?= $value["info"] ?></option>
+                      <?php
+                      }
+                      ?>
+                    </select>
+                  </div>
+
+                  <div class="col-2 col-md-2 col-sm-12 mt-2">
+                    <label for="from-date" class="form-label">From (Date)</label>
+                    <input type="date" name="from-date" id="from-date" class="form-control">
+                  </div>
+
+                  <div class="col-2 col-md-2 col-sm-12 mt-2">
+                    <label for="to-date" class="form-label">To (Date)</label>
+                    <input type="date" name="to-date" id="to-date" class="form-control">
+                  </div>
+
+                  <div class="col-2 col-md-2 col-sm-12 mt-2">
+                    <label for="form-type" class="form-label">Form Type</label>
+                    <select name="form-type" id="form-type" class="form-select">
+                      <option value="" hidden>Choose</option>
+                      <option value="All">All</option>
+                      <?php
+                      $result = $admin->getAvailableForms();
+                      foreach ($result as $value) {
+                      ?>
+                        <option value="<?= $value["id"] ?>"><?= $value["name"] ?></option>
+                      <?php
+                      }
+                      ?>
+                    </select>
+                  </div>
+
+                  <div class="col-2 col-md-2 col-sm-12 mt-2">
+                    <label for="purchase-status" class="form-label">Purchase Status</label>
+                    <select name="purchase-status" id="purchase-status" class="form-select">
+                      <option value="" hidden>Choose</option>
+                      <option value="All">All</option>
+                      <option value="COMPLETED">COMPLETED</option>
+                      <option value="FAILED">FAILED</option>
+                      <option value="PENDING">PENDING</option>
+                    </select>
+                  </div>
+
+                  <div class="col-2 col-md-2 col-sm-12 mt-2">
+                    <label for="payment-method" class="form-label">Payment Method</label>
+                    <select name="payment-method" id="payment-method" class="form-select">
+                      <option value="" hidden>Choose</option>
+                      <option value="All">All</option>
+                      <option value="CARD">CARD</option>
+                      <option value="CASH">CASH</option>
+                      <option value="MOMO">MOMO</option>
+                      <option value="USSD">USSD</option>
+                    </select>
+                  </div>
+
+                </div>
+              </form>
+
+              <div class="mt-4" style="display: flex; justify-content: space-between">
+                <h4>Total: <span id="totalData"></span></h4>
+                <div id="alert-output"></div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div><!-- End Transactions fitering row -->
+
+      <!-- Transactions Table -->
       <div class="row">
         <div class="col-12">
           <div class="card recent-sales overflow-auto">
@@ -535,7 +384,7 @@ require_once('../inc/page-data.php');
                       <th scope="col">Name</th>
                       <th scope="col">Phone Number</th>
                       <th scope="col">Admission Period</th>
-                      <th scope="col">Form Type</th>
+                      <th scope="col">Form Bought</th>
                       <th scope="col">Status</th>
                       <th scope="col">Payment Method</th>
                       <th scope="col">Action</th>
@@ -636,7 +485,7 @@ require_once('../inc/page-data.php');
               <fieldset>
                 <div class="row" style="width:100% !important">
                   <form id="sendPurchaseInfoForm" method="post" style="display: flex; justify-content:center">
-                    <button id="sendTransIDBtn" type="submit" class="btn btn-success" style="padding:15px !important">Send application login info</button>
+                    <button id="sendTransIDBtn" type="submit" class="btn btn-success" style="padding:15px !important">Generate and resend application login info</button>
                     <input type="hidden" name="sendTransID" id="sendTransID" value="">
                   </form>
                 </div>
@@ -670,6 +519,7 @@ require_once('../inc/page-data.php');
 
       $("#reportsForm").on("submit", function(e, d) {
         e.preventDefault();
+
         triggeredBy = 1;
         let data = new FormData(this);
 
@@ -729,7 +579,7 @@ require_once('../inc/page-data.php');
                     '<td>' + value.status + '</td>' +
                     '<td>' + value.paymentMethod + '</td>' +
                     '<td>' +
-                    '<button id="' + value.id + '" class="btn btn-xs btn-primary openPurchaseInfo" data-bs-toggle="modal" data-bs-target="#purchaseInfoModal">Open</button>' +
+                    '<button id="' + value.id + '" class="btn btn-xs btn-primary openPurchaseInfo" data-bs-toggle="modal" data-bs-target="#purchaseInfoModal">View</button>' +
                     '</td>' +
                     '</tr>'
                   );

@@ -46,12 +46,12 @@
                         <h5 class="card-header">Add Form Price</h5>
                         <div class="card-body">
                             <div class="mb-2">
-                                <label for="form-type">Form Type</label>
+                                <label for="form-type">Form Category</label>
                                 <div style="display:flex; flex-direction:row; justify-content:baseline; align-items:baseline;">
                                     <select name="form-type" id="form-type" class="form-select form-select-sm">
                                         <option value="0">Select</option>
                                         <?php
-                                        $data = $admin->fetchAvailableformTypes();
+                                        $data = $admin->getFormCategories();
                                         foreach ($data as $ft) {
                                         ?>
                                             <option value="<?= $ft['id'] ?>"><?= $ft['name'] ?></option>
@@ -63,7 +63,7 @@
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label for="form-name">Form Title/Name</label>
+                                <label for="form-name">Form Name</label>
                                 <input type="text" class="form-control form-control-sm" name="form-name" id="form-name" placeholder="Form Title/Name">
                             </div>
                             <div class="mb-3">
