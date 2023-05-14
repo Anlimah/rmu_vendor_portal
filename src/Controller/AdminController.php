@@ -25,6 +25,30 @@ class AdminController
         return $payConfirm->vendorPaymentProcess($data);
     }
 
+    public function fetchVendorUsernameByUserID(int $user_id)
+    {
+        $query = "SELECT user_name FROM sys_users AS su, vendor_details AS vd WHERE su.id = vd.user_id AND vd.id = :ui";
+        return $this->dm->getData($query, array(':ui' => $user_id));
+    }
+
+    public function resetUserPassword($password)
+    {
+
+        // Hash password
+        $hashed_pw = password_hash($password, PASSWORD_DEFAULT);
+        $query_result = $this->dm->inputData("UPDATE sys_users SET `password` = :pw WHERE id = :id", array(":pw" => $hashed_pw));
+
+        if ($query_result) {
+            $this->logActivity(
+                $_SESSION["user"],
+                "UPDATE",
+                "{$_SESSION["user"]} Updated user their account's password"
+            );
+            return array("success" => false, "message" => "Account's password reset was successful!");
+        }
+        return array("success" => false, "message" => "Failed to reset user account password!");
+    }
+
     public function verifyAdminLogin($username, $password)
     {
         $sql = "SELECT * FROM `sys_users` WHERE `user_name` = :u";
@@ -1372,6 +1396,22 @@ class AdminController
      * For accounts officers
      */
 
+    // fetch dashboards stats for a vendor 
+    public function fetchVendorSummary(int $vendor_id)
+    {
+        $result["form-types"] = array();
+        $allAvailableForms = $this->dm->getData("SELECT * FROM forms");
+        foreach ($allAvailableForms as $form) {
+            $form_id = $form['id'];
+            $query = "SELECT ft.name, COUNT(*) AS total_num, SUM(pd.amount) AS total_amount, pd.amount AS unit_price 
+                FROM purchase_detail AS pd, admission_period AS ap, forms AS ft, vendor_details AS vd 
+                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.form_id = ft.id AND pd.vendor = vd.id 
+                AND pd.status = 'COMPLETED' AND ft.id = {$form_id} AND vd.id = {$vendor_id}";
+            array_push($result["form-types"], $this->dm->getData($query)[0]);
+        }
+        return $result;
+    }
+
     // fetch dashboards stats
     public function fetchInitialSummaryRecord()
     {
@@ -1393,17 +1433,6 @@ class AdminController
             array_push($result["transactions"], $this->dm->getData($query)[0]);
             $i += 1;
         }
-
-        /*$query2 = "SELECT pd.status, COUNT(*) AS completed_trans FROM purchase_detail AS pd, admission_period AS ap 
-                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.status = 'COMPLETED'";
-        $query3 = "SELECT COUNT(*) AS pending_trans FROM purchase_detail AS pd, admission_period AS ap 
-                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.status = 'PENDING'";
-        $query4 = "SELECT COUNT(*) AS failed_trans FROM purchase_detail AS pd, admission_period AS ap 
-                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.status = 'FAILED'";
-
-        $result["transactions"]["completed_trans"] = $this->dm->getData($query2)[0]["completed_trans"];
-        $result["transactions"]["pending_trans"] = $this->dm->getData($query3)[0]["pending_trans"];
-        $result["transactions"]["failed_trans"] = $this->dm->getData($query4)[0]["failed_trans"];*/
 
         $query5 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount 
                 FROM purchase_detail AS pd, admission_period AS ap 
@@ -1432,30 +1461,6 @@ class AdminController
                 AND pd.status = 'COMPLETED' AND ft.id = '{$form_id}'";
             array_push($result["form-types"], $this->dm->getData($query9)[0]);
         }
-
-        /*$query9 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount, ft.amount AS unit_price 
-                FROM purchase_detail AS pd, admission_period AS ap, forms AS ft 
-                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.form_id = ft.id 
-                AND pd.status = 'COMPLETED' AND ft.name LIKE 'Masters%'";
-        $query10 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount, ft.amount AS unit_price 
-                FROM purchase_detail AS pd, admission_period AS ap, forms AS ft 
-                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.form_id = ft.id 
-                AND pd.status = 'COMPLETED' AND ft.name LIKE 'Degree%'";
-        $query11 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount, ft.amount AS unit_price 
-                FROM purchase_detail AS pd, admission_period AS ap, forms AS ft 
-                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.form_id = ft.id 
-                AND pd.status = 'COMPLETED' AND ft.name LIKE 'Diploma%'";
-        $query12 = "SELECT COUNT(*) AS total_num, SUM(pd.amount) AS total_amount, ft.amount AS unit_price 
-                FROM purchase_detail AS pd, admission_period AS ap, forms AS ft 
-                WHERE pd.admission_period = ap.id AND ap.active = 1 AND pd.form_id = ft.id 
-                AND pd.status = 'COMPLETED' AND ft.name LIKE 'Short Courses%' OR ft.name LIKE 'Other%'";
-
-        $result["form-types"]["masters"] = $this->dm->getData($query9)[0];
-        $result["form-types"]["degree"] = $this->dm->getData($query10)[0];
-        $result["form-types"]["diploma"] = $this->dm->getData($query11)[0];
-        $result["form-types"]["short"] = $this->dm->getData($query12)[0];*/
-
-
 
         return $result;
     }

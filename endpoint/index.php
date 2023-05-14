@@ -717,6 +717,30 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         }
     }
 
+    // reset password
+    elseif ($_GET["url"] == "reset-password") {
+        if (!isset($_POST["currentPassword"]) || empty($_POST["currentPassword"]))
+            die(json_encode(array("success" => false, "message" => "Current password field is required!")));
+        if (!isset($_POST["newPassword"]) || empty($_POST["newPassword"]))
+            die(json_encode(array("success" => false, "message" => "New password field is required!")));
+        if (!isset($_POST["renewPassword"]) || empty($_POST["renewPassword"]))
+            die(json_encode(array("success" => false, "message" => "Retype new password field is required!")));
+
+        $currentPass = $expose->validatePassword($_POST["currentPassword"]);
+        $newPass = $expose->validatePassword($_POST["newPassword"]);
+        $renewPass = $expose->validatePassword($_POST["renewPassword"]);
+
+        if ($newPass !== $renewPass) die(json_encode(array("success" => false, "message" => "New password entry mismatched!")));
+
+        $username = $admin->fetchVendorUsernameByUserID($_SESSION["user"]);
+        $result = $admin->verifyAdminLogin($username, $currentPass);
+        if (!$result) {
+            die(json_encode(array("success" => false, "message" => "Incorrect password!")));
+        }
+
+        die(json_encode($admin->resetUserPassword($newPass)));
+    }
+
 
 
     // All PUT request will be sent here

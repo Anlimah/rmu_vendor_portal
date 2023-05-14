@@ -45,60 +45,73 @@ require_once('../inc/page-data.php');
   <?= require_once("../inc/header.php") ?>
 
   <?= require_once("../inc/sidebar.php") ?>
-
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Forms Sale</h1>
+      <h1>Daily Transactions</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-          <li class="breadcrumb-item active">Forms Sale</li>
+          <li class="breadcrumb-item active">Daily Transactions</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
 
     <section class="section dashboard">
+
       <div class="row">
+        <div class="col-12">
+          <div class="card recent-sales overflow-auto">
 
-        <!-- Left side columns -->
-        <div class="col-lg-12">
-          <div class="row mx-auto">
-            <!-- summary data buttons -->
-            <button id="apps-total" class="btn btn-outline-primary col me-2 toggle-output">
-              Total
-              <span class="badge text-bg-secondary">
-                <?= $admin->fetchTotalFormsSold()[0]["total"]; ?>
-              </span>
-            </button>
+            <!--<div class="filter">
+          <span class="icon download-file" id="excelFileDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Export as Excel file">
+            <img src="../assets/img/icons8-microsoft-excel-2019-48.png" alt="Download as Excel file" style="cursor:pointer;width: 22px;">
+          </span>
+          <span class="icon download-file" id="pdfFileDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Download as PDF file">
+            <img src="../assets/img/icons8-pdf-48.png" alt="Download as PDF file" style="width: 22px;cursor:pointer;">
+          </span>
+        </div>-->
 
-            <button id="apps-submitted" class="btn btn-outline-primary col me-2 toggle-output">
-              Postgraduate
-              <span class="badge text-bg-secondary">
-                <?= $admin->fetchTotalPostgradsFormsSold()[0]["total"]; ?>
-              </span>
-            </button>
+            <?php $summary = $admin->fetchVendorSummary($_SESSION["vendor_id"]); ?>
 
-            <button id="apps-in-progress" class="btn btn-outline-primary col me-2 toggle-output">
-              Undergraduate
-              <span class="badge text-bg-secondary">
-                <?= $admin->fetchTotalUdergradsFormsSold()[0]["total"]; ?>
-              </span>
-            </button>
+            <div class="card-body">
+              <h5 class="card-title">Summary</h5>
 
-            <button id="apps-admitted" class="btn btn-outline-primary col me-2 toggle-output">
-              Short Courses
-              <span class="badge text-bg-secondary">
-                <?= $admin->fetchTotalShortCoursesFormsSold(true)[0]["total"]; ?>
-              </span>
-            </button>
+              <!-- Form Types -->
+              <div class="form-types">
+                <div class="row">
+                  <?php foreach ($summary["form-types"] as $form) { ?>
+                    <!-- Masters Card -->
+                    <div class="col-xxl-4 col-md-4">
+                      <div class="card">
+                        <div class="card-body">
+                          <h6 style="font-size: 18px; font-weight: 650; margin-top:20px"><?= $form["name"] ?></h6>
+                          <div class="mt-2" style="display:flex; justify-content:space-between">
 
+                            <div style="display: flex; flex-direction:column; justify-content:flex-start">
+                              <span style="font-size: 16px;"><?= $form["total_num"] ?></span>
+                              <span class="text-muted small">COUNT</span>
+                            </div>
+
+                            <div style="display: flex; flex-direction:column; justify-content:flex-start">
+                              <h5 style="padding-bottom: 0; margin-bottom:0;">
+                                <span class="small">GH</span>&#162;<span class="small"><?= $form["total_amount"] ? $form["total_amount"] : "0.00" ?></span>
+                              </h5>
+                              <span class="text-muted small">AMOUNT</span>
+                            </div>
+
+                          </div>
+                        </div>
+                      </div>
+                    </div><!-- End Masters Card -->
+                  <?php } ?>
+                </div>
+              </div>
+
+            </div>
           </div>
-
-        </div><!-- End Left side columns -->
-
-        <!-- Right side columns -->
-        <!-- End Right side columns -->
+        </div>
+      </div><!-- End Transactions Summary row -->
 
     </section>
 

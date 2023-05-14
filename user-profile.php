@@ -192,7 +192,7 @@ require_once('inc/page-data.php');
 
               <img src="assets/img/icons8-circled-user-male-skin-type-5-96.png" alt="Profile" class="rounded-circle">
               <h2><?= $admin->fetchFullName($_SESSION["user"])[0]["fullName"] ?></h2>
-              <h3>Web Designer</h3>
+              <h3><?= strtoupper($_SESSION["role"]) ?></h3>
             </div>
           </div>
 
@@ -249,21 +249,21 @@ require_once('inc/page-data.php');
                     <div class="row mb-3">
                       <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">Current Password</label>
                       <div class="col-md-8 col-lg-9">
-                        <input name="password" type="password" class="form-control" id="currentPassword" required>
+                        <input name="currentPassword" type="password" class="form-control" id="currentPassword" required>
                       </div>
                     </div>
 
                     <div class="row mb-3">
                       <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">New Password</label>
                       <div class="col-md-8 col-lg-9">
-                        <input name="newpassword" type="password" class="form-control" id="newPassword" required>
+                        <input name="newPassword" type="password" class="form-control" id="newPassword" required>
                       </div>
                     </div>
 
                     <div class="row mb-3">
                       <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">Re-enter New Password</label>
                       <div class="col-md-8 col-lg-9">
-                        <input name="renewpassword" type="password" class="form-control" id="renewPassword" required>
+                        <input name="renewPassword" type="password" class="form-control" id="renewPassword" required>
                       </div>
                     </div>
 
@@ -332,6 +332,10 @@ require_once('inc/page-data.php');
           type: "POST",
           url: "endpoint/reset-password",
           data: new FormData(this),
+          contentType: false,
+          cache: false,
+          processData: false,
+
           success: function(result) {
             console.log(result);
             if (result.success) {

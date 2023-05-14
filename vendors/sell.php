@@ -218,16 +218,16 @@ require_once('../inc/page-data.php');
                                     <div class="row mb-4">
                                         <div class="col">
                                             <label class="form-label" for="country">Country Code</label>
-                                            <select name="country" id="country" value="<?= '(' . COUNTRIES[83]["code"] . ') ' . COUNTRIES[83]["name"]  ?>" title="Choose country and country code" class="form-control" required>
+                                            <select name="country" id="country" title="Choose country and country code" class="form-control" required>
                                                 <?php
                                                 foreach (COUNTRIES as $cn) { ?>
-                                                    <option value="<?= "(" . $cn["code"] . ") " . $cn["name"] ?>"><?= "(" . $cn["code"] . ") " . $cn["name"] ?></option>
+                                                    <option value="<?= "(" . $cn["code"] . ") " . $cn["name"] ?>" <?= $cn["name"] == "Ghana" ? "selected" : "" ?>><?= "(" . $cn["code"] . ") " . $cn["name"] ?></option>
                                                 <?php } ?>
                                             </select>
                                         </div>
                                         <div class="col">
                                             <label class="form-label" for="phone-number">Phone Number</label>
-                                            <input name="phone_number" id="phone_number" maxlength="10" title="Provide your Provide Number" class="form-control" type="tel" placeholder="0244123123" required>
+                                            <input name="phone_number" id="phone_number" minlength="9" maxlength="10" title="Provide your Provide Number" class="form-control" type="tel" placeholder="0244123123" required>
                                         </div>
                                     </div>
 
