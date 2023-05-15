@@ -1,14 +1,21 @@
 <!--Vendors Pane-->
 <div class="tab-pane fade show active" id="vendors-tab-pane" role="tabpanel" aria-labelledby="vendors-tab" tabindex="0">
-    <div class="container mt-4">
+    <div class="mt-4">
+
         <div class="row">
+
+            <div class="alert alert-default" style="padding-left: 10px !important; padding-right: 10 !important">
+                <span>
+                    <button id="addNewVendorBtn" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Add new vendor account">Add</button>
+                </span>
+            </div>
 
             <div class="col-lg-6">
                 <table class="table table-striped">
-                    <thead>
+                    <thead class="table-dark">
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col" style="width: 250px;">Company</th>
+                            <th scope="col" style="width: 250px;">Company (Main Branch)</th>
                             <th scope="col">Phone Number</th>
                             <th scope="col"></th>
                             <th scope="col"></th>
@@ -43,10 +50,13 @@
             <div class="col-lg-1">
             </div>
 
-            <div class="col-lg-5">
+            <div id="addNewVendorDiv" class="col-lg-5" style="display: none">
                 <form id="addOrUpdateVendorForm" method="post" enctype="multipart/form-data">
                     <div class="card">
-                        <h5 class="card-header">New Vendor</h5>
+                        <h5 class="card-header" style="display:flex; justify-content: space-between">
+                            <span>New Vendor</span>
+                            <span id="closeAddNewVendorDiv" class="text-danger" style="cursor: pointer"><b>x</b></span>
+                        </h5>
                         <div class="card-body">
                             <div class="mb-4 mt-4">
                                 <label for="v-name">Company Name</label>
@@ -96,6 +106,15 @@
 
 <script>
     $(document).ready(function() {
+
+        $("#addNewVendorBtn").on("click", () => {
+            $("#addNewVendorDiv").show("fade");
+        })
+
+        $("#closeAddNewVendorDiv").on("click", () => {
+            $("#addNewVendorDiv").hide("fade");
+        })
+
         function resetVendorForm() {
             $("#v-id").val("");
             $("#v-name").val("");
@@ -145,13 +164,11 @@
                     if (result.success) {
                         $("#v-action").attr("value", "update");
                         $(".card-header").text("Update Form Price");
-                        $("#v-action-btn").text("Update");
+                        $("#v-action-btn").text("Save");
                         $("#v-id").val(result.message[0].id);
-                        $("#v-name").val(result.message[0].vendor_name);
-                        $("#v-tin").val(result.message[0].tin);
-                        $("#v-email").val(result.message[0].email_address);
+                        $("#v-name").val(result.message[0].company);
+                        $("#v-email").val(result.message[0].user_name);
                         $("#v-phone").val(result.message[0].phone_number);
-                        $("#v-address").val(result.message[0].address);
                     } else {
                         alert(result.message)
                     };

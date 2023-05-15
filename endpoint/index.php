@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
             die(json_encode(array("success" => false, "message" => "Missing input field")));
         }
         $rslt = $admin->fetchVendor($_GET["vendor_key"]);
-        if (!$rslt) die(json_encode(array("success" => false, "message" => "Error fetching form price details!")));
+        if (!$rslt) die(json_encode(array("success" => false, "message" => "Error fetching vendor details!")));
         die(json_encode(array("success" => true, "message" => $rslt)));
     }
     //
@@ -450,18 +450,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
                 if (!$rslt) {
                     die(json_encode(array("success" => false, "message" => "Failed to add vendor!")));
                 }
-
-                if (isset($_FILES["other-branches"]) || empty($_FILES["other-branches"])) {
-
-                    if ($_FILES["other-branches"]['error']) {
-                        $result = array("success" => false, "message" => "Successfully added vendor. But failed to upload file!");
-                    } else {
-                        $startRow = 1;
-                        $endRow = 0;
-                        $result = $admin->uploadCompanyBranchesData($_FILES["other-branches"], $startRow, $endRow);
-                    }
-                }
-                $result = array("success" => true, "message" => "Successfully added vendor!");
+                $result = array("success" => true, "message" => "Successfully added vendor account!");
                 break;
 
             case 'update':
@@ -469,8 +458,19 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
                 if (!$rslt) {
                     die(json_encode(array("success" => false, "message" => "Failed to update vendor information!")));
                 }
-                $result = array("success" => true, "message" => "Successfully updated vendor information!");
+                $result = array("success" => true, "message" => "Successfully updated vendor account information!");
                 break;
+        }
+
+        if (isset($_FILES["other-branches"]) || empty($_FILES["other-branches"])) {
+
+            if ($_FILES["other-branches"]['error']) {
+                $result = array("success" => false, "message" => "Successfully saved main account details. But failed to upload branches file!");
+            } else {
+                $startRow = 1;
+                $endRow = 0;
+                $result = $admin->uploadCompanyBranchesData($_FILES["other-branches"], $startRow, $endRow);
+            }
         }
 
         die(json_encode($result));

@@ -203,7 +203,8 @@ class AdminController
 
     public function fetchVendor($vendor_id)
     {
-        $query = "SELECT * FROM vendor_details WHERE id = :i";
+        $query = "SELECT vd.*, su.first_name, su.last_name, su.user_name 
+                    FROM vendor_details AS vd, sys_users AS su WHERE vd.id = :i AND vd.user_id = su.id";
         return $this->dm->inputData($query, array(":i" => $vendor_id));
     }
 
@@ -213,9 +214,9 @@ class AdminController
         return $this->dm->inputData($query, array(":c" => $company, ":b" => $branch));
     }
 
-    public function verifyVendorSysUserExists($email)
+    public function verifySysUserExists($email)
     {
-        $query = "SELECT `id` FROM `vendor_details` WHERE `username` = :u";
+        $query = "SELECT `id` FROM `sys_users` WHERE `username` = :u";
         return $this->dm->inputData($query, array(":u" => $email));
     }
 
