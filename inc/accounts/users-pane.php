@@ -16,7 +16,7 @@
                     </thead>
                     <tbody>
                         <?php
-                        $sys_users = $admin->fetchAllVendorSystemUsers();
+                        $sys_users = $admin->fetchAllNotVendorSystemUsers();
                         if (!empty($sys_users)) {
                             $i = 1;
                             foreach ($sys_users as $user) {

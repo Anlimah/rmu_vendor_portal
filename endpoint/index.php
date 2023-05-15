@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
             die(json_encode(array("success" => false, "message" => "Missing input field")));
         }
         $rslt = $admin->fetchProgramme($_GET["prog_key"]);
-        if (!$rslt) die(json_encode(array("success" => false, "message" => "Error fetching programme informatiion!")));
+        if (!$rslt) die(json_encode(array("success" => false, "message" => "Error fetching programme information!")));
         die(json_encode(array("success" => true, "message" => $rslt)));
     }
     //
@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
             die(json_encode(array("success" => false, "message" => "Missing input field")));
         }
         $rslt = $admin->fetchAdmissionPeriod($_GET["adp_key"]);
-        if (!$rslt) die(json_encode(array("success" => false, "message" => "Error fetching programme informatiion!")));
+        if (!$rslt) die(json_encode(array("success" => false, "message" => "Error fetching admissions information!")));
         die(json_encode(array("success" => true, "message" => $rslt)));
     }
     //
@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
             die(json_encode(array("success" => false, "message" => "Missing input field")));
         }
         $rslt = $admin->fetchSystemUser($_GET["user_key"]);
-        if (!$rslt) die(json_encode(array("success" => false, "message" => "Error fetching programme informatiion!")));
+        if (!$rslt) die(json_encode(array("success" => false, "message" => "Error fetching user account information!")));
         die(json_encode(array("success" => true, "message" => $rslt)));
     }
 

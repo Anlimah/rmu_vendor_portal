@@ -494,9 +494,9 @@ class AdminController
      * CRUD for user accounts
      */
 
-    public function fetchAllVendorSystemUsers()
+    public function fetchAllNotVendorSystemUsers()
     {
-        return $this->dm->getData("SELECT * FROM `sys_users` WHERE `role` = 'Accounts'");
+        return $this->dm->getData("SELECT * FROM `sys_users` WHERE `role` <> 'Vendors'");
     }
 
     public function fetchAllSystemUsers()
