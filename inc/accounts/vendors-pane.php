@@ -10,12 +10,13 @@
                 </span>
             </div>
 
-            <div class="col-lg-6">
+            <div class="col-lg-5">
+                <h2>Main Branch</h2>
                 <table class="table table-striped">
                     <thead class="table-dark">
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col" style="width: 250px;">Company (Main Branch)</th>
+                            <th scope="col" style="width: 250px;">Company</th>
                             <th scope="col">Phone Number</th>
                             <th scope="col"></th>
                             <th scope="col"></th>
@@ -33,8 +34,8 @@
                                     <th scope="row"><?= $i ?></th>
                                     <td><?= $vendor["company"] ?></td>
                                     <td><?= $vendor["phone_number"] ?></td>
-                                    <td id="<?= $vendor["id"] ?>" class="view-vendor"><span style="cursor:pointer;" class="bi bi-eye text-success" title="View <?= $vendor["company"] ?> Information"></span></td>
-                                    <td id="<?= $vendor["id"] ?>" class="edit-vendor"><span style="cursor:pointer;" class="bi bi-pencil-square text-primary" title="Edit <?= $vendor["company"] ?>"></span></td>
+                                    <td id="<?= $vendor["company"] ?>" class="view-vendor"><span style="cursor:pointer;" class="bi bi-eye text-success" title="View <?= $vendor["company"] ?> Other branches"></span></td>
+                                    <td id="<?= $vendor["id"] ?>" data-branchType="main" class="edit-vendor"><span style="cursor:pointer;" class="bi bi-pencil-square text-primary" title="Edit <?= $vendor["company"] ?>"></span></td>
                                     <td id="<?= $vendor["id"] ?>" class="delete-vendor"><span style="cursor:pointer;" class="bi bi-trash text-danger" title="Delete <?= $vendor["company"] ?>"></span></td>
                                 </tr>
                         <?php
@@ -50,55 +51,83 @@
             <div class="col-lg-1">
             </div>
 
-            <div id="addNewVendorDiv" class="col-lg-5" style="display: none">
-                <form id="addOrUpdateVendorForm" method="post" enctype="multipart/form-data">
-                    <div class="card">
-                        <h5 class="card-header" style="display:flex; justify-content: space-between">
-                            <span>New Vendor</span>
-                            <span id="closeAddNewVendorDiv" class="text-danger" style="cursor: pointer"><b>x</b></span>
-                        </h5>
-                        <div class="card-body">
-                            <div class="mb-4 mt-4">
-                                <label for="v-name">Company Name</label>
-                                <input type="text" class="transform-text form-control form-control-sm" name="v-name" id="v-name" placeholder="Name">
-                            </div>
+            <div id="other-branches" class="col-lg-5">
+                <h2 id="sub-branches-h">Sub Branches</h2>
+                <table class="table table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col" style="width: 250px;">Branch</th>
+                            <th scope="col">Phone Number</th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="sub-branches-tb">
+                        <tr>
+                            <th scope="row"><?= $i ?></th>
+                            <td><?= $vendor["company"] ?></td>
+                            <td><?= $vendor["phone_number"] ?></td>
+                            <td id="<?= $vendor["id"] ?>" data-branchType="sub" class="edit-vendor"><span style="cursor:pointer;" class="bi bi-pencil-square text-primary" title="Edit <?= $vendor["company"] ?>"></span></td>
+                            <td id="<?= $vendor["id"] ?>" class="delete-vendor"><span style="cursor:pointer;" class="bi bi-trash text-danger" title="Delete <?= $vendor["company"] ?>"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-                            <div class="row mt-4">
-                                <h4><u>Main Branch Account (Admin)</u> </h4>
-                                <div class="col">
-                                    <label for="v-email">Email</label>
-                                    <input type="text" class="form-control form-control-sm" name="v-email" id="v-email" placeholder="Email">
+            <!--Add document form modal-->
+            <div class="modal fade" id="addOrUpdateVendorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-2" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class=" modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Upload <span class="doc-type">Certificate</span></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="addOrUpdateVendorForm" method="post" enctype="multipart/form-data">
+                                <div class="mb-4 mt-4">
+                                    <label for="v-name">Company Name</label>
+                                    <input type="text" class="transform-text form-control form-control-sm" name="v-name" id="v-name" placeholder="Name">
                                 </div>
-                                <div class="col">
-                                    <label for="v-phone">Phone No.</label>
-                                    <input type="text" class="form-control form-control-sm" name="v-phone" id="v-phone" placeholder="02441234567">
-                                </div>
-                            </div>
 
-                            <div class="row mt-4 mb-4">
-                                <h4><u>Other Branches Account</u> </h4>
-                                <div class="col">
-                                    <input type="file" name="other-branches" id="other-branches" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
-                                    <div class="alert alert-warning mt-4" role="alert">
-                                        <h4 class="alert-heading">Instruction for File Upload!</h4>
-                                        <p>Please follow the instructions below to successfully upload company's branches data</p>
-                                        <hr>
-                                        <ul>
-                                            <li>The allow file type are <b>.xlsx</b> and <b>.xls</b></li>
-                                        </ul>
+                                <div class="row mb-4">
+                                    <h4 id="main-branch-h4"><u>Main Branch Account (Admin)</u> </h4>
+                                    <div class="col">
+                                        <label for="v-email">Email</label>
+                                        <input type="text" class="form-control form-control-sm" name="v-email" id="v-email" placeholder="Email">
+                                    </div>
+                                    <div class="col">
+                                        <label for="v-phone">Phone No.</label>
+                                        <input type="text" class="form-control form-control-sm" name="v-phone" id="v-phone" placeholder="02441234567">
                                     </div>
                                 </div>
-                            </div>
 
-                            <div>
-                                <button type="submit" class="btn btn-primary btn-sm" id="v-action-btn">Save</button>
-                            </div>
+                                <div class="row mb-4" id="other-branches-file-upload">
+                                    <h4><u>Other Branches Account</u> </h4>
+                                    <div class="col">
+                                        <input type="file" name="other-branches" id="other-branches" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                                        <div class="alert alert-warning mt-4" role="alert">
+                                            <h4 class="alert-heading">Instruction for File Upload!</h4>
+                                            <p>Please follow the instructions below to successfully upload branches</p>
+                                            <hr>
+                                            <ul>
+                                                <li>The allow file formats are <b>.xlsx</b> and <b>.xls</b></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <button type="submit" class="btn btn-primary btn-sm" id="v-action-btn">Save</button>
+                                </div>
+                                <input type="hidden" name="v-action" id="v-action" value="add">
+                                <input type="hidden" name="v-id" id="v-id" value="">
+                            </form>
                         </div>
                     </div>
-                    <input type="hidden" name="v-action" id="v-action" value="add">
-                    <input type="hidden" name="v-id" id="v-id" value="">
-                </form>
+                </div>
             </div>
+            <!--End of Modal-->
 
         </div>
     </div>
@@ -108,11 +137,9 @@
     $(document).ready(function() {
 
         $("#addNewVendorBtn").on("click", () => {
-            $("#addNewVendorDiv").show("fade");
-        })
-
-        $("#closeAddNewVendorDiv").on("click", () => {
-            $("#addNewVendorDiv").hide("fade");
+            $("#addOrUpdateVendorModal").modal("toggle");
+            $("#addOrUpdateVendorForm").trigger("reset");
+            $("#v-name").prop("readonly", false).attr("style", "");
         })
 
         function resetVendorForm() {
@@ -150,7 +177,47 @@
             resetVendorForm();
         });
 
+        $(".view-vendor").click(function(e) {
+            let data = {
+                vendor_key: $(this).attr("id")
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "../endpoint/vendor-sub-branches",
+                data: data,
+                success: function(result) {
+                    console.log(result);
+                    if (result.success) {
+                        $("#sub-branches-h").text(result.message[0]["company"]);
+                        $.each(result.message, function(index, data) {
+                            $(".sub-branches-tb").append(
+                                '<tr>' +
+                                '<th scope="row">' + (index + 1) + '</th>' +
+                                '<td>' + data["company"] + '</td>' +
+                                '<td>' + data["phone_number"] + '</td>' +
+                                '<td id="' + data["id"] + '" class="edit-vendor" >' +
+                                '<span style="cursor:pointer;" class="bi bi-pencil-square text-primary" title="Edit' + data["company"] + '"> </span>' +
+                                '</td>' +
+                                '<td id="' + data["id"] + '" class="delete-vendor">' +
+                                '<span style="cursor:pointer;" class="bi bi-trash text-danger" title="Delete' + data["company "] + '" ></span>' +
+                                '</td>' +
+                                '</tr>'
+                            );
+                        });
+                    } else {
+                        alert(result.message)
+                    }
+
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+
         $(".edit-vendor").click(function(e) {
+            let ds = this.dataset.branchtype;
             let data = {
                 vendor_key: $(this).attr("id")
             }
@@ -163,12 +230,24 @@
                     console.log(result);
                     if (result.success) {
                         $("#v-action").attr("value", "update");
-                        $(".card-header").text("Update Form Price");
+                        $(".header-title").text("Edit Vendor Account");
                         $("#v-action-btn").text("Save");
                         $("#v-id").val(result.message[0].id);
-                        $("#v-name").val(result.message[0].company);
+                        $("#v-name").val(result.message[0].company).prop("readonly", true).attr("style", "background-color: #f1f1f1; color: #000;");
                         $("#v-email").val(result.message[0].user_name);
                         $("#v-phone").val(result.message[0].phone_number);
+
+                        if (ds == "main") {
+                            $("#main-branch-h4").show();
+                            $("#other-branches-file-upload").show();
+                        }
+
+                        if (ds == "sub") {
+                            $("#main-branch-h4").hide();
+                            $("#other-branches-file-upload").hide();
+                        };
+
+                        $("#addOrUpdateVendorModal").modal("toggle");
                     } else {
                         alert(result.message)
                     };

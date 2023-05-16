@@ -201,11 +201,18 @@ class AdminController
         return $this->dm->getData("SELECT * FROM vendor_details WHERE `type` <> 'ONLINE'");
     }
 
-    public function fetchVendor($vendor_id)
+    public function fetchVendor(int $vendor_id)
     {
         $query = "SELECT vd.*, su.first_name, su.last_name, su.user_name 
                     FROM vendor_details AS vd, sys_users AS su WHERE vd.id = :i AND vd.user_id = su.id";
         return $this->dm->inputData($query, array(":i" => $vendor_id));
+    }
+
+    public function fetchVendorSubBranches($company)
+    {
+        $query = "SELECT * FROM vendor_details WHERE company = :c AND 
+                branch <> 'MAIN' AND `type` <> 'ONLINE'";
+        return $this->dm->inputData($query, array(":c" => $company));
     }
 
     public function verifyVendorByCompanyAndBranch($company, $branch)
@@ -330,23 +337,17 @@ class AdminController
         }
     }
 
-    public function updateVendor($v_id, $v_name, $v_tin, $v_email, $v_phone, $v_address)
+    public function updateVendor($v_id, $v_name, $v_email, $v_phone)
     {
-        $query = "UPDATE vendor_details SET `vendor_name` = :nm, `tin` = :tn, 
-                `email_address` = :ea, `phone_number` = :pn, `address` = :ad
-                WHERE id = :id";
-        $params = array(
-            ":id" => $v_id, ":nm" => $v_name, ":tn" => $v_tin,
-            ":ea" => $v_email, ":pn" => $v_phone, ":ad" => $v_address
-        );
+        $query = "UPDATE vendor_details SET `company` = :nm, `phone_number` = :pn WHERE id = :id";
+        $params = array(":id" => $v_id, ":nm" => $v_name, ":pn" => $v_phone);
         $query_result = $this->dm->inputData($query, $params);
 
-        if ($query_result)
-            $this->logActivity(
-                $_SESSION["user"],
-                "UPDATE",
-                "Updated information for vendor {$v_id}"
-            );
+        $query = "UPDATE sys_users SET `user_name` = :ea WHERE id = :id";
+        $params = array(":id" => $v_id, ":ea" => $v_email);
+        $query_result = $this->dm->inputData($query, $params);
+
+        if ($query_result) $this->logActivity($_SESSION["user"], "UPDATE", "Updated information for vendor {$v_id}");
         return $query_result;
     }
 
@@ -523,7 +524,7 @@ class AdminController
     {
         // verify if a vendor with this email exists
         if ($this->verifySysUserByEmail($user_data["user_name"])) {
-            return array("success" => false, "message" => "A user with this email exists already exists!");
+            return array("success" => false, "message" => "This email ({$user_data['user_name']}) is associated with an account!");
         }
 
         // Generate password
@@ -605,8 +606,7 @@ class AdminController
 
     public function updateSystemUser($user_id, $first_name, $last_name, $email_addr, $role, $privileges)
     {
-        $query = "UPDATE sys_users SET 
-                `user_name` = :un, `first_name` = :fn, `last_name` = :ln, `role` = :rl 
+        $query = "UPDATE sys_users SET `user_name` = :un, `first_name` = :fn, `last_name` = :ln, `role` = :rl 
                 WHERE id = :id";
         $params = array(
             ":un" => $email_addr, ":fn" => $first_name, ":ln" => $last_name,

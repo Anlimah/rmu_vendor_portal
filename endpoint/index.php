@@ -420,6 +420,16 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
         die(json_encode($result));
     }
+
+    //
+    elseif ($_GET["url"] == "vendor-sub-branches") {
+        if (!isset($_POST["vendor_key"]) || empty($_POST["vendor_key"])) {
+            die(json_encode(array("success" => false, "message" => "Missing input field")));
+        }
+        $rslt = $admin->fetchVendorSubBranches($_POST["vendor_key"]);
+        if (!$rslt) die(json_encode(array("success" => false, "message" => "Error fetching vendor details!")));
+        die(json_encode(array("success" => true, "message" => $rslt)));
+    }
     //
     elseif ($_GET["url"] == "vendor-form") {
 
@@ -454,7 +464,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
                 break;
 
             case 'update':
-                $rslt = $admin->updateVendor($_POST["v-id"], $_POST["v-name"], $_POST["v-tin"], $_POST["v-email"], $_POST["v-phone"], $_POST["v-address"]);
+                $rslt = $admin->updateVendor($_POST["v-id"], $_POST["v-name"], $_POST["v-email"], $_POST["v-phone"]);
                 if (!$rslt) {
                     die(json_encode(array("success" => false, "message" => "Failed to update vendor information!")));
                 }
