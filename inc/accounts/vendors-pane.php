@@ -64,13 +64,6 @@
                         </tr>
                     </thead>
                     <tbody class="sub-branches-tb">
-                        <tr>
-                            <th scope="row"><?= $i ?></th>
-                            <td><?= $vendor["company"] ?></td>
-                            <td><?= $vendor["phone_number"] ?></td>
-                            <td id="<?= $vendor["id"] ?>" data-branchType="sub" class="edit-vendor"><span style="cursor:pointer;" class="bi bi-pencil-square text-primary" title="Edit <?= $vendor["company"] ?>"></span></td>
-                            <td id="<?= $vendor["id"] ?>" class="delete-vendor"><span style="cursor:pointer;" class="bi bi-trash text-danger" title="Delete <?= $vendor["company"] ?>"></span></td>
-                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -177,7 +170,7 @@
             resetVendorForm();
         });
 
-        $(".view-vendor").click(function(e) {
+        $(document).on("click", ".view-vendor", function(e) {
             let data = {
                 vendor_key: $(this).attr("id")
             }
@@ -189,7 +182,7 @@
                 success: function(result) {
                     console.log(result);
                     if (result.success) {
-                        $("#sub-branches-h").text(result.message[0]["company"]);
+                        $("#sub-branches-h").text(result.message[0]["company"] + " Branches");
                         $.each(result.message, function(index, data) {
                             $(".sub-branches-tb").append(
                                 '<tr>' +
@@ -197,10 +190,10 @@
                                 '<td>' + data["company"] + '</td>' +
                                 '<td>' + data["phone_number"] + '</td>' +
                                 '<td id="' + data["id"] + '" class="edit-vendor" >' +
-                                '<span style="cursor:pointer;" class="bi bi-pencil-square text-primary" title="Edit' + data["company"] + '"> </span>' +
+                                '<span style="cursor:pointer;" class="bi bi-pencil-square text-primary" title="Edit ' + data["company"] + '"> </span>' +
                                 '</td>' +
                                 '<td id="' + data["id"] + '" class="delete-vendor">' +
-                                '<span style="cursor:pointer;" class="bi bi-trash text-danger" title="Delete' + data["company "] + '" ></span>' +
+                                '<span style="cursor:pointer;" class="bi bi-trash text-danger" title="Delete ' + data["company "] + '" ></span>' +
                                 '</td>' +
                                 '</tr>'
                             );
@@ -216,7 +209,7 @@
             });
         });
 
-        $(".edit-vendor").click(function(e) {
+        $(document).on("click", ".edit-vendor", function(e) {
             let ds = this.dataset.branchtype;
             let data = {
                 vendor_key: $(this).attr("id")
@@ -259,7 +252,7 @@
             });
         });
 
-        $(".delete-vendor").click(function(e) {
+        $(document).on("click", ".delete-vendor", function(e) {
             var data = {
                 vendor_key: $(this).attr("id")
             }
