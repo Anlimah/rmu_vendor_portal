@@ -187,13 +187,13 @@
                             $(".sub-branches-tb").append(
                                 '<tr>' +
                                 '<th scope="row">' + (index + 1) + '</th>' +
-                                '<td>' + data["company"] + '</td>' +
+                                '<td>' + data["branch"] + '</td>' +
                                 '<td>' + data["phone_number"] + '</td>' +
                                 '<td id="' + data["id"] + '" class="edit-vendor" >' +
-                                '<span style="cursor:pointer;" class="bi bi-pencil-square text-primary" title="Edit ' + data["company"] + '"> </span>' +
+                                '<span style="cursor:pointer;" class="bi bi-pencil-square text-primary" title="Edit ' + data["branch"] + '"> </span>' +
                                 '</td>' +
                                 '<td id="' + data["id"] + '" class="delete-vendor">' +
-                                '<span style="cursor:pointer;" class="bi bi-trash text-danger" title="Delete ' + data["company "] + '" ></span>' +
+                                '<span style="cursor:pointer;" class="bi bi-trash text-danger" title="Delete ' + data["branch "] + '" ></span>' +
                                 '</td>' +
                                 '</tr>'
                             );
