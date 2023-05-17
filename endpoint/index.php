@@ -471,7 +471,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
         if (isset($_FILES["other-branches"]) && !empty($_FILES["other-branches"])) {
             if ($_FILES["other-branches"]['error']) {
-                $result = array("success" => false, "message" => "Successfully saved main account details, but failed to upload branches file!");
+                $result = array("success" => false, "message" => "Successfully {$_POST["v-action"]}ed vendor's account information");
             } else {
                 $result = $admin->uploadCompanyBranchesData($_POST["v-name"], $_FILES["other-branches"]);
             }
