@@ -350,7 +350,7 @@ class AdminController
         }
         return array(
             "success" => true,
-            "message" => "{$successCount} other branches with {$errorCount} unsuccessful!. Skipped rows " . json_encode($skippedCount)
+            "message" => "Successfully added MAIN branch account and {$successCount} other branches with {$errorCount} unsuccessful!. Skipped rows are " . json_encode($skippedCount)
         );
     }
 
