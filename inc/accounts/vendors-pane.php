@@ -145,7 +145,7 @@
         }
 
         $("#addOrUpdateVendorForm").on("submit", function(e) {
-            //e.preventDefault();
+            e.preventDefault();
 
             $.ajax({
                 type: "POST",
@@ -156,12 +156,8 @@
                 processData: false,
                 success: function(result) {
                     console.log(result);
-                    if (result.success) {
-                        alert(result.message);
-                        window.location.reload();
-                    } else {
-                        alert(result.message);
-                    }
+                    alert(result.message);
+                    window.location.reload();
                 },
                 error: function(error) {
                     console.log(error);
@@ -268,12 +264,8 @@
                 data: data,
                 success: function(result) {
                     console.log(result);
-                    if (result.success) {
-                        alert(result.message);
-                        window.location.reload();
-                    } else {
-                        alert(result.message);
-                    }
+                    alert(result.message);
+                    window.location.reload();
                 },
                 error: function(error) {
                     console.log(error);
