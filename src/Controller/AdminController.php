@@ -354,18 +354,20 @@ class AdminController
         );
     }
 
-    public function updateVendor($v_id, $v_name, $v_email, $v_phone)
+    public function updateVendor($v_id, $v_email, $v_phone)
     {
-        $query = "UPDATE vendor_details SET `company` = :nm, `phone_number` = :pn WHERE id = :id";
-        $params = array(":id" => $v_id, ":nm" => $v_name, ":pn" => $v_phone);
-        $query_result = $this->dm->inputData($query, $params);
+        $query1 = "UPDATE vendor_details SET `phone_number` = :pn WHERE id = :id";
+        $params1 = array(":id" => $v_id, ":pn" => $v_phone);
+        if (!$this->dm->inputData($query1, $params1))
+            return array("success" => false, "message" => "Failed to updated vendor's account information! [Error code 1]");
 
-        $query = "UPDATE sys_users SET `user_name` = :ea WHERE id = :id";
-        $params = array(":id" => $v_id, ":ea" => $v_email);
-        $query_result = $this->dm->inputData($query, $params);
+        $query2 = "UPDATE sys_users SET `user_name` = :ea WHERE id = :id";
+        $params2 = array(":id" => $v_id, ":ea" => $v_email);
+        if (!$this->dm->inputData($query2, $params2))
+            return array("success" => false, "message" => "Failed to updated vendor's information! [Error code 2]");
 
-        if ($query_result) $this->logActivity($_SESSION["user"], "UPDATE", "Updated information for vendor {$v_id}");
-        return $query_result;
+        $this->logActivity($_SESSION["user"], "UPDATE", "Updated information for vendor {$v_id}");
+        return array("success" => true, "message" => "Successfully updated vendor's account information!");
     }
 
     public function deleteVendor($vendor_id)

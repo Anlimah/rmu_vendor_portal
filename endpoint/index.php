@@ -463,7 +463,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
                 break;
 
             case 'update':
-                $rslt = $admin->updateVendor($_POST["v-id"], $_POST["v-name"], $_POST["v-email"], $_POST["v-phone"]);
+                $rslt = $admin->updateVendor($_POST["v-id"], $_POST["v-email"], $_POST["v-phone"]);
                 if (!$rslt["success"]) die(json_encode($rslt));
                 $result = array("success" => true, "message" => "Successfully updated vendor account information!");
                 break;
