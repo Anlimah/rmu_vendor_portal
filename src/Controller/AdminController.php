@@ -274,7 +274,7 @@ class AdminController
         }
         return 0;
     }*/
-    public function saveDataFile($fileObj, $fileLocation)
+    public function saveDataFile($fileObj)
     {
         $allowedFileType = [
             'application/vnd.ms-excel',
@@ -293,7 +293,7 @@ class AdminController
             $name = time() . '-' . 'awaiting.xlsx';
 
             // Create the full path to the file
-            $targetPath = UPLOAD_DIR . "/$fileLocation/" . $name;
+            $targetPath = UPLOAD_DIR . "/branches/" . $name;
 
             // Delete file if exsists
             if (file_exists($targetPath)) {
@@ -308,10 +308,10 @@ class AdminController
         return array("success" => false, "message" => "Error: Invalid file object!");
     }
 
-    public function uploadCompanyBranchesData($fileLocation, $mainBranch, $fileObj, $startRow, $endRow)
+    public function uploadCompanyBranchesData($mainBranch, $fileObj)
     {
         // save file to uploads folder
-        $file_upload_msg = $this->saveDataFile($fileObj, $fileLocation);
+        $file_upload_msg = $this->saveDataFile($fileObj);
         if (!$file_upload_msg["success"]) return $file_upload_msg;
 
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
@@ -319,8 +319,8 @@ class AdminController
         $excelSheet = $spreadSheet->getActiveSheet();
         $spreadSheetArray = $excelSheet->toArray();
 
-        if ($endRow == 0) $endRow = count($spreadSheetArray);
-        if ($startRow > 1) $startRow -= 1;
+        $startRow = 1;
+        $endRow = count($spreadSheetArray);
 
         $successCount = 0;
         $errorCount = 0;

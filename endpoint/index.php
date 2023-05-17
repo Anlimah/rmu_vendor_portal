@@ -478,9 +478,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
             if ($_FILES["other-branches"]['error']) {
                 $result = array("success" => false, "message" => "Successfully saved main account details. But failed to upload branches file!");
             } else {
-                $startRow = 1;
-                $endRow = 0;
-                $result = $admin->uploadCompanyBranchesData($_FILES["other-branches"], $startRow, $endRow);
+                $result = $admin->uploadCompanyBranchesData($_POST["v-name"], $_FILES["other-branches"]);
             }
         }
 
