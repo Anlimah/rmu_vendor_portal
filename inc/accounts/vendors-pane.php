@@ -190,7 +190,7 @@
                                 '<th scope="row">' + (index + 1) + '</th>' +
                                 '<td>' + data["branch"] + '</td>' +
                                 '<td>' + data["phone_number"] + '</td>' +
-                                '<td id="' + data["id"] + '" class="edit-vendor" >' +
+                                '<td id="' + data["id"] + '" data-branchType="sub" class="edit-vendor">' +
                                 '<span style="cursor:pointer;" class="bi bi-pencil-square text-primary" title="Edit ' + data["branch"] + '"> </span>' +
                                 '</td>' +
                                 '<td id="' + data["id"] + '" class="delete-vendor">' +
@@ -212,6 +212,7 @@
 
         $(document).on("click", ".edit-vendor", function(e) {
             let ds = this.dataset.branchtype;
+            console.log($(this).attr("id"));
             let data = {
                 vendor_key: $(this).attr("id")
             }
