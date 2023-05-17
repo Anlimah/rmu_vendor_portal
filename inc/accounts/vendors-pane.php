@@ -255,6 +255,9 @@
         });
 
         $(document).on("click", ".delete-vendor", function(e) {
+            let conf = confirm("Are you sure you want to delete this vednor's account?");
+            if (!conf) return;
+
             var data = {
                 vendor_key: $(this).attr("id")
             }
