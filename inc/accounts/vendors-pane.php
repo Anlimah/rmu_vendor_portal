@@ -183,6 +183,7 @@
                     console.log(result);
                     if (result.success) {
                         $("#sub-branches-h").text(result.message[0]["company"] + " Branches");
+                        $(".sub-branches-tb").html("");
                         $.each(result.message, function(index, data) {
                             $(".sub-branches-tb").append(
                                 '<tr>' +
