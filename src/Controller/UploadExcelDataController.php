@@ -52,7 +52,7 @@ class UploadExcelDataController
             // Move the file to the target directory
             if (!move_uploaded_file($this->fileObj['tmp_name'], $this->targetPath))
                 return array("success" => false, "message" => "Failed to upload file!");
-            return array("success" => true, "message" => "Failed to upload file!");
+            return array("success" => true, "message" => "File upload successful!");
         }
         return array("success" => false, "message" => "Error: Invalid file object!");
     }

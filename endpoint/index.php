@@ -21,6 +21,7 @@ require "../bootstrap.php";
 use Src\Controller\AdminController;
 use Src\Controller\DownloadExcelDataController;
 use Src\Controller\UploadExcelDataController;
+use Src\Controller\UploadBranchesExcelDataController;
 use Src\Controller\ExposeDataController;
 
 $expose = new ExposeDataController();

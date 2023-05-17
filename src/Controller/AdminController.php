@@ -274,8 +274,7 @@ class AdminController
         }
         return 0;
     }*/
-
-    public function uploadCompanyBranchesData($fileObj, $v_name)
+    public function saveDataFile($fileObj, $fileLocation)
     {
         $allowedFileType = [
             'application/vnd.ms-excel',
@@ -291,10 +290,10 @@ class AdminController
         if ($fileObj['error'] == UPLOAD_ERR_OK) {
 
             // Create a unique file name
-            $name = time() . '-' . 'branches.xlsx';
+            $name = time() . '-' . 'awaiting.xlsx';
 
             // Create the full path to the file
-            $targetPath = UPLOAD_DIR . "branches/" . $name;
+            $targetPath = UPLOAD_DIR . "/$fileLocation/" . $name;
 
             // Delete file if exsists
             if (file_exists($targetPath)) {
@@ -304,37 +303,44 @@ class AdminController
             // Move the file to the target directory
             if (!move_uploaded_file($fileObj['tmp_name'], $targetPath))
                 return array("success" => false, "message" => "Failed to upload file!");
-            //return array("success" => true, "message" => "Failed to upload file!");
-
-            $Reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
-            $spreadSheet = $Reader->load($targetPath);
-            $excelSheet = $spreadSheet->getActiveSheet();
-            $spreadSheetArray = $excelSheet->toArray();
-
-            $startRow = 1;
-            $endRow = count($spreadSheetArray);
-
-            $successCount = 0;
-            $errorCount = 0;
-
-            for ($i = $startRow; $i <= $endRow - 1; $i++) {
-
-                $v_branch = $spreadSheetArray[$i][1];
-                $v_email = $spreadSheetArray[$i][2];
-                $v_phone = $spreadSheetArray[$i][3];
-
-                $user_data = array(
-                    "first_name" => $v_name, "last_name" => $v_branch, "user_name" => $v_email,
-                    "user_role" => "Vendors", "vendor_company" => $v_name,
-                    "vendor_phone" => $v_phone, "vendor_branch" => $v_branch
-                );
-
-                $privileges = array("select" => 1, "insert" => 1, "update" => 0, "delete" => 0);
-                if ($this->addSystemUser($user_data, $privileges)) $successCount += 1;
-                else $errorCount += 1;
-            }
-            return array("success" => true, "message" => "Successfully added MAIN branch account and {$successCount} branches with {$errorCount} unsuccessful!");
+            return array("success" => true, "message" => $targetPath);
         }
+        return array("success" => false, "message" => "Error: Invalid file object!");
+    }
+
+    public function uploadCompanyBranchesData($fileLocation, $mainBranch, $fileObj, $startRow, $endRow)
+    {
+        // save file to uploads folder
+        $file_upload_msg = $this->saveDataFile($fileObj, $fileLocation);
+        if (!$file_upload_msg["success"]) return $file_upload_msg;
+
+        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+        $spreadSheet = $reader->load($file_upload_msg["message"]);
+        $excelSheet = $spreadSheet->getActiveSheet();
+        $spreadSheetArray = $excelSheet->toArray();
+
+        if ($endRow == 0) $endRow = count($spreadSheetArray);
+        if ($startRow > 1) $startRow -= 1;
+
+        $successCount = 0;
+        $errorCount = 0;
+        $privileges = array("select" => 1, "insert" => 1, "update" => 0, "delete" => 0);
+
+        for ($i = $startRow; $i <= $endRow - 1; $i++) {
+            $v_branch = $spreadSheetArray[$i][0];
+            $v_email = $spreadSheetArray[$i][1];
+            $v_phone = $spreadSheetArray[$i][2];
+
+            $user_data = array(
+                "first_name" => $mainBranch, "last_name" => $v_branch, "user_name" => $v_email,
+                "user_role" => "Vendors", "vendor_company" => $mainBranch,
+                "vendor_phone" => $v_phone, "vendor_branch" => $v_branch
+            );
+            if ($this->addSystemUser($user_data, $privileges)) $successCount += 1;
+            else $errorCount += 1;
+        }
+
+        return array("success" => true, "message" => "Successfully added MAIN branch account and {$successCount} branches with {$errorCount} unsuccessful!");
     }
 
     public function updateVendor($v_id, $v_name, $v_email, $v_phone)
