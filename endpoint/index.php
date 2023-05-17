@@ -458,17 +458,13 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         switch ($_POST["v-action"]) {
             case 'add':
                 $rslt = $admin->addSystemUser($user_data, $privileges);
-                if (!$rslt) {
-                    die(json_encode(array("success" => false, "message" => "Failed to add vendor!")));
-                }
+                if (!$rslt["success"]) die(json_encode($rslt));
                 $result = array("success" => true, "message" => "Successfully added vendor account!");
                 break;
 
             case 'update':
                 $rslt = $admin->updateVendor($_POST["v-id"], $_POST["v-name"], $_POST["v-email"], $_POST["v-phone"]);
-                if (!$rslt) {
-                    die(json_encode(array("success" => false, "message" => "Failed to update vendor information!")));
-                }
+                if (!$rslt["success"]) die(json_encode($rslt));
                 $result = array("success" => true, "message" => "Successfully updated vendor account information!");
                 break;
         }
