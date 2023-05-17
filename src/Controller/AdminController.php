@@ -372,17 +372,17 @@ class AdminController
 
     public function deleteVendor($vendor_id)
     {
-        $query = "DELETE FROM vendor_details WHERE id = :i";
-        $params = array(":i" => $vendor_id);
-        $query_result = $this->dm->inputData($query, $params);
+        $vendor_info = $this->fetchVendor($vendor_id);
+        $this->deleteSystemUser($vendor_info[0]["user_id"]);
+        $query_result2 = $this->dm->inputData("DELETE FROM vendor_details WHERE id = :i", array(":i" => $vendor_id));
 
-        if ($query_result)
+        if ($query_result2)
             $this->logActivity(
                 $_SESSION["user"],
                 "DELETE",
                 "Deleted vendor {$vendor_id} information"
             );
-        return $query_result;
+        return $query_result2;
     }
 
     /**
