@@ -569,7 +569,7 @@ class AdminController
         $subject = "Regional Maritime University - User Account";
 
         if (strtoupper($user_data["user_role"]) == "VENDORS") {
-            $vendor_id = time() + 1;
+            $vendor_id = time() + 1000;
             $query1 = "INSERT INTO vendor_details (`id`, `type`, `company`, `branch`, `phone_number`, `user_id`) VALUES(:id, :tp, :cp, :b, :pn, :ui)";
             $params1 = array(
                 ":id" => $vendor_id, ":tp" => "VENDOR", ":cp" => $user_data["vendor_company"],
