@@ -321,6 +321,7 @@ class AdminController
 
         $startRow = 1;
         $endRow = count($spreadSheetArray);
+        return array("success" => true, "message" => $endRow);
 
         $successCount = 0;
         $errorCount = 0;
