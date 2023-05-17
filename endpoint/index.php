@@ -470,11 +470,11 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         }
 
         if (isset($_FILES["other-branches"]) || empty($_FILES["other-branches"])) {
-
             if ($_FILES["other-branches"]['error']) {
-                $result = array("success" => false, "message" => "Successfully saved main account details. But failed to upload branches file!");
+                $result = array("success" => false, "message" => "Successfully saved main account details, but failed to upload branches file!");
             } else {
-                $result = $admin->uploadCompanyBranchesData($_POST["v-name"], $_FILES["other-branches"]);
+                $rslt = $admin->uploadCompanyBranchesData($_POST["v-name"], $_FILES["other-branches"]);
+                $result = "Successfully added MAIN branch account and " . $rslt;
             }
         }
 

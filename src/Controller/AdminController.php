@@ -320,10 +320,12 @@ class AdminController
         $spreadSheetArray = $excelSheet->toArray();
 
         $startRow = 1;
-        $endRow = count($spreadSheetArray);
+        $endRow = count($spreadSheetArray) - 1;
 
         $successCount = 0;
         $errorCount = 0;
+        $skippedCount = array();
+
         $privileges = array("select" => 1, "insert" => 1, "update" => 0, "delete" => 0);
 
         for ($i = $startRow; $i <= $endRow - 1; $i++) {
@@ -331,17 +333,25 @@ class AdminController
             $v_email = $spreadSheetArray[$i][1];
             $v_phone = $spreadSheetArray[$i][2];
 
+            if (!$v_branch || !$v_email || !$v_phone) {
+                array_push($skippedCount, ($i - 1));
+                continue;
+            }
+
             $user_data = array(
                 "first_name" => $mainBranch, "last_name" => $v_branch, "user_name" => $v_email,
                 "user_role" => "Vendors", "vendor_company" => $mainBranch,
                 "vendor_phone" => $v_phone, "vendor_branch" => $v_branch
             );
+
             $vendor_id = time() + $i;
             if ($this->addSystemUser($user_data, $privileges, $vendor_id)) $successCount += 1;
             else $errorCount += 1;
         }
-
-        return array("success" => true, "message" => "Successfully added MAIN branch account and {$successCount} branches with {$errorCount} unsuccessful!");
+        return array(
+            "success" => true,
+            "message" => "{$successCount} other branches with {$errorCount} unsuccessful!. Skipped rows " . json_encode($skippedCount)
+        );
     }
 
     public function updateVendor($v_id, $v_name, $v_email, $v_phone)
