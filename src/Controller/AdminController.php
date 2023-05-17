@@ -336,7 +336,8 @@ class AdminController
                 "user_role" => "Vendors", "vendor_company" => $mainBranch,
                 "vendor_phone" => $v_phone, "vendor_branch" => $v_branch
             );
-            if ($this->addSystemUser($user_data, $privileges)) $successCount += 1;
+            $vendor_id = time() + $i;
+            if ($this->addSystemUser($user_data, $privileges, $vendor_id)) $successCount += 1;
             else $errorCount += 1;
         }
 
@@ -526,7 +527,7 @@ class AdminController
         return $this->dm->inputData($query, array(":u" => $email));
     }
 
-    public function addSystemUser($user_data, $privileges)
+    public function addSystemUser($user_data, $privileges, $vendor_id = 0)
     {
         // verify if a vendor with this email exists
         if ($this->verifySysUserByEmail($user_data["user_name"])) {
@@ -569,7 +570,7 @@ class AdminController
         $subject = "Regional Maritime University - User Account";
 
         if (strtoupper($user_data["user_role"]) == "VENDORS") {
-            $vendor_id = time() + 1000;
+            if (!$vendor_id) $vendor_id = time();
             $query1 = "INSERT INTO vendor_details (`id`, `type`, `company`, `branch`, `phone_number`, `user_id`) VALUES(:id, :tp, :cp, :b, :pn, :ui)";
             $params1 = array(
                 ":id" => $vendor_id, ":tp" => "VENDOR", ":cp" => $user_data["vendor_company"],
