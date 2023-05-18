@@ -345,7 +345,8 @@ class ExposeDataController extends DatabaseMethods
 
     public function getApplicationInfo(int $transaction_id)
     {
-        $sql = "SELECT p.`id`, p.`app_number`, p.`pin_number`, f.`name`, f.`amount`, v.`company`, a.`info`, f.`name`  
+        $sql = "SELECT p.`id`, p.`first_name`, p.`last_name`, p.`phone_number`, p.`app_number`, p.`pin_number`, 
+                f.`name`, f.`amount`, v.`company`, v.`branch`, a.`info` 
         FROM `purchase_detail` AS p, `forms` AS f, `vendor_details` AS v, `admission_period` AS a 
         WHERE p.`form_id` = f.`id` AND p.vendor = v.`id` AND p.`admission_period` = a.`id` AND p.`id` = :i";
         return $this->getData($sql, array(':i' => $transaction_id));

@@ -238,7 +238,7 @@ $data = $expose->getApplicationInfo($_GET["exttrid"]);
 
             $("#printReciptBtn").click(function() {
                 window.open("print-form.php?exttrid=" + getUrlVars()["exttrid"], "_blank", "width=800,height=600");
-            })
+            });
         });
     </script>
 

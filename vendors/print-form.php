@@ -43,6 +43,7 @@ use Src\Controller\ExposeDataController;
 $expose = new ExposeDataController();
 
 $data = $expose->getApplicationInfo($_GET["exttrid"]);
+$vendor_info = $admin->fetchFullName($_SESSION["user"]);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -56,9 +57,9 @@ $data = $expose->getApplicationInfo($_GET["exttrid"]);
             -webkit-overflow-scrolling: touch;
             overflow: auto;
             line-height: 1;
-            background-color: #f9f9f9 !important;
             color: #282828 !important;
-            font-size: 16px !important;
+            font-size: 12px !important;
+            font-weight: 400;
         }
 
         .hide {
@@ -132,114 +133,89 @@ $data = $expose->getApplicationInfo($_GET["exttrid"]);
             width: 100% !important;
         }
 
-        .purchase-card-header {
-            padding: 0 !important;
-            width: 100% !important;
-            height: 40px !important;
-        }
-
-        .purchase-card-header>h1 {
-            font-size: 22px !important;
-            font-weight: 600 !important;
-            color: #003262 !important;
-            text-align: center;
-            width: 100%;
-        }
-
-        .purchase-card-step-info {
-            color: #003262;
-            padding: 0px;
-            font-weight: 400;
-            width: 100%;
-        }
-
         .purchase-card-footer {
             width: 100% !important;
-        }
-
-        .bg-img {
-            width: 100%;
-            height: 100%;
-            background-image: url(../assets/img/logo.png);
-            background-repeat: no-repeat;
-            background-position: contain;
-            background-size: 10%;
-            background-color: rgba(255, 255, 255, 0.5);
-            opacity: 0.5;
-            z-index: 9999;
-            position: absolute;
         }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&family=Roboto+Mono:wght@700&family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap.css">
 </head>
 
-<body>
+<body class="container-fluid">
 
-    <main id="main" class="main">
+    <div class="row" style="padding: 0px 50px; margin-top: 10px">
+        <div class="col-7" style="display: flex; justify-content: center; align-items: center;">
+            <!--<img src="../assets/img/rmu-logo-large.jpeg" style="width: 100%" alt="">-->
+            <h3 style="font-weight: 600;">Regional Maritime University</h3>
+        </div>
+        <div class="col-5" style="display: flex; justify-content: right; align-items: center;">
+            <h1 style="font-size:medium !important; float:right">Receipt No.: <b>RMUHF<?= $data[0]["id"] ?></b></h1>
+        </div>
+    </div>
 
-        <section class="section dashboard">
-            <div class="flex-card">
-                <div class="form-card card" style="max-width: 800px !important;">
-
-                    <div class="flex-column">
-                        <div class="purchase-card-header flex-row" style="align-items:baseline; justify-content: space-between">
-                            <h1>REGIONAL MARITIME UNIVERSITY</h1>
-                            <h1 style="font-size:medium !important;">Receipt Number: RMUHF<?= $data[0]["id"] ?></h1>
-                        </div>
-                        <div class="flex-row" style="align-items: baseline; justify-content:space-around;">
-                            <p style="font-size:medium !important;">Date Issued: <?= date("jS F, Y") . " - " . date("h:i:s A") ?></p>
-                        </div>
-                    </div>
-
-                    <div class="purchase-card-body">
-                        <div class="pay-status" style="align-items: baseline;">
-                            <?php if (!empty($data)) { ?>
-                                <table style="width:100%;border-collapse: collapse;" class="mb-4">
-                                    <tr>
-                                        <td style="width: 150px; background: #f1f1f1;text-align: right; padding: 10px;"><b>VENDOR:</b></td>
-                                        <td colspan="2" style="text-align: left; padding: 10px;"><b><?= $data[0]["company"] ?></b></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="background: #f1f1f1;text-align: right; padding: 10px;"><b>PRICE:</b></td>
-                                        <td style="text-align: left; padding: 10px;"><b><?= $data[0]["amount"] ?></b></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="background: #f1f1f1;text-align: right; padding: 10px;"><b>APPLICATION NO:</b></td>
-                                        <td style="text-align: left; padding: 10px;"><b><?= "RMU-" . $data[0]["app_number"] ?></b></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="background: #f1f1f1;text-align: right; padding: 10px;"><b>PIN NO:</b></td>
-                                        <td style="text-align: left; padding: 10px;"><b><?= $data[0]["pin_number"] ?></b></td>
-                                    </tr>
-                                    <tr style="border-top: 1px solid rgb(155, 155, 155)">
-                                        <td style="background: #f1f1f1;text-align: right; padding: 10px;">INSTITUTION:</td>
-                                        <td style="text-align: left; padding: 10px;"><b>REGIONAL MARITIME UNIVERSITY</b></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="background: #f1f1f1;text-align: right; padding: 10px;">CAMPUS:</td>
-                                        <td style="text-align: left; padding: 10px;"><b>MAIN</b></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="background: #f1f1f1;text-align: right; padding: 10px;">FORM NAME:</td>
-                                        <td style="text-align: left; padding: 10px;"><b><?= $data[0]["info"] . " - " . strtoupper($data[0]["name"]) ?></b></td>
-                                    </tr>
-                                </table>
-                            <?php } ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-    </main><!-- End #main -->
+    <div class="purchase-card-body">
+        <div class="pay-status" style="align-items: baseline; margin-top: 10px">
+            <?php if (!empty($data)) { ?>
+                <table style=" width:100%;border-collapse: collapse; border: 1px solid #222" class="mb-4">
+                    <tr>
+                        <td style="width: 150px; background: #f1f1f1;text-align: right; padding: 5px;"><b>CENTER/BRANCH:</b></td>
+                        <td colspan="2" style="text-align: left; padding: 5px;"><b><?= $data[0]["company"] . " " . $data[0]["branch"] ?></b></td>
+                    </tr>
+                    <tr>
+                        <td style="background: #f1f1f1;text-align: right; padding: 5px;"><b>PRICE:</b></td>
+                        <td style="text-align: left; padding: 5px;"><b><?= $data[0]["amount"] ?></b></td>
+                    </tr>
+                    <tr>
+                        <td style="background: #f1f1f1;text-align: right; padding: 5px;"><b>APPLICATION NO:</b></td>
+                        <td style="text-align: left; padding: 5px;"><b><?= "RMU-" . $data[0]["app_number"] ?></b></td>
+                    </tr>
+                    <tr>
+                        <td style="background: #f1f1f1;text-align: right; padding: 5px;"><b>PIN NO:</b></td>
+                        <td style="text-align: left; padding: 5px;"><b><?= $data[0]["pin_number"] ?></b></td>
+                    </tr>
+                    <tr>
+                        <td style="background: #f1f1f1;text-align: right; padding: 5px;"><b>Date Issued:</b></td>
+                        <td style="text-align: left; padding: 5px;"><b><?= date("jS F, Y") . " - " . date("h:i:s A") ?></b></td>
+                    </tr>
+                    <tr style="border-top: 1px solid #222">
+                        <td style="background: #f1f1f1;text-align: right; padding: 5px;">Institution:</td>
+                        <td style="text-align: left; padding: 5px;"><b>REGIONAL MARITIME UNIVERSITY</b></td>
+                    </tr>
+                    <tr>
+                        <td style="background: #f1f1f1;text-align: right; padding: 5px;">Form Name:</td>
+                        <td style="text-align: left; padding: 5px;"><b><?= strtoupper($data[0]["info"] . " - " . strtoupper($data[0]["name"])) ?></b></td>
+                    </tr>
+                    <tr>
+                        <td style="background: #f1f1f1;text-align: right; padding: 5px;">Received From:</td>
+                        <td style="text-align: left; padding: 5px;"><b><?= strtoupper($data[0]["first_name"] . " " . $data[0]["last_name"]) ?></b></td>
+                    </tr>
+                    <tr>
+                        <td style="background: #f1f1f1;text-align: right; padding: 5px;">Tel:</td>
+                        <td style="text-align: left; padding: 5px;"><b><?= strtoupper($data[0]["phone_number"]) ?></b></td>
+                    </tr>
+                    <tr style="border-top: 1px solid #222">
+                        <td style="background: #f1f1f1;text-align: right; padding: 5px;">
+                        </td>
+                        <td style="text-align: left;padding: 5px;">
+                            <ol style="line-height: 2;">
+                                <li>Go to https://admissions.rmuictonline.com on the internet after you purchase the voucher</li>
+                                <li>Carefully read the EASY STEPS TO APPLY instructions on the login page before login in.</li>
+                                <li>Log in to the online Admissiosns System with the e-voucher Application Number and PIN.</li>
+                                <li>Follow the steps on the Online Admissions system to complete your application.</li>
+                            </ol>
+                        </td>
+                    </tr>
+                </table>
+            <?php } ?>
+        </div>
+    </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             window.print();
             window.close();
-            
         });
     </script>
 
