@@ -239,7 +239,7 @@ $data = $expose->getApplicationInfo($_GET["exttrid"]);
         document.addEventListener("DOMContentLoaded", () => {
             window.print();
             window.close();
-            window.location.href = "sell.php";
+            
         });
     </script>
 
