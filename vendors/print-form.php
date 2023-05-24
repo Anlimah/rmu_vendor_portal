@@ -145,13 +145,18 @@ $vendor_info = $admin->fetchFullName($_SESSION["user"]);
 
 <body class="container-fluid">
 
-    <div class="row" style="padding: 0px 50px; margin-top: 10px">
-        <div class="col-7" style="display: flex; justify-content: center; align-items: center;">
-            <!--<img src="../assets/img/rmu-logo-large.jpeg" style="width: 100%" alt="">-->
-            <h3 style="font-weight: 600;">Regional Maritime University</h3>
+    <div class="row" style="padding: 0px 0px; margin-top: 25px">
+        <div class="col-7">
+            <div class="flex-row" style="justify-content: felt; align-items: left;">
+                <img src="../assets/img/rmu-logo.png" style="width: 50px; height: 50px" alt="">
+                <div class="flex-column">
+                    <h5 style="font-weight: 600; font-size: 16px !important">Regional Maritime University</h5>
+                    <h5 style="font-size: 16px !important">Form Sale System</h5>
+                </div>
+            </div>
         </div>
         <div class="col-5" style="display: flex; justify-content: right; align-items: center;">
-            <h1 style="font-size:medium !important; float:right">Receipt No.: <b>RMUHF<?= $data[0]["id"] ?></b></h1>
+            <h6 style="float:right; font-size: 16px !important">Receipt No.: <b>RMUHF<?= $data[0]["id"] ?></b></h6>
         </div>
     </div>
 
@@ -196,13 +201,11 @@ $vendor_info = $admin->fetchFullName($_SESSION["user"]);
                         <td style="text-align: left; padding: 5px;"><b><?= strtoupper($data[0]["phone_number"]) ?></b></td>
                     </tr>
                     <tr style="border-top: 1px solid #222">
-                        <td style="background: #f1f1f1;text-align: right; padding: 5px;">
-                        </td>
-                        <td style="text-align: left;padding: 5px;">
+                        <td style="padding: 5px;" colspan="2">
                             <ol style="line-height: 2;">
-                                <li>Go to https://admissions.rmuictonline.com on the internet after you purchase the voucher</li>
-                                <li>Carefully read the EASY STEPS TO APPLY instructions on the login page before login in.</li>
-                                <li>Log in to the online Admissiosns System with the e-voucher Application Number and PIN.</li>
+                                <li>Go to <b>https://admissions.rmuictonline.com</b> on the internet after you purchase the voucher.</li>
+                                <li>Carefully read the <b>EASY STEPS TO APPLY</b> instructions on the login page before login in.</li>
+                                <li>Log in to the online Admissiosns System with the e-voucher <b>Application Number</b> and <b>PIN</b>.</li>
                                 <li>Follow the steps on the Online Admissions system to complete your application.</li>
                             </ol>
                         </td>
@@ -214,8 +217,8 @@ $vendor_info = $admin->fetchFullName($_SESSION["user"]);
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            window.print();
-            window.close();
+            //window.print();
+            //window.close();
         });
     </script>
 
