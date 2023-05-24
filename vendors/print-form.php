@@ -217,8 +217,8 @@ $vendor_info = $admin->fetchFullName($_SESSION["user"]);
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            //window.print();
-            //window.close();
+            window.print();
+            window.close();
         });
     </script>
 
