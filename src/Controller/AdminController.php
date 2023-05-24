@@ -320,7 +320,7 @@ class AdminController
         $spreadSheetArray = $excelSheet->toArray();
 
         $startRow = 1;
-        $endRow = count($spreadSheetArray) - 1;
+        $endRow = count($spreadSheetArray);
 
         $successCount = 0;
         $errorCount = 0;
