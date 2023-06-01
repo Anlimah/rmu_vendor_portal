@@ -71,6 +71,7 @@ require_once('../inc/page-data.php');
 
                         <?php
                         $summary = $admin->fetchInitialSummaryRecord();
+
                         if (!empty($summary)) {
                             //collections
                             $collect_total = $summary["collections"]["collect"]["total_num"] ? $summary["collections"]["collect"]["total_num"] : "0";
@@ -108,7 +109,7 @@ require_once('../inc/page-data.php');
                                             };
 
                                             $trans = $transaction["total"] ? $transaction["total"] : 0;
-                                            $trans_percent = ($trans / $total_trans) * 100;
+                                            $trans_percent = $total_trans ? ($trans / $total_trans) * 100 : $total_trans;
                                         ?>
 
                                             <!-- Pending Transactions Card -->
@@ -125,7 +126,9 @@ require_once('../inc/page-data.php');
                                                 </div>
                                             </div><!-- End Pending Transactions Card -->
 
-                                        <?php } ?>
+                                        <?php
+                                        }
+                                        ?>
 
                                     </div>
                                 </div>
