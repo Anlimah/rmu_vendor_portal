@@ -487,8 +487,10 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         if (!isset($_POST["prog-type"]) || empty($_POST["prog-type"])) {
             die(json_encode(array("success" => false, "message" => "Missing input field: Type")));
         }
-        if (!isset($_POST["prog-wkd"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field: Weekend")));
+        if (!isset($_POST["prog-wkd"]) || empty($_POST["prog-wkd"])) {
+            $prog_wkd = "0";
+        } else {
+            $prog_wkd = "1";
         }
         if (!isset($_POST["prog-grp"]) || empty($_POST["prog-grp"])) {
             die(json_encode(array("success" => false, "message" => "Missing input field: Group")));
@@ -497,7 +499,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         $result;
         switch ($_POST["prog-action"]) {
             case 'add':
-                $rslt = $admin->addProgramme($_POST["prog-name"], $_POST["prog-type"], $_POST["prog-wkd"], $_POST["prog-grp"]);
+                $rslt = $admin->addProgramme($_POST["prog-name"], $_POST["prog-type"], $prog_wkd, $_POST["prog-grp"]);
                 if (!$rslt) {
                     die(json_encode(array("success" => false, "message" => "Failed to add vendor!")));
                 }
@@ -505,7 +507,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
                 break;
 
             case 'update':
-                $rslt = $admin->updateProgramme($_POST["prog-id"], $_POST["prog-name"], $_POST["prog-type"], $_POST["prog-wkd"], $_POST["prog-grp"]);
+                $rslt = $admin->updateProgramme($_POST["prog-id"], $_POST["prog-name"], $_POST["prog-type"], $prog_wkd, $_POST["prog-grp"]);
                 if (!$rslt) {
                     die(json_encode(array("success" => false, "message" => "Failed to update vendor information!")));
                 }

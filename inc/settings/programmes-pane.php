@@ -65,13 +65,11 @@
                                 <label for="prog-name">Name</label>
                                 <input type="text" class="form-control form-control-sm" name="prog-name" id="prog-name" placeholder="Programme Name">
                             </div>
-                            <div class="mb-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Check if this programme available to weekend students.">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="prog-wkd" id="prog-wkd">
-                                    <label class="form-check-label" for="prog-wkd">
-                                        Weekend available?
-                                    </label>
-                                </div>
+                            <div class="mb-3 form-check" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Check if this programme available to weekend students.">
+                                <input class="form-check-input" type="checkbox" name="prog-wkd" id="prog-wkd" value="off">
+                                <label class="form-check-label" for="prog-wkd">
+                                    Weekend available?
+                                </label>
                             </div>
                             <div class="mb-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Field is need for appropriate students admission processing.">
                                 <label for="form-name">Group</label>
