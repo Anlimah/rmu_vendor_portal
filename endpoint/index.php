@@ -487,7 +487,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         if (!isset($_POST["prog-type"]) || empty($_POST["prog-type"])) {
             die(json_encode(array("success" => false, "message" => "Missing input field: Type")));
         }
-        if (!isset($_POST["prog-wkd"]) || empty($_POST["prog-wkd"])) {
+        if (!isset($_POST["prog-wkd"])) {
             die(json_encode(array("success" => false, "message" => "Missing input field: Weekend")));
         }
         if (!isset($_POST["prog-grp"]) || empty($_POST["prog-grp"])) {

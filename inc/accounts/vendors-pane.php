@@ -12,7 +12,7 @@
 
             <div class="col-lg-5">
                 <h2>Main Branch</h2>
-                <table class="table table-striped">
+                <table class="table table-striped table-hover">
                     <thead class="table-dark">
                         <tr>
                             <th scope="col">#</th>
@@ -167,6 +167,9 @@
         });
 
         $(document).on("click", ".view-vendor", function(e) {
+            var tr = $(this).closest('tr');
+            tr.addClass("table-active");
+
             let data = {
                 vendor_key: $(this).attr("id")
             }
