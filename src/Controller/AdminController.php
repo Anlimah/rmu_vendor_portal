@@ -392,7 +392,7 @@ class AdminController
     public function fetchAllPrograms()
     {
         $query = "SELECT p.`id`, p.`name`, f.name AS `type`, p.`weekend`, p.`group` 
-                FROM programs AS p, form_categories AS f WHERE p.type = f.id";
+                FROM programs AS p, forms AS f WHERE p.type = f.id";
         return $this->dm->getData($query);
     }
 
