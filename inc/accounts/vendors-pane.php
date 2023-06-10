@@ -6,7 +6,7 @@
 
             <div class="alert alert-default" style="padding-left: 10px !important; padding-right: 10 !important">
                 <span>
-                    <button id="addNewVendorBtn" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Add new vendor account">Add</button>
+                    <button id="addNewVendorBtn" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Add new vendor account">Add vendors</button>
                 </span>
             </div>
 
@@ -104,7 +104,8 @@
                                             <p>Please follow the instructions below to successfully upload branches</p>
                                             <hr>
                                             <ul>
-                                                <li>The allow file formats are <b>.xlsx</b> and <b>.xls</b></li>
+                                                <li>The allowed file formats are <b>.xlsx</b> and <b>.xls</b></li>
+                                                <li><a href="../download-file.php?type=branch">Click Here</a> to download sample.</li>
                                             </ul>
                                         </div>
                                     </div>

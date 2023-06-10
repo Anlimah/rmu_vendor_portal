@@ -1710,4 +1710,12 @@ class AdminController
         }
         return $this->dm->getData($query, array(":i" => $i));
     }
+
+    public function downloadFile($file_url)
+    {
+        header('Content-Type:application/octet-stream');
+        header("Content-Transfer-Encoding:utf-8");
+        header("Content-disposition:attachment;filename=\"" . basename($file_url) . "\"");
+        readfile($file_url);
+    }
 }
