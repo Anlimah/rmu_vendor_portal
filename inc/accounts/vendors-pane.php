@@ -131,9 +131,10 @@
     $(document).ready(function() {
 
         $("#addNewVendorBtn").on("click", () => {
-            $("#addOrUpdateVendorModal").modal("toggle");
             $("#addOrUpdateVendorForm").trigger("reset");
             $("#v-name").prop("readonly", false).attr("style", "");
+            $("#addOrUpdateVendorModal").modal("toggle");
+            $("#other-branches-file-upload").show();
         })
 
         function resetVendorForm() {
