@@ -58,8 +58,6 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col" style="width: 250px;">Branch</th>
-                            <th scope="col">Phone Number</th>
-                            <th scope="col"></th>
                             <th scope="col"></th>
                         </tr>
                     </thead>
@@ -123,6 +121,31 @@
             </div>
             <!--End of Modal-->
 
+            <!-- Vendor list modal-->
+            <div class="modal fade" id="vendorsBranchList" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-2" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class=" modal-header">
+                            <h5 class="modal-title" id="vendorsBranchListLabel"><span class="branch-name">Branch</span> Branch</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table table-striped">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col" style="width: 250px;">Branch</th>
+                                        <th scope="col"></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="branches-list-tb"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--End of Modal-->
+
         </div>
     </div>
 </div>
@@ -169,6 +192,88 @@
         });
 
         $(document).on("click", ".view-vendor", function(e) {
+            var tr = $(this).closest('tr');
+            tr.addClass("table-active");
+
+            let data = {
+                vendor_key: $(this).attr("id")
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "../endpoint/vendor-sub-branches-group",
+                data: data,
+                success: function(result) {
+                    console.log(result);
+                    if (result.success) {
+                        $("#sub-branches-h").text(result.message[0]["company"] + " Branches");
+                        $(".sub-branches-tb").html("");
+                        $.each(result.message, function(index, data) {
+                            $(".sub-branches-tb").append(
+                                '<tr>' +
+                                '<th scope="row">' + (index + 1) + '</th>' +
+                                '<td>' + data["branch"] + '</td>' +
+                                '<td data-branch="' + data["branch"] + '" class="view-vendor-list">' +
+                                '<span style="cursor:pointer;" class="bi bi-eye text-success" title="View ' + data["branch"] + ' vendors account"> View</span>' +
+                                '</td>' +
+                                '</tr>'
+                            );
+                        });
+                    } else {
+                        alert(result.message)
+                    }
+
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+
+        $(document).on("click", ".view-vendor-list", function() {
+            let branch_ds = this.dataset.branch;
+            let data = {
+                vendor_branch: branch_ds
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "../endpoint/vendor-sub-branches",
+                data: data,
+                success: function(result) {
+                    console.log(result);
+                    if (result.success) {
+                        $("#sub-branches-h").text(result.message[0]["company"] + " Branches");
+                        $(".branches-list-tb").html("");
+                        $.each(result.message, function(index, data) {
+                            $(".branches-list-tb").append(
+                                '<tr>' +
+                                '<th scope="row">' + (index + 1) + '</th>' +
+                                '<td>' + data["role"] + '</td>' +
+                                '<td>' + data["phone_number"] + '</td>' +
+                                '<td id="' + data["id"] + '" data-branchType="sub" class="edit-vendor">' +
+                                '<span style="cursor:pointer;" class="bi bi-pencil-square text-primary" title="Edit ' + data["phone_number"] + '"> </span>' +
+                                '</td>' +
+                                '<td id="' + data["id"] + '" class="delete-vendor">' +
+                                '<span style="cursor:pointer;" class="bi bi-trash text-danger" title="Delete ' + data["phone_number "] + '" ></span>' +
+                                '</td>' +
+                                '</tr>'
+                            );
+                        });
+
+                        $("#vendorsBranchList").modal("toggle");
+                    } else {
+                        alert(result.message)
+                    }
+
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+
+        $(document).on("click", ".view-branch", function(e) {
             var tr = $(this).closest('tr');
             tr.addClass("table-active");
 

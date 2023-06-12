@@ -208,6 +208,13 @@ class AdminController
         return $this->dm->inputData($query, array(":i" => $vendor_id));
     }
 
+    public function fetchVendorSubBranchesGrp($company)
+    {
+        $query = "SELECT * FROM vendor_details WHERE company = :c AND 
+                branch <> 'MAIN' AND `type` <> 'ONLINE' GROUP BY `branch`";
+        return $this->dm->inputData($query, array(":c" => $company));
+    }
+
     public function fetchVendorSubBranches($company)
     {
         $query = "SELECT * FROM vendor_details WHERE company = :c AND 

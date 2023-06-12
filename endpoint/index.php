@@ -423,6 +423,16 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     }
 
     //
+    elseif ($_GET["url"] == "vendor-sub-branches-group") {
+        if (!isset($_POST["vendor_key"]) || empty($_POST["vendor_key"])) {
+            die(json_encode(array("success" => false, "message" => "Missing input field")));
+        }
+        $rslt = $admin->fetchVendorSubBranchesGrp($_POST["vendor_key"]);
+        if (!$rslt) die(json_encode(array("success" => false, "message" => "Error fetching vendor details!")));
+        die(json_encode(array("success" => true, "message" => $rslt)));
+    }
+
+    //
     elseif ($_GET["url"] == "vendor-sub-branches") {
         if (!isset($_POST["vendor_key"]) || empty($_POST["vendor_key"])) {
             die(json_encode(array("success" => false, "message" => "Missing input field")));
