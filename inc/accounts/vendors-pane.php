@@ -134,7 +134,9 @@
                                 <thead class="table-dark">
                                     <tr>
                                         <th scope="col">#</th>
-                                        <th scope="col" style="width: 250px;">Branch</th>
+                                        <th scope="col">Role</th>
+                                        <th scope="col">Phone Number</th>
+                                        <th scope="col"></th>
                                         <th scope="col"></th>
                                     </tr>
                                 </thead>
@@ -235,6 +237,8 @@
             let data = {
                 vendor_branch: branch_ds
             }
+
+            console.log(branch_ds);
 
             $.ajax({
                 type: "POST",
@@ -348,6 +352,7 @@
                             $("#other-branches-file-upload").hide();
                         };
 
+                        $("#vendorsBranchList").modal("toggle");
                         $("#addOrUpdateVendorModal").modal("toggle");
                     } else {
                         alert(result.message)

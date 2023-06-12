@@ -434,10 +434,10 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
     //
     elseif ($_GET["url"] == "vendor-sub-branches") {
-        if (!isset($_POST["vendor_key"]) || empty($_POST["vendor_key"])) {
+        if (!isset($_POST["vendor_branch"]) || empty($_POST["vendor_branch"])) {
             die(json_encode(array("success" => false, "message" => "Missing input field")));
         }
-        $rslt = $admin->fetchVendorSubBranches($_POST["vendor_key"]);
+        $rslt = $admin->fetchVendorSubBranches($_POST["vendor_branch"]);
         if (!$rslt) die(json_encode(array("success" => false, "message" => "Error fetching vendor details!")));
         die(json_encode(array("success" => true, "message" => $rslt)));
     }

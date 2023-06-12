@@ -217,9 +217,9 @@ class AdminController
 
     public function fetchVendorSubBranches($company)
     {
-        $query = "SELECT * FROM vendor_details WHERE company = :c AND 
+        $query = "SELECT * FROM vendor_details WHERE branch = :b AND 
                 branch <> 'MAIN' AND `type` <> 'ONLINE'";
-        return $this->dm->inputData($query, array(":c" => $company));
+        return $this->dm->inputData($query, array(":b" => $company));
     }
 
     public function verifyVendorByCompanyAndBranch($company, $branch)
