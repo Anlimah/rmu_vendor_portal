@@ -332,6 +332,7 @@ class AdminController
             $v_branch = $spreadSheetArray[$i][0];
             $v_email = $spreadSheetArray[$i][1];
             $v_phone = $spreadSheetArray[$i][2];
+            $v_role = $spreadSheetArray[$i][3];
 
             if (!$v_branch || !$v_email || !$v_phone) {
                 array_push($skippedCount, ($i - 1));
@@ -341,7 +342,7 @@ class AdminController
             $user_data = array(
                 "first_name" => $mainBranch, "last_name" => $v_branch, "user_name" => $v_email,
                 "user_role" => "Vendors", "vendor_company" => $mainBranch,
-                "vendor_phone" => $v_phone, "vendor_branch" => $v_branch
+                "vendor_phone" => $v_phone, "vendor_branch" => $v_branch, "vendor_role" => $v_role
             );
 
             $vendor_id = time() + $i;
@@ -583,10 +584,12 @@ class AdminController
 
         if (strtoupper($user_data["user_role"]) == "VENDORS") {
             if (!$vendor_id) $vendor_id = time();
-            $query1 = "INSERT INTO vendor_details (`id`, `type`, `company`, `branch`, `phone_number`, `user_id`) VALUES(:id, :tp, :cp, :b, :pn, :ui)";
+            $query1 = "INSERT INTO vendor_details (`id`, `type`, `company`, `branch`, `role`, `phone_number`, `user_id`) 
+                        VALUES(:id, :tp, :cp, :bh, :vr, :pn, :ui)";
             $params1 = array(
                 ":id" => $vendor_id, ":tp" => "VENDOR", ":cp" => $user_data["vendor_company"],
-                ":b" => $user_data["vendor_branch"], ":pn" => $user_data["vendor_phone"], ":ui" => $sys_user[0]["id"]
+                ":bh" => $user_data["vendor_branch"], ":vr" => $user_data["vendor_role"],
+                ":pn" => $user_data["vendor_phone"], ":ui" => $sys_user[0]["id"]
             );
             $this->dm->inputData($query1, $params1);
             $subject = "Regional Maritime University - Vendor Account";
@@ -1588,6 +1591,10 @@ class AdminController
         return array("success" => false, "message" => "Failed to update purchase records!");
     }
 
+    /**
+     * Generates and sends new applicant login details
+     * @param transID - transaction id of purchase 
+     */
     public function sendPurchaseInfo(int $transID)
     {
         //geenerate new login details
