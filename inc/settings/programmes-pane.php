@@ -63,7 +63,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="prog-name">Name</label>
-                                <input type="text" class="form-control form-control-sm" name="prog-name" id="prog-name" placeholder="Programme Name">
+                                <input type="text" style="text-transform: uppercase;" class="form-control form-control-sm" name="prog-name" id="prog-name" placeholder="Programme Name">
                             </div>
                             <div class="mb-3 form-check" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Check if this programme available to weekend students.">
                                 <input class="form-check-input" type="checkbox" name="prog-wkd" id="prog-wkd" value="off">
