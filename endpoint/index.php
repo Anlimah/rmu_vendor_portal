@@ -284,6 +284,20 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         }
         die(json_encode($data));
     }
+
+    //
+    elseif ($_GET["url"] == "getAllAdmittedApplicants") {
+
+        if (!isset($_POST["cert-type"]))
+            die(json_encode(array("success" => false, "message" => "Invalid input field")));
+        if (empty($_POST["cert-type"]))
+            die(json_encode(array("success" => false, "message" => "Missing input field")));
+
+        $result = $admin->getAllAdmittedApplicantsAllAll($_POST["cert-type"]);
+        if (empty($result)) die(json_encode(array("success" => false, "message" => "No result found!")));
+        die(json_encode(array("success" => true, "message" => $result)));
+    }
+
     //
     elseif ($_GET["url"] == "getUnadmittedApps") {
 
@@ -757,7 +771,19 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         die(json_encode($admin->resetUserPassword($newPass)));
     }
 
+    if ($_GET["url"] == "admit-individual-applicant") {
+        if (!isset($_POST["app-prog"]) || empty($_POST["app-prog"]))
+            die(json_encode(array("success" => false, "message" => "Please choose a programme!")));
+        if (!isset($_POST["app-login"]) || empty($_POST["app-login"]))
+            die(json_encode(array("success" => false, "message" => "There no match for this applicant in database!")));
 
+        die(json_encode($admin->admitIndividualApplicant($_POST["app-login"], $_POST["app-prog"])));
+    }
+
+    if ($_GET["url"] == "decline-individual-applicant") {
+        if (!isset($_POST["app-login"]) || empty($_POST["app-login"]))
+            die(json_encode(array("success" => false, "message" => "There no match for this applicant in database!")));
+    }
 
     // All PUT request will be sent here
 } else if ($_SERVER['REQUEST_METHOD'] == "PUT") {

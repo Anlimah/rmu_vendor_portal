@@ -1054,6 +1054,16 @@ class AdminController
         return $this->dm->getData($query);
     }
 
+    public function getAllAdmittedApplicantsAllAll($cert_type)
+    {
+        $query = "SELECT p.`first_name`, p.`middle_name`, p.`last_name`, fs.first_prog_qualified, fs.second_prog_qualified, 
+                    pi.first_prog, pi.second_prog, pi.application_term, pi.study_stream  
+                FROM `personal_information` AS p, `applicants_login` AS a, form_sections_chek AS fs, academic_background AS ab, program_info AS pi   
+                WHERE p.app_login = a.id AND ab.app_login = a.id AND fs.app_login = a.id AND pi.app_login = a.id AND 
+                    fs.admitted = 1 AND ab.cert_type = :ct";
+        return $this->dm->getData($query, array(":ct" => $cert_type));
+    }
+
     public function getAllAdmitedApplicants($cert_type)
     {
         $in_query = "";
@@ -1284,7 +1294,7 @@ class AdminController
                 }
             }
 
-            die(json_encode(
+            /*die(json_encode(
                 array(
                     "total_core_score" => $total_core_score,
                     "required_core_passed" => $required_core_passed,
@@ -1294,7 +1304,7 @@ class AdminController
                     "total_elective_score" => $total_elective_score,
                     "any_three_elective_scores" => $any_three_elective_scores,
                 )
-            ));
+            ));*/
         }
 
         $array_before_sort = $any_three_elective_scores;
@@ -1419,6 +1429,75 @@ class AdminController
         }
 
         return 0;
+    }
+
+    private function getAppProgDetailsByAppID($appID)
+    {
+        $sql = "SELECT * FROM `program_info` WHERE `app_login` = :i";
+        return $this->dm->getData($sql, array(':i' => $appID));
+    }
+
+    private function getApplicantContactInfo($appID)
+    {
+        $sql = "SELECT * FROM `personal_information` WHERE `app_login` = :i";
+        return $this->dm->getData($sql, array(':i' => $appID));
+    }
+
+    public function admitIndividualApplicant($appID, $prog_choice)
+    {
+        $prog_choice_q = $prog_choice . "_qualified";
+        $query = "UPDATE `form_sections_chek` SET `admitted` = 1, `$prog_choice_q` = 1 WHERE `app_login` = :i";
+        if ($this->dm->inputData($query, array(":i" => $appID))) {
+            $contactInfo = $this->getApplicantContactInfo($appID);
+            $programInfo = $this->getAppProgDetailsByAppID($appID);
+
+            // Prepare SMS message
+            $message = 'Hi ' . ucfirst(strtolower($contactInfo[0]["first_name"])) . " " . ucfirst(strtolower($contactInfo[0]["last_name"])) . '. ';
+            $message .= 'Congratulations! You have been offered admission into Regional Maritime University to read ' . $programInfo[0][$prog_choice];
+            $message .= ' as a ' . $programInfo[0]['study_stream'] . " student. To secure this offer, please ";
+            $message .= 'visit the application portal at https://admissions.rmuictonline.com and login to complete an acceptance form.';
+            $to = $contactInfo[0]["phone_no1_code"] . $contactInfo[0]["phone_no1"];
+
+            $sentEmail = false;
+            $smsSent = false;
+
+            // Send SMS message
+            $response = json_decode($this->expose->sendSMS($to, $message));
+
+            // Set SMS response status
+            if (!$response->status) $smsSent = true;
+
+            // Check if email address was provided
+            if (!empty($data[0]["email_address"])) {
+                // Prepare email message
+                $e_message = '<p>Hi ' . $data[0]["first_name"] . ",</p>";
+                $e_message .= '<p>Congratulations! You have been offered admission into Regional Maritime University to read ' . $programInfo[0][$prog_choice];
+                $e_message .= 'as a ' . strtolower($programInfo[0]['study_stream']) . ' student.</p>';
+                $e_message .= '<p>To secure this offer, please visit the application portal at https://admissions.rmuictonline.com and login to complete an acceptance form.';
+
+                // Send email message
+                $e_response = $this->expose->sendEmail($contactInfo[0]["email_addr"], 'ONLINE APPLICATION PORTAL LOGIN INFORMATION', $e_message);
+
+                // Ste email reponse status
+                if ($e_response) $sentEmail = true;
+            }
+
+            // Set output message
+            $output = "";
+            if ($smsSent || $sentEmail) $output = "Applicant admitted successfully and SMS/email sent!";
+            else $output = "Applicant admitted successfully but failed to send SMS/Email!";
+
+            // Log activity
+            $this->logActivity(
+                $_SESSION["user"],
+                "INSERT",
+                "Admissions user {$_SESSION["user"]} admitted applicant with ID {$appID}"
+            );
+
+            // return output message
+            return array("success" => true, "message" => $output);
+        }
+        return array("success" => false, "message" => "Failed to admit applicant!");
     }
 
 

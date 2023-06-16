@@ -289,7 +289,7 @@ class UsersController
     {
         $sql = "SELECT `prefix`, `first_name`, `middle_name`, `last_name`, `suffix`, 
                 `gender`, `dob`, `marital_status`, `nationality`, `country_res`, 
-                `disability`, `photo`, `country_birth`, `spr_birth`, `city_birth`, 
+                `disability`, `disability_descript`,  `photo`, `country_birth`, `spr_birth`, `city_birth`, 
                 `english_native`, `other_language`, `postal_addr`, `postal_town`, 
                 `postal_spr`, `postal_country`, `phone_no1_code`, `phone_no1`, `phone_no2_code`, `phone_no2`, `email_addr`, 
                 `p_prefix`, `p_first_name`, `p_last_name`, `p_occupation`, `p_phone_no_code`, `p_phone_no`, 
