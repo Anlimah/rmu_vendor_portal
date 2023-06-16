@@ -237,8 +237,7 @@ require_once('../inc/page-data.php');
                         if (result.success) {
                             $("tbody").html('');
                             $.each(result.message, function(index, value) {
-                                console.log(value["declaration"]);
-                                if (value["declaration"]) {
+                                if (value["declaration"] == 1) {
                                     $("tbody").append(
                                         '<tr>' +
                                         '<th scope="row"><a href="javascript:void()">' + (index + 1) + '</a></th>' +
