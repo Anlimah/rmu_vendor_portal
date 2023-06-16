@@ -111,6 +111,28 @@ $app_number = $admin->getApplicantAppNum($_GET["q"]);
             flex-direction: row !important;
             padding: 6px 20px !important;
         }
+
+        .photo-display {
+            width: 150px !important;
+            height: 150px !important;
+            min-width: 150px !important;
+            min-height: 150px !important;
+            /*background: red;*/
+            border-radius: 5px;
+            border: 1px solid #aaa;
+            background: #f1f1f1;
+            padding: 5px;
+        }
+
+        .photo-display>img {
+            width: 100% !important;
+        }
+
+        .photo-display>img {
+            width: 100% !important;
+            height: 100% !important;
+            border-radius: 5px;
+        }
     </style>
 </head>
 
@@ -149,7 +171,7 @@ $app_number = $admin->getApplicantAppNum($_GET["q"]);
                                 <div class="col-6" style="border-right: 1px solid #ccc;">
                                     <div class="col">
                                         <div style="display: flex;">
-                                            <div class="photo-display" style="margin-top: 5px; margin-right: 25px">
+                                            <div class="photo-display" style="margin-top: 5px; margin-right: 25px;">
                                                 <img id="app-photo" src="<?= 'https://admissions.rmuictonline.com/apply/photos/' . $personal[0]["photo"] ?>" alt="">
                                             </div>
                                             <div style="display: flex; flex-direction: column">
