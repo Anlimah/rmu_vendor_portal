@@ -150,7 +150,7 @@ $app_number = $admin->getApplicantAppNum($_GET["q"]);
                                     <div class="col">
                                         <div style="display: flex;">
                                             <div class="photo-display" style="margin-top: 5px; margin-right: 25px">
-                                                <img id="app-photo" src="<?= $_SERVER["DOCUMENT_ROOT"] . '/rmu_admissions/apply/photos/1664974457.251.jpg' ?>" alt="">
+                                                <img id="app-photo" src="<?= 'https://admissions.rmuictonline.com/apply/photos/' . $personal[0]["photo"] ?>" alt="">
                                             </div>
                                             <div style="display: flex; flex-direction: column">
                                                 <div class="col">
