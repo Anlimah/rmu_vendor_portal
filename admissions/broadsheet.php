@@ -53,7 +53,6 @@ require_once('../inc/page-data.php');
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-                    <li class="breadcrumb-item"><a href="applications.php">Applications</a></li>
                     <li class="breadcrumb-item active">Broadsheet</li>
                 </ol>
             </nav>
@@ -70,10 +69,10 @@ require_once('../inc/page-data.php');
                         <div class="card-body">
                             <h5 class="card-title">Broadsheet</h5>
                             <form id="fetchDataForm" class="mb-4">
-                                <div class="row">
+                                <div class="row" style="justify-content: baseline; align-items: center">
                                     <div class="col-3">
-                                        <label for="cert-type" class="form-label">Certificate Type</label>
-                                        <select name="cert-type" id="cert-type" class="form-select form-select-sm">
+                                        <!--<label for="cert-type" class="form-label">Certificate Type</label>-->
+                                        <select name="cert-type" id="cert-type" class="form-select">
                                             <option value="" hidden>Choose Certificate</option>
                                             <option value="WASSCE">WASSCE/NECO</option>
                                             <option value="SSSCE">SSSCE/GBCE</option>
@@ -81,9 +80,8 @@ require_once('../inc/page-data.php');
                                             <option value="ALL">ALL</option>
                                         </select>
                                     </div>
-                                    <div class="col-3">
-                                        <label for="prog-type" class="form-label" style="visibility: hidden;">Programme Category</label>
-                                        <button type="submit" class="btn mb-4 btn-outline-primary btn-sm">Fetch Data</button>
+                                    <div class="col-3 mt-4">
+                                        <button type="submit" class="btn mb-4 btn-outline-primary">Fetch Data</button>
                                     </div>
                                 </div>
                             </form>
@@ -122,9 +120,6 @@ require_once('../inc/page-data.php');
 
                     </div>
                 </div><!-- End Recent Sales -->
-
-                <!-- Right side columns -->
-                <!-- End Right side columns -->
 
             </div>
         </section>
