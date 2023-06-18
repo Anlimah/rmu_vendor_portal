@@ -85,7 +85,7 @@ require_once('../inc/page-data.php');
                                             <h5 class="card-title"><?= $form_type["name"] ?></h5>
                                             <div class="d-flex align-items-center">
                                                 <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                                    <img src="../assets/img/icons8-<?= $form_type["name"] ?>.png" style="width: 48px;" alt="">
+                                                    <img src="../assets/img/icons8-<?= ucfirst(strtolower($form_type["name"])) ?>.png" style="width: 48px;" alt="">
                                                 </div>
                                                 <div class="ps-3">
                                                     <h6><?= $admin->fetchTotalApplications($form_type["id"])[0]["total"]; ?></h6>
@@ -126,13 +126,13 @@ require_once('../inc/page-data.php');
                             <div class="card info-card">
                                 <div class="card-body">
                                     <a href="admit-applicants.php" style="text-decoration: none;">
-                                        <h5 class="card-title">Bulk/Auto Admit Applicants</h5>
+                                        <h5 class="card-title">Admit WAEC Applicants</h5>
                                         <div class="d-flex align-items-center">
                                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                                                 <img src="../assets/img/icons8-checked-user-male-96.png" style="width: 48px;" alt="">
                                             </div>
                                             <div class="ps-3">
-                                                <span class="text-muted small pt-2 ps-1">Admit WAEC (WASSCE, SSSCE, GCBE, NECO) applicants</span>
+                                                <span class="text-muted small pt-2 ps-1">Admit (WASSCE, SSSCE, GCBE, NECO) applicants</span>
                                             </div>
                                         </div>
                                     </a>

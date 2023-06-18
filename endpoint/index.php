@@ -783,6 +783,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     if ($_GET["url"] == "decline-individual-applicant") {
         if (!isset($_POST["app-login"]) || empty($_POST["app-login"]))
             die(json_encode(array("success" => false, "message" => "There no match for this applicant in database!")));
+        die(json_encode($admin->declineIndividualApplicant($_POST["app-login"])));
     }
 
     // All PUT request will be sent here

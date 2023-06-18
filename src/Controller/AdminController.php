@@ -1088,7 +1088,8 @@ class AdminController
                 WHERE 
                     p.`app_login` = l.`id` AND a.`app_login` = l.`id` AND 
                     f.`app_login` = l.`id` AND i.`app_login` = l.`id` AND
-                    a.`awaiting_result` = 0 AND f.`declaration` = 1 AND f.`admitted` = 0";
+                    a.`awaiting_result` = 0 AND f.`declaration` = 1 AND 
+                    f.`admitted` = 0 AND f.`declined` = 0";
         $param = array();
         if (strtolower($certificate) != "all") {
             $query .= " AND a.`cert_type` = :c";
@@ -1217,12 +1218,12 @@ class AdminController
             }
 
             if ($qualified) {
-                $query = "UPDATE `form_sections_chek` SET `admitted` = 1, `$prog_choice` = 1 WHERE `app_login` = :i";
+                $query = "UPDATE `form_sections_chek` SET `admitted` = 1, `declined` = 0, `$prog_choice` = 1 WHERE `app_login` = :i";
                 $this->dm->getData($query, array(":i" => $app_result["id"]));
                 return $qualified;
             }
         } else {
-            $query = "UPDATE `form_sections_chek` SET `admitted` = 0,  `$prog_choice` = 1 WHERE `app_login` = :i";
+            $query = "UPDATE `form_sections_chek` SET `admitted` = 0, `declined` = 1,  `$prog_choice` = 1 WHERE `app_login` = :i";
             $this->dm->getData($query, array(":i" => $app_result["id"]));
             return $qualified;
         }
@@ -1446,7 +1447,7 @@ class AdminController
     public function admitIndividualApplicant($appID, $prog_choice)
     {
         $prog_choice_q = $prog_choice . "_qualified";
-        $query = "UPDATE `form_sections_chek` SET `admitted` = 1, `$prog_choice_q` = 1 WHERE `app_login` = :i";
+        $query = "UPDATE `form_sections_chek` SET `admitted` = 1, `declined` = 0, `$prog_choice_q` = 1 WHERE `app_login` = :i";
         if ($this->dm->inputData($query, array(":i" => $appID))) {
             $contactInfo = $this->getApplicantContactInfo($appID);
             $programInfo = $this->getAppProgDetailsByAppID($appID);
@@ -1500,6 +1501,14 @@ class AdminController
         return array("success" => false, "message" => "Failed to admit applicant!");
     }
 
+    public function declineIndividualApplicant($appID)
+    {
+        $query = "UPDATE `form_sections_chek` SET `admitted` = 0, `declined` = 1  WHERE `app_login` = :i";
+        if ($this->dm->inputData($query, array(":i" => $appID))) {
+            return array("success" => true, "message" => "Succesfully declined applicant admission!");
+        }
+        return array("success" => false, "message" => "Failed to declined applicant admission!");
+    }
 
     /**
      * For accounts officers

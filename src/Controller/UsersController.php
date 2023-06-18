@@ -299,7 +299,7 @@ class UsersController
 
     public function fetchApplicantAcaB($user_id)
     {
-        $sql = "SELECT `school_name`, `s_number`, `country`, `region`, `city`, `cert_type`, 
+        $sql = "SELECT `school_name`, `s_number`, `country`, `region`, `city`, `cert_type`, `other_cert_type`, 
                 `month_started`, `year_started`, `month_completed`, `year_completed`, 
                 `index_number`, `course_of_study`, `awaiting_result` 
                 FROM `academic_background` WHERE `app_login` = :a";

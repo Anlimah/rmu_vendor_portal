@@ -91,7 +91,6 @@ $app_number = $admin->getApplicantAppNum($_GET["q"]);
         }
 
         .edu-history-control {
-            width: 90px !important;
             height: 50px !important;
             background-color: #e6e6e6 !important;
             display: flex !important;
@@ -103,7 +102,7 @@ $app_number = $admin->getApplicantAppNum($_GET["q"]);
 
         .edu-history-footer {
             width: 100% !important;
-            height: 36px !important;
+            height: 100% !important;
             background-color: #ffffb3 !important;
             margin: 0 !important;
             padding: 0 !important;
@@ -304,6 +303,36 @@ $app_number = $admin->getApplicantAppNum($_GET["q"]);
                                                                         <?= ucwords(strtolower($edu_hist["month_completed"])) . " " . ucwords(strtolower($edu_hist["year_completed"])) ?>
                                                                     </p>
                                                                 </div>
+                                                                <div class="edu-history-control">
+                                                                    <button type="button" class="btn " name="edit-edu-btn" id="edit<?= $edu_hist["s_number"] ?>">
+                                                                        <span class="bi bi-caret-down-fill edit-edu-btn" style="font-size: 20px !important;"></span>
+                                                                    </button>
+                                                                    <button type="button" class="btn edit-edu-btn" name="edit-edu-btn" id="edit<?= $edu_hist["s_number"] ?>" style="display: none">
+                                                                        <span class="bi bi-caret-up-fill" style="font-size: 20px !important;"></span>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="edu-history-footer">
+                                                                <table>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <th scope="row" style="width: 150px;">Country: </th>
+                                                                            <td><?= $edu_hist["country"] ?></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th scope="row">Region: </th>
+                                                                            <td><?= $edu_hist["region"] ?></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th scope="row">Certificate Type: </th>
+                                                                            <td><?= $edu_hist["cert_type"] ?></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th scope="row">Awaiting Status: </th>
+                                                                            <td><?= $edu_hist["awaiting_result"] ? "YES" : "NO" ?></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
                                                             </div>
                                                         </div>
                                                 <?php
@@ -323,7 +352,8 @@ $app_number = $admin->getApplicantAppNum($_GET["q"]);
                                                         <thead class="table-dark">
                                                             <tr>
                                                                 <th scope="col">S/N</th>
-                                                                <th scope="col">DOCUMENT TYPE</th>
+                                                                <th scope="col">DOC TYPE</th>
+                                                                <th scope="col">DOC NAME</th>
                                                                 <th scope="col"> </th>
                                                             </tr>
                                                         </thead>
@@ -335,7 +365,8 @@ $app_number = $admin->getApplicantAppNum($_GET["q"]);
                                                                 <tr>
                                                                     <th scope="row"><?= $ind ?></th>
                                                                     <td><?= ucwords(strtoupper($cert["type"])) ?></td>
-                                                                    <td> <button type="button" style="cursor: pointer; float: right" class="btn btn-primary btn-sm delete-file" id="tran-delete-<?= $cert["id"] ?>" title="Open"><span class="bi bi-eye"></span></button></td>
+                                                                    <td><?= (strtoupper($cert["type"]) == "OTHER" && count($academic_BG) == 1) ? ucwords(strtoupper($academic_BG[0]["other_cert_type"])) : ucwords(strtoupper($cert["type"]))  ?></td>
+                                                                    <td> <button type="button" style="cursor: pointer; float: right" class="btn btn-primary btn-sm open-file" id="file-open-<?= $cert["id"] ?>" title="Open"><span class="bi bi-eye"></span></button></td>
                                                                 </tr>
                                                             <?php
                                                                 $ind += 1;
@@ -643,7 +674,7 @@ $app_number = $admin->getApplicantAppNum($_GET["q"]);
 
             $("#decline-applicant-form").on("submit", function(e) {
                 e.preventDefault();
-                var c = confirm("Are you sure you want to admit this applicant?");
+                var c = confirm("Are you sure you want to decline this applicant's admission?");
                 if (c) {
                     $.ajax({
                         type: "POST",
