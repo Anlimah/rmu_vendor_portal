@@ -299,6 +299,19 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     }
 
     //
+    elseif ($_GET["url"] == "getAllDeclinedApplicants") {
+
+        if (!isset($_POST["cert-type"]))
+            die(json_encode(array("success" => false, "message" => "Invalid input field")));
+        if (empty($_POST["cert-type"]))
+            die(json_encode(array("success" => false, "message" => "Missing input field")));
+
+        $result = $admin->getAllDeclinedApplicantsAllAll($_POST["cert-type"]);
+        if (empty($result)) die(json_encode(array("success" => false, "message" => "No result found!")));
+        die(json_encode(array("success" => true, "message" => $result)));
+    }
+
+    //
     elseif ($_GET["url"] == "getUnadmittedApps") {
 
         if (!isset($_POST["cert-type"]) || !isset($_POST["prog-type"])) {

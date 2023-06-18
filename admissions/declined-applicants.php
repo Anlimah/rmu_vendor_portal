@@ -49,11 +49,11 @@ require_once('../inc/page-data.php');
     <main id="main" class="main">
 
         <div class="pagetitle">
-            <h1>Admit Applicants</h1>
+            <h1>Declined Applicants</h1>
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-                    <li class="breadcrumb-item active">Admitted Applicants</li>
+                    <li class="breadcrumb-item active">Declined Applicants</li>
                 </ol>
             </nav>
         </div><!-- End Page Title -->
@@ -74,7 +74,7 @@ require_once('../inc/page-data.php');
                         </div>
 
                         <div class="card-body">
-                            <h5 class="card-title">Admit Applicants</h5>
+                            <h5 class="card-title">Declined Applicants</h5>
                             <form id="fetchDataForm" class="mb-4">
                                 <div class="row">
                                     <div class="col-3">
@@ -138,7 +138,7 @@ require_once('../inc/page-data.php');
 
                 $.ajax({
                     type: "POST",
-                    url: "../endpoint/getAllAdmittedApplicants",
+                    url: "../endpoint/getAllDeclinedApplicants",
                     data: data,
                     success: function(result) {
                         console.log(result);
@@ -167,6 +167,7 @@ require_once('../inc/page-data.php');
                         } else {
                             $("tbody").html("<tr style='text-align: center'><td colspan='5'>No entries found</td></tr>");
                         }
+
                     },
                     error: function(error) {
                         console.log(error);

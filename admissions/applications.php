@@ -261,15 +261,10 @@ require_once('../inc/page-data.php');
                                 }
 
                             });
+                            $("#info-output").hide();
 
                         } else {
-                            $("tbody").html('');
-                            $("#info-output").html(
-                                '<div class="alert alert-info alert-dismissible fade show" role="alert">' +
-                                '<i class="bi bi-info-circle me-1"></i>' + result.message +
-                                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-                                '</div>'
-                            );
+                            $("tbody").html("<tr style='text-align: center'><td colspan='7'>No entries found</td></tr>");
                         }
                     },
                     error: function(error) {
@@ -315,15 +310,10 @@ require_once('../inc/page-data.php');
                                     '<td><b><a href="applicant-info.php?q=' + value.id + '">Open</a></b></td>' +
                                     '</tr>');
                             });
+                            $("#info-output").hide();
 
                         } else {
-                            $("tbody").html('');
-                            $("#info-output").html(
-                                '<div class="alert alert-info alert-dismissible fade show" role="alert">' +
-                                '<i class="bi bi-info-circle me-1"></i>' + result.message +
-                                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-                                '</div>'
-                            );
+                            $("tbody").html("<tr style='text-align: center'><td colspan='7'>No entries found</td></tr>");
                         }
 
                         if (id == "type") {

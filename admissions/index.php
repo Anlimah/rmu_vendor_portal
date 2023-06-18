@@ -159,6 +159,25 @@ require_once('../inc/page-data.php');
                             </div>
                         </div><!-- End Admitted Applicants -->
 
+                        <!-- Admitted Applicants -->
+                        <div class="col-xxl-3 col-md-3">
+                            <div class="card info-card">
+                                <div class="card-body">
+                                    <a href="declined-applicants.php" style="text-decoration: none;">
+                                        <h5 class="card-title">Declined Applicants</h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <img src="../assets/img/icons8-users-96.png" style="width: 48px;" alt="">
+                                            </div>
+                                            <div class="ps-3">
+                                                <span class="text-muted small pt-2 ps-1">List of all declined applicants</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div><!-- End Admitted Applicants -->
+
                         <!-- Admitted Students Card -->
                         <div class="col-xxl-3 col-md-3">
                             <div class="card info-card text-success">

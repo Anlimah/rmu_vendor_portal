@@ -1056,12 +1056,28 @@ class AdminController
 
     public function getAllAdmittedApplicantsAllAll($cert_type)
     {
+        $in_query = "";
+        if ($cert_type != "All") $in_query = "AND ab.cert_type = '$cert_type'";
         $query = "SELECT p.`first_name`, p.`middle_name`, p.`last_name`, fs.first_prog_qualified, fs.second_prog_qualified, 
-                    pi.first_prog, pi.second_prog, pi.application_term, pi.study_stream  
-                FROM `personal_information` AS p, `applicants_login` AS a, form_sections_chek AS fs, academic_background AS ab, program_info AS pi   
-                WHERE p.app_login = a.id AND ab.app_login = a.id AND fs.app_login = a.id AND pi.app_login = a.id AND 
-                    fs.admitted = 1 AND ab.cert_type = :ct";
-        return $this->dm->getData($query, array(":ct" => $cert_type));
+                    pi.first_prog, pi.second_prog, pi.application_term, pi.study_stream, pd.`form_id`, a.id 
+                FROM `personal_information` AS p, `applicants_login` AS a, form_sections_chek AS fs, 
+                    academic_background AS ab, program_info AS pi, purchase_detail AS pd 
+                WHERE p.app_login = a.id AND ab.app_login = a.id AND fs.app_login = a.id AND 
+                    pd.id = a.purchase_id AND pi.app_login = a.id AND fs.admitted = 1 $in_query";
+        return $this->dm->getData($query);
+    }
+
+    public function getAllDeclinedApplicantsAllAll($cert_type)
+    {
+        $in_query = "";
+        if ($cert_type != "All") $in_query = "AND ab.cert_type = '$cert_type'";
+        $query = "SELECT p.`first_name`, p.`middle_name`, p.`last_name`, fs.first_prog_qualified, fs.second_prog_qualified, 
+                    pi.first_prog, pi.second_prog, pi.application_term, pi.study_stream, pd.`form_id`, a.id  
+                FROM `personal_information` AS p, `applicants_login` AS a, form_sections_chek AS fs, 
+                    academic_background AS ab, program_info AS pi, purchase_detail AS pd 
+                WHERE p.app_login = a.id AND ab.app_login = a.id AND fs.app_login = a.id AND 
+                    pd.id = a.purchase_id AND pi.app_login = a.id AND fs.declined = 1 $in_query";
+        return $this->dm->getData($query);
     }
 
     public function getAllAdmitedApplicants($cert_type)
