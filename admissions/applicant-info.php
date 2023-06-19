@@ -366,7 +366,7 @@ $app_number = $admin->getApplicantAppNum($_GET["q"]);
                                                                     <th scope="row"><?= $ind ?></th>
                                                                     <td><?= ucwords(strtoupper($cert["type"])) ?></td>
                                                                     <td><?= (strtoupper($cert["type"]) == "OTHER" && count($academic_BG) == 1) ? ucwords(strtoupper($academic_BG[0]["other_cert_type"])) : ucwords(strtoupper($cert["type"]))  ?></td>
-                                                                    <td> <button type="button" style="cursor: pointer; float: right" class="btn btn-primary btn-sm open-file" id="file-open-<?= $cert["id"] ?>" title="Open"><span class="bi bi-eye"></span></button></td>
+                                                                    <td> <button type="button" style="cursor: pointer; float: right" class="btn btn-primary btn-sm open-file" data-doc="<?= $cert["file_name"] ?>" id="file-open-<?= $cert["id"] ?>" title="Open"><span class="bi bi-eye"></span></button></td>
                                                                 </tr>
                                                             <?php
                                                                 $ind += 1;
@@ -452,6 +452,21 @@ $app_number = $admin->getApplicantAppNum($_GET["q"]);
             <!-- End Right side columns -->
 
         </section>
+
+        <!-- Documents display Modal -->
+        <div class="modal fade" id="documentDisplay" tabindex="-1" aria-labelledby="addFormTypeLabel" aria-hidden="true">
+            <div class="modal-dialog modal-fullscreen modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="documentDisplayLabel">Form Type</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <iframe id="pdfFrame" src="" frameborder="0" style="width: 100%; height: 80vh"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </main><!-- End #main -->
 
@@ -557,6 +572,17 @@ $app_number = $admin->getApplicantAppNum($_GET["q"]);
                         }
                     });
                 }
+            });
+
+            $(".open-file").on("click", function() {
+                var pdfFrame = document.getElementById("pdfFrame");
+
+                // Set the PDF file URL
+                var pdfUrl = "https://admissions.rmuictonline.com/apply/docs/" + this.dataset.doc;
+
+                // Set the PDF file URL as the iframe source
+                pdfFrame.src = "https://docs.google.com/viewer?url=" + encodeURIComponent(pdfUrl) + "&embedded=true";
+                $("#documentDisplay").modal("toggle");
             });
 
         });
