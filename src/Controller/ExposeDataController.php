@@ -199,15 +199,6 @@ class ExposeDataController extends DatabaseMethods
         return $_SERVER['HTTP_USER_AGENT'];
     }
 
-    /*public function getFormPriceAndFormName(string $form_type, int $admin_period)
-    {
-        return $this->getData(
-            "SELECT p.`amount`, t.`name` FROM `form_price` AS p, `form_type` AS t 
-                WHERE p.`form_type` = :ft AND p.`admin_period` = :ap AND t.`id` = p.`form_type`",
-            array(":ft" => $form_type, ":ap" => $admin_period)
-        );
-    }*/
-
     public function getFormPriceA(int $form_id)
     {
         $sql = "SELECT * FROM `forms` WHERE `id` = :fi";
@@ -223,7 +214,7 @@ class ExposeDataController extends DatabaseMethods
     public function getFormPrice(int $form_type, int $admin_period)
     {
         return $this->getData(
-            "SELECT `amount` FROM `form_price` WHERE `form_type` = :ft AND admin_period = :ap",
+            "SELECT `amount` FROM `forms` WHERE `form_category` = :ft AND admin_period = :ap",
             array(":ft" => $form_type, ":ap" => $admin_period)
         );
     }
@@ -237,7 +228,7 @@ class ExposeDataController extends DatabaseMethods
 
     public function getFormTypes()
     {
-        return $this->getData("SELECT * FROM `form_type`");
+        return $this->getData("SELECT * FROM `forms`");
     }
 
     public function getPaymentMethods()
