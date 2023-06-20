@@ -53,6 +53,8 @@ $uploads = $user->fetchUploadedDocs($_GET['q']);
 
 $form_name = $admin->getFormTypeName($_GET["t"]);
 $app_number = $admin->getApplicantAppNum($_GET["q"]);
+
+$admin->updateApplicationStatus($_GET["q"]);
 ?>
 <!DOCTYPE html>
 <html lang="en">

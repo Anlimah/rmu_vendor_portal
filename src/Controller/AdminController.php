@@ -1526,6 +1526,12 @@ class AdminController
         return array("success" => false, "message" => "Failed to declined applicant admission!");
     }
 
+    public function updateApplicationStatus($appID)
+    {
+        $query = "UPDATE `form_sections_chek` SET `reviewed` = 1 WHERE `app_login` = :i";
+        $this->dm->inputData($query, array(":i" => $appID));
+    }
+    
     /**
      * For accounts officers
      */
