@@ -52,19 +52,13 @@ class DownloadAllExcelDataController
 
     public function makeSpreadsheetContent($datasheet)
     {
-        $columnRange = range("B", "BT"); //["B"..."BT"];
-        return $datasheet;
         $row = 2;
 
         foreach ($datasheet as $data) {
-
+            return $data;
             $dataIndex = 0;
-
-            foreach ($data as $d) {
-                $cell = $columnRange[$dataIndex] . "" . $row;
-                $this->sheet->setCellValue($cell, $d);
-                $dataIndex += 1;
-            }
+            //$this->sheet->setCellValue($cell, $d);
+            $dataIndex += 1;
 
             $row += 1;
         }
