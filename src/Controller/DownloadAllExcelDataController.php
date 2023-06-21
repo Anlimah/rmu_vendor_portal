@@ -53,6 +53,7 @@ class DownloadAllExcelDataController
     public function makeSpreadsheetContent($datasheet)
     {
         $columnRange = range("B", "BT"); //["B"..."BT"];
+        return $datasheet;
         $row = 2;
 
         foreach ($datasheet as $data) {
@@ -97,7 +98,7 @@ class DownloadAllExcelDataController
         if (!empty($dataSheet)) {
             $this->createFileName($this->status);
             //$this->formatSpreadsheet($this->sheetTitle);
-            $this->makeSpreadsheetContent($dataSheet);
+            return $this->makeSpreadsheetContent($dataSheet);
             $this->saveSpreadsheetFile($this->fileName);
             return $this->fileName;
         }
