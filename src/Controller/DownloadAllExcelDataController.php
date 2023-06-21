@@ -52,8 +52,10 @@ class DownloadAllExcelDataController
 
     public function makeSpreadsheetContent($datasheet)
     {
+        $row = 1;
         foreach ($datasheet as $data) {
-            $this->sheet->fromArray($data, NULL, 'A2');
+            $this->sheet->fromArray($data, NULL, 'A' . $row);
+            $row += 1;
         }
     }
 
