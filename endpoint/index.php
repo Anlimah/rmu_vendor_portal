@@ -796,7 +796,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         die(json_encode($admin->declineIndividualApplicant($_POST["app-login"])));
     } elseif ($_GET["url"] == "export-excel") {
         $t = new DownloadAllExcelDataController($_POST["action"]);
-        die(json_encode($t->prepareBSData()));
+        die(json_encode($t->generateFile()));
     }
 
     // All PUT request will be sent here
