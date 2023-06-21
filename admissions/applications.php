@@ -377,7 +377,20 @@ require_once('../inc/page-data.php');
                         "type": getUrlVars()["t"],
                         "program": $("#program").val(),
                     }
-                    window.open("../export-excel.php?w=sdjgskfsd&a=hoh&c=jgkg&t=hjgkj&p=jgksjgks", "_blank");
+
+                    $.ajax({
+                        type: "POST",
+                        url: "../endpoint/export-excel",
+                        data: data,
+                        success: function(result) {
+                            console.log(result, "ok");
+                        },
+                        error: function(error) {
+                            console.log(error);
+                        }
+                    });
+
+                    //window.open("../export-excel.php?w=sdjgskfsd&a=hoh&c=jgkg&t=hjgkj&p=jgksjgks", "_blank");
                 }
             });
 
