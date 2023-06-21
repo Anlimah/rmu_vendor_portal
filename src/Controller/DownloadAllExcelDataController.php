@@ -38,21 +38,6 @@ class DownloadAllExcelDataController
 
     public function formatSpreadsheet($title)
     {
-        $this->sheet->setCellValue('A1', $title);
-        $this->sheet->mergeCells('A1:J1');
-
-        $this->sheet->setCellValue('A2', "NAME");
-        $this->sheet->mergeCells('A2:A3');
-
-        $this->sheet->setCellValue('J2', "PROGRAMME");
-        $this->sheet->mergeCells('J2:J3');
-
-        $this->sheet->setCellValue('B2', "CORE SUBJECTS");
-        $this->sheet->mergeCells('B2:E2');
-
-        $this->sheet->setCellValue('F2', "ELECTIVE SUBJECTS");
-        $this->sheet->mergeCells('F2:I2');
-
         $this->sheet->getColumnDimension('A')->setAutoSize(true);
         $this->sheet->getColumnDimension('B')->setAutoSize(true);
         $this->sheet->getColumnDimension('C')->setAutoSize(true);
@@ -68,7 +53,6 @@ class DownloadAllExcelDataController
     public function makeSpreadsheetContent($datasheet)
     {
         $columnRange = range("B", "BT"); //["B"..."BT"];
-        return $columnRange;
         $row = 2;
 
         foreach ($datasheet as $data) {
