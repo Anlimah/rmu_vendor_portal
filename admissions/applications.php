@@ -383,7 +383,7 @@ require_once('../inc/page-data.php');
                         url: "../endpoint/export-excel",
                         data: data,
                         success: function(result) {
-                            console.log(result, "ok");
+                            console.log(result);
                         },
                         error: function(error) {
                             console.log(error);

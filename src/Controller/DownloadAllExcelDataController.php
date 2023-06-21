@@ -102,18 +102,18 @@ class DownloadAllExcelDataController
     public function createFileName($status)
     {
         $dateData = $this->admin->getAcademicPeriod();
-        $this->fileName = strtoupper("List of Admitted" . ($status != "all" ? " $status " : " ") . "Applicants");
+        $this->fileName = strtoupper("List of " . ($status != "all" ? " $status " : " ") . "Applicants");
         $academicIntake = $dateData[0]["start_year"] . " - " . $dateData[0]["end_year"] . " " . $dateData[0]["info"];
         $this->sheetTitle = $this->fileName . "(" . strtoupper($academicIntake) . ")";
     }
 
     public function generateFile()
     {
-        $this->prepareBSData();
-        if (!empty($this->dataSheet)) {
+        $dataSheet = $this->prepareBSData();
+        if (!empty($dataSheet)) {
             $this->createFileName($this->status);
-            $this->formatSpreadsheet($this->sheetTitle);
-            $this->makeSpreadsheetContent($this->dataSheet);
+            //$this->formatSpreadsheet($this->sheetTitle);
+            $this->makeSpreadsheetContent($dataSheet);
             $this->saveSpreadsheetFile($this->fileName);
             return $this->fileName;
         }
