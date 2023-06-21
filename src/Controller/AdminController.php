@@ -1836,30 +1836,14 @@ class AdminController
     }
 
     // Excel Sheet Download for Admissions
-    public function exportAdmissionData($status)
+    public function exportAdmissionData($status, $query)
     {
         $in_query = "";
-        if ($status == "completed") $in_query = "AND fsc.declaration = 1";
-        if ($status == "admitted") $in_query = "AND fsc.admitted = 1";
-        if ($status == "declined") $in_query = "AND fsc.declined = 1";
-        if ($status == "declined") $in_query = "AND fsc.declaration = 1";
-        $sql = "SELECT 
-        al.`id`, 
-        pin.`prefix`, `first_name`, `middle_name`, `last_name`, `suffix`, `gender`, `dob`, `marital_status`, 
-        pin.`nationality`, pin.`country_res`, pin.`disability`, pin.`disability_descript`, pin.`photo`, 
-        pin.`country_birth`, pin.`spr_birth`, pin.`city_birth`, pin.`english_native`, pin.`speaks_english`, 
-        pin.`other_language`, pin.`postal_addr`, pin.`postal_town`, pin.`postal_spr`, pin.`postal_country`, 
-        pin.`phone_no1_code`, pin.`phone_no1`, pin.`phone_no2_code`, pin.`phone_no2`, pin.`email_addr`, 
-        pin.`p_prefix`, pin.`p_first_name`, pin.`p_last_name`, pin.`p_occupation`, pin.`p_phone_no_code`, 
-        pin.`p_phone_no`, pin.`p_email_addr`, pin.`updated_at`,
-        pi.`first_prog`, `second_prog`, pi.`application_term`, pi.`study_stream`,
-        hau.`medium`, hau.`description` 
-        FROM  
-        `applicants_login` AS al, `personal_information` AS pin, `program_info` AS pi, 
-        `heard_about_us` AS hau, `form_sections_chek` AS fsc 
-        WHERE 
-        al.id = pin.app_login AND al.id = pi.app_login AND 
-        al.id = hau.app_login AND al.id = fsc.app_login $in_query";
+        if ($status == "apps-completed") $in_query = "AND fsc.declaration = 1";
+        if ($status == "apps-admitted") $in_query = "AND fsc.admitted = 1";
+        if ($status == "apps-declined") $in_query = "AND fsc.declined = 1";
+        if ($status == "apps-declined") $in_query = "AND fsc.declaration = 1";
+        $sql = $query . " " . $in_query;
         return $this->dm->getData($sql);
     }
 

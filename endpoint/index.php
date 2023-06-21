@@ -794,9 +794,13 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         if (!isset($_POST["app-login"]) || empty($_POST["app-login"]))
             die(json_encode(array("success" => false, "message" => "There no match for this applicant in database!")));
         die(json_encode($admin->declineIndividualApplicant($_POST["app-login"])));
-    } elseif ($_GET["url"] == "export-excel") {
+    }
+
+    ///
+    elseif ($_GET["url"] == "export-excel") {
         $t = new DownloadAllExcelDataController($_POST["action"]);
-        die(json_encode($t->generateFile()));
+        $result = $t->downloadFile($t->generateFile());
+        die(json_encode($result));
     }
 
     // All PUT request will be sent here

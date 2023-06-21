@@ -31,37 +31,77 @@ class DownloadAllExcelDataController
      * Download broadsheet
      */
 
-    public function prepareBSData()
+    public function prepareBSData($query)
     {
-        return $this->admin->exportAdmissionData($this->status);
+        return $this->admin->exportAdmissionData($this->status, $query);
     }
 
-    public function formatSpreadsheet($title)
+    public function getExtraData()
     {
-        $this->sheet->getColumnDimension('A')->setAutoSize(true);
-        $this->sheet->getColumnDimension('B')->setAutoSize(true);
-        $this->sheet->getColumnDimension('C')->setAutoSize(true);
-        $this->sheet->getColumnDimension('D')->setAutoSize(true);
-        $this->sheet->getColumnDimension('E')->setAutoSize(true);
-        $this->sheet->getColumnDimension('F')->setAutoSize(true);
-        $this->sheet->getColumnDimension('G')->setAutoSize(true);
-        $this->sheet->getColumnDimension('H')->setAutoSize(true);
-        $this->sheet->getColumnDimension('I')->setAutoSize(true);
-        $this->sheet->getColumnDimension('J')->setAutoSize(true);
+        $query = "SELECT ab.`school_name`, ab.`country`, ab.`region`, ab.`city`, ab.`cert_type`, ab.`other_cert_type`, 
+        ab.`index_number`, ab.`month_started`, ab.`year_started`, ab.`month_completed`, ab.`year_completed`, 
+        ab.`course_of_study`, ab.`other_course_studied`, ab.`awaiting_result`
+        FROM  
+        `applicants_login` AS al, `academic_background` AS ab, `form_sections_chek` AS fsc
+        WHERE al.id = ab.app_login AND al.id = fsc.app_login AND fsc.app_login";
     }
 
-    public function makeSpreadsheetContent($datasheet)
+    public function setSheetTitle($title)
     {
-        $row = 1;
-        foreach ($datasheet as $data) {
-            $this->sheet->fromArray($data, NULL, 'A' . $row);
+        $split = explode("-", $title, 2);
+        $this->sheet->setCellValue('A1', $split[1]);
+    }
+
+    public function makeSpreadsheetContent($title)
+    {
+        $this->setSheetTitle($title);
+
+        $applicantRawDataQuery = "SELECT 
+        al.`id`, pd.`form_id`
+        pin.`prefix`, `first_name`, `middle_name`, `last_name`, `suffix`, `gender`, `dob`, `marital_status`, 
+        pin.`nationality`, pin.`country_res`, pin.`disability`, pin.`disability_descript`, pin.`photo`, 
+        pin.`country_birth`, pin.`spr_birth`, pin.`city_birth`, pin.`english_native`, pin.`speaks_english`, 
+        pin.`other_language`, pin.`postal_addr`, pin.`postal_town`, pin.`postal_spr`, pin.`postal_country`, 
+        pin.`phone_no1_code`, pin.`phone_no1`, pin.`phone_no2_code`, pin.`phone_no2`, pin.`email_addr`, 
+        pin.`p_prefix`, pin.`p_first_name`, pin.`p_last_name`, pin.`p_occupation`, pin.`p_phone_no_code`, 
+        pin.`p_phone_no`, pin.`p_email_addr`, 
+        pi.`first_prog`, `second_prog`, pi.`application_term`, pi.`study_stream`,
+        hau.`medium`, hau.`description` 
+        FROM  
+        `applicants_login` AS al, `personal_information` AS pin, `program_info` AS pi, 
+        `heard_about_us` AS hau, `purchase_detail` AS pd, `forms` AS f, `form_sections_chek` AS fsc 
+        WHERE 
+        al.id = pin.app_login AND al.id = pi.app_login AND al.purchase_id = pd.id AND pd.form_id = f.id 
+        al.id = hau.app_login AND al.id = fsc.app_login";
+        $datasheet1 = $this->prepareBSData($applicantRawDataQuery);
+
+        $row = 2;
+        foreach ($datasheet1 as $data1) {
+            $this->sheet->fromArray($data1, NULL, $cell = 'A' . $row);
+
+            $this->sheet->setCellValue('AK' . $row, "");
+
+            $academicDataQuery = "SELECT 
+                ab.`school_name`, ab.`country`, ab.`region`, ab.`city`, ab.`cert_type`, ab.`other_cert_type`, 
+                ab.`index_number`, ab.`month_started`, ab.`year_started`, ab.`month_completed`, ab.`year_completed`, 
+                ab.`course_of_study`, ab.`other_course_studied`, ab.`awaiting_result`
+            FROM  
+            `applicants_login` AS al, `academic_background` AS ab 
+            WHERE 
+            al.id = pin.app_login AND al.id = pi.app_login AND al.id = {$data1["id"]}";
+            $datasheet2 = $this->prepareBSData($academicDataQuery);
+
+            foreach ($datasheet2 as $data2) {
+                $this->sheet->fromArray($data2, NULL, 'AL' . $row);
+            }
+
             $row += 1;
         }
     }
 
     public function saveSpreadsheetFile($filename)
     {
-        $file = $filename . '.xlsx';
+        $file = '../downloads/' . $filename . '.xlsx';
 
         if (file_exists($file)) {
             unlink($file);
@@ -83,23 +123,19 @@ class DownloadAllExcelDataController
 
     public function generateFile()
     {
-        $dataSheet = $this->prepareBSData();
-        if (!empty($dataSheet)) {
-            $this->createFileName($this->status);
-            //$this->formatSpreadsheet($this->sheetTitle);
-            $this->makeSpreadsheetContent($dataSheet);
-            $this->saveSpreadsheetFile($this->fileName);
-            return $this->fileName;
-        }
+        $this->createFileName($this->status);
+        $this->makeSpreadsheetContent($this->sheetTitle);
+        $this->saveSpreadsheetFile($this->fileName);
+        return $this->fileName;
     }
 
     public function downloadFile($file)
     {
-        $file_url = './' . $file . ".xlsx";
+        $file_url = '../downloads/' . $file . ".xlsx";
         header('Content-Type:application/octet-stream');
         header("Content-Transfer-Encoding:utf-8");
         header("Content-disposition:attachment;filename=\"" . basename($file_url) . "\"");
-        if (readfile($file_url)) return true;
+        if (readfile($file_url)) return array("success" => true, "message" => "Download successfull!");
         return array("success" => false, "message" => "Download failed!");
     }
 }
