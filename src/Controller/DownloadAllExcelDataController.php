@@ -85,7 +85,7 @@ class DownloadAllExcelDataController
         if (!empty($dataSheet)) {
             $this->createFileName($this->status);
             //$this->formatSpreadsheet($this->sheetTitle);
-            return $this->makeSpreadsheetContent($dataSheet);
+            $this->makeSpreadsheetContent($dataSheet);
             $this->saveSpreadsheetFile($this->fileName);
             return $this->fileName;
         }
