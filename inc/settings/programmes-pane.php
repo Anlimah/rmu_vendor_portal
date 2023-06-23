@@ -1,5 +1,5 @@
 <!--Programmes Pane-->
-<div class="tab-pane fade" id="programmes-tab-pane" role="tabpanel" aria-labelledby="programmes-tab" tabindex="0">
+<div class="tab-pane fadeshow active" id="programmes-tab-pane" role="tabpanel" aria-labelledby="programmes-tab" tabindex="0">
     <div class="container mt-4">
         <div class="row">
             <div class="col-lg-8">

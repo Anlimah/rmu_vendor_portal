@@ -53,7 +53,6 @@ require_once('../inc/page-data.php');
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.php">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="applications.php">Applications</a></li>
                     <li class="breadcrumb-item active">Settings</li>
                 </ol>
             </nav>
@@ -68,7 +67,7 @@ require_once('../inc/page-data.php');
                 <div class="col-lg-12">
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="programmes-tab" data-bs-toggle="tab" data-bs-target="#programmes-tab-pane" type="button" role="tab" aria-controls="programmes-tab-pane" aria-selected="false">Programmes</button>
+                            <button class="nav-link active" id="programmes-tab" data-bs-toggle="tab" data-bs-target="#programmes-tab-pane" type="button" role="tab" aria-controls="programmes-tab-pane" aria-selected="false">Programmes</button>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="admission-tab" data-bs-toggle="tab" data-bs-target="#admission-tab-pane" type="button" role="tab" aria-controls="admission-tab-pane" aria-selected="false">Admission Period</button>
