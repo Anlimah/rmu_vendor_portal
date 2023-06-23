@@ -68,9 +68,6 @@ require_once('../inc/page-data.php');
                 <div class="col-lg-12">
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="forms-tab" data-bs-toggle="tab" data-bs-target="#forms-tab-pane" type="button" role="tab" aria-controls="forms-tab-pane" aria-selected="true">Forms</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
                             <button class="nav-link" id="programmes-tab" data-bs-toggle="tab" data-bs-target="#programmes-tab-pane" type="button" role="tab" aria-controls="programmes-tab-pane" aria-selected="false">Programmes</button>
                         </li>
                         <li class="nav-item" role="presentation">
@@ -79,7 +76,6 @@ require_once('../inc/page-data.php');
                     </ul>
 
                     <div class="tab-content" id="myTabContent">
-                        <?php require_once("../inc/settings/forms-pane.php"); ?>
                         <?php require_once("../inc/settings/programmes-pane.php"); ?>
                         <?php require_once("../inc/settings/admissions-pane.php"); ?>
                     </div>
