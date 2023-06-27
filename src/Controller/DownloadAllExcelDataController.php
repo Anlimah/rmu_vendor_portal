@@ -130,9 +130,6 @@ class DownloadAllExcelDataController
         header('Content-Type: application/octet-stream');
         header("Content-Transfer-Encoding: utf-8");
         header("Content-disposition: attachment; filename=\"" . basename($file_url) . "\"");
-        ob_clean();
-        flush();
-        if (readfile($file_url)) return array("success" => true, "message" => "Download successfull!");
-        return array("success" => false, "message" => "Download failed!");
+        readfile($file_url);
     }
 }
