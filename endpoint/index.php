@@ -799,8 +799,8 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     ///
     elseif ($_GET["url"] == "export-excel") {
         $t = new DownloadAllExcelDataController($_POST["action"]);
-        $result = $t->downloadFile($t->generateFile());
-        die(json_encode($result));
+        $t->downloadFile($t->generateFile());
+        die(json_encode(array("success" => true)));
     }
 
     // All PUT request will be sent here
