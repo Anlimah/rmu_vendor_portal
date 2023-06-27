@@ -1050,7 +1050,8 @@ class AdminController
                 FROM purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, forms AS ft, 
                 academic_background AS ab 
                 WHERE ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id AND 
-                ab.app_login = al.id AND pd.form_id = ft.id AND fc.`declaration` = 1 AND ab.`awaiting_result` = 1";
+                ab.app_login = al.id AND pd.form_id = ft.id AND fc.`declaration` = 1 AND ab.`awaiting_result` = 1 AND 
+                ab.`cert_type` IN ('WASSCE', 'SSSCE')";
         return $this->dm->getData($query);
     }
 
