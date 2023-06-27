@@ -69,7 +69,7 @@ class DownloadAllExcelDataController
         `applicants_login` AS al, `personal_information` AS pin, `program_info` AS pi, 
         `heard_about_us` AS hau, `purchase_detail` AS pd, `forms` AS f, `form_sections_chek` AS fsc 
         WHERE 
-        al.id = pin.app_login AND al.id = pi.app_login AND al.purchase_id = pd.id AND pd.form_id = f.id 
+        al.id = pin.app_login AND al.id = pi.app_login AND al.purchase_id = pd.id AND pd.form_id = f.id AND 
         al.id = hau.app_login AND al.id = fsc.app_login";
         $datasheet1 = $this->prepareBSData($applicantRawDataQuery);
 
@@ -83,10 +83,8 @@ class DownloadAllExcelDataController
                 ab.`school_name`, ab.`country`, ab.`region`, ab.`city`, ab.`cert_type`, ab.`other_cert_type`, 
                 ab.`index_number`, ab.`month_started`, ab.`year_started`, ab.`month_completed`, ab.`year_completed`, 
                 ab.`course_of_study`, ab.`other_course_studied`, ab.`awaiting_result`
-            FROM  
-            `applicants_login` AS al, `academic_background` AS ab 
-            WHERE 
-            al.id = pin.app_login AND al.id = pi.app_login AND al.id = {$data1["id"]}";
+            FROM `applicants_login` AS al, `academic_background` AS ab 
+            WHERE al.id = ab.app_login AND al.id = {$data1["id"]}";
             $datasheet2 = $this->prepareBSData($academicDataQuery);
 
             foreach ($datasheet2 as $data2) {
