@@ -75,11 +75,10 @@ class DownloadAllExcelDataController
 
         $row = 2;
         foreach ($datasheet1 as $data1) {
-            $this->sheet->fromArray($data1, NULL, $cell = 'A' . $row);
+            $this->sheet->fromArray($data1, NULL, 'A' . $row);
+            //$this->sheet->setCellValue('AK' . $row, "");
 
-            $this->sheet->setCellValue('AK' . $row, "");
-
-            $academicDataQuery = "SELECT 
+            /*$academicDataQuery = "SELECT 
                 ab.`school_name`, ab.`country`, ab.`region`, ab.`city`, ab.`cert_type`, ab.`other_cert_type`, 
                 ab.`index_number`, ab.`month_started`, ab.`year_started`, ab.`month_completed`, ab.`year_completed`, 
                 ab.`course_of_study`, ab.`other_course_studied`, ab.`awaiting_result`
@@ -89,7 +88,7 @@ class DownloadAllExcelDataController
 
             foreach ($datasheet2 as $data2) {
                 $this->sheet->fromArray($data2, NULL, 'AL' . $row);
-            }
+            }*/
 
             $row += 1;
         }
