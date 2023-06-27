@@ -799,7 +799,8 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     ///
     elseif ($_GET["url"] == "export-excel") {
         $t = new DownloadAllExcelDataController($_POST["action"]);
-        $t->downloadFile($t->generateFile());
+        $file = $t->generateFile();
+        $t->downloadFile($file);
         die(json_encode(array("success" => true)));
     }
 

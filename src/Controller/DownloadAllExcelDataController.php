@@ -96,7 +96,7 @@ class DownloadAllExcelDataController
 
     public function saveSpreadsheetFile($filename)
     {
-        $file = '../downloads/' . $filename . '.xlsx';
+        $file = $filename . '.xlsx';
 
         if (file_exists($file)) {
             unlink($file);
@@ -126,7 +126,7 @@ class DownloadAllExcelDataController
 
     public function downloadFile($file)
     {
-        $file_url = '../downloads/' . $file . ".xlsx";
+        $file_url = './' . $file . ".xlsx";
         header('Content-Type: application/octet-stream');
         header("Content-Transfer-Encoding: utf-8");
         header("Content-disposition: attachment; filename=\"" . basename($file_url) . "\"");
