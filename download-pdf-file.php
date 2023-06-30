@@ -73,6 +73,7 @@ if (isset($_GET["w"]) && $_GET["w"] == 'pdfFileDownload') $result = $admin->exec
                                 <th scope="col">S/N</th>
                                 <th scope="col">Buyer Name</th>
                                 <th scope="col">Country</th>
+                                <th scope="col">Phone Number</th>
                                 <th scope="col">Payment Mode</th>
                                 <th scope="col">Date/Time</th>
                             </tr>
@@ -85,6 +86,7 @@ if (isset($_GET["w"]) && $_GET["w"] == 'pdfFileDownload') $result = $admin->exec
                                     <td><?= $index ?></td>
                                     <td><?= $row["first_name"] . " " . $row["last_name"] ?></td>
                                     <td><?= $row["country_name"] ?></td>
+                                    <td><?= "(" . $row["country_code"] . ")" . $row["phone_number"] ?></td>
                                     <td><?= $row["payment_method"] ?></td>
                                     <td><?= $row["added_at"] ?></td>
                                 </tr>
