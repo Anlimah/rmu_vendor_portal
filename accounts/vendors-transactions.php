@@ -182,6 +182,7 @@ require_once('../inc/page-data.php');
                                         <th scope="col">S/N</th>
                                         <th scope="col">Customer</th>
                                         <th scope="col">Country</th>
+                                        <th scope="col">Phone Number</th>
                                         <th scope="col">Payment Method</th>
                                         <th scope="col">Date</th>
                                     </tr>
@@ -300,6 +301,7 @@ require_once('../inc/page-data.php');
                                     '<td>' + (index + 1) + '</td>' +
                                     '<td>' + value.first_name + ' ' + value.last_name + '</td>' +
                                     '<td>' + value.country_name + '</td>' +
+                                    '<td>' + '(' + value.country_code + ') ' + value.phone_number + '</td>' +
                                     '<td>' + value.payment_method + '</td>' +
                                     '<td>' + value.added_at + '</td>' +
                                     '</tr>'
