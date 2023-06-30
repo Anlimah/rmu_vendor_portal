@@ -69,10 +69,10 @@ require_once('../inc/page-data.php');
                     <div class="card recent-sales overflow-auto">
 
                         <div class="filter">
-                            <span class="icon download-file" id="excelFileDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Export as Excel file">
+                            <span style="margin-right: 0 !important" class="icon download-file" id="excelFileDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Export as Excel file">
                                 <img src="../assets/img/icons8-microsoft-excel-2019-48.png" alt="Download as Excel file" style="cursor:pointer;width: 24px;">
                             </span>
-                            <span class="icon download-pdf" id="main" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Download as PDF file">
+                            <span style="margin-left: 0 !important" class="icon download-pdf" id="main" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Download as PDF file">
                                 <img src="../assets/img/icons8-pdf-48.png" alt="Download as PDF file" style="width: 24px;cursor:pointer;">
                             </span>
                         </div>
