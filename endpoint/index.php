@@ -714,24 +714,31 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
     // fetch group sales data
     elseif ($_GET["url"] == "group-sales-report") {
-        if (!isset($_POST["_data"])) die(json_encode(array("success" => false, "message" => "Invalid input request!")));
-        $_data = $expose->validateText($_POST["_data"]);
-        $result = $admin->fetchFormPurchasesGroupReport($_data);
+        if (!isset($_POST["from-date"])) die(json_encode(array("success" => false, "message" => "Invalid input request for from date!")));
+        if (!isset($_POST["to-date"])) die(json_encode(array("success" => false, "message" => "Invalid input request for to date!")));
+        if (!isset($_POST["report-by"])) die(json_encode(array("success" => false, "message" => "Invalid input request for filter by!")));
+
+        if ((!empty($_POST["from-date"]) && empty($_POST["to-date"])) || (!empty($_POST["to-date"]) && empty($_POST["from-date"])))
+            die(json_encode(array("success" => false, "message" => "Date range (From - To) not set!")));
+
+        $_data = $expose->validateText($_POST["report-by"]);
+        $result = $admin->fetchFormPurchasesGroupReport($_POST);
         if (empty($result)) die(json_encode(array("success" => false, "message" => "No result found for given parameters!")));
         die(json_encode(array("success" => true, "message" => $result)));
     }
 
     // fetch group sales data
     elseif ($_GET["url"] == "group-sales-report-list") {
-        if (!isset($_POST["_dataI"]) || empty($_POST["_dataI"]))
-            die(json_encode(array("success" => false, "message" => "Invalid input request!")));
-        if (!isset($_POST["_dataT"]) || empty($_POST["_dataT"]))
-            die(json_encode(array("success" => false, "message" => "Invalid input request!")));
+        if (!isset($_POST["_dataI"]) || empty($_POST["_dataI"])) die(json_encode(array("success" => false, "message" => "Invalid input request!")));
+        if (!isset($_POST["from-date"])) die(json_encode(array("success" => false, "message" => "Invalid input request for from date!")));
+        if (!isset($_POST["to-date"])) die(json_encode(array("success" => false, "message" => "Invalid input request for to date!")));
+        if (!isset($_POST["report-by"])) die(json_encode(array("success" => false, "message" => "Invalid input request for filter by!")));
+
+        if ((!empty($_POST["from-date"]) && empty($_POST["to-date"])) || (!empty($_POST["to-date"]) && empty($_POST["from-date"])))
+            die(json_encode(array("success" => false, "message" => "Date range (From - To) not set!")));
 
         $_dataI = $expose->validateNumber($_POST["_dataI"]);
-        $_dataT = $expose->validateText($_POST["_dataT"]);
-
-        $result = $admin->fetchFormPurchasesGroupReportInfo($_dataI, $_dataT);
+        $result = $admin->fetchFormPurchasesGroupReportInfo($_POST);
         if (empty($result)) die(json_encode(array("success" => false, "message" => "No result found for given parameters!")));
         die(json_encode(array("success" => true, "message" => $result)));
     }
@@ -741,6 +748,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         $result = $admin->prepareDownloadQuery($_POST);
         if (!$result) die(json_encode(array("success" => false, "message" => "Fatal error: server generated error!")));
         die(json_encode(array("success" => true, "message" => "successfully!")));
+    } else if ($_GET["url"] == "general-download") {
     }
 
     // backup database

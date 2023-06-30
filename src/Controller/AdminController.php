@@ -1805,36 +1805,48 @@ class AdminController
         return $this->dm->getData($_SESSION["downloadQuery"]);
     }
 
+    public function executeDownloadQueryStmt()
+    {
+        return $this->dm->getData($_SESSION["downloadQueryStmt"]["query"]);
+    }
+
     public function fetchFormPurchasesGroupReport($data)
     {
         $query = "";
-        if ($data == "PayMethod") {
+        $in_query = "";
+        if (!empty($data["to-date"]) && !empty($data["from-date"])) $in_query .= " AND pd.`added_at` BETWEEN DATE({$data["from-date"]}) AND DATE({$data["to-date"]})";
+        if ($data["report-by"] == "PayMethod") {
             $query = "SELECT pm.id, pd.payment_method AS title, COUNT(pd.payment_method) AS total_num_sold, SUM(pd.amount) AS total_amount_sold
                     FROM purchase_detail AS pd, vendor_details AS vd, admission_period AS ap, forms AS ft, payment_method AS pm   
                     WHERE pd.admission_period = ap.id AND pd.vendor = vd.id AND pd.form_id = ft.id AND pd.payment_method = pm.name 
-                    AND pd.`status` = 'COMPLETED' GROUP BY pd.payment_method";
+                    AND pd.`status` = 'COMPLETED'$in_query GROUP BY pd.payment_method";
         }
-        if ($data == "Vendors") {
+        if ($data["report-by"] == "Vendors") {
             $query = "SELECT vd.id, vd.company AS title, COUNT(pd.vendor) AS total_num_sold, SUM(pd.amount) AS total_amount_sold
                     FROM purchase_detail AS pd, vendor_details AS vd, admission_period AS ap, forms AS ft, payment_method AS pm 
                     WHERE pd.admission_period = ap.id AND pd.vendor = vd.id AND pd.form_id = ft.id AND pd.payment_method = pm.name 
-                    AND pd.`status` = 'COMPLETED' GROUP BY pd.vendor";
+                    AND pd.`status` = 'COMPLETED'$in_query GROUP BY pd.vendor";
         }
+        $_SESSION["downloadQueryStmt"] = array("type" => "groupReport", "data" => $data, "query" => $query);
         return $this->dm->getData($query);
     }
 
-    public function fetchFormPurchasesGroupReportInfo(int $i, $t)
+    public function fetchFormPurchasesGroupReportInfo($data)
     {
         $query = "";
-        if ($t == "PayMethod") {
+        $in_query = "";
+        if (!empty($data["to-date"]) && !empty($data["from-date"])) $in_query .= " AND pd.`added_at` BETWEEN DATE({$data["from-date"]}) AND DATE({$data["to-date"]})";
+
+        if ($data["report-by"] == "PayMethod") {
             $query = "SELECT * FROM purchase_detail AS pd, payment_method AS pm 
-                    WHERE pd.payment_method = pm.name AND pm.id = :i AND pd.`status` = 'COMPLETED'";
+                    WHERE pd.payment_method = pm.name AND pm.id = {$data["_dataI"]} AND pd.`status` = 'COMPLETED'$in_query";
         }
-        if ($t == "Vendors") {
+        if ($data["report-by"] == "Vendors") {
             $query = "SELECT * FROM purchase_detail AS pd, vendor_details AS vd 
-                    WHERE pd.vendor = vd.id AND vd.id = :i AND pd.`status` = 'COMPLETED'";
+                    WHERE pd.vendor = vd.id AND vd.id = {$data["_dataI"]} AND pd.`status` = 'COMPLETED'$in_query";
         }
-        return $this->dm->getData($query, array(":i" => $i));
+        $_SESSION["downloadQueryStmt"] = array("type" => "groupReportInfo", "data" => $data, "query" => $query);
+        return $this->dm->getData($query);
     }
 
     // Excel Sheet Download for Admissions

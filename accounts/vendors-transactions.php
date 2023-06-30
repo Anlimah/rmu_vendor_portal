@@ -72,7 +72,7 @@ require_once('../inc/page-data.php');
                             <span class="icon download-file" id="excelFileDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Export as Excel file">
                                 <img src="../assets/img/icons8-microsoft-excel-2019-48.png" alt="Download as Excel file" style="cursor:pointer;width: 24px;">
                             </span>
-                            <span class="icon download-file" id="pdfFileDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Download as PDF file">
+                            <span class="icon download-pdf" id="main" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Download as PDF file">
                                 <img src="../assets/img/icons8-pdf-48.png" alt="Download as PDF file" style="width: 24px;cursor:pointer;">
                             </span>
                         </div>
@@ -92,7 +92,7 @@ require_once('../inc/page-data.php');
                                 </div>
 
                                 <div class="col-6 col-md-6 col-sm-12 mt-2">
-                                    <form action="" method="post">
+                                    <form id="reportsForm" action="" method="post">
                                         <div style="margin-top: 50px !important; display: flex; justify-content: space-between; align-content:baseline">
                                             <div>
                                                 <label for="from-date" class="form-label">Filter By</label>
@@ -145,7 +145,15 @@ require_once('../inc/page-data.php');
                     <div class="modal-content">
                         <div class="modal-header">
                             <h1 class="modal-title fs-5" id="salesInfoModalTitle">Purchase Information</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <div class="filter">
+                                <span class="icon download-file" id="excelFileDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Export as Excel file">
+                                    <img src="../assets/img/icons8-microsoft-excel-2019-48.png" alt="Download as Excel file" style="cursor:pointer;width: 22px;">
+                                </span>
+                                <span class="icon download-pdf" id="specific" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Download as PDF file">
+                                    <img src="../assets/img/icons8-pdf-48.png" alt="Download as PDF file" style="width: 22px;cursor:pointer;">
+                                </span>
+                            </div>
+                            <!--<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
                         </div>
                         <div class="modal-body">
                             <div class="mb-4 row">
@@ -208,103 +216,79 @@ require_once('../inc/page-data.php');
                 $("#reportsForm").submit();
             });
 
-            $("#report-by").change("blur", function(e, d) {
+            $(document).on("click", ".download-pdf", function() {
+                d = $(this).attr("id");
+                window.open("../download-pdf-file.php?w=pdfFileDownload&p=vendors-transactions&t=" + d, "_blank");
+            });
+
+            $("#reportsForm").on("submit", function(e) {
                 e.preventDefault();
+
                 triggeredBy = 1;
 
-                let data = {
-                    _data: $(this).val()
-                }
-
-                // Executes when download is click, either for excel or pdf download
-                if (d == "pdfFileDownload" || d == "excelFileDownload") {
-                    $.ajax({
-                        type: "POST",
-                        url: "../endpoint/download-file",
-                        data: data,
-                        processData: false,
-                        contentType: false,
-                        success: function(result) {
-                            console.log(result);
-                            if (result.success) {
-                                window.open("../download-pdf.php?w=" + d, "_blank");
-                            } else {
-                                $("#alert-output").html('');
-                                $("#alert-output").html(
-                                    '<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
-                                    '<i class="bi bi-info-circle me-1"></i>' + result.message +
-                                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-                                    '</div>'
-                                );
-                            }
-                        },
-                        error: function(error) {
-                            console.log(error);
-                        }
-                    });
-
-                }
-
                 // Executes when purchase data is fetched
-                else {
-                    $.ajax({
-                        type: "POST",
-                        url: "../endpoint/group-sales-report",
-                        data: data,
-                        success: function(result) {
-                            console.log(result);
+                $.ajax({
+                    type: "POST",
+                    url: "../endpoint/group-sales-report",
+                    data: new FormData(this),
+                    processData: false,
+                    contentType: false,
+                    success: function(result) {
+                        console.log(result);
 
-                            if (result.success) {
-                                $("#saleGroupTbody").html('');
-                                let totalP = 0;
-                                let totalA = 0.0;
-                                $.each(result.message, function(index, value) {
-                                    totalP += parseInt(value.total_num_sold);
-                                    totalA += parseFloat(value.total_amount_sold);
-                                    $("#saleGroupTbody").append(
-                                        '<tr>' +
-                                        '<td>' + (index + 1) + '</td>' +
-                                        '<td>' + value.title + '</td>' +
-                                        '<td>' + value.total_num_sold + '</td>' +
-                                        '<td>' + value.total_amount_sold + '</td>' +
-                                        '<td>' +
-                                        '<button id="' + value.id + '" class="btn btn-xs btn-primary openSalesInfo" data-bs-toggle="modal" data-bs-target="#salesInfoModal">View</button>' +
-                                        '</td>' +
-                                        '</tr>'
-                                    );
-                                });
-                                $("#totalPurchase #totalAmount").text('');
-                                $("#totalPurchase").text(totalP);
-                                $("#totalAmount").text("GHS " + totalA.toFixed(2));
-                            } else {
-                                $("#alert-output").html('');
-                                $("#alert-output").html(
-                                    '<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
-                                    '<i class="bi bi-info-circle me-1"></i>' + result.message +
-                                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-                                    '</div>'
+                        if (result.success) {
+                            $("#saleGroupTbody").html('');
+                            let totalP = 0;
+                            let totalA = 0.0;
+                            $.each(result.message, function(index, value) {
+                                totalP += parseInt(value.total_num_sold);
+                                totalA += parseFloat(value.total_amount_sold);
+                                $("#saleGroupTbody").append(
+                                    '<tr>' +
+                                    '<td>' + (index + 1) + '</td>' +
+                                    '<td id="title' + value.id + '">' + value.title + '</td>' +
+                                    '<td id="total-sold' + value.id + '">' + value.total_num_sold + '</td>' +
+                                    '<td id="total-amount' + value.id + '">' + value.total_amount_sold + '</td>' +
+                                    '<td>' +
+                                    '<button id="' + value.id + '" class="btn btn-xs btn-primary openSalesInfo" data-bs-toggle="modal" data-bs-target="#salesInfoModal">View</button>' +
+                                    '</td>' +
+                                    '</tr>'
                                 );
-                            }
-
-                        },
-                        error: function(error) {
-                            console.log(error);
+                            });
+                            $("#totalPurchase #totalAmount").text('');
+                            $("#totalPurchase").text(totalP);
+                            $("#totalAmount").text("GHS " + totalA.toFixed(2));
+                        } else {
+                            $("#saleGroupTbody").html("<tr style='text-align: center'><td colspan='5'>No entries found</td></tr>");
                         }
-                    });
-                }
+
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
             });
 
             $(document).on("click", ".openSalesInfo", function() {
                 triggeredBy = 2;
-                let data = {
-                    _dataI: $(this).attr("id"),
-                    _dataT: $("#report-by").val(),
-                }
+
+                formData = new FormData();
+
+                key = $(this).attr("id");
+                formData.append("_dataI", key);
+                formData.append("from-date", $("#from-date").val());
+                formData.append("to-date", $("#to-date").val());
+                formData.append("report-by", $("#report-by").val());
+                formData.append("title", $("#title" + key).text());
+                formData.append("total-sold", $("#total-sold" + key).text());
+                formData.append("total-amount", $("#total-amount" + key).text());
 
                 $.ajax({
                     type: "POST",
                     url: "../endpoint/group-sales-report-list",
-                    data: data,
+                    data: formData,
+                    processData: false,
+                    contentType: false,
                     success: function(result) {
                         console.log(result);
 
