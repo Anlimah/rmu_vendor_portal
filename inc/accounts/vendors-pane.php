@@ -322,7 +322,6 @@
 
         $(document).on("click", ".edit-vendor", function(e) {
             let ds = this.dataset.branchtype;
-            console.log($(this).attr("id"));
             let data = {
                 vendor_key: $(this).attr("id")
             }
@@ -352,7 +351,6 @@
                             $("#other-branches-file-upload").hide();
                         };
 
-                        $("#vendorsBranchList").modal("toggle");
                         $("#addOrUpdateVendorModal").modal("toggle");
                     } else {
                         alert(result.message)

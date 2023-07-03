@@ -32,7 +32,8 @@ if (isset($_GET["w"]) && $_GET["w"] == 'pdfFileDownload') $result = $admin->exec
 <div>
     <h3 style="text-align: center;" class="m-4">Transactions Report</h3>
     <h6 style="display: flex; justify-content: space-between" class="m-4">
-        <span><b>Filter By:</b> <?= $_SESSION["downloadQueryStmt"]["data"]["report-by"] ?></span>
+        <span><b>Filter By:</b> <?= $_SESSION["downloadQueryStmt"]["data"]["report-by"] == "PayMethod" ? "Payment Menthod" : $_SESSION["downloadQueryStmt"]["data"]["report-by"] ?></span>
+        <span><b>Vendor:</b> <?= $_SESSION["downloadQueryStmt"]["data"]["report-by"] == "PayMethod" ? "Payment Menthod" : $_SESSION["downloadQueryStmt"]["data"]["report-by"] ?></span>
         <span><b>Date:</b> <?= $_SESSION["downloadQueryStmt"]["data"]["from-date"] . " - " . $_SESSION["downloadQueryStmt"]["data"]["to-date"]  ?></span>
     </h6>
     <table class="table table-borderless datatable table-striped table-hover" style="font-size: 12px;">
@@ -97,6 +98,10 @@ if (isset($_GET["w"]) && $_GET["w"] == 'pdfFileDownload') $result = $admin->exec
         <?php
                         break;
                 }
+                break;
+
+            case '':
+                # code...
                 break;
 
             default:
