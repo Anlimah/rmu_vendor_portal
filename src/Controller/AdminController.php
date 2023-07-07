@@ -90,6 +90,11 @@ class AdminController
         return $this->dm->getData("SELECT * FROM `forms`");
     }
 
+    public function getFormByFormID($form_id)
+    {
+        return $this->dm->getData("SELECT * FROM `forms` WHERE id = :i", array(":i" => $form_id));
+    }
+
     public function getFormCategories()
     {
         return $this->dm->getData("SELECT * FROM `form_categories`");
@@ -1626,6 +1631,8 @@ class AdminController
                  pd.`status`, pd.`added_at`, ft.`name` AS formType, ap.`info` AS admissionPeriod, pd.`payment_method` AS paymentMethod 
                  FROM `purchase_detail` AS pd, `admission_period` AS ap, `forms` AS ft, vendor_details AS vd 
                  WHERE pd.admission_period = ap.`id` AND pd.form_id = ft.id AND pd.vendor = vd.`id`$QUERY_CON";
+
+        $_SESSION["downloadQueryStmt"] = array("type" => "dailyReport", "data" => $data, "query" => $query);
         return $this->dm->getData($query);
     }
 

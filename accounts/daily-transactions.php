@@ -360,11 +360,11 @@ require_once('../inc/page-data.php');
                     <div class="card recent-sales overflow-auto">
 
                         <div class="filter">
-                            <span class="icon download-file" id="excelFileDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Export as Excel file">
-                                <img src="../assets/img/icons8-microsoft-excel-2019-48.png" alt="Download as Excel file" style="cursor:pointer;width: 22px;">
+                            <span style="margin-right: 0 !important" class="icon download-file" id="excelFileDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Export as Excel file">
+                                <img src="../assets/img/icons8-microsoft-excel-2019-48.png" alt="Download as Excel file" style="cursor:pointer;width: 24px;">
                             </span>
-                            <span class="icon download-file" id="pdfFileDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Download as PDF file">
-                                <img src="../assets/img/icons8-pdf-48.png" alt="Download as PDF file" style="width: 22px;cursor:pointer;">
+                            <span style="margin-left: 0 !important" class="icon download-pdf" id="main" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Download as PDF file">
+                                <img src="../assets/img/icons8-pdf-48.png" alt="Download as PDF file" style="width: 24px;cursor:pointer;">
                             </span>
                         </div>
 
@@ -515,89 +515,60 @@ require_once('../inc/page-data.php');
                 $("#reportsForm").submit();
             });
 
+            $(document).on("click", ".download-pdf", function() {
+                d = $(this).attr("id");
+                window.open("../download-pdf-file.php?w=pdfFileDownload&p=daily-transactions&t=" + d, "_blank");
+            });
+
             $("#reportsForm").on("submit", function(e, d) {
                 e.preventDefault();
-
                 triggeredBy = 1;
-                let data = new FormData(this);
 
-                // Executes when download is click, either for excel or pdf download
-                if (d == "pdfFileDownload" || d == "excelFileDownload") {
-                    $.ajax({
-                        type: "POST",
-                        url: "../endpoint/download-file",
-                        data: data,
-                        processData: false,
-                        contentType: false,
-                        success: function(result) {
-                            console.log(result);
-                            if (result.success) {
-                                window.open("../download-pdf.php?w=" + d, "_blank");
-                            } else {
-                                $("#alert-output").html('');
-                                $("#alert-output").html(
-                                    '<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
-                                    '<i class="bi bi-info-circle me-1"></i>' + result.message +
-                                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-                                    '</div>'
+                $.ajax({
+                    type: "POST",
+                    url: "../endpoint/salesReport",
+                    data: new FormData(this),
+                    processData: false,
+                    contentType: false,
+                    success: function(result) {
+                        console.log(result);
+
+                        if (result.success) {
+                            $("#totalData").text(result.message.length);
+                            $("tbody").html('');
+                            $.each(result.message, function(index, value) {
+                                $("tbody").append(
+                                    '<tr>' +
+                                    '<td>' + (index + 1) + '</td>' +
+                                    '<td>' + value.added_at + '</td>' +
+                                    '<td>' + value.id + '</td>' +
+                                    '<td>' + value.fullName + '</td>' +
+                                    '<td>' + value.phoneNumber + '</td>' +
+                                    '<td>' + value.admissionPeriod + '</td>' +
+                                    '<td>' + value.formType + '</td>' +
+                                    '<td>' + value.status + '</td>' +
+                                    '<td>' + value.paymentMethod + '</td>' +
+                                    '<td>' +
+                                    '<button id="' + value.id + '" class="btn btn-xs btn-primary openPurchaseInfo" data-bs-toggle="modal" data-bs-target="#purchaseInfoModal">View</button>' +
+                                    '</td>' +
+                                    '</tr>'
                                 );
-                            }
-                        },
-                        error: function(error) {
-                            console.log(error);
+                            });
+                        } else {
+                            $("#alert-output").html('');
+                            $("#alert-output").html(
+                                '<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+                                '<i class="bi bi-info-circle me-1"></i>' + result.message +
+                                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                                '</div>'
+                            );
                         }
-                    });
 
-                }
-
-                // Executes when purchase data is fetched
-                else {
-                    $.ajax({
-                        type: "POST",
-                        url: "../endpoint/salesReport",
-                        data: new FormData(this),
-                        processData: false,
-                        contentType: false,
-                        success: function(result) {
-                            console.log(result);
-
-                            if (result.success) {
-                                $("#totalData").text(result.message.length);
-                                $("tbody").html('');
-                                $.each(result.message, function(index, value) {
-                                    $("tbody").append(
-                                        '<tr>' +
-                                        '<td>' + (index + 1) + '</td>' +
-                                        '<td>' + value.added_at + '</td>' +
-                                        '<td>' + value.id + '</td>' +
-                                        '<td>' + value.fullName + '</td>' +
-                                        '<td>' + value.phoneNumber + '</td>' +
-                                        '<td>' + value.admissionPeriod + '</td>' +
-                                        '<td>' + value.formType + '</td>' +
-                                        '<td>' + value.status + '</td>' +
-                                        '<td>' + value.paymentMethod + '</td>' +
-                                        '<td>' +
-                                        '<button id="' + value.id + '" class="btn btn-xs btn-primary openPurchaseInfo" data-bs-toggle="modal" data-bs-target="#purchaseInfoModal">View</button>' +
-                                        '</td>' +
-                                        '</tr>'
-                                    );
-                                });
-                            } else {
-                                $("#alert-output").html('');
-                                $("#alert-output").html(
-                                    '<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
-                                    '<i class="bi bi-info-circle me-1"></i>' + result.message +
-                                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-                                    '</div>'
-                                );
-                            }
-
-                        },
-                        error: function(error) {
-                            console.log(error);
-                        }
-                    });
-                }
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
             });
 
             $(document).on("click", ".openPurchaseInfo", function() {

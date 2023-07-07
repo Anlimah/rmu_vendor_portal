@@ -32,9 +32,17 @@ if (isset($_GET["w"]) && $_GET["w"] == 'pdfFileDownload') $result = $admin->exec
 <div>
     <h3 style="text-align: center;" class="m-4">Transactions Report</h3>
     <h6 style="display: flex; justify-content: space-between" class="m-4">
-        <span><b>Filter By:</b> <?= $_SESSION["downloadQueryStmt"]["data"]["report-by"] == "PayMethod" ? "Payment Menthod" : $_SESSION["downloadQueryStmt"]["data"]["report-by"] ?></span>
-        <span><b>Vendor:</b> <?= $_SESSION["downloadQueryStmt"]["data"]["report-by"] == "PayMethod" ? "Payment Menthod" : $_SESSION["downloadQueryStmt"]["data"]["report-by"] ?></span>
-        <span><b>Date:</b> <?= $_SESSION["downloadQueryStmt"]["data"]["from-date"] . " - " . $_SESSION["downloadQueryStmt"]["data"]["to-date"]  ?></span>
+        <?php if (isset($_GET["p"]) && $_GET["p"] == "vendors-transactions") { ?>
+            <span><b>Filter By:</b> <?= $_SESSION["downloadQueryStmt"]["data"]["report-by"] == "PayMethod" ? "Payment Menthod" : $_SESSION["downloadQueryStmt"]["data"]["report-by"] ?></span>
+            <span><b>Vendor:</b> <?= $_SESSION["downloadQueryStmt"]["data"]["report-by"] == "PayMethod" ? "Payment Menthod" : $_SESSION["downloadQueryStmt"]["data"]["report-by"] ?></span>
+            <span><b>Date:</b> <?= $_SESSION["downloadQueryStmt"]["data"]["from-date"] . " - " . $_SESSION["downloadQueryStmt"]["data"]["to-date"]  ?></span>
+        <?php } else if (isset($_GET["p"]) && $_GET["p"] == "daily-transactions") { ?>
+            <span><b>Admission Period:</b> <?= isset($_SESSION["downloadQueryStmt"]["data"]["admission-period"]) && !empty($_SESSION["downloadQueryStmt"]["data"]["admission-period"]) ? $admin->fetchAdmissionPeriod($_SESSION["downloadQueryStmt"]["data"]["admission-period"])[0]["info"] : "" ?></span>
+            <span><b>Date:</b> <?= $_SESSION["downloadQueryStmt"]["data"]["from-date"] . " - " . $_SESSION["downloadQueryStmt"]["data"]["to-date"]  ?></span>
+            <span><b>Form Type:</b> <?= isset($_SESSION["downloadQueryStmt"]["data"]["form-type"]) && !empty($_SESSION["downloadQueryStmt"]["data"]["form-type"]) ? $admin->getFormByFormID($_SESSION["downloadQueryStmt"]["data"]["form-type"])[0]["name"] : "" ?></span>
+            <span><b>Purchase Status:</b> <?= $_SESSION["downloadQueryStmt"]["data"]["purchase-status"] ?></span>
+            <span><b>Payment Method:</b> <?= $_SESSION["downloadQueryStmt"]["data"]["payment-method"] ?></span>
+        <?php } ?>
     </h6>
     <table class="table table-borderless datatable table-striped table-hover" style="font-size: 12px;">
         <?php
@@ -95,17 +103,65 @@ if (isset($_GET["w"]) && $_GET["w"] == 'pdfFileDownload') $result = $admin->exec
                                 $index++;
                             } ?>
                         </tbody>
-        <?php
+                    <?php
                         break;
                 }
                 break;
 
-            case '':
-                # code...
-                break;
+            case 'daily-transactions':
+                switch ($_GET["t"]) {
+                    case "main":
+                    ?>
+                        <thead class="table-secondary">
+                            <tr>
+                                <th scope="col">S/N</th>
+                                <th scope="col">Transaction ID</th>
+                                <th scope="col">Customer</th>
+                                <th scope="col">Phone Number</th>
+                                <?php if (!isset($_SESSION["downloadQueryStmt"]["data"]["admission-period"]) || empty($_SESSION["downloadQueryStmt"]["data"]["admission-period"])) { ?>
+                                    <th scope="col">Admission Period</th>
+                                <?php } ?>
+                                <?php if (!isset($_SESSION["downloadQueryStmt"]["data"]["form-type"]) || empty($_SESSION["downloadQueryStmt"]["data"]["form-type"])) { ?>
+                                    <th scope="col">Form Bought</th>
+                                <?php } ?>
+                                <?php if (!isset($_SESSION["downloadQueryStmt"]["data"]["purchase-status"]) || empty($_SESSION["downloadQueryStmt"]["data"]["purchase-status"])) { ?>
+                                    <th scope="col">Status</th>
+                                <?php } ?>
+                                <?php if (!isset($_SESSION["downloadQueryStmt"]["data"]["payment-method"]) || empty($_SESSION["downloadQueryStmt"]["data"]["payment-method"])) { ?>
+                                    <th scope="col">Payment Method</th>
+                                <?php } ?>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $index = 1;
+                            foreach ($result as $row) { ?>
+                                <tr>
+                                    <td><?= $index ?></td>
+                                    <td><?= $row["id"] ?></td>
+                                    <td><?= $row["fullName"] ?></td>
+                                    <td><?= $row["phoneNumber"] ?></td>
+                                    <?php if (!isset($_SESSION["downloadQueryStmt"]["data"]["admission-period"]) || empty($_SESSION["downloadQueryStmt"]["data"]["admission-period"])) { ?>
+                                        <td><?= $row["admissionPeriod"] ?></td>
+                                    <?php } ?>
+                                    <?php if (!isset($_SESSION["downloadQueryStmt"]["data"]["form-type"]) || empty($_SESSION["downloadQueryStmt"]["data"]["form-type"])) { ?>
+                                        <td><?= $row["formType"] ?></td>
+                                    <?php } ?>
+                                    <?php if (!isset($_SESSION["downloadQueryStmt"]["data"]["purchase-status"]) || empty($_SESSION["downloadQueryStmt"]["data"]["purchase-status"])) { ?>
+                                        <td><?= $row["status"] ?></td>
+                                    <?php } ?>
+                                    <?php if (!isset($_SESSION["downloadQueryStmt"]["data"]["payment-method"]) || empty($_SESSION["downloadQueryStmt"]["data"]["payment-method"])) { ?>
+                                        <td><?= $row["paymentMethod"] ?></td>
+                                    <?php } ?>
+                                </tr>
+                            <?php
+                                $index++;
+                            } ?>
+                        </tbody>
+        <?php
+                        break;
+                }
 
-            default:
-                # code...
                 break;
         } ?>
     </table>
