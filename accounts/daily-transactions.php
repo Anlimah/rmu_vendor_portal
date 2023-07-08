@@ -148,7 +148,7 @@ require_once('../inc/page-data.php');
                                                             <i class="bi bi-currency-dollar"></i>
                                                         </div>
                                                         <div class="ps-3">
-                                                            <h5><span class="small">GH</span>&#162;<span><?= $collect_amount ?></span></h5>
+                                                            <h5><span class="small">GH</span>&#162;<span><?= number_format($collect_amount) ?></span></h5>
                                                             <span class="text-muted pt-1">COUNT: </span>
                                                             <span class="pt-2 ps-1" style="font-size: 16px;"><?= $collect_total ?></span>
                                                         </div>
@@ -168,7 +168,7 @@ require_once('../inc/page-data.php');
                                                             <img src="../assets/img/icons8-sell-48.png" style="width: 48px;" alt="">
                                                         </div>
                                                         <div class="ps-3">
-                                                            <h5><span class="small">GH</span>&#162;<span><?= $vendor_amount ?></span></h5>
+                                                            <h5><span class="small">GH</span>&#162;<span><?= number_format($vendor_amount) ?></span></h5>
                                                             <span class="text-muted pt-1">COUNT: </span>
                                                             <span class="pt-2 ps-1" style="font-size: 16px;"><?= $vendor_total ?></span>
                                                         </div>
@@ -188,7 +188,7 @@ require_once('../inc/page-data.php');
                                                             <img src="../assets/img/icons8-online-payment-64.png" style="width: 48px;" alt="">
                                                         </div>
                                                         <div class="ps-3">
-                                                            <h5><span class="small">GH</span>&#162;<span><?= $online_amount ?></span></h5>
+                                                            <h5><span class="small">GH</span>&#162;<span><?= number_format($online_amount) ?></span></h5>
                                                             <span class="text-muted pt-1">COUNT: </span>
                                                             <span class="pt-2 ps-1" style="font-size: 16px;"><?= $online_total ?></span>
                                                         </div>
@@ -208,7 +208,7 @@ require_once('../inc/page-data.php');
                                                             <img src="../assets/img/icons8-withdrawal-96.png" style="width: 48px;" alt="">
                                                         </div>
                                                         <div class="ps-3">
-                                                            <h5><span class="small">GH</span>&#162;<span><?= $provider_amount ?></span></h5>
+                                                            <h5><span class="small">GH</span>&#162;<span><?= number_format($provider_amount) ?></span></h5>
                                                             <span class="text-muted pt-1">COUNT: </span>
                                                             <span class="pt-2 ps-1" style="font-size: 16px;"><?= $provider_total ?></span>
                                                         </div>
@@ -239,7 +239,7 @@ require_once('../inc/page-data.php');
 
                                                             <div style="display: flex; flex-direction:column; justify-content:flex-start">
                                                                 <h5 style="padding-bottom: 0; margin-bottom:0;">
-                                                                    <span class="small">GH</span>&#162;<span class="small"><?= $form["total_amount"] ? $form["total_amount"] : "0.00" ?></span>
+                                                                    <span class="small">GH</span>&#162;<span class="small"><?= $form["total_amount"] ? number_format($form["total_amount"]) : "0.00" ?></span>
                                                                 </h5>
                                                                 <span class="text-muted small">AMOUNT</span>
                                                             </div>
