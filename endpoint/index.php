@@ -784,14 +784,17 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
         if ($newPass !== $renewPass) die(json_encode(array("success" => false, "message" => "New password entry mismatched!")));
 
-        $username = $admin->fetchVendorUsernameByUserID($_SESSION["user"]);
-        $result = $admin->verifyAdminLogin($username, $currentPass);
-        if (!$result) {
-            die(json_encode(array("success" => false, "message" => "Incorrect password!")));
-        }
+        $userDetails = $admin->verifySysUserExistsByID($_SESSION["user"]);
+        if (empty($userDetails)) die(json_encode(array("success" => false, "message" => "Failed to verify user account!")));
 
-        die(json_encode($admin->resetUserPassword($newPass)));
-    } elseif ($_GET["url"] == "admit-individual-applicant") {
+        $result = $admin->verifyAdminLogin($userDetails[0]["user_name"], $currentPass);
+        if (!$result) die(json_encode(array("success" => false, "message" => "Incorrect current password!")));
+
+        $changePassword = $admin->resetUserPassword($_SESSION["user"], $newPass);
+        die(json_encode($changePassword));
+    }
+    //
+    elseif ($_GET["url"] == "admit-individual-applicant") {
         if (!isset($_POST["app-prog"]) || empty($_POST["app-prog"]))
             die(json_encode(array("success" => false, "message" => "Please choose a programme!")));
         if (!isset($_POST["app-login"]) || empty($_POST["app-login"]))

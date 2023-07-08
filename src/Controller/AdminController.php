@@ -31,12 +31,12 @@ class AdminController
         return $this->dm->getData($query, array(':ui' => $user_id));
     }
 
-    public function resetUserPassword($password)
+    public function resetUserPassword($user_id, $password)
     {
-
         // Hash password
         $hashed_pw = password_hash($password, PASSWORD_DEFAULT);
-        $query_result = $this->dm->inputData("UPDATE sys_users SET `password` = :pw WHERE id = :id", array(":pw" => $hashed_pw));
+        $query = "UPDATE sys_users SET `password` = :pw WHERE id = :id";
+        $query_result = $this->dm->inputData($query, array(":id" => $user_id, ":pw" => $hashed_pw));
 
         if ($query_result) {
             $this->logActivity(
@@ -44,7 +44,7 @@ class AdminController
                 "UPDATE",
                 "{$_SESSION["user"]} Updated user their account's password"
             );
-            return array("success" => false, "message" => "Account's password reset was successful!");
+            return array("success" => true, "message" => "Account's password reset was successful!");
         }
         return array("success" => false, "message" => "Failed to reset user account password!");
     }
@@ -233,10 +233,10 @@ class AdminController
         return $this->dm->inputData($query, array(":c" => $company, ":b" => $branch));
     }
 
-    public function verifySysUserExists($email)
+    public function verifySysUserExistsByID($user_id)
     {
-        $query = "SELECT `id` FROM `sys_users` WHERE `username` = :u";
-        return $this->dm->inputData($query, array(":u" => $email));
+        $query = "SELECT * FROM `sys_users` WHERE `id` = :u";
+        return $this->dm->inputData($query, array(":u" => $user_id));
     }
 
     /*public function addVendor($v_name, $v_email, $v_phone, $branch)
