@@ -44,7 +44,9 @@ require_once('inc/page-data.php');
     <title>Dashboard - Admissions</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
-
+    <meta name="author" content="Francis A. Anlimah">
+    <meta name="email" content="francis.ano.anlimah@gmail.com">
+    <meta name="website" content="https://linkedin.com/in/francis-anlimah">
     <!-- Favicons -->
     <link href="assets/img/rmu-logo.png" rel="icon">
     <link href="assets/img/rmu-logo.png" rel="apple-touch-icon">
