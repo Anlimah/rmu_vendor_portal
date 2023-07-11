@@ -408,8 +408,8 @@ require_once('../inc/page-data.php');
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <div class="alert alert-danger alert-dismissible infoFeed" style="display:none" role="alert">
-                                <span id="msgContent">Holy guacamole! You should check in on some of those fields below.</span>
+                            <div class="alert alert-dismissible infoFeed" style="display:none" role="alert">
+                                <span id="msgContent"></span>
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                             <div class="mb-4 row">
@@ -480,17 +480,18 @@ require_once('../inc/page-data.php');
                                     </div>
                                 </div>
                             </fieldset>
-                            <fieldset>
-                                <div class="row" style="width:100% !important">
-                                    <form id="sendPurchaseInfoForm" method="post" style="display: flex; justify-content:center">
-                                        <button id="sendTransIDBtn" type="submit" class="btn btn-success" style="padding:15px !important">Generate and resend application login info</button>
-                                        <input type="hidden" name="sendTransID" id="sendTransID" value="">
-                                    </form>
-                                </div>
-                            </fieldset>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <div style="width:100% !important; display:flex; justify-content: space-between">
+                                <form id="genSendPurchaseInfoForm" method="post">
+                                    <button type="submit" id="genSendTransIDBtn" class="btn btn-warning" style="padding:15px !important">Generate and send new application login info</button>
+                                    <input type="hidden" name="genSendTransID" id="genSendTransID" value="">
+                                </form>
+                                <form id="sendPurchaseInfoForm" method="post" style="float: right;">
+                                    <button type="submit" id="sendTransIDBtn" class="btn btn-success" style="padding:15px !important">resend application login info</button>
+                                    <input type="hidden" name="sendTransID" id="sendTransID" value="">
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -598,6 +599,7 @@ require_once('../inc/page-data.php');
                             $("#p-formT").val(result.message[0].formT);
                             $("#p-payM").val(result.message[0].payM);
                             $("#sendTransID").val(result.message[0].transID);
+                            $("#genSendTransID").val(result.message[0].transID);
                         } else {
                             alert(result.message);
                         }
@@ -608,9 +610,37 @@ require_once('../inc/page-data.php');
                 });
             });
 
-            $("#sendPurchaseInfoForm").on("submit", function(e) {
+            $("#genSendPurchaseInfoForm").on("submit", function(e) {
                 e.preventDefault();
                 triggeredBy = 3;
+                $.ajax({
+                    type: "POST",
+                    url: "../endpoint/gen-send-purchase-info",
+                    data: new FormData(this),
+                    processData: false,
+                    contentType: false,
+                    success: function(result) {
+                        console.log(result);
+
+                        $("#msgContent").text(result.message);
+                        if (result.success) {
+                            $(".infoFeed").removeClass("alert-danger").addClass("alert-success");
+                            $(".infoFeed").fadeIn(1000).fadeOut(500);
+                        } else {
+                            $(".infoFeed").removeClass("alert-success").addClass("alert-danger");
+                            $(".infoFeed").fadeIn(1000).fadeOut(500);
+                        }
+
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+
+            $("#sendPurchaseInfoForm").on("submit", function(e) {
+                e.preventDefault();
+                triggeredBy = 4;
                 $.ajax({
                     type: "POST",
                     url: "../endpoint/send-purchase-info",
@@ -622,9 +652,11 @@ require_once('../inc/page-data.php');
 
                         $("#msgContent").text(result.message);
                         if (result.success) {
-                            $(".infoFeed").removeClass("alert-danger").addClass("alert-success").toggle();
+                            $(".infoFeed").removeClass("alert-danger").addClass("alert-success");
+                            $(".infoFeed").fadeIn(1000).fadeOut(500);
                         } else {
-                            $(".infoFeed").removeClass("alert-success").addClass("alert-danger").toggle();
+                            $(".infoFeed").removeClass("alert-success").addClass("alert-danger");
+                            $(".infoFeed").fadeIn(1000).fadeOut(500);
                         }
 
                     },
@@ -636,11 +668,13 @@ require_once('../inc/page-data.php');
 
             $(document).on({
                 ajaxStart: function() {
-                    if (triggeredBy == 3) $("#sendTransIDBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> processing...');
+                    if (triggeredBy == 3) $("#genSendTransIDBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> processing...');
+                    else if (triggeredBy == 3) $("#sendTransIDBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> processing...');
                     else $("#alert-output").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
                 },
                 ajaxStop: function() {
-                    if (triggeredBy == 3) $("#sendTransIDBtn").prop("disabled", false).html('Send application login info');
+                    if (triggeredBy == 3) $("#genSendTransIDBtn").prop("disabled", false).html('Generate and send new application login info');
+                    else if (triggeredBy == 4) $("#sendTransIDBtn").prop("disabled", false).html('Send application login info');
                     else $("#alert-output").html('');
                 }
             });

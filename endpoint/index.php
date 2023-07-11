@@ -705,11 +705,19 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     }
 
     // send purchase info
+    elseif ($_GET["url"] == "gen-send-purchase-info") {
+        if (!isset($_POST["genSendTransID"]) || empty($_POST["genSendTransID"]))
+            die(json_encode(array("success" => false, "message" => "Invalid request!")));
+        $transID = $expose->validateNumber($_POST["genSendTransID"]);
+        die(json_encode($admin->sendPurchaseInfo($transID)));
+    }
+
+    // send purchase info
     elseif ($_GET["url"] == "send-purchase-info") {
         if (!isset($_POST["sendTransID"]) || empty($_POST["sendTransID"]))
             die(json_encode(array("success" => false, "message" => "Invalid request!")));
         $transID = $expose->validateNumber($_POST["sendTransID"]);
-        die(json_encode($admin->sendPurchaseInfo($transID)));
+        die(json_encode($admin->sendPurchaseInfo($transID, false)));
     }
 
     // fetch group sales data

@@ -1673,7 +1673,7 @@ class AdminController
 
     private function getAppPurchaseData(int $trans_id)
     {
-        $sql = "SELECT f.`form_id`, pd.`country_code`, pd.`phone_number`, pd.`email_address` 
+        $sql = "SELECT pd.`form_id`, pd.`country_code`, pd.`phone_number`, pd.`email_address` 
                 FROM `purchase_detail` AS pd, forms AS f WHERE pd.`id` = :t AND f.`id` = pd.`form_id`";
         return $this->dm->getData($sql, array(':t' => $trans_id));
     }
@@ -1721,11 +1721,13 @@ class AdminController
      * Generates and sends new applicant login details
      * @param transID - transaction id of purchase 
      */
-    public function sendPurchaseInfo(int $transID)
+    public function sendPurchaseInfo(int $transID, $genrateNewLoginDetails = true)
     {
-        //geenerate new login details
-        $gen = $this->genLoginsAndSend($transID);
-        if (!$gen["success"]) return $gen;
+        if ($genrateNewLoginDetails) {
+            //generate new login details
+            $gen = $this->genLoginsAndSend($transID);
+            if (!$gen["success"]) return $gen;
+        }
 
         // Get purchase data
         $data = $this->dm->getData("SELECT * FROM purchase_detail WHERE id = :ti", array(":ti" => $transID));
@@ -1736,7 +1738,11 @@ class AdminController
         $message .= 'APPLICATION NUMBER: RMU-' . $data[0]['app_number'];
         $message .= '    PIN: ' . $data[0]['pin_number'] . ".";
         $message .= ' Follow the link, https://admissions.rmuictonline.com start application process.';
-        $to = $data[0]["country_code"] . $data[0]["phone_number"];
+
+        if ($data[0]["payment_method"] == "USSD")
+            $to = "+" . $data[0]["last_name"];
+        else
+            $to = $data[0]["country_code"] . $data[0]["phone_number"];
 
         $sentEmail = false;
         $smsSent = false;
@@ -1745,9 +1751,7 @@ class AdminController
         $response = json_decode($this->expose->sendSMS($to, $message));
 
         // Set SMS response status
-        if (!$response->status) {
-            $smsSent = true;
-        }
+        if (!$response->status) $smsSent = true;
 
         // Check if email address was provided
         if (!empty($data[0]["email_address"])) {
@@ -1763,15 +1767,13 @@ class AdminController
             $e_response = $this->expose->sendEmail($data[0]["email_address"], 'ONLINE APPLICATION PORTAL LOGIN INFORMATION', $e_message);
 
             // Ste email reponse status
-            if ($e_response) {
-                $sentEmail = true;
-            }
+            if ($e_response) $sentEmail = true;
         }
 
         // Set output message
         $output = "";
-        if ($smsSent && $sentEmail) $output = "Successfully, sent purchase details via SMS and email!";
-        else $output = "Successfully, sent purchase details!";
+        if ($smsSent && $sentEmail) $output = "Successfully sent purchase details via SMS and email!";
+        else $output = "Successfully sent purchase details!" . $to;
 
         // Log activity
         $this->logActivity(
