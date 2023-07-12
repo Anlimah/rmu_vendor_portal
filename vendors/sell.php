@@ -235,7 +235,7 @@ require_once('../inc/page-data.php');
                                         <button class="btn btn-primary btn-sm" type="submit" id="submitBtn" style="padding: 10px 10px; width:200px" disabled>Sell</button>
                                     </div>
                                 </div>
-                                <input type="hidden" name="_v1Token" value="<?= $_SESSION["_vendor1Token"]; ?>">
+                                <input type="hidden" name="_v1Token" value="<?= isset($_SESSION["_vendor1Token"]) ? $_SESSION["_vendor1Token"] : "" ?>">
                                 <input type="hidden" name="form_price" id="form_price" value="0">
                                 <!--<input type="hidden" name="form_type" id="form_type" value="0">-->
                             </form>
