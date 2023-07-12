@@ -74,31 +74,36 @@ require_once('../inc/page-data.php');
                             <!-- Form Types -->
                             <div class="form-types">
                                 <div class="row">
-                                    <?php foreach ($summary["form-types"] as $form) { ?>
-                                        <!-- Masters Card -->
-                                        <div class="col-xxl-4 col-md-4">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <h6 style="font-size: 18px; font-weight: 650; margin-top:20px"><?= $form["name"] ?></h6>
-                                                    <div class="mt-2" style="display:flex; justify-content:space-between">
+                                    <?php
+                                    if (!empty($summary)) {
+                                        foreach ($summary["form-types"] as $form) { ?>
+                                            <!-- Masters Card -->
+                                            <div class="col-xxl-4 col-md-4">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <h6 style="font-size: 18px; font-weight: 650; margin-top:20px"><?= $form["name"] ?></h6>
+                                                        <div class="mt-2" style="display:flex; justify-content:space-between">
 
-                                                        <div style="display: flex; flex-direction:column; justify-content:flex-start">
-                                                            <span style="font-size: 16px;"><?= $form["total_num"] ?></span>
-                                                            <span class="text-muted small">COUNT</span>
+                                                            <div style="display: flex; flex-direction:column; justify-content:flex-start">
+                                                                <span style="font-size: 16px;"><?= $form["total_num"] ?></span>
+                                                                <span class="text-muted small">COUNT</span>
+                                                            </div>
+
+                                                            <div style="display: flex; flex-direction:column; justify-content:flex-start">
+                                                                <h5 style="padding-bottom: 0; margin-bottom:0;">
+                                                                    <span class="small">GH</span>&#162;<span class="small"><?= $form["total_amount"] ? $form["total_amount"] : "0.00" ?></span>
+                                                                </h5>
+                                                                <span class="text-muted small">AMOUNT</span>
+                                                            </div>
+
                                                         </div>
-
-                                                        <div style="display: flex; flex-direction:column; justify-content:flex-start">
-                                                            <h5 style="padding-bottom: 0; margin-bottom:0;">
-                                                                <span class="small">GH</span>&#162;<span class="small"><?= $form["total_amount"] ? $form["total_amount"] : "0.00" ?></span>
-                                                            </h5>
-                                                            <span class="text-muted small">AMOUNT</span>
-                                                        </div>
-
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div><!-- End Masters Card -->
-                                    <?php } ?>
+                                            </div><!-- End Masters Card -->
+                                    <?php
+                                        }
+                                    }
+                                    ?>
                                 </div>
                             </div>
 
