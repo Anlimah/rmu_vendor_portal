@@ -484,15 +484,11 @@ require_once('../inc/page-data.php');
                         <div class="modal-footer">
                             <div style="width:100% !important; display:flex; justify-content: space-between">
                                 <form id="genSendPurchaseInfoForm" method="post">
-                                    <button type="submit" id="genSendTransIDBtn" class="btn btn-warning" style="padding:15px !important">Generate and send new application login info</button>
+                                    <button type="submit" id="genSendTransIDBtn" class="btn btn-warning btn-sm" style="padding:15px !important">Generate and send new application login info</button>
                                     <input type="hidden" name="genSendTransID" id="genSendTransID" value="">
                                 </form>
                                 <form id="sendPurchaseInfoForm" method="post" style="float: right;">
-                                    <button type="submit" id="sendTransIDBtn" class="btn btn-success" style="padding:15px !important">Resend application login info</button>
-                                    <input type="hidden" name="sendTransID" id="sendTransID" value="">
-                                </form>
-                                <form id="sendPurchaseInfoForm" method="post" style="float: right;">
-                                    <button type="submit" id="sendTransIDBtn" class="btn btn-danger" style="padding:15px !important">Resend application login info</button>
+                                    <button type="submit" id="sendTransIDBtn" class="btn btn-success btn-sm" style="padding:15px !important">Resend application login info</button>
                                     <input type="hidden" name="sendTransID" id="sendTransID" value="">
                                 </form>
                             </div>
