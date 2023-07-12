@@ -334,7 +334,7 @@ class ExposeDataController extends DatabaseMethods
         return array("success" => false, "message" => "User does not exist!");
     }
 
-    public function getApplicationInfo(int $transaction_id)
+    public function getApplicationInfo($transaction_id)
     {
         $sql = "SELECT p.`id`, p.`first_name`, p.`last_name`, p.`phone_number`, p.`app_number`, p.`pin_number`, 
                 f.`name`, f.`amount`, v.`company`, v.`branch`, a.`info` 

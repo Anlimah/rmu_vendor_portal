@@ -10,7 +10,7 @@ if (isset($_SESSION["adminLogSuccess"]) && $_SESSION["adminLogSuccess"] == true 
 }
 
 if (isset($_SESSION["vendor_id"]) && !empty($_SESSION["vendor_id"]))
-    $trans_id = $_GET["exttrid"];
+    $trans_id = isset($_GET["exttrid"]) ? $_GET["exttrid"] : "";
 else header("Location: index.php");
 
 if (isset($_GET['logout']) || strtolower($_SESSION["role"]) != "vendors") {
@@ -43,7 +43,7 @@ use Src\Controller\ExposeDataController;
 
 $expose = new ExposeDataController();
 
-$data = $expose->getApplicationInfo($_GET["exttrid"]);
+$data = isset($_GET["exttrid"]) ? $expose->getApplicationInfo($_GET["exttrid"]) : "";
 ?>
 <!DOCTYPE html>
 <html lang="en">
