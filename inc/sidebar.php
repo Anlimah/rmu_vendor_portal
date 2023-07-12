@@ -17,7 +17,7 @@
         </li>End Application Page Nav -->
 
         <?php
-        if (strtolower($_SESSION["role"]) == "admissions") {
+        if (isset($_SESSION["role"]) && strtolower($_SESSION["role"]) == "admissions") {
         ?>
             <!-- <li class="nav-item">
                 <a class="nav-link collapsed" href="admit-applicants.php">
@@ -42,7 +42,7 @@
         <?php } ?>
 
         <?php
-        if (strtolower($_SESSION["role"]) == "admissions" || strtolower($_SESSION["role"]) == "accounts") {
+        if (isset($_SESSION["role"]) && strtolower($_SESSION["role"]) == "admissions" || strtolower($_SESSION["role"]) == "accounts") {
         ?>
             <li class="nav-item">
                 <a class="nav-link collapsed" href="../<?= strtolower($_SESSION["role"]) ?>/user-account.php">
