@@ -184,7 +184,7 @@ require_once('../inc/page-data.php');
                             $data = array(
                                 "admission-period" => $currentAdminPeriod,
                                 "from-date" => "", "to-date" => "", "form-type" => "all",
-                                "purchase-status" => "all", "vendor-id" => $_SESSION["vendor_id"]
+                                "purchase-status" => "all", "vendor-id" => (isset($_SESSION["vendor_id"]) ? $_SESSION["vendor_id"] : "")
                             );
                             $purchaseData = $admin->fetchAllVendorFormPurchases($data);
                             $totalPurchaseData = !empty($purchaseData) ? count($purchaseData) : 0;
