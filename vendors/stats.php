@@ -182,11 +182,11 @@ require_once('../inc/page-data.php');
                                 "purchase-status" => "all", "vendor-id" => $_SESSION["vendor_id"]
                             );
                             $purchaseData = $admin->fetchAllVendorFormPurchases($data);
-                            $totalPurchaseData = count($purchaseData);
+                            $totalPurchaseData = !empty($purchaseData) ? count($purchaseData) : 0;
                             ?>
 
                             <div class="mt-4" style="display: flex; justify-content: space-between">
-                                <h4>Total: <span id="totalData"><?= !empty($totalPurchaseData) ? $totalPurchaseData : 0 ?></span></h4>
+                                <h4>Total: <span id="totalData"><?= $totalPurchaseData ?></span></h4>
                                 <div id="alert-output"></div>
                             </div>
 
@@ -209,23 +209,25 @@ require_once('../inc/page-data.php');
 
                                     <tbody>
                                         <?php
-                                        $index = 1;
-                                        foreach ($purchaseData as $pd) {
+                                        if (!empty($purchaseData)) {
+                                            $index = 1;
+                                            foreach ($purchaseData as $pd) {
                                         ?>
-                                            <tr>
-                                                <td> <?= $index ?> </td>
-                                                <td> <?= $pd["added_at"] ?> </td>
-                                                <td> <?= $pd["id"] ?> </td>
-                                                <td> <?= $pd["fullName"] ?> </td>
-                                                <td> <?= $pd["phoneNumber"] ?> </td>
-                                                <td> <?= $pd["admissionPeriod"] ?> </td>
-                                                <td> <?= $pd["formType"] ?> </td>
-                                                <td> <?= $pd["status"] ?> </td>
-                                                <td>
-                                                    <button id="<?= $pd["id"] ?>" class="btn btn-xs btn-primary openPurchaseInfo" data-bs-toggle="modal" data-bs-target="#purchaseInfoModal">View</button>
-                                                </td>
-                                            </tr>
+                                                <tr>
+                                                    <td> <?= $index ?> </td>
+                                                    <td> <?= $pd["added_at"] ?> </td>
+                                                    <td> <?= $pd["id"] ?> </td>
+                                                    <td> <?= $pd["fullName"] ?> </td>
+                                                    <td> <?= $pd["phoneNumber"] ?> </td>
+                                                    <td> <?= $pd["admissionPeriod"] ?> </td>
+                                                    <td> <?= $pd["formType"] ?> </td>
+                                                    <td> <?= $pd["status"] ?> </td>
+                                                    <td>
+                                                        <button id="<?= $pd["id"] ?>" class="btn btn-xs btn-primary openPurchaseInfo" data-bs-toggle="modal" data-bs-target="#purchaseInfoModal">View</button>
+                                                    </td>
+                                                </tr>
                                         <?php
+                                            }
                                         }
                                         ?>
                                     </tbody>
