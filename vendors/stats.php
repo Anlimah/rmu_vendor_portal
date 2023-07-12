@@ -107,6 +107,89 @@ require_once('../inc/page-data.php');
                 </div>
             </div><!-- End Transactions Summary row -->
 
+            <!-- Transactions Table -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card recent-sales overflow-auto">
+
+                        <div class="card-body">
+                            <h5 class="card-title">Transactions</h5>
+
+                            <form id="reportsForm" method="post">
+                                <div class="row">
+
+                                    <div class="col-2 col-md-2 col-sm-12 mt-2">
+                                        <label for="admission-period" class="form-label">Admission Period</label>
+                                        <select name="admission-period" id="admission-period" class="form-select">
+                                            <option value="" hidden>Choose</option>
+                                            <option value="All">All</option>
+                                            <?php
+                                            $result = $admin->fetchAllAdmissionPeriod();
+                                            foreach ($result as $value) {
+                                            ?>
+                                                <option value="<?= $value["id"] ?>"><?= $value["info"] ?></option>
+                                            <?php
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-2 col-md-2 col-sm-12 mt-2">
+                                        <label for="from-date" class="form-label">From (Date)</label>
+                                        <input type="date" name="from-date" id="from-date" class="form-control">
+                                    </div>
+
+                                    <div class="col-2 col-md-2 col-sm-12 mt-2">
+                                        <label for="to-date" class="form-label">To (Date)</label>
+                                        <input type="date" name="to-date" id="to-date" class="form-control">
+                                    </div>
+
+                                    <div class="col-2 col-md-2 col-sm-12 mt-2">
+                                        <label for="form-type" class="form-label">Form Type</label>
+                                        <select name="form-type" id="form-type" class="form-select">
+                                            <option value="" hidden>Choose</option>
+                                            <option value="All">All</option>
+                                            <?php
+                                            $result = $admin->getAvailableForms();
+                                            foreach ($result as $value) {
+                                            ?>
+                                                <option value="<?= $value["id"] ?>"><?= $value["name"] ?></option>
+                                            <?php
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <div style="margin-top: 10px !important">
+                                <table class="table table-borderless table-striped table-hover" id="dataT">
+
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th scope="col">S/N</th>
+                                            <th scope="col">Date</th>
+                                            <th scope="col">Transaction ID</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Phone Number</th>
+                                            <th scope="col">Admission Period</th>
+                                            <th scope="col">Form Bought</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Payment Method</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- Transactions List row -->
+
         </section>
 
     </main><!-- End #main -->
@@ -127,6 +210,57 @@ require_once('../inc/page-data.php');
                     // Hide it after 3 seconds
                     $.LoadingOverlay("hide");
                 }
+            });
+
+            $("#reportsForm").on("submit", function(e, d) {
+                e.preventDefault();
+                triggeredBy = 1;
+
+                $.ajax({
+                    type: "POST",
+                    url: "../endpoint/dailySalesByVendor",
+                    data: new FormData(this),
+                    processData: false,
+                    contentType: false,
+                    success: function(result) {
+                        console.log(result);
+
+                        if (result.success) {
+                            $("#totalData").text(result.message.length);
+                            $("tbody").html('');
+                            $.each(result.message, function(index, value) {
+                                $("tbody").append(
+                                    '<tr>' +
+                                    '<td>' + (index + 1) + '</td>' +
+                                    '<td>' + value.added_at + '</td>' +
+                                    '<td>' + value.id + '</td>' +
+                                    '<td>' + value.fullName + '</td>' +
+                                    '<td>' + value.phoneNumber + '</td>' +
+                                    '<td>' + value.admissionPeriod + '</td>' +
+                                    '<td>' + value.formType + '</td>' +
+                                    '<td>' + value.status + '</td>' +
+                                    '<td>' + value.paymentMethod + '</td>' +
+                                    '<td>' +
+                                    '<button id="' + value.id + '" class="btn btn-xs btn-primary openPurchaseInfo" data-bs-toggle="modal" data-bs-target="#purchaseInfoModal">View</button>' +
+                                    '</td>' +
+                                    '</tr>'
+                                );
+                            });
+                        } else {
+                            $("#alert-output").html('');
+                            $("#alert-output").html(
+                                '<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+                                '<i class="bi bi-info-circle me-1"></i>' + result.message +
+                                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                                '</div>'
+                            );
+                        }
+
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
             });
         });
     </script>
