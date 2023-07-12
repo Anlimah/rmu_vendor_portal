@@ -64,7 +64,7 @@ require_once('../inc/page-data.php');
                     <div class="card recent-sales overflow-auto">
 
                         <?php
-                        $summary = $admin->fetchVendorSummary($_SESSION["vendor_id"]);
+                        $summary = isset($_SESSION["vendor_id"]) ? $admin->fetchVendorSummary($_SESSION["vendor_id"]) : "";
                         $admissionInfo = $admin->fetchCurrentAdmissionPeriod();
                         ?>
 
