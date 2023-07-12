@@ -159,8 +159,17 @@ require_once('../inc/page-data.php');
                                             ?>
                                         </select>
                                     </div>
+
+                                    <div class="col-2 col-md-2 col-sm-12 mt-2">
+                                        <button type="submit">Submit</button>
+                                    </div>
                                 </div>
                             </form>
+
+                            <div class="mt-4" style="display: flex; justify-content: space-between">
+                                <h4>Total: <span id="totalData"></span></h4>
+                                <div id="alert-output"></div>
+                            </div>
 
                             <div style="margin-top: 10px !important">
                                 <table class="table table-borderless table-striped table-hover" id="dataT">
