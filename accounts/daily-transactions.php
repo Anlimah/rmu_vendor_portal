@@ -488,7 +488,11 @@ require_once('../inc/page-data.php');
                                     <input type="hidden" name="genSendTransID" id="genSendTransID" value="">
                                 </form>
                                 <form id="sendPurchaseInfoForm" method="post" style="float: right;">
-                                    <button type="submit" id="sendTransIDBtn" class="btn btn-success" style="padding:15px !important">resend application login info</button>
+                                    <button type="submit" id="sendTransIDBtn" class="btn btn-success" style="padding:15px !important">Resend application login info</button>
+                                    <input type="hidden" name="sendTransID" id="sendTransID" value="">
+                                </form>
+                                <form id="sendPurchaseInfoForm" method="post" style="float: right;">
+                                    <button type="submit" id="sendTransIDBtn" class="btn btn-danger" style="padding:15px !important">Resend application login info</button>
                                     <input type="hidden" name="sendTransID" id="sendTransID" value="">
                                 </form>
                             </div>
@@ -556,13 +560,8 @@ require_once('../inc/page-data.php');
                                 );
                             });
                         } else {
-                            $("#alert-output").html('');
-                            $("#alert-output").html(
-                                '<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
-                                '<i class="bi bi-info-circle me-1"></i>' + result.message +
-                                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-                                '</div>'
-                            );
+                            $("#totalData").text(0);
+                            $("tbody").html("<tr style='text-align: center'><td colspan='5'>" + result.message + "</td></tr>");
                         }
 
                     },
@@ -612,6 +611,10 @@ require_once('../inc/page-data.php');
 
             $("#genSendPurchaseInfoForm").on("submit", function(e) {
                 e.preventDefault();
+
+                var confirmMsg = confirm("Please note that applicant current progress on the application portal will be lost after new login info are generated! Click OK to continue.");
+                if (!confirmMsg) return;
+
                 triggeredBy = 3;
                 $.ajax({
                     type: "POST",
@@ -669,12 +672,12 @@ require_once('../inc/page-data.php');
             $(document).on({
                 ajaxStart: function() {
                     if (triggeredBy == 3) $("#genSendTransIDBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> processing...');
-                    else if (triggeredBy == 3) $("#sendTransIDBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> processing...');
+                    else if (triggeredBy == 4) $("#sendTransIDBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> processing...');
                     else $("#alert-output").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
                 },
                 ajaxStop: function() {
                     if (triggeredBy == 3) $("#genSendTransIDBtn").prop("disabled", false).html('Generate and send new application login info');
-                    else if (triggeredBy == 4) $("#sendTransIDBtn").prop("disabled", false).html('Send application login info');
+                    else if (triggeredBy == 4) $("#sendTransIDBtn").prop("disabled", false).html('Resend application login info');
                     else $("#alert-output").html('');
                 }
             });

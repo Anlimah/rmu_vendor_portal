@@ -694,6 +694,24 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         die(json_encode(array("success" => true, "message" => $result)));
     }
 
+    // For sales report on vendor's dashboard
+    elseif ($_GET["url"] == "vendorSalesReport") {
+        if (!isset($_POST["admission-period"])) die(json_encode(array("success" => false, "message" => "Invalid input request for admission period!")));
+        if (!isset($_POST["from-date"])) die(json_encode(array("success" => false, "message" => "Invalid input request for from date!")));
+        if (!isset($_POST["to-date"])) die(json_encode(array("success" => false, "message" => "Invalid input request for to date!")));
+        if (!isset($_POST["form-type"])) die(json_encode(array("success" => false, "message" => "Invalid input request for form type!")));
+        if (!isset($_POST["purchase-status"])) die(json_encode(array("success" => false, "message" => "Invalid input request for purchase status!")));
+
+        if ((!empty($_POST["from-date"]) && empty($_POST["to-date"])) || (!empty($_POST["to-date"]) && empty($_POST["from-date"])))
+            die(json_encode(array("success" => false, "message" => "Date range (From - To) must be set!")));
+
+        $_POST["vendor-id"] = $_SESSION["vendor_id"];
+
+        $result = $admin->fetchAllVendorFormPurchases($_POST);
+        if (empty($result)) die(json_encode(array("success" => false, "message" => "No result found for given parameters!")));
+        die(json_encode(array("success" => true, "message" => $result)));
+    }
+
     //
     elseif ($_GET["url"] == "purchaseInfo") {
         if (!isset($_POST["_data"]) || empty($_POST["_data"]))

@@ -127,7 +127,7 @@ require_once('../inc/page-data.php');
                                             $result = $admin->fetchAllAdmissionPeriod();
                                             foreach ($result as $value) {
                                             ?>
-                                                <option value="<?= $value["id"] ?>"><?= $value["info"] ?></option>
+                                                <option value="<?= $value["id"] ?>" <?= $value["active"] ? "selected" : "" ?>><?= $value["info"] ?></option>
                                             <?php
                                             }
                                             ?>
@@ -161,13 +161,31 @@ require_once('../inc/page-data.php');
                                     </div>
 
                                     <div class="col-2 col-md-2 col-sm-12 mt-2">
-                                        <button type="submit">Submit</button>
+                                        <label for="purchase-status" class="form-label">Purchase Status</label>
+                                        <select name="purchase-status" id="purchase-status" class="form-select">
+                                            <option value="" hidden>Choose</option>
+                                            <option value="All">All</option>
+                                            <option value="COMPLETED">COMPLETED</option>
+                                            <option value="FAILED">FAILED</option>
+                                            <option value="PENDING">PENDING</option>
+                                        </select>
                                     </div>
                                 </div>
                             </form>
 
+                            <?php
+                            $currentAdminPeriod = $admin->getCurrentAdmissionPeriodID();
+
+                            $data = array(
+                                "admission-period" => $currentAdminPeriod,
+                                "from-date" => "", "to-date" => "", "form-type" => "all",
+                                "purchase-status" => "all", "vendor-id" => $_SESSION["vendor_id"]
+                            );
+                            $purchaseData = $admin->fetchAllVendorFormPurchases($data);
+                            ?>
+
                             <div class="mt-4" style="display: flex; justify-content: space-between">
-                                <h4>Total: <span id="totalData"></span></h4>
+                                <h4>Total: <span id="totalData"><?= count($purchaseData) ?></span></h4>
                                 <div id="alert-output"></div>
                             </div>
 
@@ -184,12 +202,31 @@ require_once('../inc/page-data.php');
                                             <th scope="col">Admission Period</th>
                                             <th scope="col">Form Bought</th>
                                             <th scope="col">Status</th>
-                                            <th scope="col">Payment Method</th>
                                             <th scope="col">Action</th>
                                         </tr>
                                     </thead>
 
                                     <tbody>
+                                        <?php
+                                        $index = 1;
+                                        foreach ($purchaseData as $pd) {
+                                        ?>
+                                            <tr>
+                                                <td> <?= $index ?> </td>
+                                                <td> <?= $pd["added_at"] ?> </td>
+                                                <td> <?= $pd["id"] ?> </td>
+                                                <td> <?= $pd["fullName"] ?> </td>
+                                                <td> <?= $pd["phoneNumber"] ?> </td>
+                                                <td> <?= $pd["admissionPeriod"] ?> </td>
+                                                <td> <?= $pd["formType"] ?> </td>
+                                                <td> <?= $pd["status"] ?> </td>
+                                                <td>
+                                                    <button id="<?= $pd["id"] ?>" class="btn btn-xs btn-primary openPurchaseInfo" data-bs-toggle="modal" data-bs-target="#purchaseInfoModal">View</button>
+                                                </td>
+                                            </tr>
+                                        <?php
+                                        }
+                                        ?>
                                     </tbody>
 
                                 </table>
@@ -198,6 +235,106 @@ require_once('../inc/page-data.php');
                     </div>
                 </div>
             </div><!-- Transactions List row -->
+            <!-- Purchase info Modal -->
+            <div class="modal fade" id="purchaseInfoModal" tabindex="-1" aria-labelledby="purchaseInfoModal" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="purchaseInfoModalTitle">Purchase Information</h1>
+                            <a href="#" id="printVoucher" target="_blank" type="button" class="btn btn-primary btn-sm">
+                                <span class="bi bi-printer"> PRINT</span>
+                            </a>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-dismissible infoFeed" style="display:none" role="alert">
+                                <span id="msgContent"></span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            <div class="mb-4 row">
+                                <div class="mb-3 col-5">
+                                    <div class="input-group">
+                                        <span class="input-group-text" id="basic-addon3">Trans. ID: </span>
+                                        <input disabled type="text" class="form-control _textD" id="p-transID" aria-describedby="basic-addon3">
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-7">
+                                    <div class="input-group">
+                                        <span class="input-group-text" id="basic-addon3">Admission Period: </span>
+                                        <input disabled type="text" class="form-control _textD" id="p-admisP" aria-describedby="basic-addon3">
+                                    </div>
+                                </div>
+                            </div>
+                            <fieldset class="mb-4 mt-4">
+                                <legend>Personal</legend>
+                                <div class="row">
+                                    <div class="mb-3 col">
+                                        <label for="p-name" class="form-label">Name</label>
+                                        <input disabled type="text" class="form-control _textD" id="p-name">
+                                    </div>
+                                    <div class="mb-3 col">
+                                        <label for="p-country" class="form-label">Country</label>
+                                        <input disabled type="text" class="form-control _textD" id="p-country">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="mb-3 col">
+                                        <label for="p-email" class="form-label">Email Address</label>
+                                        <input disabled type="text" class="form-control _textD" id="p-email">
+                                    </div>
+                                    <div class="mb-3 col">
+                                        <label for="p-phoneN" class="form-label">Phone Number</label>
+                                        <input disabled type="text" class="form-control _textD" id="p-phoneN">
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <fieldset class="mb-4">
+                                <legend>Form</legend>
+                                <div class="row">
+                                    <div class="mb-3 col">
+                                        <label for="p-appN" class="form-label">App Number</label>
+                                        <input disabled type="text" class="form-control _textD" id="p-appN">
+                                    </div>
+                                    <div class="mb-3 col">
+                                        <label for="p-pin" class="form-label">PIN</label>
+                                        <input disabled type="text" class="form-control _textD" id="p-pin">
+                                    </div>
+                                    <div class="mb-3 col">
+                                        <label for="p-status" class="form-label">Status</label>
+                                        <input disabled type="text" class="form-control _textD" id="p-status">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="mb-3 col">
+                                        <label for="p-vendor" class="form-label">Vendor</label>
+                                        <input disabled type="text" class="form-control _textD" id="p-vendor">
+                                    </div>
+                                    <div class="mb-3 col">
+                                        <label for="p-formT" class="form-label">Form Type</label>
+                                        <input disabled type="text" class="form-control _textD" id="p-formT">
+                                    </div>
+                                    <div class="mb-3 col">
+                                        <label for="p-payM" class="form-label">Payment Method</label>
+                                        <input disabled type="text" class="form-control _textD" id="p-payM">
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div class="modal-footer">
+                            <div style="width:100% !important; display:flex; justify-content: space-between">
+                                <form id="genSendPurchaseInfoForm" method="post">
+                                    <button type="submit" id="genSendTransIDBtn" class="btn btn-warning btn-sm" style="padding:15px !important">Generate and send new application login info</button>
+                                    <input type="hidden" name="genSendTransID" id="genSendTransID" value="">
+                                </form>
+                                <form id="sendPurchaseInfoForm" method="post" style="float: right;">
+                                    <button type="submit" id="sendTransIDBtn" class="btn btn-success btn-sm" style="padding:15px !important">Resend application login info</button>
+                                    <input type="hidden" name="sendTransID" id="sendTransID" value="">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
         </section>
 
@@ -221,13 +358,21 @@ require_once('../inc/page-data.php');
                 }
             });
 
+            var triggeredBy = 0;
+
+            // when 
+            $(".form-select, .form-control").change("blur", function(e) {
+                e.preventDefault();
+                $("#reportsForm").submit();
+            });
+
             $("#reportsForm").on("submit", function(e, d) {
                 e.preventDefault();
                 triggeredBy = 1;
 
                 $.ajax({
                     type: "POST",
-                    url: "../endpoint/dailySalesByVendor",
+                    url: "../endpoint/vendorSalesReport",
                     data: new FormData(this),
                     processData: false,
                     contentType: false,
@@ -248,7 +393,6 @@ require_once('../inc/page-data.php');
                                     '<td>' + value.admissionPeriod + '</td>' +
                                     '<td>' + value.formType + '</td>' +
                                     '<td>' + value.status + '</td>' +
-                                    '<td>' + value.paymentMethod + '</td>' +
                                     '<td>' +
                                     '<button id="' + value.id + '" class="btn btn-xs btn-primary openPurchaseInfo" data-bs-toggle="modal" data-bs-target="#purchaseInfoModal">View</button>' +
                                     '</td>' +
@@ -256,13 +400,82 @@ require_once('../inc/page-data.php');
                                 );
                             });
                         } else {
-                            $("#alert-output").html('');
-                            $("#alert-output").html(
-                                '<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
-                                '<i class="bi bi-info-circle me-1"></i>' + result.message +
-                                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-                                '</div>'
-                            );
+                            $("#totalData").text(0);
+                            $("tbody").html("<tr style='text-align: center'><td colspan='9'>" + result.message + "</td></tr>");
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+
+            $(document).on("click", ".openPurchaseInfo", function() {
+                triggeredBy = 2;
+                let data = {
+                    _data: $(this).attr("id")
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "../endpoint/purchaseInfo",
+                    data: data,
+                    success: function(result) {
+                        console.log(result);
+
+                        if (result.success) {
+                            $("#p-transID").val(result.message[0].transID);
+                            $("#p-admisP").val(result.message[0].admisP);
+                            $("#p-name").val(result.message[0].fullName);
+                            $("#p-country").val(result.message[0].country);
+                            $("#p-email").val(result.message[0].email);
+                            $("#p-phoneN").val(result.message[0].phoneN);
+                            $("#p-appN").val(result.message[0].appN);
+                            $("#p-pin").val(result.message[0].pin);
+                            $("#p-status").val(result.message[0].status);
+                            $("#p-vendor").val(result.message[0].vendor);
+                            $("#p-formT").val(result.message[0].formT);
+                            $("#p-payM").val(result.message[0].payM);
+                            $("#sendTransID").val(result.message[0].transID);
+                            $("#genSendTransID").val(result.message[0].transID);
+                            $("#printVoucher").prop("href", "print-form.php?exttrid=" + result.message[0].transID);
+                        } else {
+                            alert(result.message);
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+
+            $("#genSendPurchaseInfoForm").on("submit", function(e) {
+                e.preventDefault();
+
+                var confirmMsg = confirm("Please note that applicant current progress on the application portal will be lost after new login info are generated! Click OK to continue.");
+                if (!confirmMsg) return;
+
+                triggeredBy = 3;
+                $.ajax({
+                    type: "POST",
+                    url: "../endpoint/gen-send-purchase-info",
+                    data: new FormData(this),
+                    processData: false,
+                    contentType: false,
+                    success: function(result) {
+                        console.log(result);
+
+                        $("#msgContent").text(result.message);
+                        if (result.success) {
+                            $(".infoFeed").removeClass("alert-danger").addClass("alert-success");
+                            $(".infoFeed").fadeIn("slow", function() {
+                                $(".infoFeed").fadeOut(5000);
+                            });
+                        } else {
+                            $(".infoFeed").removeClass("alert-success").addClass("alert-danger");
+                            $(".infoFeed").fadeIn("slow", function() {
+                                $(".infoFeed").fadeOut(5000);
+                            });
                         }
 
                     },
@@ -270,6 +483,51 @@ require_once('../inc/page-data.php');
                         console.log(error);
                     }
                 });
+            });
+
+            $("#sendPurchaseInfoForm").on("submit", function(e) {
+                e.preventDefault();
+                triggeredBy = 4;
+                $.ajax({
+                    type: "POST",
+                    url: "../endpoint/send-purchase-info",
+                    data: new FormData(this),
+                    processData: false,
+                    contentType: false,
+                    success: function(result) {
+                        console.log(result);
+
+                        $("#msgContent").text(result.message);
+                        if (result.success) {
+                            $(".infoFeed").removeClass("alert-danger").addClass("alert-success").fadeOut(3000);
+                            $(".infoFeed").fadeIn("slow", function() {
+                                $(".infoFeed").fadeOut(5000);
+                            });
+                        } else {
+                            $(".infoFeed").removeClass("alert-success").addClass("alert-danger");
+                            $(".infoFeed").fadeIn("slow", function() {
+                                $(".infoFeed").fadeOut(5000);
+                            });
+                        }
+
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+
+            $(document).on({
+                ajaxStart: function() {
+                    if (triggeredBy == 3) $("#genSendTransIDBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> processing...');
+                    else if (triggeredBy == 4) $("#sendTransIDBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> processing...');
+                    else $("#alert-output").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
+                },
+                ajaxStop: function() {
+                    if (triggeredBy == 3) $("#genSendTransIDBtn").prop("disabled", false).html('Generate and send new application login info');
+                    else if (triggeredBy == 4) $("#sendTransIDBtn").prop("disabled", false).html('Resend application login info');
+                    else $("#alert-output").html('');
+                }
             });
         });
     </script>

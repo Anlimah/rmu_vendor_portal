@@ -1630,7 +1630,32 @@ class AdminController
                  CONCAT('(', pd.`country_code`,') ', pd.`phone_number`) AS phoneNumber, 
                  pd.`status`, pd.`added_at`, ft.`name` AS formType, ap.`info` AS admissionPeriod, pd.`payment_method` AS paymentMethod 
                  FROM `purchase_detail` AS pd, `admission_period` AS ap, `forms` AS ft, vendor_details AS vd 
-                 WHERE pd.admission_period = ap.`id` AND pd.form_id = ft.id AND pd.vendor = vd.`id`$QUERY_CON";
+                 WHERE pd.admission_period = ap.`id` AND pd.form_id = ft.id AND pd.vendor = vd.`id`$QUERY_CON ORDER BY pd.`added_at` DESC";
+
+        $_SESSION["downloadQueryStmt"] = array("type" => "dailyReport", "data" => $data, "query" => $query);
+        return $this->dm->getData($query);
+    }
+
+    //
+    public function fetchAllVendorFormPurchases($data = array())
+    {
+        $QUERY_CON = "";
+        if (strtolower($data["admission-period"]) != "all" && !empty($data["admission-period"]))
+            $QUERY_CON .= " AND pd.`admission_period` = '" . $data["admission-period"] . "'";
+        if (!empty($data["from-date"])  && !empty($data["to-date"]))
+            $QUERY_CON .= " AND pd.`added_at` BETWEEN '" . $data["from-date"] . "'" . " AND '" . $data["to-date"] . "'";
+        if (strtolower($data["form-type"]) != "all" && !empty($data["form-type"]))
+            $QUERY_CON .= " AND pd.`form_id` = '" . $data["form-type"] . "'";
+        if (strtolower($data["purchase-status"]) != "all" && !empty($data["purchase-status"]))
+            $QUERY_CON .= " AND pd.`status` = '" . $data["purchase-status"] . "'";
+        if (!empty($data["vendor-id"]))
+            $QUERY_CON .= " AND pd.`vendor` = '" . $data["vendor-id"] . "'";
+
+        $query = "SELECT pd.`id`, CONCAT(pd.`first_name`, ' ', pd.`last_name`) AS fullName, 
+                 CONCAT('(', pd.`country_code`,') ', pd.`phone_number`) AS phoneNumber, 
+                 pd.`status`, pd.`added_at`, ft.`name` AS formType, ap.`info` AS admissionPeriod 
+                 FROM `purchase_detail` AS pd, `admission_period` AS ap, `forms` AS ft, vendor_details AS vd 
+                 WHERE pd.admission_period = ap.`id` AND pd.form_id = ft.id AND pd.vendor = vd.`id`$QUERY_CON ORDER BY pd.`added_at` DESC";
 
         $_SESSION["downloadQueryStmt"] = array("type" => "dailyReport", "data" => $data, "query" => $query);
         return $this->dm->getData($query);
@@ -1640,7 +1665,7 @@ class AdminController
     {
         $query = "SELECT pd.`id` AS transID, CONCAT(pd.`first_name`, ' ', pd.`last_name`) AS fullName, 
                 pd.`email_address` AS email,  CONCAT('(', pd.`country_code`,') ', pd.`phone_number`) AS phoneN, 
-                pd.`country_name` AS country, pd.`app_number` AS appN, pd.`pin_number` AS pin, 
+                pd.`country_name` AS country, CONCAT('RMU-', pd.`app_number`) AS appN, pd.`pin_number` AS pin, 
                 pd.`status`, pd.`added_at`, ft.`name` AS formT, pd.`payment_method` AS payM, 
                 vd.`company` AS vendor, ap.`info` AS admisP 
                 FROM `purchase_detail` AS pd, `admission_period` AS ap, `forms` AS ft, vendor_details AS vd 
