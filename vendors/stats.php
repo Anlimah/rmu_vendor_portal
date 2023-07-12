@@ -182,10 +182,11 @@ require_once('../inc/page-data.php');
                                 "purchase-status" => "all", "vendor-id" => $_SESSION["vendor_id"]
                             );
                             $purchaseData = $admin->fetchAllVendorFormPurchases($data);
+                            $totalPurchaseData = count($purchaseData);
                             ?>
 
                             <div class="mt-4" style="display: flex; justify-content: space-between">
-                                <h4>Total: <span id="totalData"><?= count($purchaseData) ?></span></h4>
+                                <h4>Total: <span id="totalData"><?= !empty($totalPurchaseData) ? $totalPurchaseData : 0 ?></span></h4>
                                 <div id="alert-output"></div>
                             </div>
 
