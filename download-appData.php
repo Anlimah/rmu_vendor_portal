@@ -77,14 +77,9 @@ $admin->updateApplicationStatus($_GET["q"]);
 
     <!-- Vendor CSS Files -->
     <!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">-->
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap-icons/bootstrap-icons.css">
-    <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-    <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet">
-    <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet">
-    <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
-    <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
 
     <!-- Template Main CSS File -->
     <link href="assets/css/style.css" rel="stylesheet">
@@ -102,8 +97,94 @@ $admin->updateApplicationStatus($_GET["q"]);
         textarea.transform-text {
             text-transform: uppercase !important;
         }
+
+        body {
+            /*was 000*/
+            font-family: "Ubuntu", sans-serif !important;
+            font-weight: 300;
+            -webkit-overflow-scrolling: touch;
+            overflow: auto;
+            line-height: 1;
+            color: #282828 !important;
+            font-size: 12px !important;
+            font-weight: 400;
+        }
+
+        .hide {
+            display: none;
+        }
+
+        .display {
+            display: block;
+        }
+
+        #wrapper {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .flex-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .flex-container>div {
+            height: 100% !important;
+            width: 100% !important;
+        }
+
+        .flex-column {
+            display: flex !important;
+            flex-direction: column !important;
+        }
+
+        .flex-row {
+            display: flex !important;
+            flex-direction: row !important;
+        }
+
+        .justify-center {
+            justify-content: center !important;
+        }
+
+        .justify-space-between {
+            justify-content: space-between !important;
+        }
+
+        .align-items-center {
+            align-items: center !important;
+        }
+
+        .align-items-baseline {
+            align-items: baseline !important;
+        }
+
+        .flex-card {
+            display: flex !important;
+            justify-content: center !important;
+            flex-direction: row !important;
+        }
+
+        .form-card {
+            height: 100% !important;
+            max-width: 425px !important;
+            padding: 15px 10px 20px 10px !important;
+        }
+
+        .flex-card>.form-card {
+            height: 100% !important;
+            width: 100% !important;
+        }
+
+        .purchase-card-footer {
+            width: 100% !important;
+        }
     </style>
-    <script src="js/jquery-3.6.0.min.js"></script>
     <style>
         .arrow {
             display: inline-block;
@@ -122,7 +203,6 @@ $admin->updateApplicationStatus($_GET["q"]);
 
         .edu-history-header {
             width: 100% !important;
-            height: 84px !important;
             background-color: #fff !important;
             display: flex !important;
             flex-direction: row !important;
@@ -130,7 +210,7 @@ $admin->updateApplicationStatus($_GET["q"]);
         }
 
         .edu-history-header-info {
-            width: 80% !important;
+            width: 100% !important;
             height: 100% !important;
             padding: 10px 20px !important;
         }
@@ -150,273 +230,349 @@ $admin->updateApplicationStatus($_GET["q"]);
             height: 100% !important;
             background-color: #ffffb3 !important;
             margin: 0 !important;
-            padding: 0 !important;
             display: flex !important;
             flex-direction: row !important;
             padding: 6px 20px !important;
         }
 
         .photo-display {
-            width: 150px !important;
-            height: 150px !important;
+            width: 220px !important;
+            height: 220px !important;
             min-width: 150px !important;
             min-height: 150px !important;
             /*background: red;*/
             border-radius: 5px;
-            border: 1px solid #aaa;
             background: #f1f1f1;
             padding: 5px;
         }
 
         .photo-display>img {
             width: 100% !important;
-        }
-
-        .photo-display>img {
-            width: 100% !important;
             height: 100% !important;
-            border-radius: 5px;
         }
     </style>
 </head>
 
-<body>
-    <section class=" section dashboard">
 
-        <!-- programs summary view -->
-        <div class="row">
+<body class="container-fluid">
 
-            <!-- Recent Sales -->
-            <div class="col-12">
-
-                <div class="card recent-sales overflow-auto">
-
-                    <div class="card-body" style="padding-top: 10px;">
-                        <!--<h5 class="card-title">Applications</h5>-->
-
-                        <div class="row">
-                            <h3>Personal Information</h3>
-                            <div style="display: flex;">
-                                <div class="photo-display" style="margin-top: 5px; margin-right: 25px;">
-                                    <img id="app-photo" src="<?= 'https://admissions.rmuictonline.com/apply/photos/' . $personal[0]["photo"] ?>" alt="">
-                                </div>
-                                <div style="display: flex; flex-direction: column">
-                                    <div class="col">
-                                        <h3>Personal Information</h3>
-                                        <div>
-                                            <p>
-                                                <span><b>Name: </b> </span>
-                                                <span><?= $personal[0]["first_name"] ?> <?= $personal[0]["middle_name"] ?> <?= $personal[0]["last_name"] ?></span>
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p>
-                                                <span><b>Gender: </b> </span>
-                                                <span><?= $personal[0]["gender"] ?></span>
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p>
-                                                <span><b>Date of Birth: </b> </span>
-                                                <span><?= $personal[0]["dob"] ?></span>
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p>
-                                                <span><b>Marital Status:</b> </span>
-                                                <span><?= $personal[0]["marital_status"] ?></span>
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p>
-                                                <span><b>Nationality:</b> </span>
-                                                <span><?= $personal[0]["nationality"] ?></span>
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p>
-                                                <span><b>Country of residence: </b> </span>
-                                                <span><?= $personal[0]["country_res"] ?></span>
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p>
-                                                <span><b>Disabled?: </b> </span>
-                                                <span><?= $personal[0]["disability"] ? "YES" : "NO" ?></span>
-                                                <span> <?= " - " . $personal[0]["disability_descript"] ?> </span>
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p>
-                                                <span><b>English Native?: </b> </span>
-                                                <span><?= $personal[0]["english_native"] ? "YES" : "NO" ?></span>
-                                                <span> - <?= $personal[0]["other_language"] ?></span>
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p>
-                                                <span><b>Address Line 1: </b> </span>
-                                                <span><?= $personal[0]["postal_addr"] ?> <?= $personal[0]["postal_town"] . ", " ?> <?= $personal[0]["postal_spr"] . " - " ?> <?= $personal[0]["postal_country"] ?></span>
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p>
-                                                <span><b>Primary phone number: </b> </span>
-                                                <span><?= $personal[0]["phone_no1_code"] ?> <?= $personal[0]["phone_no1"] ?></span>
-                                            </p>
-                                            <p>
-                                                <span><b>Secondary phone number: </b> </span>
-                                                <span><?= $personal[0]["phone_no2_code"] ?> <?= $personal[0]["phone_no2"] ?></span>
-                                            </p>
-                                            <p>
-                                                <span><b>Email address: </b> </span>
-                                                <span><?= $personal[0]["email_addr"] ?></span>
-                                            </p>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="col" style="margin-top: 25px">
-                                        <h3>Guardian/Parent Information</h3>
-                                        <div>
-                                            <p>
-                                                <span><b>Name: </b> </span>
-                                                <span><?= $personal[0]["p_first_name"] ?> <?= $personal[0]["p_last_name"] ?></span>
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p>
-                                                <span><b>Occupation: </b> </span>
-                                                <span><?= $personal[0]["p_occupation"] ?></span>
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p>
-                                                <span><b>Phone number: </b> </span>
-                                                <span><?= $personal[0]["p_phone_no_code"] ?> <?= $personal[0]["p_phone_no"] ?></span>
-                                            </p>
-                                            <p>
-                                                <span><b>Email address: </b> </span>
-                                                <span><?= $personal[0]["p_email_addr"] ?></span>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Education Background -->
-
-                            <h3 style="margin-top: 270px;">Education Background</h3>
-                            <div class="col mb-4">
-                                <h5 style="font-size: 16px;" class="form-label mt-4"><b>List of schools</b></h5>
-                                <div class="col">
-                                    <?php
-                                    if (!empty($academic_BG)) {
-                                        foreach ($academic_BG as $edu_hist) {
-                                    ?>
-                                            <div class="mb-4 edu-history" id="<?= $edu_hist["s_number"] ?>">
-                                                <div class="edu-history-header">
-                                                    <div class="edu-history-header-info">
-                                                        <p style="font-size: 16px; font-weight: 600;margin:0;padding:0">
-                                                            <?= htmlspecialchars_decode(html_entity_decode(ucwords(strtolower($edu_hist["school_name"])), ENT_QUOTES), ENT_QUOTES); ?>
-                                                            (<?= htmlspecialchars_decode(html_entity_decode(ucwords(strtolower($edu_hist["course_of_study"])), ENT_QUOTES), ENT_QUOTES); ?>)
-                                                        </p>
-                                                        <p style="color:#8c8c8c;margin:0;padding:0">
-                                                            <?= ucwords(strtolower($edu_hist["month_started"])) . " " . ucwords(strtolower($edu_hist["year_started"])) . " - " ?>
-                                                            <?= ucwords(strtolower($edu_hist["month_completed"])) . " " . ucwords(strtolower($edu_hist["year_completed"])) ?>
-                                                        </p>
-                                                    </div>
-                                                    <div class="edu-history-control">
-                                                        <button type="button" class="btn " name="edit-edu-btn" id="edit<?= $edu_hist["s_number"] ?>">
-                                                            <span class="bi bi-caret-down-fill edit-edu-btn" style="font-size: 20px !important;"></span>
-                                                        </button>
-                                                        <button type="button" class="btn edit-edu-btn" name="edit-edu-btn" id="edit<?= $edu_hist["s_number"] ?>" style="display: none">
-                                                            <span class="bi bi-caret-up-fill" style="font-size: 20px !important;"></span>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <div class="edu-history-footer">
-                                                    <table>
-                                                        <tbody>
-                                                            <tr>
-                                                                <th scope="row" style="width: 150px;">Country: </th>
-                                                                <td><?= $edu_hist["country"] ?></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <th scope="row">Region: </th>
-                                                                <td><?= $edu_hist["region"] ?></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <th scope="row">Certificate Type: </th>
-                                                                <td><?= $edu_hist["cert_type"] ?></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <th scope="row">Awaiting Status: </th>
-                                                                <td><?= $edu_hist["awaiting_result"] ? "YES" : "NO" ?></td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                    <?php
-                                        }
-                                    }
-                                    ?>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <!-- Programmes -->
-                        <div class="col">
-                            <h3>Programmes</h3>
-                            <div class="certificates mb-4">
-                                <?php
-                                if (!empty($personal_AB)) {
-                                ?>
-                                    <div class="mt-4 mb-4" style="font-weight: 600;">
-                                        <p>TERM APPLIED: <span><?= $personal_AB[0]["application_term"] ?></span></p>
-                                        <p>STREAM APPLIED: <span><?= $personal_AB[0]["study_stream"] ?></span></p>
-                                    </div>
-                                    <table class="table table-striped">
-                                        <thead class="table-dark">
-                                            <tr>
-                                                <th scope="col">CHOICE</th>
-                                                <th scope="col">PROGRAMME</th>
-                                                <th scope="col"></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>1<sup>st</sup></td>
-                                                <td><?= ucwords(strtoupper($personal_AB[0]["first_prog"])) ?></td>
-                                                <td>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input app-prog-admit" style="cursor: pointer; float: right" type="radio" name="admit-prog" value="first_prog" data-prog="<?= $personal_AB[0]["first_prog"] ?>">
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                <?php
-                                }
-                                ?>
-                            </div>
-                        </div>
-
-                    </div>
-
+    <div class="row" style="padding: 0px 0px; margin-top: 25px">
+        <div class="col-7">
+            <div class="flex-row" style="justify-content: felt; align-items: left;">
+                <img src="assets/img/rmu-logo.png" style="width: 50px; height: 50px" alt="">
+                <div class="flex-column">
+                    <h5 style="font-weight: 600; font-size: 16px !important">REGIONAL MARITIME UNIVERSITY</h5>
+                    <h5 style="font-size: 16px !important">Online Application Form</h5>
                 </div>
-            </div><!-- End Recent Sales -->
+            </div>
+        </div>
+        <div class="col-5" style="display: flex; justify-content: right; align-items: center;">
+            <pre>
+                The registrar
+                Post Office Box GP1115
+                Accra - Ghana
 
-        </div> <!-- programs summary view -->
-        <!-- Right side columns -->
-        <!-- End Right side columns -->
+                +233 302 712775
+                +233 302 718225
+                Email: registrar@rmu.edu.gh
+            </pre>
+        </div>
+    </div>
 
-    </section>
+    <div class="row">
+        <div class="col">
+            <h6 style="font-size: 16px !important">
+                Application Mode: <b><?= strtolower($academic_BG[0]["cert_type"]) == "other" ? $academic_BG[0]["other_cert_type"] : $academic_BG[0]["cert_type"] ?></b>
+            </h6>
+            <p>Note that your application would be considered under the above mode</p>
+        </div>
+        <div class="col">
+            <h6 style="float:right; font-size: 16px !important">Form Type: <b><?= $form_name[0]["name"] ?></b></h6>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="row">
+        <div class="col">
+            <h6 style="float:right; font-size: 16px !important">Application No.: <b><?= $app_number[0]["app_number"] ?></b></h6>
+        </div>
+    </div>
+
+    <hr style="border: 1px dashed #000; padding-top: 0 !important; margin-top: 0 !important;">
+
+    <div class="mb-4">
+        <h6><b>Personal</b></h6>
+
+        <fieldset style="width: 100%; border: 1px solid #aaa; padding: 10px 10px">
+
+            <div class="row">
+                <div class="col">
+                    <p style="width: 100%; border-bottom: 1px solid #aaa; padding: 5px 0px"><b>Personal Information</b></p>
+                    <div class="row">
+                        <div class="col-7">
+                            <table style=" width: 100%;" class="table table-borderless">
+                                <tr>
+                                    <td style="text-align: right">Title: </td>
+                                    <td><b><?= $personal[0]["prefix"] ?></b></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right">Name: </td>
+                                    <td><b><?= $personal[0]["first_name"] ?> <?= $personal[0]["middle_name"] ?> <?= $personal[0]["last_name"] ?></b></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right">Sex: </td>
+                                    <td><b><?= $personal[0]["gender"] ?></b></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right">Date of Birth: </td>
+                                    <td><b><?= $personal[0]["dob"] ?></b></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right">Marital Status: </td>
+                                    <td><b><?= $personal[0]["marital_status"] ?></b></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right">National of: </td>
+                                    <td><b><?= $personal[0]["nationality"] ?></b></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right">Country of residence: </td>
+                                    <td><b><?= $personal[0]["country_res"] ?></b></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right">Disabled?: </td>
+                                    <td><b><?= $personal[0]["disability"] ? "YES" : "NO" ?> <?= $personal[0]["disability"] ? " - " . $personal[0]["disability_descript"] : "" ?></b></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right">English Native?: </td>
+                                    <td><b><?= $personal[0]["english_native"] ? "YES" : "NO" ?> <?= !$personal[0]["english_native"]  ? " - " . $personal[0]["other_language"] : "" ?></b></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-5">
+                            <div class="photo-display">
+                                <img id="app-photo" src="<?= 'https://admissions.rmuictonline.com/apply/photos/' . $personal[0]["photo"] ?>" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col">
+                    <p style="width: 100%; border-bottom: 1px solid #aaa; padding: 5px 0px"><b>Contact Information</b></p>
+                    <div class="row">
+                        <div class="col">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td style="text-align: right">Postal Address: </td>
+                                    <td><b><?= $personal[0]["postal_addr"] ?></b></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right">Postal Town: </td>
+                                    <td><b><?= $personal[0]["postal_town"] ?></b></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right">Postal Region/Province: </td>
+                                    <td><b><?= $personal[0]["postal_spr"] ?></b></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right">Postal Country: </td>
+                                    <td><b><?= $personal[0]["postal_country"] ?></b></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td style="text-align: right">Primary phone number: </td>
+                                    <td><b><?= $personal[0]["phone_no1_code"] ?> <?= $personal[0]["phone_no1"] ?></b></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right">Secondary phone number: </td>
+                                    <td><b><?= $personal[0]["phone_no2_code"] ?> <?= $personal[0]["phone_no2"] ?></b></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right">Email address: </td>
+                                    <td><b><?= $personal[0]["email_addr"] ?></b></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </fieldset>
+    </div>
+
+    <div class="mb-4">
+        <h6><b>Parental</b></h6>
+        <fieldset style="width: 100%; border: 1px solid #aaa; padding: 10px 10px">
+            <div class="row">
+                <div class="col">
+                    <p style="width: 100%; border-bottom: 1px solid #aaa; padding: 5px 0px"><b>Guardian / Parent Information</b></p>
+                    <div class="row">
+                        <div class="col">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td style="text-align: right">Name: </td>
+                                    <td><b><?= $personal[0]["p_first_name"] ?> <?= $personal[0]["p_last_name"] ?></b></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right">Occupation: </td>
+                                    <td><b><?= $personal[0]["p_occupation"] ?></b></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td style="text-align: right">Phone number: </td>
+                                    <td><b><?= $personal[0]["p_phone_no_code"] ?> <?= $personal[0]["p_phone_no"] ?></b></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right">Email address: </td>
+                                    <td><b><?= $personal[0]["p_email_addr"] ?></b></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+    <!-- Education Background -->
+    <div class="mb-4">
+        <h6><b>Education Background</b></h6>
+
+        <fieldset style="width: 100%; border: 1px solid #aaa; padding: 10px 10px">
+
+            <div class="row">
+                <div class="col">
+
+                    <p style="width: 100%; border-bottom: 1px solid #aaa; padding: 5px 0px"><b>List of schools you have attended</b></p>
+
+                    <div class="row">
+                        <div class="col">
+                            <?php
+                            if (!empty($academic_BG)) {
+                                foreach ($academic_BG as $edu_hist) {
+                            ?>
+                                    <div class="mb-4 edu-history" id="<?= $edu_hist["s_number"] ?>">
+                                        <div class="edu-history-header">
+                                            <div class="edu-history-header-info">
+                                                <p style="font-size: 14px; font-weight: 600;margin:0;padding:0">
+                                                    <?= htmlspecialchars_decode(html_entity_decode(ucwords(strtolower($edu_hist["school_name"])), ENT_QUOTES), ENT_QUOTES); ?>
+                                                    (<?= strtolower($edu_hist["course_of_study"]) == "other" ? htmlspecialchars_decode(html_entity_decode(ucwords(strtolower($edu_hist["other_course_studied"])), ENT_QUOTES), ENT_QUOTES) : htmlspecialchars_decode(html_entity_decode(ucwords(strtolower($edu_hist["course_of_study"])))) ?>)
+                                                </p>
+                                                <p style="color:#000;margin:0;padding:0; margin-top:8px">
+                                                    <?= ucwords(strtolower($edu_hist["month_started"])) . " " . ucwords(strtolower($edu_hist["year_started"])) . " - " ?>
+                                                    <?= ucwords(strtolower($edu_hist["month_completed"])) . " " . ucwords(strtolower($edu_hist["year_completed"])) ?>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="edu-history-footer">
+                                            <table class="col">
+                                                <tr>
+                                                    <td style="text-align: right">Country: </td>
+                                                    <td><b><?= $edu_hist["country"] ?></b></td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="text-align: right">Region: </td>
+                                                    <td><b><?= $edu_hist["region"] ?></b></td>
+                                                </tr>
+                                            </table>
+                                            <table class="col">
+                                                <tr>
+                                                    <td style="text-align: right">Certificate Type: </td>
+                                                    <td><b><?= strtolower($edu_hist["cert_type"]) == "other" ? $edu_hist["other_cert_type"] : $edu_hist["cert_type"] ?></b></td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="text-align: right">Awaiting Status: </td>
+                                                    <td><b><?= $edu_hist["awaiting_result"] ? "YES" : "NO" ?></b></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                            <?php
+                                }
+                            }
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+    <!-- Programmes -->
+    <div class="mb-4">
+        <h6><b>University Enrollment Information</b></h6>
+
+        <fieldset style="width: 100%; border: 1px solid #aaa; padding: 10px 10px">
+
+            <div class="row">
+                <div class="col">
+                    <div class="mb-4" style="font-weight: 600;">
+                        <p>Term Applied for: <span><b><?= $personal_AB[0]["application_term"] ?></b></span></p>
+                        <p>Stream Applied for: <span><b><?= $personal_AB[0]["study_stream"] ?></b></span></p>
+                    </div>
+                    <div class="row">
+                        <?php
+                        if (!empty($personal_AB)) {
+                        ?>
+                            <div class="col-7">
+
+                                <p style="width: 100%; border-bottom: 1px solid #aaa; padding: 5px 0px"><b>Programmes you have chosen to pursue</b></p>
+                                <div class="certificates mb-4">
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td style="text-align: right">First (1<sup>st) Choice</sup>: </td>
+                                            <td><b><?= ucwords(strtoupper($personal_AB[0]["first_prog"])) ?></b></td>
+                                        </tr>
+                                        <tr style='<?= isset($personal_AB[0]["second_prog"]) && !empty($personal_AB[0]["second_prog"]) ? "none" : "block" ?>'>
+                                            <td style="text-align: right">Second (2<sup>nd) Choice</sup></td>
+                                            <td><b><?= ucwords(strtoupper($personal_AB[0]["second_prog"])) ?></b></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="col-5">
+                                <p style="width: 100%; border-bottom: 1px solid #aaa; padding: 5px 0px"><b>Choices for hall of residence</b></p>
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td style="text-align: right">First (1<sup>st) Choice</sup>: </td>
+                                        <td><b><?= ucwords(strtoupper($personal_AB[0]["first_prog"])) ?></b></td>
+                                    </tr>
+                                    <tr style='<?= isset($personal_AB[0]["second_prog"]) && !empty($personal_AB[0]["second_prog"]) ? "none" : "block" ?>'>
+                                        <td style="text-align: right">Second (2<sup>nd) Choice</sup></td>
+                                        <td><b><?= ucwords(strtoupper($personal_AB[0]["second_prog"])) ?></b></td>
+                                    </tr>
+                                    <tr style='<?= isset($personal_AB[0]["second_prog"]) && !empty($personal_AB[0]["second_prog"]) ? "none" : "block" ?>'>
+                                        <td style="text-align: right">Third (3<sup>rd) Choice</sup></td>
+                                        <td><b><?= ucwords(strtoupper($personal_AB[0]["second_prog"])) ?></b></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        <?php
+                        }
+                        ?>
+                    </div>
+                </div>
+            </div>
+
+        </fieldset>
+
+    </div>
+
+    <!-- Right side columns -->
+    <!-- End Right side columns -->
 
     <script>
-        window.print();
-        window.close();
+        //window.print();
+        //window.close();
     </script>
 </body>
