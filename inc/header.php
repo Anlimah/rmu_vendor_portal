@@ -8,7 +8,7 @@
         <i class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->
 
-    <div class="setDashboardForm-bar" style="width: 100%; margin: 0 25px; background-color: red">
+    <div class="setDashboardForm-bar" style="width: 100%; margin: 0 25px;">
         <div style="display:flex; justify-content:center;">
             <form class="search-form d-flex align-items-center" method="POST" action="#" id="setDashboardForm" style="min-width: 200px;">
                 <label for="admission-period" class="form-label me-2">Admission Period</label>
