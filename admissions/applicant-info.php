@@ -177,7 +177,7 @@ $admin->updateApplicationStatus($_GET["q"]);
                                                     <img id="app-photo" src="<?= 'https://admissions.rmuictonline.com/apply/photos/' . $personal[0]["photo"] ?>" alt="">
                                                 </div>
 
-                                                <a class="btn btn-primary" href="../download-appData.php?<?= "t=" . $_GET["t"] . "&q=" . $_GET["q"] ?>" style="width: 150px; margin-top: 15px">PRINT</a>
+                                                <a class="btn btn-primary" target="_blank" href="../download-appData.php?<?= "t=" . $_GET["t"] . "&q=" . $_GET["q"] ?>" style="width: 150px; margin-top: 15px">PRINT</a>
                                             </div>
                                             <div style="display: flex; flex-direction: column">
                                                 <div class="col">
