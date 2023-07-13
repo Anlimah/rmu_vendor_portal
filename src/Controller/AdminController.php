@@ -1848,7 +1848,7 @@ class AdminController
     {
         $query = "";
         $in_query = "";
-        if (!empty($data["to-date"]) && !empty($data["from-date"])) $in_query .= " AND DATE(pd.`added_at`) BETWEEN DATE({$data["from-date"]}) AND DATE({$data["to-date"]})";
+        if (!empty($data["to-date"]) && !empty($data["from-date"])) $in_query .= " AND DATE(pd.`added_at`) BETWEEN '" . $data["from-date"] . "' AND '" . $data["to-date"] . "'";
         if ($data["report-by"] == "PayMethod") {
             $query = "SELECT pm.id, pd.payment_method AS title, COUNT(pd.payment_method) AS total_num_sold, SUM(pd.amount) AS total_amount_sold
                     FROM purchase_detail AS pd, vendor_details AS vd, admission_period AS ap, forms AS ft, payment_method AS pm   
@@ -1869,7 +1869,7 @@ class AdminController
     {
         $query = "";
         $in_query = "";
-        if (!empty($data["to-date"]) && !empty($data["from-date"])) $in_query .= " AND DATE(pd.`added_at`) BETWEEN DATE({$data["from-date"]}) AND DATE({$data["to-date"]})";
+        if (!empty($data["to-date"]) && !empty($data["from-date"])) $in_query .= " AND DATE(pd.`added_at`) BETWEEN '" . $data["from-date"] . "' AND '" . $data["to-date"] . "'";
 
         if ($data["report-by"] == "PayMethod") {
             $query = "SELECT * FROM purchase_detail AS pd, payment_method AS pm 
