@@ -997,6 +997,30 @@ class AdminController
         return $this->dm->getData($query);
     }
 
+    // fetch data by form type and admission period
+    public function fetchTotalApplicationsByFormTypeAndAdmPeriod(int $form_id = 0, $admin_period = 0)
+    {
+        if ($form_id == 0 && $admin_period == 0) {
+            $query = "SELECT 
+                    COUNT(*) AS total 
+                FROM 
+                    purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, forms AS ft
+                WHERE 
+                    ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id 
+                    AND pd.form_id = ft.id";
+            return $this->dm->getData($query);
+        } else {
+            $query = "SELECT 
+                    COUNT(*) AS total 
+                FROM 
+                    purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, forms AS ft
+                WHERE 
+                    ap.id = pd.admission_period AND fc.app_login = al.id AND al.purchase_id = pd.id 
+                    AND pd.form_id = ft.id AND ft.id = :f AND ap.id = :a";
+            return $this->dm->getData($query, array(":f" => $form_id, ":a" => $admin_period));
+        }
+    }
+
     public function fetchTotalApplications(int $form_id = 100)
     {
         if ($form_id == 100) {

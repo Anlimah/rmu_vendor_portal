@@ -65,9 +65,8 @@ require_once('../inc/page-data.php');
 
         <section class=" section dashboard">
 
-
             <!-- Dashboard view -->
-            <div class="row" <?= isset($_GET["t"]) ? 'style="display:none"' : "" ?>>
+            <div class="row" <?= isset($_GET["a"]) && isset($_GET["s"]) ? 'style="display:none"' : "" ?>>
 
                 <!-- Left side columns -->
                 <div class="col-lg-12">
@@ -226,7 +225,10 @@ require_once('../inc/page-data.php');
     </main><!-- End #main -->
 
     <?= require_once("../inc/footer-section.php") ?>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>
 
+    </script>
 </body>
 
 </html>

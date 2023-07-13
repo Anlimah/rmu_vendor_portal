@@ -172,8 +172,12 @@ $admin->updateApplicationStatus($_GET["q"]);
                                 <div class="col-6" style="border-right: 1px solid #ccc;">
                                     <div class="col">
                                         <div style="display: flex;">
-                                            <div class="photo-display" style="margin-top: 5px; margin-right: 25px;">
-                                                <img id="app-photo" src="<?= 'https://admissions.rmuictonline.com/apply/photos/' . $personal[0]["photo"] ?>" alt="">
+                                            <div style="display: flex; flex-direction: column;">
+                                                <div class="photo-display" style="margin-top: 5px; margin-right: 25px;">
+                                                    <img id="app-photo" src="<?= 'https://admissions.rmuictonline.com/apply/photos/' . $personal[0]["photo"] ?>" alt="">
+                                                </div>
+
+                                                <a class="btn btn-primary" href="../download-appData.php?t=1&q=137" style="width: 150px; margin-top: 15px">PRINT</a>
                                             </div>
                                             <div style="display: flex; flex-direction: column">
                                                 <div class="col">
