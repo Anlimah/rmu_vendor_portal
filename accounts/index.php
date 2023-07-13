@@ -74,7 +74,7 @@ require_once('../inc/page-data.php');
                                         <h5 class="card-title">Reports</h5>
                                         <div class="d-flex align-items-center">
                                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                                <img src="../assets/img/icons8-stocks-growth-96.png" style="width: 48px;" alt="">
+                                                <img src="../assets/img/icons8-payment-history-96.png" style="width: 48px;" alt="">
                                             </div>
                                             <div class="ps-3">
                                                 <span class="text-muted small pt-2 ps-1">Sales summary & reports</span>

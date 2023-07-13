@@ -145,7 +145,7 @@ require_once('../inc/page-data.php');
 
                                                     <div class="d-flex align-items-center">
                                                         <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                                            <i class="bi bi-currency-dollar"></i>
+                                                            <img src="../assets/img/icons8-cash-96.png" style="width: 48px;" alt="">
                                                         </div>
                                                         <div class="ps-3">
                                                             <h5><span class="small">GH</span>&#162;<span><?= number_format($collect_amount) ?></span></h5>
