@@ -294,7 +294,7 @@ require_once('../inc/page-data.php');
                             window.location.href = "confirm.php?status=000&exttrid=" + result.exttrid;
                         } else {
                             flashMessage("alert-danger", result.message);
-                            console.log("success area: ", result.message);
+                            //console.log("success area: ", result.message);
                         }
                     },
                     error: function(error) {
