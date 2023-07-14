@@ -3,7 +3,7 @@ session_start();
 //echo $_SERVER["HTTP_USER_AGENT"];
 if (isset($_SESSION["adminLogSuccess"]) && $_SESSION["adminLogSuccess"] == true && isset($_SESSION["role"]) && !empty($_SESSION["role"])) {
 } else {
-    header("Location: login.php");
+    header("Location: index.php");
 }
 
 if (isset($_GET['logout'])) {
@@ -22,7 +22,7 @@ if (isset($_GET['logout'])) {
         );
     }
 
-    header('Location: login.php');
+    header('Location: index.php');
 }
 ?>
 <?php
