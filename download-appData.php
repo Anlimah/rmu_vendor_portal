@@ -76,8 +76,6 @@ $admin->updateApplicationStatus($_GET["q"]);
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
     <!-- Vendor CSS Files -->
-    <!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">-->
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap-icons/bootstrap-icons.css">
 
@@ -529,11 +527,11 @@ $admin->updateApplicationStatus($_GET["q"]);
                                 <div class="certificates mb-4">
                                     <table class="table table-borderless">
                                         <tr>
-                                            <td style="text-align: right">First (1<sup>st) Choice</sup>: </td>
+                                            <td style="text-align: right">First (1<sup>st</sup>) Choice: </td>
                                             <td><b><?= ucwords(strtoupper($personal_AB[0]["first_prog"])) ?></b></td>
                                         </tr>
                                         <tr style='<?= isset($personal_AB[0]["second_prog"]) && !empty($personal_AB[0]["second_prog"]) ? "none" : "block" ?>'>
-                                            <td style="text-align: right">Second (2<sup>nd) Choice</sup></td>
+                                            <td style="text-align: right">Second (2<sup>nd</sup>) Choice: </td>
                                             <td><b><?= ucwords(strtoupper($personal_AB[0]["second_prog"])) ?></b></td>
                                         </tr>
                                     </table>
@@ -544,16 +542,16 @@ $admin->updateApplicationStatus($_GET["q"]);
                                 <p style="width: 100%; border-bottom: 1px solid #aaa; padding: 5px 0px"><b>Choices for hall of residence</b></p>
                                 <table class="table table-borderless">
                                     <tr>
-                                        <td style="text-align: right">First (1<sup>st) Choice</sup>: </td>
-                                        <td><b><?= ucwords(strtoupper($personal_AB[0]["first_prog"])) ?></b></td>
+                                        <td style="text-align: right">First (1<sup>st</sup>) Choice: </td>
+                                        <td><b><?= "NON-CADET HOSTEL" ?></b></td>
                                     </tr>
                                     <tr style='<?= isset($personal_AB[0]["second_prog"]) && !empty($personal_AB[0]["second_prog"]) ? "none" : "block" ?>'>
-                                        <td style="text-align: right">Second (2<sup>nd) Choice</sup></td>
-                                        <td><b><?= ucwords(strtoupper($personal_AB[0]["second_prog"])) ?></b></td>
+                                        <td style="text-align: right">Second (2<sup>nd</sup>) Choice: </td>
+                                        <td><b><?= "NON-CADET HOSTEL" ?></b></td>
                                     </tr>
                                     <tr style='<?= isset($personal_AB[0]["second_prog"]) && !empty($personal_AB[0]["second_prog"]) ? "none" : "block" ?>'>
-                                        <td style="text-align: right">Third (3<sup>rd) Choice</sup></td>
-                                        <td><b><?= ucwords(strtoupper($personal_AB[0]["second_prog"])) ?></b></td>
+                                        <td style="text-align: right">Third (3<sup>rd</sup>) Choice: </td>
+                                        <td><b><?= "NON-CADET HOSTEL" ?></b></td>
                                     </tr>
                                 </table>
                             </div>
