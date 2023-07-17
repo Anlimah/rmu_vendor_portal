@@ -36,9 +36,7 @@ $_SESSION["currentAccess"] = time();
 
 $diff = ($_SESSION["currentAccess"] - $_SESSION["lastAccessed"]);
 
-if ($diff >  30) {
-    die(json_encode(array("success" => false, "message" => "logout")));
-}
+if ($diff >  1800) die(json_encode(array("success" => false, "message" => "logout")));
 
 // All GET request will be sent here
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
