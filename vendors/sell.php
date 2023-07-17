@@ -42,6 +42,8 @@ use Src\Controller\AdminController;
 $admin = new AdminController();
 require_once('../inc/page-data.php');
 
+$_SESSION["lastAccessed"] = time();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -34,6 +34,9 @@ $admin = new AdminController();
 require_once('../inc/page-data.php');
 
 $vendor_id = isset($_SESSION["vendor_id"]) ? $_SESSION["vendor_id"] : "";
+
+$_SESSION["lastAccessed"] = time();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

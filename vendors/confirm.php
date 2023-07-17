@@ -43,6 +43,8 @@ use Src\Controller\ExposeDataController;
 
 $expose = new ExposeDataController();
 
+$_SESSION["lastAccessed"] = time();
+
 $data = isset($_GET["exttrid"]) ? $expose->getApplicationInfo($_GET["exttrid"]) : "";
 ?>
 <!DOCTYPE html>

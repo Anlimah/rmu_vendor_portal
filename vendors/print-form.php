@@ -44,6 +44,8 @@ $expose = new ExposeDataController();
 
 $data = $expose->getApplicationInfo($_GET["exttrid"]);
 $vendor_info = $admin->fetchFullName($_SESSION["user"]);
+
+$_SESSION["lastAccessed"] = time();
 ?>
 <!DOCTYPE html>
 <html lang="en">
