@@ -416,6 +416,12 @@ class AdminController
         return $this->dm->getData($query, array(":i" => $prog_id));
     }
 
+    public function fetchAllFromProgramByName($prog_name)
+    {
+        $query = "SELECT * FROM programs WHERE `name` = :n";
+        return $this->dm->getData($query, array(":n" => $prog_name));
+    }
+
     public function addProgramme($prog_name, $prog_type, $prog_wkd, $prog_grp)
     {
         $query = "INSERT INTO programs (`name`, `type`, `weekend`, `group`) VALUES(:n, :t, :w, :g)";
@@ -1117,6 +1123,7 @@ class AdminController
         if (in_array($cert_type, ["WASSCE", "NECO"])) $in_query = "AND ab.cert_type IN ('WASSCE', 'NECO')";
         if (in_array($cert_type, ["SSSCE", "GBCE"])) $in_query = "AND ab.cert_type IN ('SSSCE', 'GBCE')";
         if (in_array($cert_type, ["BACCALAUREATE"])) $in_query = "AND ab.cert_type IN ('BACCALAUREATE')";
+        if (in_array($cert_type, ["OTHERS"])) $in_query = "AND ab.cert_type NOT IN ('WASSCE', 'NECO', 'SSSCE', 'GBCE', 'BACCALAUREATE')";
 
         $query = "SELECT a.`id`, p.`first_name`, p.`middle_name`, p.`last_name`, pg.name AS programme, b.program_choice 
                 FROM `personal_information` AS p, `applicants_login` AS a, broadsheets AS b, programs AS pg,  academic_background AS ab  
@@ -1917,6 +1924,12 @@ class AdminController
         if ($status == "apps-declined") $in_query = "AND fsc.declaration = 1";
         $sql = $query . " " . $in_query;
         return $this->dm->getData($sql);
+    }
+
+    public function fetchApplicationStatus($appID)
+    {
+        $query = "SELECT `declaration`, `reviewed`, `admitted`, `declined` FROM `form_sections_chek` WHERE `app_login` = :i";
+        return $this->dm->getData($query, array(":i" => $appID));
     }
 
     public function downloadFile($file_url)

@@ -157,6 +157,68 @@ $admin->updateApplicationStatus($_GET["q"]);
 
         <section class=" section dashboard">
 
+            <div class="row">
+                <div class="col-12">
+                    <div class="card recent-sales overflow-auto">
+                        <div class="card-body" style="padding-top: 10px;">
+
+                            <div class="row">
+                                <di class="col-2">
+                                    <div style="display: flex; flex-direction: column;">
+                                        <div class="photo-display" style="margin-top: 5px; margin-right: 25px;">
+                                            <img id="app-photo" src="<?= 'https://admissions.rmuictonline.com/apply/photos/' . $personal[0]["photo"] ?>" alt="">
+                                        </div>
+                                    </div>
+                                </di>
+                                <div class="col-7">
+                                    <div style="display: flex; flex-direction: column; align-items: baseline;">
+                                        <div class="col">
+                                            <div>
+                                                <p>
+                                                    <span><b>Name: </b> </span>
+                                                    <span><?= $personal[0]["first_name"] ?> <?= $personal[0]["middle_name"] ?> <?= $personal[0]["last_name"] ?></span>
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p>
+                                                    <span><b>Gender: </b> </span>
+                                                    <span><?= $personal[0]["gender"] ?></span>
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p>
+                                                    <span><b>Date of Birth: </b> </span>
+                                                    <span><?= $personal[0]["dob"] ?></span>
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p>
+                                                    <span><b>Nationality:</b> </span>
+                                                    <span><?= $personal[0]["nationality"] ?></span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <?php
+                                    $app_statuses = $admin->fetchApplicationStatus($_GET['q']);
+
+                                    if (!empty($app_statuses)) {
+                                        if ($app_statuses[0]["declined"]) echo "DECILNED";
+                                        else if ($app_statuses[0]["admitted"]) echo "ADMITTED";
+                                        else if ($app_statuses[0]["reviewed"]) echo "REVIEWED";
+                                        else if ($app_statuses[0]["declaration"]) echo "SUBMITTED";
+                                    }
+                                    ?>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- programs summary view -->
             <div class="row">
 
@@ -430,6 +492,8 @@ $admin->updateApplicationStatus($_GET["q"]);
                                                 </table>
                                             <?php
                                             }
+
+                                            
                                             ?>
                                         </div>
                                     </div>

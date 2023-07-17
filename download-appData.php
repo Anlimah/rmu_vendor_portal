@@ -6,7 +6,7 @@ if (isset($_SESSION["adminLogSuccess"]) && $_SESSION["adminLogSuccess"] == true 
     header("Location: login.php");
 }
 
-if (isset($_GET['logout'])  || strtolower($_SESSION["role"]) != "admissions") {
+if (isset($_GET['logout']) || strtolower($_SESSION["role"]) != "admissions") {
     session_destroy();
     $_SESSION = array();
     if (ini_get("session.use_cookies")) {
@@ -30,7 +30,6 @@ if (!isset($_GET['q']) || empty($_GET['q'])) header("Location: applications.php?
 
 <?php
 require_once('bootstrap.php');
-require_once('inc/page-data.php');
 
 use Src\Controller\AdminController;
 use Src\Controller\UsersController;
@@ -265,15 +264,24 @@ $admin->updateApplicationStatus($_GET["q"]);
             </div>
         </div>
         <div class="col-5" style="display: flex; justify-content: right; align-items: center;">
-            <pre>
-                The registrar
-                Post Office Box GP1115
-                Accra - Ghana
+            <pre style="font-size: 14px;">
+            <b>
+            The registrar
+            Post Office Box GP1115
+            Accra - Ghana
 
-                +233 302 712775
-                +233 302 718225
-                Email: registrar@rmu.edu.gh
+            +233 302 712775
+            +233 302 718225
+            Email: registrar@rmu.edu.gh
+            </b>
+            <span><?= date("M d, Y"); ?></span>
             </pre>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col" style="text-align: center;">
+            <p style="font-weight: 600;">Keep this printout for any future enquiry</p>
         </div>
     </div>
 
@@ -543,15 +551,11 @@ $admin->updateApplicationStatus($_GET["q"]);
                                 <table class="table table-borderless">
                                     <tr>
                                         <td style="text-align: right">First (1<sup>st</sup>) Choice: </td>
-                                        <td><b><?= "NON-CADET HOSTEL" ?></b></td>
+                                        <td><b><?= !empty($admin->fetchAllFromProgramByName($personal_AB[0]["first_prog"])[0]["cadet_hall"]) ? "CADET HOSTEL" : "NON-CADET HOSTEL" ?></b></td>
                                     </tr>
-                                    <tr style='<?= isset($personal_AB[0]["second_prog"]) && !empty($personal_AB[0]["second_prog"]) ? "none" : "block" ?>'>
+                                    <tr>
                                         <td style="text-align: right">Second (2<sup>nd</sup>) Choice: </td>
-                                        <td><b><?= "NON-CADET HOSTEL" ?></b></td>
-                                    </tr>
-                                    <tr style='<?= isset($personal_AB[0]["second_prog"]) && !empty($personal_AB[0]["second_prog"]) ? "none" : "block" ?>'>
-                                        <td style="text-align: right">Third (3<sup>rd</sup>) Choice: </td>
-                                        <td><b><?= "NON-CADET HOSTEL" ?></b></td>
+                                        <td><b><?= !empty($admin->fetchAllFromProgramByName($personal_AB[0]["second_prog"])[0]["cadet_hall"]) ? "CADET HOSTEL" : "NON-CADET HOSTEL" ?></b></td>
                                     </tr>
                                 </table>
                             </div>
@@ -564,6 +568,28 @@ $admin->updateApplicationStatus($_GET["q"]);
 
         </fieldset>
 
+    </div>
+
+    <div class="mb-4">
+        <fieldset style="width: 100%; border: 1px dashed #000;">
+
+            <div class="row">
+                <div class="col">
+                    <div style="width: 100%; padding: 20px;">
+                        <div style="width: 100%; background-color: #036; color: #fff; font-size: smaller; padding: 5px 10px; font-weight:700">
+                            <b>DECLARATION</b>
+                        </div>
+                        <div style="align-items:center; margin-top: 10px">
+                            <p>I
+                                <label for="">
+                                    <b><?= $personal[0]["first_name"] ?> <?= $personal[0]["middle_name"] ?> <?= $personal[0]["last_name"] ?> </b>
+                                </label>, certify that the information provided above is valid and will be held personally responsible for its authenticity and will bear any consequences for any invalid information provided.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
     </div>
 
     <!-- Right side columns -->
