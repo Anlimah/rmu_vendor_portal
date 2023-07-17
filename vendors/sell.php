@@ -295,7 +295,8 @@ $_SESSION["lastAccessed"] = time();
                             //window.location.href = result.message;
                             window.location.href = "confirm.php?status=000&exttrid=" + result.exttrid;
                         } else {
-                            flashMessage("alert-danger", result.message);
+                            if (result.message == "logout") window.location.href = "?logout=true";
+                            else flashMessage("alert-danger", result.message);
                             //console.log("success area: ", result.message);
                         }
                     },
