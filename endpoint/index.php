@@ -22,7 +22,6 @@ use Src\Controller\AdminController;
 use Src\Controller\DownloadExcelDataController;
 use Src\Controller\DownloadAllExcelDataController;
 use Src\Controller\UploadExcelDataController;
-use Src\Controller\UploadBranchesExcelDataController;
 use Src\Controller\ExposeDataController;
 
 $expose = new ExposeDataController();
@@ -125,6 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
         $_SESSION['user'] = $result[0]["id"];
         $_SESSION['role'] = $result[0]["role"];
+        $_SESSION['user_type'] = $result[0]["type"];
         $_SESSION["admin_period"] = $expose->getCurrentAdmissionPeriodID();
 
         if (strtoupper($result[0]['role']) == "VENDORS") {
