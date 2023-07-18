@@ -838,7 +838,10 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
             die(json_encode(array("success" => false, "message" => "There no match for this applicant in database!")));
 
         die(json_encode($admin->admitIndividualApplicant($_POST["app-login"], $_POST["app-prog"])));
-    } elseif ($_GET["url"] == "decline-individual-applicant") {
+    }
+
+    //
+    elseif ($_GET["url"] == "decline-individual-applicant") {
         if (!isset($_POST["app-login"]) || empty($_POST["app-login"]))
             die(json_encode(array("success" => false, "message" => "There no match for this applicant in database!")));
         die(json_encode($admin->declineIndividualApplicant($_POST["app-login"])));
