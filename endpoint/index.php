@@ -494,7 +494,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
         $user_data = array(
             "first_name" => $_POST["v-name"], "last_name" => "MAIN", "user_name" => $_POST["v-email"], "user_role" => "Vendors",
-            "vendor_company" => $_POST["v-name"], "vendor_phone" => $_POST["v-phone"], "vendor_branch" => "MAIN"
+            "user_type" => $_POST["v-type"], "vendor_company" => $_POST["v-name"], "vendor_phone" => $_POST["v-phone"], "vendor_branch" => "MAIN"
         );
 
         $privileges = array("select" => 1, "insert" => 1, "update" => 0, "delete" => 0);
@@ -634,6 +634,9 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         if (!isset($_POST["user-role"]) || empty($_POST["user-role"])) {
             die(json_encode(array("success" => false, "message" => "Missing input field: Role")));
         }
+        if (!isset($_POST["user-type"]) || empty($_POST["user-type"])) {
+            die(json_encode(array("success" => false, "message" => "Missing input field: User Type")));
+        }
 
         if ($_POST["user-role"] == "Vendors") {
             if (!isset($_POST["vendor-tin"]) || empty($_POST["vendor-tin"])) {
@@ -653,8 +656,9 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         $user_data = array(
             "first_name" => $_POST["user-fname"], "last_name" => $_POST["user-lname"],
             "user_name" => $_POST["user-email"], "user_role" => $_POST["user-role"],
-            "vendor_company" => $_POST["vendor-company"], "vendor_tin" => $_POST["vendor-tin"],
-            "vendor_phone" => $_POST["vendor-phone"], "vendor_address" => $_POST["vendor-address"]
+            "user_type" => $_POST["user-type"], "vendor_company" => $_POST["vendor-company"],
+            "vendor_tin" => $_POST["vendor-tin"], "vendor_phone" => $_POST["vendor-phone"],
+            "vendor_address" => $_POST["vendor-address"]
         );
 
         $privileges = array("select" => 1, "insert" => 0, "update" => 0, "delete" => 0);
@@ -673,7 +677,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
                 break;
 
             case 'update':
-                $rslt = $admin->updateSystemUser($_POST["user-id"], $_POST["user-fname"], $_POST["user-lname"], $_POST["user-email"], $_POST["user-role"], $privileges);
+                $rslt = $admin->updateSystemUser($_POST, $privileges);
                 if (!$rslt) {
                     die(json_encode(array("success" => false, "message" => "Failed to update admission information!")));
                 }

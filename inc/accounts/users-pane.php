@@ -73,6 +73,16 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col mb-2 me-2">
+                                        <label for="user-type">User Type</label>
+                                        <select style="width: 100%;" name="user-type" id="user-type" class="form-select form-select-sm" required>
+                                            <option value="" hidden>Choose...</option>
+                                            <option value="admin">Admin</option>
+                                            <option value="user">User</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </fieldset>
 
                             <div id="vendor_info" style="display: none">
@@ -267,6 +277,8 @@
                         $("#user-email").val(result.message[0].user_name);
                         $("#user-role option:selected").attr("selected", false);
                         $("#user-role" + " option[value='" + result.message[0].role + "']").attr('selected', true);
+                        $("#user-type option:selected").attr("selected", false);
+                        $("#user-type" + " option[value='" + result.message[0].type + "']").attr('selected', true);
                         $("#select").attr('checked', parseInt(result.message[0].select) ? true : false);
                         $("#insert").attr('checked', parseInt(result.message[0].insert) ? true : false);
                         $("#update").attr('checked', parseInt(result.message[0].update) ? true : false);

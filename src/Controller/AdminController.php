@@ -572,10 +572,10 @@ class AdminController
         $hashed_pw = password_hash($password, PASSWORD_DEFAULT);
 
         // Create insert query
-        $query1 = "INSERT INTO sys_users (`first_name`, `last_name`, `user_name`, `password`, `role`) VALUES(:fn, :ln, :un, :pw, :rl)";
+        $query1 = "INSERT INTO sys_users (`first_name`, `last_name`, `user_name`, `password`, `role`, `type`) VALUES(:fn, :ln, :un, :pw, :rl, :tp)";
         $params1 = array(
             ":fn" => $user_data["first_name"], ":ln" => $user_data["last_name"], ":un" => $user_data["user_name"],
-            ":pw" => $hashed_pw, ":rl" => $user_data["user_role"]
+            ":pw" => $hashed_pw, ":rl" => $user_data["user_role"], ":tp" => $user_data["user_type"]
         );
 
         // execute query
@@ -644,20 +644,20 @@ class AdminController
         return array("success" => true, "message" => "Successfully created user account!");
     }
 
-    public function updateSystemUser($user_id, $first_name, $last_name, $email_addr, $role, $privileges)
+    public function updateSystemUser($data, $privileges)
     {
-        $query = "UPDATE sys_users SET `user_name` = :un, `first_name` = :fn, `last_name` = :ln, `role` = :rl 
+        $query = "UPDATE sys_users SET `user_name` = :un, `first_name` = :fn, `last_name` = :ln, `role` = :rl, `type` = :tp 
                 WHERE id = :id";
         $params = array(
-            ":un" => $email_addr, ":fn" => $first_name, ":ln" => $last_name,
-            ":rl" => $role, ":id" => $user_id
+            ":un" => $data["user-email"], ":fn" => $data["user-fname"], ":ln" => $data["user-lname"],
+            ":rl" => $data["user-role"], ":tp" => $data["user-type"], ":id" => $data["user-id"]
         );
         if ($this->dm->inputData($query, $params)) {
             // Create insert query for user privileges
             $query2 = "UPDATE `sys_users_privileges` SET `select` = :s, `insert` = :i,`update` = :u, `delete`= :d 
                         WHERE `user_id` = :ui";
             $params2 = array(
-                ":ui" => $user_id, ":s" => $privileges["select"], ":i" => $privileges["insert"],
+                ":ui" => $data["user-id"], ":s" => $privileges["select"], ":i" => $privileges["insert"],
                 ":u" => $privileges["update"], ":d" => $privileges["delete"]
             );
             // Execute user privileges 
@@ -667,7 +667,7 @@ class AdminController
             $this->logActivity(
                 $_SESSION["user"],
                 "UPDATE",
-                "Updated user {$user_id} account information and privileges"
+                "Updated user {$data["user-id"]} account information and privileges"
             );
 
             return array("success" => true, "message" => "Successfully updated user account information!");
