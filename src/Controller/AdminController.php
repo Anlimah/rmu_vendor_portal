@@ -213,6 +213,13 @@ class AdminController
         return $this->dm->inputData($query, array(":i" => $vendor_id));
     }
 
+    public function fetchVendorDataByUserID(int $user_id)
+    {
+        $query = "SELECT vd.*, su.first_name, su.last_name, su.user_name 
+                    FROM vendor_details AS vd, sys_users AS su WHERE su.id = :i AND vd.user_id = su.id";
+        return $this->dm->inputData($query, array(":i" => $user_id));
+    }
+
     public function fetchVendorSubBranchesGrp($company)
     {
         $query = "SELECT * FROM vendor_details WHERE company = :c AND 
@@ -724,7 +731,7 @@ class AdminController
 
     public function fetchVendorAPIData($vendor_id): mixed
     {
-        return $this->dm->getData("SELECT * FROM api_users WHERE vendor_id = :vi", array(":vi", $vendor_id));
+        return $this->dm->getData("SELECT * FROM api_users WHERE vendor_id = :vi", array(":vi" => $vendor_id));
     }
 
     public function generateAPIKeys($vendor_id): mixed
