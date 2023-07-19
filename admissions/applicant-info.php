@@ -683,8 +683,10 @@ $admin->updateApplicationStatus($_GET["q"]);
                     data: data,
                     success: function(result) {
                         console.log(result);
-                        if (result.message == "logout") window.location.href = "?logout=true";
-                        else {
+                        if (result.message == "logout") {
+                            window.location.href = "?logout=true";
+                            return;
+                        } else {
                             $("#admit-other-prog").html("<option hidden value=''>Choose...</option>");
                             $.each(result.message, function(index, value) {
                                 $("#admit-other-prog").append('<option value="' + value.name + '">' + value.name + '</option>');

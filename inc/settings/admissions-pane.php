@@ -151,7 +151,10 @@
                         resetADPForm();
                         window.location.reload();
                     } else {
-                        if (result.message == "logout") window.location.href = "?logout=true";
+                        if (result.message == "logout") {
+                            window.location.href = "?logout=true";
+                            return;
+                        }
                         alert(result.message);
                     }
                 },
@@ -181,7 +184,10 @@
                         $("#adp-end").val(result.message[0].end_date);
                         $("#adp-desc").val(result.message[0].info);
                     } else {
-                        if (result.message == "logout") window.location.href = "?logout=true";
+                        if (result.message == "logout") {
+                            window.location.href = "?logout=true";
+                            return;
+                        }
                         alert(result.message)
                     };
 
@@ -209,7 +215,10 @@
                         resetADPForm();
                         window.location.reload();
                     } else {
-                        if (result.message == "logout") window.location.href = "?logout=true";
+                        if (result.message == "logout") {
+                            window.location.href = "?logout=true";
+                            return;
+                        }
                         alert(result.message);
                     }
                 },

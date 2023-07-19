@@ -264,7 +264,10 @@ require_once('../inc/page-data.php');
                             $("#info-output").hide();
 
                         } else {
-                            if (result.message == "logout") window.location.href = "?logout=true";
+                            if (result.message == "logout") {
+                                window.location.href = "?logout=true";
+                                return;
+                            }
                             $("tbody").html("<tr style='text-align: center'><td colspan='7'>No entries found</td></tr>");
                         }
                     },
@@ -314,7 +317,10 @@ require_once('../inc/page-data.php');
                             $("#info-output").hide();
 
                         } else {
-                            if (result.message == "logout") window.location.href = "?logout=true";
+                            if (result.message == "logout") {
+                                window.location.href = "?logout=true";
+                                return;
+                            }
                             $("tbody").html("<tr style='text-align: center'><td colspan='7'>No entries found</td></tr>");
                         }
 

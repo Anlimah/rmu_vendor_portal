@@ -151,11 +151,14 @@
                 data: data,
                 success: function(result) {
                     console.log(result);
+                    if (result.message == "logout") {
+                        window.location.href = "?logout=true";
+                        return;
+                    }
                     alert(result.message);
                     if (result.success) {
                         window.location.reload();
                     }
-                    if (result.message == "logout") window.location.href = "?logout=true";
                 },
                 error: function(error) {
                     console.log(error);
@@ -186,7 +189,10 @@
                         $("#form-type option:selected").attr("selected", false);
                         $("#form-type" + " option[value='" + result.message[0].ft_id + "']").attr('selected', true);
                     } else {
-                        if (result.message == "logout") window.location.href = "?logout=true";
+                        if (result.message == "logout") {
+                            window.location.href = "?logout=true";
+                            return;
+                        }
                         alert(result.message);
                     }
 
@@ -214,7 +220,10 @@
                         alert(result.message);
                         window.location.reload();
                     } else {
-                        if (result.message == "logout") window.location.href = "?logout=true";
+                        if (result.message == "logout") {
+                            window.location.href = "?logout=true";
+                            return;
+                        }
                         alert(result.message);
                     }
                 },

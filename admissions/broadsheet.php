@@ -149,7 +149,10 @@ require_once('../inc/page-data.php');
                         console.log(result);
                         if (result.success) window.open(result.message, '_blank');
                         else {
-                            if (result.message == "logout") window.location.href = "?logout=true";
+                            if (result.message == "logout") {
+                                window.location.href = "?logout=true";
+                                return;
+                            }
                             alert(result.message);
                         }
                     },
@@ -191,6 +194,10 @@ require_once('../inc/page-data.php');
                             });
                             $("#down-bs").show();
                         } else {
+                            if (result.message == "logout") {
+                                window.location.href = "?logout=true";
+                                return;
+                            }
                             $("tbody").html('');
                             $("#info-output").html(
                                 '<div class="alert alert-info alert-dismissible fade show" role="alert">' +

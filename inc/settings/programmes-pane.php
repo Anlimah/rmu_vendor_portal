@@ -162,7 +162,10 @@
                         resetProgForm();
                         window.location.reload();
                     } else {
-                        if (result.message == "logout") window.location.href = "?logout=true";
+                        if (result.message == "logout") {
+                            window.location.href = "?logout=true";
+                            return;
+                        }
                         alert(result.message);
                     }
                 },
@@ -195,7 +198,10 @@
                         $("#prog-grp option:selected").attr("selected", false);
                         $("#prog-grp" + " option[value='" + result.message[0].group + "']").attr('selected', true);
                     } else {
-                        if (result.message == "logout") window.location.href = "?logout=true";
+                        if (result.message == "logout") {
+                            window.location.href = "?logout=true";
+                            return;
+                        }
                         alert(result.message)
                     };
 
@@ -223,7 +229,10 @@
                         resetProgForm();
                         window.location.reload();
                     } else {
-                        if (result.message == "logout") window.location.href = "?logout=true";
+                        if (result.message == "logout") {
+                            window.location.href = "?logout=true";
+                            return;
+                        }
                         alert(result.message);
                     }
                 },

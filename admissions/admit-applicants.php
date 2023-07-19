@@ -186,7 +186,10 @@ require_once('../inc/page-data.php');
                             });
 
                         } else {
-                            if (result.message == "logout") window.location.href = "?logout=true";
+                            if (result.message == "logout") {
+                                window.location.href = "?logout=true";
+                                return;
+                            }
                             $("tbody").html('');
                             $("#info-output").html(
                                 '<div class="alert alert-info alert-dismissible fade show" role="alert">' +
