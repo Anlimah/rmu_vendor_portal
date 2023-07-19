@@ -602,12 +602,13 @@ class AdminController
 
         if (strtoupper($user_data["user_role"]) == "VENDORS") {
             if (!$vendor_id) $vendor_id = time();
-            $query1 = "INSERT INTO vendor_details (`id`, `type`, `company`, `branch`, `role`, `phone_number`, `user_id`) 
-                        VALUES(:id, :tp, :cp, :bh, :vr, :pn, :ui)";
+            $query1 = "INSERT INTO vendor_details (`id`, `type`, `company`, `company_code`, `branch`, `role`, `phone_number`, `user_id`, `api_user`) 
+                        VALUES(:id, :tp, :cp, :cc, :bh, :vr, :pn, :ui, :au)";
             $params1 = array(
                 ":id" => $vendor_id, ":tp" => "VENDOR", ":cp" => $user_data["vendor_company"],
-                ":bh" => $user_data["vendor_branch"], ":vr" => $user_data["vendor_role"],
-                ":pn" => $user_data["vendor_phone"], ":ui" => $sys_user[0]["id"]
+                ":cc" => $user_data["company_code"], ":bh" => $user_data["vendor_branch"],
+                ":vr" => $user_data["vendor_role"], ":pn" => $user_data["vendor_phone"],
+                ":ui" => $sys_user[0]["id"], ":au" => $user_data["api_user"]
             );
             $this->dm->inputData($query1, $params1);
             $subject = "Regional Maritime University - Vendor Account";
@@ -621,7 +622,7 @@ class AdminController
 
         // Prepare email
         $message = "<p>Hi " . $user_data["first_name"] . " " . $user_data["last_name"] . ", </p></br>";
-        $message .= "<p>Your account to access Regional Maritime University's Admissions Portal as a " . $user_data["user_role"] . " officer was created successfully.</p>";
+        $message .= "<p>Your account to access Regional Maritime University's Admissions Portal as a " . $user_data["user_role"] . " was created successfully.</p>";
         $message .= "<p>Find below your Login details.</p></br>";
         $message .= "<p style='font-weight: bold;'>Username: " . $user_data["user_name"] . "</p>";
         $message .= "<p style='font-weight: bold;'>Password: " . $password . "</p></br>";
@@ -630,7 +631,7 @@ class AdminController
         $message .= "<li>Don't let anyone see your login password</li>";
         $message .= "<li>Access the portal and change your password</li>";
         $message .= "</ol></br>";
-        $message .= "<p><a href='office.rmuictonline.com'>Click here to access portal</a>.</p>";
+        $message .= "<p><a href='https://office.rmuictonline.com'>Click here to access portal</a>.</p>";
 
         // Send email
         $emailed = $this->expose->sendEmail($user_data["user_name"], $subject, $message);
@@ -718,6 +719,43 @@ class AdminController
     }
 
     // end of setups
+
+    // CRUD for API Users
+
+    public function fetchVendorAPIData($vendor_id): mixed
+    {
+        return $this->dm->getData("SELECT * FROM api_users WHERE vendor_id = :vi", array(":vi", $vendor_id));
+    }
+
+    public function generateAPIKeys($vendor_id): mixed
+    {
+        $vendorData = $this->fetchVendor($vendor_id);
+        if (empty($vendorData)) return array("success" => false, "message" => "Vendor data doesn't exist");
+
+        if ($vendorData["api_user"] != 1) return array("success" => false, "message" => "This vendor account is not allowed to use RMU forms APIs");
+
+        // Generate vendor api username
+        $api_username = $this->expose->genVendorAPIUsername();
+
+        // Hash username
+        $hashed_un = sha1($api_username);
+
+        // Generate vendor api password
+        $api_password = $this->expose->genVendorPin();
+
+        // Hash password
+        $hashed_pw = password_hash($api_password, PASSWORD_DEFAULT);
+
+        $vendorAPIData = $this->fetchVendorAPIData($vendor_id);
+        if (empty($vendorAPIData)) $query = "UPDATE api_users SET `username` = :un, `password` = :pw WHERE `vendor_id`:vi";
+        else $query = "INSERT INTO api_users (`username`, `password`, `vendor_id`) VALUES(:un, :pw, :vi)";
+        $params = array(":un" => $hashed_un, ":pw" => $hashed_pw, ":vi" => $vendor_id);
+
+        if ($this->dm->inputData($query, $params))
+            return array("success" => true, "message" => array("username" => $api_username, "password" => $api_password));
+
+        return array("success" => false, "message" => "Failed to register API keys");
+    }
 
     public function fetchAvailableformTypes()
     {

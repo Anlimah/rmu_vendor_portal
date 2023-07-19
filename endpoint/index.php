@@ -485,16 +485,23 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         if (!isset($_POST["v-name"]) || empty($_POST["v-name"])) {
             die(json_encode(array("success" => false, "message" => "Missing input field: Vendor Name")));
         }
+        if (!isset($_POST["v-code"]) || empty($_POST["v-code"])) {
+            die(json_encode(array("success" => false, "message" => "Missing input field: Company code")));
+        }
         if (!isset($_POST["v-email"]) || empty($_POST["v-email"])) {
             die(json_encode(array("success" => false, "message" => "Missing input field: Email Address")));
         }
         if (!isset($_POST["v-phone"]) || empty($_POST["v-phone"])) {
             die(json_encode(array("success" => false, "message" => "Missing input field: Phone Number")));
         }
+        if (!isset($_POST["v-api-user"]) || empty($_POST["v-api-user"])) {
+            die(json_encode(array("success" => false, "message" => "Missing input field: API User status")));
+        }
 
         $user_data = array(
             "first_name" => $_POST["v-name"], "last_name" => "MAIN", "user_name" => $_POST["v-email"], "user_role" => "Vendors",
-            "user_type" => $_POST["v-type"], "vendor_company" => $_POST["v-name"], "vendor_phone" => $_POST["v-phone"], "vendor_branch" => "MAIN"
+            "user_type" => "user", "vendor_company" => $_POST["v-name"], "company_code" => $_POST["v-code"],
+            "vendor_phone" => $_POST["v-phone"], "vendor_branch" => "MAIN", "api_user" => ($_POST["v-api-user"] == "YES" ? 1 : 0)
         );
 
         $privileges = array("select" => 1, "insert" => 1, "update" => 0, "delete" => 0);
