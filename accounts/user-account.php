@@ -75,10 +75,7 @@ require_once('../inc/page-data.php');
                     </ul>
 
                     <div class="tab-content" id="myTabContent">
-                        <?php require_once("../inc/accounts/users-pane.php");
-                        ?>
-                        <?php //require_once("../inc/accounts/vendors-pane.php"); 
-                        ?>
+                        <?php require_once("../inc/accounts/users-pane.php"); ?>
                     </div>
                 </div>
             </div>
