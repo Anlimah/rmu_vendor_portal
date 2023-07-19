@@ -606,7 +606,7 @@ class AdminController
                         VALUES(:id, :tp, :cp, :cc, :bh, :vr, :pn, :ui, :au)";
             $params1 = array(
                 ":id" => $vendor_id, ":tp" => "VENDOR", ":cp" => $user_data["vendor_company"],
-                ":cc" => $user_data["company_code"], ":bh" => $user_data["vendor_branch"],
+                ":cc" => strtoupper($user_data["company_code"]), ":bh" => $user_data["vendor_branch"],
                 ":vr" => $user_data["vendor_role"], ":pn" => $user_data["vendor_phone"],
                 ":ui" => $sys_user[0]["id"], ":au" => $user_data["api_user"]
             );

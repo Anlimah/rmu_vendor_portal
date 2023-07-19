@@ -210,6 +210,7 @@
                 processData: false,
                 success: function(result) {
                     console.log(result);
+                    if (result.message == "logout") window.location.href = "?logout=true";
                     alert(result.message);
                     window.location.reload();
                 },
@@ -249,6 +250,7 @@
                             );
                         });
                     } else {
+                        if (result.message == "logout") window.location.href = "?logout=true";
                         alert(result.message)
                     }
 
@@ -294,6 +296,7 @@
 
                         $("#vendorsBranchList").modal("toggle");
                     } else {
+                        if (result.message == "logout") window.location.href = "?logout=true";
                         alert(result.message)
                     }
 
@@ -337,6 +340,7 @@
                             );
                         });
                     } else {
+                        if (result.message == "logout") window.location.href = "?logout=true";
                         alert(result.message)
                     }
 
@@ -380,6 +384,7 @@
 
                         $("#addOrUpdateVendorModal").modal("toggle");
                     } else {
+                        if (result.message == "logout") window.location.href = "?logout=true";
                         alert(result.message)
                     };
 
@@ -404,6 +409,7 @@
                 data: data,
                 success: function(result) {
                     console.log(result);
+                    if (result.message == "logout") window.location.href = "?logout=true";
                     alert(result.message);
                     window.location.reload();
                 },

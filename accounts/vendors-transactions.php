@@ -260,6 +260,7 @@ require_once('../inc/page-data.php');
                             $("#totalPurchase").text(totalP);
                             $("#totalAmount").text("GHS " + totalA.toFixed(2));
                         } else {
+                            if (result.message == "logout") window.location.href = "?logout=true";
                             $("#saleGroupTbody").html("<tr style='text-align: center'><td colspan='5'>No entries found</td></tr>");
                         }
 
@@ -308,6 +309,7 @@ require_once('../inc/page-data.php');
                                 );
                             });
                         } else {
+                            if (result.message == "logout") window.location.href = "?logout=true";
                             alert(result.message);
                         }
                     },
@@ -333,6 +335,7 @@ require_once('../inc/page-data.php');
                         if (result.success) {
                             $(".infoFeed").removeClass("alert-danger").addClass("alert-success").toggle();
                         } else {
+                            if (result.message == "logout") window.location.href = "?logout=true";
                             $(".infoFeed").removeClass("alert-success").addClass("alert-danger").toggle();
                         }
 

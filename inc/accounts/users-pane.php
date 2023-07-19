@@ -245,6 +245,7 @@
                         alert(result.message);
                         window.location.reload();
                     } else {
+                        if (result.message == "logout") window.location.href = "?logout=true";
                         alert(result.message);
                     }
                 },
@@ -284,6 +285,7 @@
                         $("#delete").attr('checked', parseInt(result.message[0].delete) ? true : false);
 
                     } else {
+                        if (result.message == "logout") window.location.href = "?logout=true";
                         alert(result.message)
                     };
 
@@ -312,6 +314,7 @@
                         alert(result.message);
                         window.location.reload();
                     } else {
+                        if (result.message == "logout") window.location.href = "?logout=true";
                         alert(result.message);
                     }
                 },

@@ -162,6 +162,7 @@
                         resetProgForm();
                         window.location.reload();
                     } else {
+                        if (result.message == "logout") window.location.href = "?logout=true";
                         alert(result.message);
                     }
                 },
@@ -194,6 +195,7 @@
                         $("#prog-grp option:selected").attr("selected", false);
                         $("#prog-grp" + " option[value='" + result.message[0].group + "']").attr('selected', true);
                     } else {
+                        if (result.message == "logout") window.location.href = "?logout=true";
                         alert(result.message)
                     };
 
@@ -221,6 +223,7 @@
                         resetProgForm();
                         window.location.reload();
                     } else {
+                        if (result.message == "logout") window.location.href = "?logout=true";
                         alert(result.message);
                     }
                 },

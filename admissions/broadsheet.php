@@ -148,7 +148,10 @@ require_once('../inc/page-data.php');
                     success: function(result) {
                         console.log(result);
                         if (result.success) window.open(result.message, '_blank');
-                        else alert(result.message);
+                        else {
+                            if (result.message == "logout") window.location.href = "?logout=true";
+                            alert(result.message);
+                        }
                     },
                     error: function(error) {
                         console.log(error);
