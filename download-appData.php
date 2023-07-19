@@ -597,6 +597,5 @@ $admin->updateApplicationStatus($_GET["q"]);
 
     <script>
         window.print();
-        window.close();
     </script>
 </body>
