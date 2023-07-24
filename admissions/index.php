@@ -6,7 +6,7 @@ if (isset($_SESSION["adminLogSuccess"]) && $_SESSION["adminLogSuccess"] == true 
     header("Location: ../index.php");
 }
 
-if (isset($_GET['logout'])  || strtolower($_SESSION["role"]) != "admissions") {
+if (isset($_GET['logout']) || strtolower($_SESSION["role"]) != "admissions" || strtolower($_SESSION["role"]) != "developers") {
     session_destroy();
     $_SESSION = array();
     if (ini_get("session.use_cookies")) {

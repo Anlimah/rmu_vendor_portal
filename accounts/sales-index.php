@@ -7,7 +7,7 @@ if (isset($_SESSION["adminLogSuccess"]) && $_SESSION["adminLogSuccess"] == true 
 }
 
 
-if (isset($_GET['logout']) || strtolower($_SESSION["role"]) != "accounts") {
+if (isset($_GET['logout']) || strtolower($_SESSION["role"]) != "accounts" || strtolower($_SESSION["role"]) != "developers") {
     session_destroy();
     $_SESSION = array();
     if (ini_get("session.use_cookies")) {
