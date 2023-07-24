@@ -74,8 +74,11 @@
                                                 <option value="Accounts" selected>Accounts</option>
                                             <?php } else if (isset($_SESSION["role"]) && strtolower($_SESSION["role"]) == "admissions") { ?>
                                                 <option value="Admissions" selected>Admissions</option>
+                                            <?php } else if (isset($_SESSION["role"]) && strtolower($_SESSION["role"]) == "developers") { ?>
+                                                <option value="Accounts">Accounts</option>
+                                                <option value="Admissions">Admissions</option>
+                                                <option value="Developers">Developers</option>
                                             <?php } ?>
-                                            <option value="Developers" hidden>Developers</option>
                                         </select>
                                     </div>
                                     <div class="col mb-2">
