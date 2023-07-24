@@ -72,13 +72,13 @@ require_once('../inc/page-data.php');
                             <a href="../accounts/">
                                 <div class="card info-card sales-card">
                                     <div class="card-body">
-                                        <h5 class="card-title">Accounts Dashboard</h5>
+                                        <h5 class="card-title">Accounts</h5>
                                         <div class="d-flex align-items-center">
                                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                                <img src="../assets/img/icons8-payment-history-96.png" style="width: 48px;" alt="">
+                                                <img src="../assets/img/icons8-profit-96.png" style="width: 48px;" alt="">
                                             </div>
                                             <div class="ps-3">
-                                                <span class="text-muted small pt-2 ps-1">Sales summary & reports</span>
+                                                <span class="text-muted small pt-2 ps-1">Accounts Dashboard</span>
                                             </div>
                                         </div>
                                     </div>
@@ -91,13 +91,13 @@ require_once('../inc/page-data.php');
                             <a href="../admissions/">
                                 <div class="card info-card sales-card">
                                     <div class="card-body">
-                                        <h5 class="card-title">Admissions Dashboard</h5>
+                                        <h5 class="card-title">Admissions</h5>
                                         <div class="d-flex align-items-center">
                                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                                <img src="../assets/img/icons8-chart-96.png" style="width: 48px;" alt="">
+                                                <img src="../assets/img/icons8-properties-script-96.png" style="width: 48px;" alt="">
                                             </div>
                                             <div class="ps-3">
-                                                <span class="text-muted small pt-2 ps-1">Vendors' sales summary & reports</span>
+                                                <span class="text-muted small pt-2 ps-1">Admissions Dashboard</span>
                                             </div>
                                         </div>
                                     </div>
