@@ -21,7 +21,7 @@
         <?php } ?>
 
         <?php
-        if (isset($_SESSION["role"]) && (strtolower($_SESSION["role"]) == "admissions" || strtolower($_SESSION["role"]) != "developers" || strtolower($_SESSION["role"]) == "accounts") && isset($_SESSION["role"]) && strtolower($_SESSION["user_type"]) == "admin") {
+        if (isset($_SESSION["role"]) && (strtolower($_SESSION["role"]) == "admissions" || strtolower($_SESSION["role"]) == "developers" || strtolower($_SESSION["role"]) == "accounts") && isset($_SESSION["role"]) && strtolower($_SESSION["user_type"]) == "admin") {
         ?>
             <li class="nav-item">
                 <a class="nav-link collapsed" href="../<?= strtolower($_SESSION["role"]) ?>/user-account.php">
