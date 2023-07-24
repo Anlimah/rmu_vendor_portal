@@ -1,14 +1,13 @@
 <?php
 session_start();
-
-if (!isset($_SESSION["adminLogSuccess"]) || $_SESSION["adminLogSuccess"] == false || !isset($_SESSION["user"]) || empty($_SESSION["user"])) {
+//echo $_SERVER["HTTP_USER_AGENT"];
+if (isset($_SESSION["adminLogSuccess"]) && $_SESSION["adminLogSuccess"] == true && isset($_SESSION["user"]) && !empty($_SESSION["user"])) {
+} else {
     header("Location: ../index.php");
 }
 
-$isUser = false;
-if (strtolower($_SESSION["role"]) == "accounts" || strtolower($_SESSION["role"]) == "developers") $isUser = true;
 
-if (isset($_GET['logout']) || !$isUser) {
+if (isset($_GET['logout']) || strtolower($_SESSION["role"]) != "developers") {
     session_destroy();
     $_SESSION = array();
     if (ini_get("session.use_cookies")) {
@@ -69,10 +68,10 @@ require_once('../inc/page-data.php');
 
                         <!-- Applications Card -->
                         <div class="col-xxl-3 col-md-3">
-                            <a href="daily-transactions.php">
+                            <a href="../accounts/">
                                 <div class="card info-card sales-card">
                                     <div class="card-body">
-                                        <h5 class="card-title">Reports</h5>
+                                        <h5 class="card-title">Accounts Dashboard</h5>
                                         <div class="d-flex align-items-center">
                                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                                                 <img src="../assets/img/icons8-payment-history-96.png" style="width: 48px;" alt="">
@@ -88,10 +87,10 @@ require_once('../inc/page-data.php');
 
                         <!-- Applications Card -->
                         <div class="col-xxl-3 col-md-3">
-                            <a href="vendors-transactions.php">
+                            <a href="../admissions/">
                                 <div class="card info-card sales-card">
                                     <div class="card-body">
-                                        <h5 class="card-title">Vendors Stats</h5>
+                                        <h5 class="card-title">Admissions Dashboard</h5>
                                         <div class="d-flex align-items-center">
                                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                                                 <img src="../assets/img/icons8-chart-96.png" style="width: 48px;" alt="">
@@ -103,44 +102,6 @@ require_once('../inc/page-data.php');
                                     </div>
                                 </div>
                             </a>
-                        </div><!-- End Applications Card -->
-
-                        <!-- Applications Card -->
-                        <div class="col-xxl-3 col-md-3">
-                            <a href="vendors-account.php">
-                                <div class="card info-card sales-card">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Vendors Account</h5>
-                                        <div class="d-flex align-items-center">
-                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                                <img src="../assets/img/icons8-male-female-user-group-96.png" style="width: 48px;" alt="">
-                                            </div>
-                                            <div class="ps-3">
-                                                <span class="text-muted small pt-2 ps-1">Add, edit, and remove vendors account</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div><!-- End Applications Card -->
-
-                        <!-- Applications Card -->
-                        <div class="col-xxl-3 col-md-3">
-                            <div class="card info-card sales-card">
-                                <div class="card-body">
-                                    <a href="settings.php">
-                                        <h5 class="card-title">Forms</h5>
-                                        <div class="d-flex align-items-center">
-                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                                <img src="../assets/img/icons8-documents-96.png" style="width: 48px;" alt="">
-                                            </div>
-                                            <div class="ps-3">
-                                                <span class="text-muted small pt-2 ps-1">Add, edit, and remove forms</span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
                         </div><!-- End Applications Card -->
 
                     </div>

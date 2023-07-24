@@ -60,6 +60,14 @@
                             <span>My Profile</span>
                         </a>
                     </li>
+                    <?php if (isset($_SESSION["role"]) && strtolower($_SESSION["role"]) == "developers") { ?>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="../user-profile.php">
+                                <i class="bi bi-person"></i>
+                                <span>My Profile</span>
+                            </a>
+                        </li>
+                    <?php } ?>
                     <li>
                         <hr class="dropdown-divider">
                     </li>
