@@ -180,6 +180,7 @@ require_once('../inc/page-data.php');
                                             <th scope="col">#</th>
                                             <th scope="col" style="width:150px">Name</th>
                                             <th scope="col">Country</th>
+                                            <th scope="col">Contact</th>
                                             <th scope="col">Application Type</th>
                                             <th scope="col">Programme (1<sup>st</sup> Choice)</th>
                                             <th scope="col">Status</th>
@@ -239,29 +240,20 @@ require_once('../inc/page-data.php');
                         if (result.success) {
                             $("tbody").html('');
                             $.each(result.message, function(index, value) {
-                                if (value["declaration"] == 1) {
-                                    $("tbody").append(
-                                        '<tr>' +
-                                        '<th scope="row"><a href="javascript:void()">' + (index + 1) + '</a></th>' +
-                                        '<td>' + value.fullname + '</td>' +
-                                        '<td>' + value.nationality + '</td>' +
-                                        '<td>' + value.app_type + '</td>' +
-                                        '<td>' + value.first_prog + '</td>' +
-                                        '<td><span class="badge text-bg-success">Submitted</span></td>' +
-                                        '<td><b><a href="applicant-info.php?t=' + getUrlVars()["t"] + '&q=' + value.id + '">Open</a></b></td>' +
-                                        '</tr>');
-                                } else {
-                                    $("tbody").append(
-                                        '<tr>' +
-                                        '<th scope="row"><a href="javascript:void()">' + (index + 1) + '</a></th>' +
-                                        '<td>' + value.fullname + '</td>' +
-                                        '<td>' + value.nationality + '</td>' +
-                                        '<td>' + value.app_type + '</td>' +
-                                        '<td>' + value.first_prog + '</td>' +
-                                        '<td><span class="badge text-bg-danger">In Progress</span></td>' +
-                                        '</tr>');
-                                }
-
+                                declared = 0;
+                                value["declaration"] == 1 ? declared = 1 : declared = 0;
+                                $("tbody").append(
+                                    '<tr>' +
+                                    '<th scope="row"><a href="javascript:void()">' + (index + 1) + '</a></th>' +
+                                    '<td>' + value.fullname + '</td>' +
+                                    '<td>' + value.nationality + '</td>' +
+                                    '<td>' + (declared ? '(' + value.phone_no1_code + ') ' + value.phone_no1 : '(' + value.country_code + ') ' + value.phone_number) + '</td>' +
+                                    '<td>' + value.app_type + '</td>' +
+                                    '<td>' + value.first_prog + '</td>' +
+                                    '<td>' + (declared ? '<span class="badge text-bg-success">Submitted</span></td>' : '<span class="badge text-bg-danger">In Progress</span></td>') +
+                                    '<td>' + (declared ? '<b><a href="applicant-info.php?t=' + getUrlVars()["t"] + '&q=' + value.id + '">Open</a></b></td>' : '') +
+                                    '</tr>'
+                                );
                             });
                             $("#info-output").hide();
 
@@ -304,17 +296,20 @@ require_once('../inc/page-data.php');
                         if (result.success) {
                             $("tbody").html('');
                             $.each(result.message, function(index, value) {
-                                let status = value.declaration == 1 ? '<span class="badge text-bg-success">Submitted</span>' : '<span class="badge text-bg-danger">In Progress</span>';
+                                declared = 0;
+                                value["declaration"] == 1 ? declared = 1 : declared = 0;
                                 $("tbody").append(
                                     '<tr>' +
                                     '<th scope="row"><a href="javascript:void()">' + (index + 1) + '</a></th>' +
                                     '<td>' + value.fullname + '</td>' +
                                     '<td>' + value.nationality + '</td>' +
+                                    '<td>' + (declared ? '(' + value.phone_no1_code + ') ' + value.phone_no1 : '(' + value.country_code + ') ' + value.phone_number) + '</td>' +
                                     '<td>' + value.app_type + '</td>' +
                                     '<td>' + value.first_prog + '</td>' +
-                                    '<td>' + status + '</td>' +
-                                    '<td><b><a href="applicant-info.php?q=' + value.id + '">Open</a></b></td>' +
-                                    '</tr>');
+                                    '<td>' + (declared ? '<span class="badge text-bg-success">Submitted</span></td>' : '<span class="badge text-bg-danger">In Progress</span></td>') +
+                                    '<td>' + (declared ? '<b><a href="applicant-info.php?t=' + getUrlVars()["t"] + '&q=' + value.id + '">Open</a></b></td>' : '') +
+                                    '</tr>'
+                                );
                             });
                             $("#info-output").hide();
 

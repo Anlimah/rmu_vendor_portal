@@ -563,7 +563,7 @@ require_once('../inc/page-data.php');
                                 return;
                             }
                             $("#totalData").text(0);
-                            $("tbody").html("<tr style='text-align: center'><td colspan='5'>" + result.message + "</td></tr>");
+                            $("tbody").html("<tr style='text-align: center'><td colspan='10'>" + result.message + "</td></tr>");
                         }
 
                     },

@@ -511,7 +511,7 @@ $admin->updateApplicationStatus($_GET["q"]);
                                     </div>
 
                                     <div class="col" style="margin-top:100px">
-                                        <form method="post" id="admit-applicant-form">
+                                        <form method="post" id="admit-applicant-form" class="mb-2">
                                             <input type="hidden" name="app-prog" id="app-prog">
                                             <input type="hidden" name="app-login" id="app-login" value="<?= $personal_AB[0]["app_login"] ?>">
                                             <button class="btn btn-success btn-lg" style="width: 100%;" type="submit">Admit</button>
