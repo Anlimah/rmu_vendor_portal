@@ -973,11 +973,11 @@ class AdminController
                 break;
 
             case 'apps-admitted':
-                $result = $this->fetchAllAdmittedOrUnAdmittedApplication(true, $SQL_COND);
+                $result = $this->fetchAllAdmittedApplication(true, $SQL_COND);
                 break;
 
             case 'apps-unadmitted':
-                $result = $this->fetchAllAdmittedOrUnAdmittedApplication(false, $SQL_COND);
+                $result = $this->fetchAllUnAdmittedApplication(false, $SQL_COND);
                 break;
 
             case 'apps-awaiting':
@@ -991,7 +991,8 @@ class AdminController
     {
         $query = "SELECT 
                     al.id, CONCAT(p.first_name, ' ', IFNULL(p.middle_name, ''), ' ', p.last_name) AS fullname, 
-                    p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration 
+                    p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration,
+                    p.phone_no1_code, p.phone_no1, pd.country_code, pd.phone_number  
                 FROM 
                     personal_information AS p, applicants_login AS al, 
                     forms AS ft, purchase_detail AS pd, program_info AS pi, 
@@ -1007,7 +1008,8 @@ class AdminController
     {
         $query = "SELECT 
                     al.id, CONCAT(p.first_name, ' ', IFNULL(p.middle_name, ''), ' ', p.last_name) AS fullname, 
-                    p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration 
+                    p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration,
+                    p.phone_no1_code, p.phone_no1, pd.country_code, pd.phone_number  
                 FROM 
                     personal_information AS p, applicants_login AS al, 
                     forms AS ft, purchase_detail AS pd, program_info AS pi, 
@@ -1019,11 +1021,12 @@ class AdminController
         return $this->dm->getData($query, array(":s" => (int) $submitted));
     }
 
-    public function fetchAllAdmittedOrUnAdmittedApplication(bool $admitted, $SQL_COND)
+    public function fetchAllAdmittedApplication($SQL_COND)
     {
         $query = "SELECT 
                     al.id, CONCAT(p.first_name, ' ', IFNULL(p.middle_name, ''), ' ', p.last_name) AS fullname, 
-                    p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration 
+                    p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration,
+                    p.phone_no1_code, p.phone_no1, pd.country_code, pd.phone_number  
                 FROM 
                     personal_information AS p, applicants_login AS al, 
                     forms AS ft, purchase_detail AS pd, program_info AS pi, 
@@ -1031,15 +1034,33 @@ class AdminController
                 WHERE 
                     p.app_login = al.id AND pi.app_login = al.id AND fs.app_login = al.id AND
                     pd.admission_period = ap.id AND pd.form_id = ft.id AND pd.id = al.purchase_id AND 
-                    ap.active = 1 AND fs.admitted = :s $SQL_COND";
-        return $this->dm->getData($query, array(":s" => (int) $admitted));
+                    ap.active = 1 AND fs.declaration = 1 AND fs.admitted = 1 $SQL_COND";
+        return $this->dm->getData($query);
+    }
+
+    public function fetchAllUnAdmittedApplication($SQL_COND)
+    {
+        $query = "SELECT 
+                    al.id, CONCAT(p.first_name, ' ', IFNULL(p.middle_name, ''), ' ', p.last_name) AS fullname, 
+                    p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration,
+                    p.phone_no1_code, p.phone_no1, pd.country_code, pd.phone_number  
+                FROM 
+                    personal_information AS p, applicants_login AS al, 
+                    forms AS ft, purchase_detail AS pd, program_info AS pi, 
+                    form_sections_chek AS fs, admission_period AS ap 
+                WHERE 
+                    p.app_login = al.id AND pi.app_login = al.id AND fs.app_login = al.id AND
+                    pd.admission_period = ap.id AND pd.form_id = ft.id AND pd.id = al.purchase_id AND 
+                    ap.active = 1 AND fs.admitted = 0 $SQL_COND";
+        return $this->dm->getData($query);
     }
 
     public function fetchAllAwaitingApplication($SQL_COND)
     {
         $query = "SELECT 
                     al.id, CONCAT(p.first_name, ' ', IFNULL(p.middle_name, ''), ' ', p.last_name) AS fullname, 
-                    p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration 
+                    p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration,
+                    p.phone_no1_code, p.phone_no1, pd.country_code, pd.phone_number 
                 FROM 
                     personal_information AS p, applicants_login AS al, 
                     forms AS ft, purchase_detail AS pd, program_info AS pi, 
