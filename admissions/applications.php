@@ -252,7 +252,7 @@ require_once('../inc/page-data.php');
                                     '<td>' + value.app_type + '</td>' +
                                     '<td>' + value.first_prog + '</td>' +
                                     '<td>' + (declared ? '<span class="badge text-bg-success">Submitted</span></td>' : '<span class="badge text-bg-danger">In Progress</span></td>') +
-                                    '<td>' + (value.printed ? '<span class="bi bi-check-lg text-success"></span>' : '<span class="bi bi-x-lg text-danger"></span> <input type="checkbox" id="' + value.id + '" class="checkPrintedDoc">') +
+                                    '<td>' + (value.printed == "1" ? '<span class="bi bi-check-lg text-success"></span>' : '<span class="bi bi-x-lg text-danger"></span> <input type="checkbox" id="' + value.id + '" class="checkPrintedDoc">') +
                                     '</td>' +
                                     '<td>' + (declared ? '<b><a href="applicant-info.php?t=' + getUrlVars()["t"] + '&q=' + value.id + '">Open</a></b></td>' : '') +
                                     '</tr>'
@@ -310,7 +310,7 @@ require_once('../inc/page-data.php');
                                     '<td>' + value.app_type + '</td>' +
                                     '<td>' + value.first_prog + '</td>' +
                                     '<td>' + (declared ? '<span class="badge text-bg-success">Submitted</span></td>' : '<span class="badge text-bg-danger">In Progress</span></td>') +
-                                    '<td>' + (value.printed ? '<span class="bi bi-check-lg text-success"></span>' : '<span class="bi bi-x-lg text-danger"></span> <input type="checkbox" id="' + value.id + '" class="checkPrintedDoc">') +
+                                    '<td>' + (value.printed == "1" ? '<span class="bi bi-check-lg text-success"></span>' : '<span class="bi bi-x-lg text-danger"></span> <input type="checkbox" id="' + value.id + '" class="checkPrintedDoc">') +
                                     '<td>' + (declared ? '<b><a href="applicant-info.php?t=' + getUrlVars()["t"] + '&q=' + value.id + '">Open</a></b></td>' : '') +
                                     '</tr>'
                                 );
