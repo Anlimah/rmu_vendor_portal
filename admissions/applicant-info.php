@@ -301,7 +301,7 @@ $admin->updateApplicationStatus($_GET["q"]);
                                                             <span><?= $personal[0]["phone_no1_code"] ?> <?= $personal[0]["phone_no1"] ?></span>
                                                         </p>
                                                         <p>
-                                                            <span><b>Secondary phone number: </b> </span>
+                                                            <span><b>Whatsapp number: </b> </span>
                                                             <span><?= $personal[0]["phone_no2_code"] ?> <?= $personal[0]["phone_no2"] ?></span>
                                                         </p>
                                                         <p>
