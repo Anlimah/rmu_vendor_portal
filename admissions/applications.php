@@ -184,6 +184,7 @@ require_once('../inc/page-data.php');
                                             <th scope="col">Application Type</th>
                                             <th scope="col">Programme (1<sup>st</sup> Choice)</th>
                                             <th scope="col">Status</th>
+                                            <th scope="col">Printed</th>
                                             <th scope="col">Action</th>
                                         </tr>
                                     </thead>
@@ -251,6 +252,8 @@ require_once('../inc/page-data.php');
                                     '<td>' + value.app_type + '</td>' +
                                     '<td>' + value.first_prog + '</td>' +
                                     '<td>' + (declared ? '<span class="badge text-bg-success">Submitted</span></td>' : '<span class="badge text-bg-danger">In Progress</span></td>') +
+                                    '<td>' + (value.printed ? '<span class="bi bi-check-lg text-success"></span>' : '<span class="bi bi-x-lg text-danger"></span> <input type="checkbox" id="' + value.id + '" class="checkPrintedDoc">') +
+                                    '</td>' +
                                     '<td>' + (declared ? '<b><a href="applicant-info.php?t=' + getUrlVars()["t"] + '&q=' + value.id + '">Open</a></b></td>' : '') +
                                     '</tr>'
                                 );
@@ -262,7 +265,7 @@ require_once('../inc/page-data.php');
                                 window.location.href = "?logout=true";
                                 return;
                             }
-                            $("tbody").html("<tr style='text-align: center'><td colspan='7'>No entries found</td></tr>");
+                            $("tbody").html("<tr style='text-align: center'><td colspan='9'>No entries found</td></tr>");
                         }
                     },
                     error: function(error) {
@@ -307,6 +310,7 @@ require_once('../inc/page-data.php');
                                     '<td>' + value.app_type + '</td>' +
                                     '<td>' + value.first_prog + '</td>' +
                                     '<td>' + (declared ? '<span class="badge text-bg-success">Submitted</span></td>' : '<span class="badge text-bg-danger">In Progress</span></td>') +
+                                    '<td>' + (value.printed ? '<span class="bi bi-check-lg text-success"></span>' : '<span class="bi bi-x-lg text-danger"></span> <input type="checkbox" id="' + value.id + '" class="checkPrintedDoc">') +
                                     '<td>' + (declared ? '<b><a href="applicant-info.php?t=' + getUrlVars()["t"] + '&q=' + value.id + '">Open</a></b></td>' : '') +
                                     '</tr>'
                                 );
@@ -318,7 +322,7 @@ require_once('../inc/page-data.php');
                                 window.location.href = "?logout=true";
                                 return;
                             }
-                            $("tbody").html("<tr style='text-align: center'><td colspan='7'>No entries found</td></tr>");
+                            $("tbody").html("<tr style='text-align: center'><td colspan='9'>No entries found</td></tr>");
                         }
 
                         if (id == "type") {
@@ -412,6 +416,25 @@ require_once('../inc/page-data.php');
                     }
                     window.open("../download-pdf.php?w=apps&t=" + getUrlVars()["t"] + "&a=" + data["action"] + "&c=" + data["country"] + "&t=" + data["type"] + "&p=" + data["program"], "_blank");
                 }
+            });
+
+            $(document).on("click", ".checkPrintedDoc", function() {
+                data = {
+                    "app": $(this).attr("id")
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "../endpoint/checkPrintedDocument",
+                    data: data,
+                    success: function(result) {
+                        console.log(result);
+                        if (result.message == "logout") window.location.href = "?logout=true";
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
             });
 
 

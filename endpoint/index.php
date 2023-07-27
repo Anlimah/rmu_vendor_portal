@@ -289,6 +289,13 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     }
 
     //
+    else if ($_GET["url"] == "checkPrintedDocument") {
+        if (!isset($_POST["app"]) || empty($_POST["app"])) die(json_encode(array("success" => false, "message" => "Missing input!")));
+        if (!empty($admin->updatePrintedStatus($_POST["app"]))) die(json_encode(array("success" => true)));
+        die(json_encode(array("success" => false, "message" => "Failed to updated printed status!")));
+    }
+
+    //
     elseif ($_GET["url"] == "getAllAdmittedApplicants") {
 
         if (!isset($_POST["cert-type"]))

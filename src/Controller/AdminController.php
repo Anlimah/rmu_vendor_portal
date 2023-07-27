@@ -945,6 +945,12 @@ class AdminController
      * fetching applicants data
      */
 
+    public function updatePrintedStatus($appID): mixed
+    {
+        $query = "UPDATE form_sections_chek SET printed = 1 WHERE app_login = :a";
+        return $this->dm->getData($query, array(":a" => $appID));
+    }
+
     public function fetchAppsSummaryData($data)
     {
         // extract the array values into variables
@@ -991,8 +997,8 @@ class AdminController
     {
         $query = "SELECT 
                     al.id, CONCAT(p.first_name, ' ', IFNULL(p.middle_name, ''), ' ', p.last_name) AS fullname, 
-                    p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration,
-                    p.phone_no1_code, p.phone_no1, pd.country_code, pd.phone_number  
+                    p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration, fs.printed, 
+                    p.phone_no1_code, p.phone_no1, pd.country_code, pd.phone_number 
                 FROM 
                     personal_information AS p, applicants_login AS al, 
                     forms AS ft, purchase_detail AS pd, program_info AS pi, 
@@ -1008,7 +1014,7 @@ class AdminController
     {
         $query = "SELECT 
                     al.id, CONCAT(p.first_name, ' ', IFNULL(p.middle_name, ''), ' ', p.last_name) AS fullname, 
-                    p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration,
+                    p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration, fs.printed,
                     p.phone_no1_code, p.phone_no1, pd.country_code, pd.phone_number  
                 FROM 
                     personal_information AS p, applicants_login AS al, 
@@ -1025,7 +1031,7 @@ class AdminController
     {
         $query = "SELECT 
                     al.id, CONCAT(p.first_name, ' ', IFNULL(p.middle_name, ''), ' ', p.last_name) AS fullname, 
-                    p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration,
+                    p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration, fs.printed,
                     p.phone_no1_code, p.phone_no1, pd.country_code, pd.phone_number  
                 FROM 
                     personal_information AS p, applicants_login AS al, 
@@ -1042,7 +1048,7 @@ class AdminController
     {
         $query = "SELECT 
                     al.id, CONCAT(p.first_name, ' ', IFNULL(p.middle_name, ''), ' ', p.last_name) AS fullname, 
-                    p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration,
+                    p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration, fs.printed,
                     p.phone_no1_code, p.phone_no1, pd.country_code, pd.phone_number  
                 FROM 
                     personal_information AS p, applicants_login AS al, 
@@ -1059,7 +1065,7 @@ class AdminController
     {
         $query = "SELECT 
                     al.id, CONCAT(p.first_name, ' ', IFNULL(p.middle_name, ''), ' ', p.last_name) AS fullname, 
-                    p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration,
+                    p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration, fs.printed,
                     p.phone_no1_code, p.phone_no1, pd.country_code, pd.phone_number  
                 FROM 
                     personal_information AS p, applicants_login AS al, 
@@ -1068,7 +1074,7 @@ class AdminController
                 WHERE 
                     p.app_login = al.id AND pi.app_login = al.id AND fs.app_login = al.id AND
                     pd.admission_period = ap.id AND pd.form_id = ft.id AND pd.id = al.purchase_id AND 
-                    ap.active = 1 AND fs.declaration = 1 AND fs.admitted = 0  AND fs.declined = 0$SQL_COND";
+                    ap.active = 1 AND fs.declaration = 1 AND fs.admitted = 0 AND fs.declined = 0$SQL_COND";
         return $this->dm->getData($query);
     }
 
@@ -1076,7 +1082,7 @@ class AdminController
     {
         $query = "SELECT 
                     al.id, CONCAT(p.first_name, ' ', IFNULL(p.middle_name, ''), ' ', p.last_name) AS fullname, 
-                    p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration,
+                    p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration, fs.printed,
                     p.phone_no1_code, p.phone_no1, pd.country_code, pd.phone_number 
                 FROM 
                     personal_information AS p, applicants_login AS al, 
