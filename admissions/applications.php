@@ -105,28 +105,28 @@ require_once('../inc/page-data.php');
                                 <button id="apps-submitted" class="btn btn-outline-primary col me-2 toggle-output">
                                     Submitted
                                     <span class="badge text-bg-secondary">
-                                        <?= isset($_GET["t"]) ? $admin->fetchTotalSubmittedOrUnsubmittedApps($_GET["t"], true)[0]["total"] : ""; ?>
+                                        <?= isset($_GET["t"]) ? $admin->fetchTotalSubmittedApps($_GET["t"])[0]["total"] : ""; ?>
                                     </span>
                                 </button>
 
                                 <button id="apps-in-progress" class="btn btn-outline-primary col me-2 toggle-output">
                                     In Progress
                                     <span class="badge text-bg-secondary">
-                                        <?= isset($_GET["t"]) ? $admin->fetchTotalSubmittedOrUnsubmittedApps($_GET["t"], false)[0]["total"] : ""; ?>
+                                        <?= isset($_GET["t"]) ? $admin->fetchTotalUnsubmittedApps($_GET["t"])[0]["total"] : ""; ?>
                                     </span>
                                 </button>
 
                                 <button id="apps-admitted" class="btn btn-outline-primary col me-2 toggle-output">
                                     Admitted
                                     <span class="badge text-bg-secondary">
-                                        <?= isset($_GET["t"]) ? $admin->fetchTotalAdmittedOrUnadmittedApplicants($_GET["t"], true)[0]["total"] : ""; ?>
+                                        <?= isset($_GET["t"]) ? $admin->fetchTotalAdmittedApplicants($_GET["t"])[0]["total"] : ""; ?>
                                     </span>
                                 </button>
 
                                 <button id="apps-unadmitted" class="btn btn-outline-primary col me-2 toggle-output">
                                     Unadmitted
                                     <span class="badge text-bg-secondary">
-                                        <?= isset($_GET["t"]) ? $admin->fetchTotalAdmittedOrUnadmittedApplicants($_GET["t"], false)[0]["total"] : ""; ?>
+                                        <?= isset($_GET["t"]) ? $admin->fetchTotalUnadmittedApplicants($_GET["t"])[0]["total"] : ""; ?>
                                     </span>
                                 </button>
 

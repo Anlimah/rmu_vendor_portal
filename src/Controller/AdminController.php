@@ -965,19 +965,19 @@ class AdminController
                 $result = $this->fetchAllApplication($SQL_COND);
                 break;
             case 'apps-submitted':
-                $result = $this->fetchAllSubmittedOrUnsubmittecApplication(true, $SQL_COND);
+                $result = $this->fetchAllSubmittedApplication($SQL_COND);
                 break;
 
             case 'apps-in-progress':
-                $result = $this->fetchAllSubmittedOrUnsubmittecApplication(false, $SQL_COND);
+                $result = $this->fetchAllUnsubmittedApplication($SQL_COND);
                 break;
 
             case 'apps-admitted':
-                $result = $this->fetchAllAdmittedApplication(true, $SQL_COND);
+                $result = $this->fetchAllAdmittedApplication($SQL_COND);
                 break;
 
             case 'apps-unadmitted':
-                $result = $this->fetchAllUnAdmittedApplication(false, $SQL_COND);
+                $result = $this->fetchAllUnAdmittedApplication($SQL_COND);
                 break;
 
             case 'apps-awaiting':
@@ -1004,7 +1004,7 @@ class AdminController
         return $this->dm->getData($query);
     }
 
-    public function fetchAllSubmittedOrUnsubmittecApplication(bool $submitted, $SQL_COND)
+    public function fetchAllSubmittedApplication($SQL_COND)
     {
         $query = "SELECT 
                     al.id, CONCAT(p.first_name, ' ', IFNULL(p.middle_name, ''), ' ', p.last_name) AS fullname, 
@@ -1017,8 +1017,25 @@ class AdminController
                 WHERE 
                     p.app_login = al.id AND pi.app_login = al.id AND fs.app_login = al.id AND
                     pd.admission_period = ap.id AND pd.form_id = ft.id AND pd.id = al.purchase_id AND 
-                    ap.active = 1 AND fs.declaration = :s $SQL_COND";
-        return $this->dm->getData($query, array(":s" => (int) $submitted));
+                    ap.active = 1 AND fs.declaration = 1 AND fs.admitted = 0 AND fs.declined = 0 $SQL_COND";
+        return $this->dm->getData($query);
+    }
+
+    public function fetchAllUnsubmittedApplication($SQL_COND)
+    {
+        $query = "SELECT 
+                    al.id, CONCAT(p.first_name, ' ', IFNULL(p.middle_name, ''), ' ', p.last_name) AS fullname, 
+                    p.nationality, ft.name AS app_type, pi.first_prog, pi.second_prog, fs.declaration,
+                    p.phone_no1_code, p.phone_no1, pd.country_code, pd.phone_number  
+                FROM 
+                    personal_information AS p, applicants_login AS al, 
+                    forms AS ft, purchase_detail AS pd, program_info AS pi, 
+                    form_sections_chek AS fs, admission_period AS ap 
+                WHERE 
+                    p.app_login = al.id AND pi.app_login = al.id AND fs.app_login = al.id AND
+                    pd.admission_period = ap.id AND pd.form_id = ft.id AND pd.id = al.purchase_id AND 
+                    ap.active = 1 AND fs.declaration = 0 AND fs.admitted = 0 AND fs.declined = 0 $SQL_COND";
+        return $this->dm->getData($query);
     }
 
     public function fetchAllAdmittedApplication($SQL_COND)
@@ -1034,7 +1051,7 @@ class AdminController
                 WHERE 
                     p.app_login = al.id AND pi.app_login = al.id AND fs.app_login = al.id AND
                     pd.admission_period = ap.id AND pd.form_id = ft.id AND pd.id = al.purchase_id AND 
-                    ap.active = 1 AND fs.declaration = 1 AND fs.admitted = 1 $SQL_COND";
+                    ap.active = 1 AND fs.declaration = 1 AND fs.admitted = 1 AND fs.declined = 0$SQL_COND";
         return $this->dm->getData($query);
     }
 
@@ -1051,7 +1068,7 @@ class AdminController
                 WHERE 
                     p.app_login = al.id AND pi.app_login = al.id AND fs.app_login = al.id AND
                     pd.admission_period = ap.id AND pd.form_id = ft.id AND pd.id = al.purchase_id AND 
-                    ap.active = 1 AND fs.admitted = 0 $SQL_COND";
+                    ap.active = 1 AND fs.declaration = 1 AND fs.admitted = 0  AND fs.declined = 0$SQL_COND";
         return $this->dm->getData($query);
     }
 
@@ -1119,24 +1136,44 @@ class AdminController
         }
     }
 
-    public function fetchTotalSubmittedOrUnsubmittedApps(int $form_id, bool $submitted = true)
+    public function fetchTotalSubmittedApps(int $form_id)
     {
         $query = "SELECT COUNT(*) AS total 
                 FROM 
                     purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, forms AS ft
                 WHERE 
                     ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id 
-                AND pd.form_id = ft.id AND fc.declaration = :s AND ft.id = :f";
-        return $this->dm->getData($query, array(":s" => (int) $submitted, ":f" => $form_id));
+                AND pd.form_id = ft.id AND fc.declaration = 1 AND fc.admitted = 0  AND fc.declined = 0 AND ft.id = :f";
+        return $this->dm->getData($query, array(":f" => $form_id));
     }
 
-    public function fetchTotalAdmittedOrUnadmittedApplicants(int $form_id, bool $admitted = true)
+    public function fetchTotalUnsubmittedApps(int $form_id)
+    {
+        $query = "SELECT COUNT(*) AS total 
+                FROM 
+                    purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, forms AS ft
+                WHERE 
+                    ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id 
+                AND pd.form_id = ft.id AND fc.declaration = 0 AND fc.admitted = 0  AND fc.declined = 0 AND ft.id = :f";
+        return $this->dm->getData($query, array(":f" => $form_id));
+    }
+
+    public function fetchTotalAdmittedApplicants(int $form_id)
     {
         $query = "SELECT COUNT(*) AS total 
                 FROM purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, forms AS ft
                 WHERE ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id AND 
-                pd.form_id = ft.id AND fc.`admitted` = :s AND ft.id = :f";
-        return $this->dm->getData($query, array(":s" => (int) $admitted, ":f" => $form_id));
+                pd.form_id = ft.id AND fc.declaration = 1 AND fc.admitted = 1 AND fc.declined = 0 AND ft.id = :f";
+        return $this->dm->getData($query, array(":f" => $form_id));
+    }
+
+    public function fetchTotalUnadmittedApplicants(int $form_id)
+    {
+        $query = "SELECT COUNT(*) AS total 
+                FROM purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, forms AS ft
+                WHERE ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id AND 
+                pd.form_id = ft.id AND fc.declaration = 1 AND fc.admitted = 0 AND fc.declined = 0 AND ft.id = :f";
+        return $this->dm->getData($query, array(":f" => $form_id));
     }
 
     public function fetchTotalAwaitingResultsByFormType(int $form_id)
@@ -1145,8 +1182,8 @@ class AdminController
                 FROM purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, forms AS ft, 
                 academic_background AS ab 
                 WHERE ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id AND 
-                ab.app_login = al.id AND pd.form_id = ft.id AND fc.`declaration` = 1 AND ab.`awaiting_result` = 1 AND ft.id = :f 
-                AND ab.cert_type = 'WASSCE'";
+                ab.app_login = al.id AND pd.form_id = ft.id AND fc.`declaration` = 1 AND fc.admitted = 0 AND fc.declined = 0 
+                AND ab.`awaiting_result` = 1 AND ft.id = :f AND ab.cert_type = 'WASSCE'";
         return $this->dm->getData($query, array(":f" => $form_id));
     }
 
