@@ -28,9 +28,9 @@ if (isset($_GET['logout']) || !$isUser) {
 }
 if (!isset($_GET['t']) || empty($_GET['t'])) header("Location: index.php");
 if (!isset($_GET['q']) || empty($_GET['q'])) header("Location: applications.php?t={$_GET['t']}");
-?>
 
-<?php
+$_SESSION["lastAccessed"] = time();
+
 require_once('../bootstrap.php');
 require_once('../inc/page-data.php');
 

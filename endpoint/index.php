@@ -1,5 +1,13 @@
 <?php
 session_start();
+
+if (!isset($_SESSION["lastAccessed"])) $_SESSION["lastAccessed"] = time();
+$_SESSION["currentAccess"] = time();
+
+$diff = $_SESSION["currentAccess"] - $_SESSION["lastAccessed"];
+
+if ($diff >  1800) die(json_encode(array("success" => false, "message" => "logout")));
+
 /*
 * Designed and programmed by
 * @Author: Francis A. Anlimah
@@ -24,13 +32,6 @@ $admin = new AdminController();
 
 $data = [];
 $errors = [];
-
-if (!isset($_SESSION["lastAccessed"])) $_SESSION["lastAccessed"] = time();
-$_SESSION["currentAccess"] = time();
-
-$diff = ($_SESSION["currentAccess"] - $_SESSION["lastAccessed"]);
-
-if ($diff >  1800) die(json_encode(array("success" => false, "message" => "logout")));
 
 // All GET request will be sent here
 if ($_SERVER['REQUEST_METHOD'] == "GET") {

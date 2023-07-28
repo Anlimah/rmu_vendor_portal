@@ -26,8 +26,9 @@ if (isset($_GET['logout']) || !$isUser) {
 
     header('Location: ../index.php');
 }
-?>
-<?php
+
+$_SESSION["lastAccessed"] = time();
+
 require_once('../bootstrap.php');
 
 use Src\Controller\AdminController;
@@ -74,8 +75,49 @@ require_once('../inc/page-data.php');
                 <div class="col-lg-12">
                     <div class="row">
 
+                        <?php var_dump($admin->fetchTotalAppsByProgCodeAndAdmisPeriod('MSC', 0)) ?>
+                        <!-- Applications Card -->
+                        <div class="col-xxl-3 col-md-3">
+                            <div class="card info-card sales-card">
+                                <div class="card-body">
+                                    <a href="applications.php?t=1">
+                                        <h5 class="card-title">MASTERS</h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <img src="../assets/img/icons8-masters.png" style="width: 48px;" alt="">
+                                            </div>
+                                            <div class="ps-3">
+                                                <!--<h6><?= $admin->fetchTotalApplications($form_type["id"])[0]["total"]; ?></h6>-->
+                                                <span class="text-muted small pt-2 ps-1">Applications</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div><!-- End Applications Card -->
+
+                        <!-- Applications Card -->
+                        <div class="col-xxl-3 col-md-3">
+                            <div class="card info-card sales-card">
+                                <div class="card-body">
+                                    <a href="applications.php?t=1">
+                                        <h5 class="card-title">UPGRADERS</h5>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                <img src="../assets/img/icons8-masters.png" style="width: 48px;" alt="">
+                                            </div>
+                                            <div class="ps-3">
+                                                <!--<h6><?= $admin->fetchTotalApplications($form_type["id"])[0]["total"]; ?></h6>-->
+                                                <span class="text-muted small pt-2 ps-1">Applications</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div><!-- End Applications Card -->
+
                         <?php
-                        $form_types = $admin->getAvailableForms();
+                        $form_types = $admin->getAvailableFormsExceptType(1);
                         foreach ($form_types as $form_type) {
                         ?>
                             <!-- Applications Card -->

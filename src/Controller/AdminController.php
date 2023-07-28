@@ -85,6 +85,11 @@ class AdminController
         return $this->dm->getData($query, $param);
     }
 
+    public function getAvailableFormsExceptType($type)
+    {
+        return $this->dm->getData("SELECT * FROM `forms` WHERE `form_category` <> :t", array(":t" => $type));
+    }
+
     public function getAvailableForms()
     {
         return $this->dm->getData("SELECT * FROM `forms`");
@@ -1096,6 +1101,31 @@ class AdminController
     }
 
     // fetch data by form type and admission period
+
+    public function fetchTotalAppsByProgCodeAndAdmisPeriod($prog_code = "", $admin_period = 0): mixed
+    {
+        $query = "SELECT COUNT(*) AS total FROM `forms` WHERE `form_category` <> :t";
+        if ($admin_period == 0) {
+            $query = "SELECT COUNT(*) AS total 
+                FROM 
+                    purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, 
+                    applicants_login AS al, forms AS ft, programs AS pg 
+                WHERE 
+                    ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id 
+                    AND pd.form_id = ft.id AND pg.type = ft.id AND pg.program_code = :pc";
+            return $this->dm->getData($query, array(":pc" => $prog_code));
+        } else {
+            $query = "SELECT COUNT(*) AS total 
+                FROM 
+                    purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, 
+                    applicants_login AS al, forms AS ft, programs AS pg 
+                WHERE 
+                    ap.id = pd.admission_period AND fc.app_login = al.id AND al.purchase_id = pd.id 
+                    AND pd.form_id = ft.id AND pg.type = ft.id AND pg.program_code = :pc AND ap.id = :a";
+            return $this->dm->getData($query, array(":pc" => $prog_code, ":a" => $admin_period));
+        }
+    }
+
     public function fetchTotalApplicationsByFormTypeAndAdmPeriod(int $form_id = 0, $admin_period = 0)
     {
         if ($form_id == 0 && $admin_period == 0) {
@@ -1199,8 +1229,7 @@ class AdminController
                 FROM purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, forms AS ft, 
                 academic_background AS ab 
                 WHERE ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id AND 
-                ab.app_login = al.id AND pd.form_id = ft.id AND fc.`declaration` = 1 AND ab.`awaiting_result` = 1 
-                AND ab.cert_type = 'WASSCE'";
+                ab.app_login = al.id AND pd.form_id = ft.id AND fc.`declaration` = 1 AND ab.`awaiting_result` = 1 AND ab.cert_type = 'WASSCE'";
         return $this->dm->getData($query);
     }
 
