@@ -1104,14 +1104,13 @@ class AdminController
 
     public function fetchTotalAppsByProgCodeAndAdmisPeriod($prog_code = "", $admin_period = 0): mixed
     {
-        $query = "SELECT COUNT(*) AS total FROM `forms` WHERE `form_category` <> :t";
+        //$query = "SELECT COUNT(*) AS total FROM `forms` WHERE `form_category` <> :t";
         if ($admin_period == 0) {
             $query = "SELECT COUNT(*) AS total 
                 FROM 
-                    purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, 
-                    applicants_login AS al, forms AS ft, programs AS pg 
+                    purchase_detail AS pd, admission_period AS ap, applicants_login AS al, forms AS ft, programs AS pg 
                 WHERE 
-                    ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id 
+                    ap.id = pd.admission_period AND ap.active = 1 AND al.purchase_id = pd.id 
                     AND pd.form_id = ft.id AND pg.type = ft.id AND pg.program_code = :pc";
             return $this->dm->getData($query, array(":pc" => $prog_code));
         } else {
