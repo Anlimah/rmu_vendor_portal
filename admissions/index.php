@@ -75,7 +75,8 @@ require_once('../inc/page-data.php');
                 <div class="col-lg-12">
                     <div class="row">
 
-                        <?php var_dump($admin->fetchTotalAppsByProgCodeAndAdmisPeriod('MSC', 0)[0]["total"]) ?>
+                        <?php //var_dump($admin->fetchTotalAppsByProgCodeAndAdmisPeriod('MSC', 0)[0]["total"]) 
+                        ?>
                         <!-- Applications Card -->
                         <div class="col-xxl-3 col-md-3">
                             <div class="card info-card sales-card">

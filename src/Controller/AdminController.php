@@ -1845,6 +1845,77 @@ class AdminController
         return $this->dm->getData($query, array(":ti" => $transID));
     }
 
+    // Create new applicants data
+
+    private function registerApplicantPersI($user_id)
+    {
+        $sql = "INSERT INTO `personal_information` (`app_login`) VALUES(:a)";
+        $this->dm->inputData($sql, array(':a' => $user_id));
+    }
+
+    private function registerApplicantProgI($user_id)
+    {
+        $sql = "INSERT INTO `program_info` (`app_login`) VALUES(:a)";
+        $this->dm->inputData($sql, array(':a' => $user_id));
+    }
+
+    private function registerApplicantPreUni($user_id)
+    {
+        $sql = "INSERT INTO `previous_uni_records` (`app_login`) VALUES(:a)";
+        $this->dm->inputData($sql, array(':a' => $user_id));
+    }
+
+    private function setFormSectionsChecks($user_id)
+    {
+        $sql = "INSERT INTO `form_sections_chek` (`app_login`) VALUES(:a)";
+        $this->dm->inputData($sql, array(':a' => $user_id));
+    }
+
+    private function setHeardAboutUs($user_id)
+    {
+        $sql = "INSERT INTO `heard_about_us` (`app_login`) VALUES(:a)";
+        $this->dm->inputData($sql, array(':a' => $user_id));
+    }
+
+    private function getApplicantLoginID($app_number)
+    {
+        $sql = "SELECT `id` FROM `applicants_login` WHERE `app_number` = :a;";
+        return $this->dm->getID($sql, array(':a' => sha1($app_number)));
+    }
+
+    private function saveLoginDetails($app_number, $pin, $who)
+    {
+        $hashed_pin = password_hash($pin, PASSWORD_DEFAULT);
+        $sql = "INSERT INTO `applicants_login` (`app_number`, `pin`, `purchase_id`) VALUES(:a, :p, :b)";
+        $params = array(':a' => sha1($app_number), ':p' => $hashed_pin, ':b' => $who);
+
+        if ($this->dm->inputData($sql, $params)) {
+            $user_id = $this->getApplicantLoginID($app_number);
+
+            //register in Personal information table in db
+            $this->registerApplicantPersI($user_id);
+
+            //register in Acaedmic backgorund
+            // Removed this education background because data will be bulk saved and also user can add more than 1
+            //$this->registerApplicantAcaB($user_id);
+
+            //register in Programs information
+            $this->registerApplicantProgI($user_id);
+
+            //register in Previous university information
+            $this->registerApplicantPreUni($user_id);
+
+            //Set initial form checks
+            $this->setFormSectionsChecks($user_id);
+
+            //Set initial form checks
+            $this->setHeardAboutUs($user_id);
+
+            return 1;
+        }
+        return 0;
+    }
+
     // Proccesses to generate and send a new applicant login details
     private function genPin(int $length_pin = 9)
     {
@@ -1924,6 +1995,8 @@ class AdminController
             //generate new login details
             $gen = $this->genLoginsAndSend($transID);
             if (!$gen["success"]) return $gen;
+            $data = $this->dm->getData("SELECT id FROM applicants_login WHERE purchase_id = :pi", array(":pi" => $transID));
+            if (empty($data)) $this->saveLoginDetails($gen["message"]['app_number'], $gen["message"]['pin_number'], $transID);
         }
 
         // Get purchase data
