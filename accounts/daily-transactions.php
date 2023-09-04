@@ -490,9 +490,9 @@ require_once('../inc/page-data.php');
                         <div class="modal-footer">
                             <div style="width:100% !important; display:flex; justify-content: space-between">
                                 <ul>
-                                    <li>Verify transaction status <label for="verifyTransIDBtn" class="btn btn-primary btn-xs">Verify</label></li>
-                                    <li>Resend application login info <label for="sendTransIDBtn" class="btn btn-success btn-xs">Send</label></li>
-                                    <li>Generate and send new application login info <label for="genSendTransIDBtn" class="btn btn-warning btn-xs">Send</label></li>
+                                    <li>Verify transaction status <label for="verifyTransIDBtn" class="btn btn-primary btn-xs forVerifyTransIDBtn">Verify</label></li>
+                                    <li>Resend application login info <label for="sendTransIDBtn" class="btn btn-success btn-xs forSendTransIDBtn">Resend</label></li>
+                                    <li>Generate and send new application login info <label for="genSendTransIDBtn" class="btn btn-warning btn-xs forGenSendTransIDBtn">Generate and send</label></li>
                                 </ul>
                                 <form id="genSendPurchaseInfoForm" method="post" style="display: none;">
                                     <button type="submit" id="genSendTransIDBtn">Generate and send new application login info</button>
@@ -728,19 +728,6 @@ require_once('../inc/page-data.php');
                 });
             });
 
-            $(document).on({
-                ajaxStart: function() {
-                    if (triggeredBy == 3) $("#genSendTransIDBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> processing...');
-                    else if (triggeredBy == 4) $("#sendTransIDBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> processing...');
-                    else $("#alert-output").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
-                },
-                ajaxStop: function() {
-                    if (triggeredBy == 3) $("#genSendTransIDBtn").prop("disabled", false).html('Generate and send new application login info');
-                    else if (triggeredBy == 4) $("#sendTransIDBtn").prop("disabled", false).html('Resend application login info');
-                    else $("#alert-output").html('');
-                }
-            });
-
             $(document).on("click", ".download-file", function() {
                 let data = {
                     actionType: $(this).attr("id")
@@ -748,21 +735,21 @@ require_once('../inc/page-data.php');
                 $("#reportsForm").trigger("submit", $(this).attr("id"));
             });
 
-        });
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
-    <script>
-        $(document).ready(function() {
             $(document).on({
                 ajaxStart: function() {
-                    // Show full page LoadingOverlay
-                    $.LoadingOverlay("show");
+                    if (triggeredBy = 3) $("#forGenSendTransIDBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Processing...');
+                    else if (triggeredBy = 4) $("#forSendTransIDBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Sending...');
+                    else if (triggeredBy = 5) $("#forVerifyTransIDBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Verifying...');
+                    else $.LoadingOverlay("show");
                 },
                 ajaxStop: function() {
-                    // Hide it after 3 seconds
-                    $.LoadingOverlay("hide");
+                    if (triggeredBy = 3) $("#forGenSendTransIDBtn").prop("disabled", false).html('Generate and send');
+                    else if (triggeredBy = 4) $("#forSendTransIDBtn").prop("disabled", false).html('Resend');
+                    else if (triggeredBy = 5) $("#forVerifyTransIDBtn").prop("disabled", false).html('Verify');
+                    else $.LoadingOverlay("hide");
                 }
             });
+
         });
     </script>
 
