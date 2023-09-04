@@ -759,6 +759,14 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         die(json_encode($admin->sendPurchaseInfo($transID, false)));
     }
 
+    // send purchase info
+    elseif ($_GET["url"] == "verify-transaction-status") {
+        if (!isset($_POST["verifyTransID"]) || empty($_POST["verifyTransID"]))
+            die(json_encode(array("success" => false, "message" => "Invalid request!")));
+        $transID = $expose->validateNumber($_POST["verifyTransID"]);
+        die(json_encode($admin->verifyTransactionStatus($transID, false)));
+    }
+
     // fetch group sales data
     elseif ($_GET["url"] == "group-sales-report") {
         if (!isset($_POST["from-date"])) die(json_encode(array("success" => false, "message" => "Invalid input request for from date!")));

@@ -465,7 +465,10 @@ require_once('../inc/page-data.php');
                                     </div>
                                     <div class="mb-3 col">
                                         <label for="p-status" class="form-label">Status</label>
-                                        <input disabled type="text" class="form-control _textD" id="p-status">
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <input disabled type="text" class="form-control _textD" id="p-status" style="width: 95%; border-top-right-radius: 0 !important; border-bottom-right-radius: 0 !important">
+                                            <input disabled type="text" class="form-control _textD bg-success" id="p-statusColor" style="width: 5%; border-top-left-radius: 0 !important; border-bottom-left-radius: 0 !important; border: none !important">
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -486,13 +489,22 @@ require_once('../inc/page-data.php');
                         </div>
                         <div class="modal-footer">
                             <div style="width:100% !important; display:flex; justify-content: space-between">
-                                <form id="genSendPurchaseInfoForm" method="post">
-                                    <button type="submit" id="genSendTransIDBtn" class="btn btn-warning btn-sm" style="padding:15px !important">Generate and send new application login info</button>
+                                <ul>
+                                    <li>Verify transaction status <label for="verifyTransIDBtn" class="btn btn-primary btn-xs">Verify</label></li>
+                                    <li>Resend application login info <label for="sendTransIDBtn" class="btn btn-success btn-xs">Send</label></li>
+                                    <li>Generate and send new application login info <label for="genSendTransIDBtn" class="btn btn-warning btn-xs">Send</label></li>
+                                </ul>
+                                <form id="genSendPurchaseInfoForm" method="post" style="display: none;">
+                                    <button type="submit" id="genSendTransIDBtn">Generate and send new application login info</button>
                                     <input type="hidden" name="genSendTransID" id="genSendTransID" value="">
                                 </form>
-                                <form id="sendPurchaseInfoForm" method="post" style="float: right;">
-                                    <button type="submit" id="sendTransIDBtn" class="btn btn-success btn-sm" style="padding:15px !important">Resend application login info</button>
+                                <form id="sendPurchaseInfoForm" method="post" style="display: none; float: right;">
+                                    <button type="submit" id="sendTransIDBtn">Resend application login info</button>
                                     <input type="hidden" name="sendTransID" id="sendTransID" value="">
+                                </form>
+                                <form id="verifyTransactionStatusForm" method="post" style="display: none; float: right;">
+                                    <button type="submit" id="verifyTransIDBtn">Verify transaction status</button>
+                                    <input type="hidden" name="verifyTransID" id="verifyTransID" value="">
                                 </form>
                             </div>
                         </div>
@@ -600,6 +612,7 @@ require_once('../inc/page-data.php');
                             $("#p-vendor").val(result.message[0].vendor);
                             $("#p-formT").val(result.message[0].formT);
                             $("#p-payM").val(result.message[0].payM);
+                            $("#verifyTransID").val(result.message[0].transID);
                             $("#sendTransID").val(result.message[0].transID);
                             $("#genSendTransID").val(result.message[0].transID);
                         } else {
@@ -676,6 +689,38 @@ require_once('../inc/page-data.php');
                             $(".infoFeed").removeClass("alert-success").addClass("alert-danger");
                             $(".infoFeed").fadeIn(1000).fadeOut(500);
                         }
+
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+
+            $("#verifyTransactionStatusForm").on("submit", function(e) {
+                e.preventDefault();
+                triggeredBy = 5;
+                $.ajax({
+                    type: "POST",
+                    url: "../endpoint/verify-transaction-status",
+                    data: new FormData(this),
+                    processData: false,
+                    contentType: false,
+                    success: function(result) {
+                        console.log(result);
+                        if (result.message == "logout") {
+                            window.location.href = "?logout=true";
+                            return;
+                        }
+
+                        /*$("#msgContent").text(result.message);
+                        if (result.success) {
+                            $(".infoFeed").removeClass("alert-danger").addClass("alert-success");
+                            $(".infoFeed").fadeIn(1000).fadeOut(500);
+                        } else {
+                            $(".infoFeed").removeClass("alert-success").addClass("alert-danger");
+                            $(".infoFeed").fadeIn(1000).fadeOut(500);
+                        }*/
 
                     },
                     error: function(error) {

@@ -2056,6 +2056,12 @@ class AdminController
         return array("success" => true, "message" => $output);
     }
 
+    public function verifyTransactionStatus($transID)
+    {
+        $pay = new PaymentController();
+        return $pay->verifyTransactionStatus($transID);
+    }
+
     public function prepareDownloadQuery($data)
     {
         $QUERY_CON = "";
