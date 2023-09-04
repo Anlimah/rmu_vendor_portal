@@ -754,6 +754,17 @@ require_once('../inc/page-data.php');
         });
     </script>
 
+    <script>
+        $(document).on({
+            ajaxStart: function() {
+                $.LoadingOverlay("show");
+            },
+            ajaxStop: function() {
+                $.LoadingOverlay("hide");
+            }
+        });
+    </script>
+
 </body>
 
 </html>
