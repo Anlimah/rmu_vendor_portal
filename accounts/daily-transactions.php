@@ -714,9 +714,9 @@ require_once('../inc/page-data.php');
                         }
 
                         if (result.success) {
-                            if (result.message == "COMPLETED") document.querySelector("#p-statusColor").setAttribute("form-control _textD bg-success");
-                            if (result.message == "PENDING") document.querySelector("#p-statusColor").setAttribute("form-control _textD bg-warning");
-                            if (result.message == "FAILED") document.querySelector("#p-statusColor").setAttribute("form-control _textD bg-danger");
+                            if (result.message == "COMPLETED") document.querySelector("#p-statusColor").setAttribute("class", "form-control _textD bg-success");
+                            if (result.message == "PENDING") document.querySelector("#p-statusColor").setAttribute("class", "form-control _textD bg-warning");
+                            if (result.message == "FAILED") document.querySelector("#p-statusColor").setAttribute("class", "form-control _textD bg-danger");
                         } else {
                             alert(result.message)
                         }
