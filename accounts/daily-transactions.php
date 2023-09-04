@@ -467,7 +467,7 @@ require_once('../inc/page-data.php');
                                         <label for="p-status" class="form-label">Status</label>
                                         <div style="display: flex; justify-content: space-between;">
                                             <input disabled type="text" class="form-control _textD" id="p-status" style="width: 95%; border-top-right-radius: 0 !important; border-bottom-right-radius: 0 !important">
-                                            <input disabled type="text" class="form-control _textD bg-success" id="p-statusColor" style="width: 5%; border-top-left-radius: 0 !important; border-bottom-left-radius: 0 !important; border: none !important">
+                                            <input disabled type="text" class="form-control _textD" id="p-statusColor" style="width: 5%; border-top-left-radius: 0 !important; border-bottom-left-radius: 0 !important; border: none !important">
                                         </div>
                                     </div>
                                 </div>
@@ -713,14 +713,13 @@ require_once('../inc/page-data.php');
                             return;
                         }
 
-                        /*$("#msgContent").text(result.message);
                         if (result.success) {
-                            $(".infoFeed").removeClass("alert-danger").addClass("alert-success");
-                            $(".infoFeed").fadeIn(1000).fadeOut(500);
+                            if (result.message == "COMPLETED") document.querySelector("#p-statusColor").setAttribute("form-control _textD bg-success");
+                            if (result.message == "PENDING") document.querySelector("#p-statusColor").setAttribute("form-control _textD bg-warning");
+                            if (result.message == "FAILED") document.querySelector("#p-statusColor").setAttribute("form-control _textD bg-danger");
                         } else {
-                            $(".infoFeed").removeClass("alert-success").addClass("alert-danger");
-                            $(".infoFeed").fadeIn(1000).fadeOut(500);
-                        }*/
+                            alert(result.message)
+                        }
 
                     },
                     error: function(error) {

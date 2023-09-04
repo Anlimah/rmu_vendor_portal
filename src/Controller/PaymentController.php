@@ -24,22 +24,19 @@ class PaymentController
     public function verifyTransactionStatus(int $transaction_id)
     {
         $response = json_decode($this->getTransactionStatusFromOrchard($transaction_id));
-        return $response;
-        /*if (empty($response)) return array("success" => false, "message" => "Invalid transaction Parameters! Code: -2");
+        if (empty($response)) return array("success" => false, "message" => "Invalid transaction Parameters! Code: -2");
 
         if (isset($response->trans_status)) {
             $status_code = substr($response->trans_status, 0, 3);
-            if ($status_code == '000') return $this->voucher->genLoginsAndSend($transaction_id);
-            $this->voucher->updateTransactionStatusInDB('FAILED', $transaction_id);
-            return array("success" => false, "message" => "Payment failed! Code: " . $status_code);
+            if ($status_code == '000') return array("success" => true, "message" => "COMPLETED");
+            if ($status_code == '001') return array("success" => true, "message" => "FAILED");
+            return array("success" => false, "message" => "transaction process FAILED!");
         } elseif (isset($response->resp_code)) {
-            if ($response->resp_code == '084') return array(
-                "success" => false,
-                "message" => "Payment pending! This might be due to insufficient fund in your mobile wallet or your payment session expired. Code: " . $response->resp_code
-            );
-            return array("success" => false, "message" => "Payment process failed! Code: " . $response->resp_code);
+            if ($response->resp_code == '084') return array("success" => true, "message" => "PENDING");
+            if ($response->resp_code == '067') return array("success" => false, "message" => "NO RECORD");
+            return array("success" => false, "message" => "transaction process FAILED!");
         }
-        return array("success" => false, "message" => "Bad request: Payment process failed!");*/
+        return array("success" => false, "message" => "Bad request: Payment process failed!");
     }
 
     /**
