@@ -520,6 +520,7 @@ require_once('../inc/page-data.php');
     </main><!-- End #main -->
 
     <?= require_once("../inc/footer-section.php") ?>
+    <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
     <script>
         $(document).ready(function() {
 
@@ -737,15 +738,15 @@ require_once('../inc/page-data.php');
 
             $(document).on({
                 ajaxStart: function() {
-                    if (triggeredBy = 3) $("#forGenSendTransIDBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Processing...');
-                    else if (triggeredBy = 4) $("#forSendTransIDBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Sending...');
-                    else if (triggeredBy = 5) $("#forVerifyTransIDBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Verifying...');
+                    if (triggeredBy = 3) $(".forGenSendTransIDBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Processing...');
+                    else if (triggeredBy = 4) $(".forSendTransIDBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Sending...');
+                    else if (triggeredBy = 5) $(".forVerifyTransIDBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Verifying...');
                     else $.LoadingOverlay("show");
                 },
                 ajaxStop: function() {
-                    if (triggeredBy = 3) $("#forGenSendTransIDBtn").prop("disabled", false).html('Generate and send');
-                    else if (triggeredBy = 4) $("#forSendTransIDBtn").prop("disabled", false).html('Resend');
-                    else if (triggeredBy = 5) $("#forVerifyTransIDBtn").prop("disabled", false).html('Verify');
+                    if (triggeredBy = 3) $(".forGenSendTransIDBtn").prop("disabled", false).html('Generate and send');
+                    else if (triggeredBy = 4) $(".forSendTransIDBtn").prop("disabled", false).html('Resend');
+                    else if (triggeredBy = 5) $(".forVerifyTransIDBtn").prop("disabled", false).html('Verify');
                     else $.LoadingOverlay("hide");
                 }
             });
