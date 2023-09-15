@@ -105,7 +105,7 @@ require_once('../inc/page-data.php');
                                         <h5 class="card-title">UPGRADERS</h5>
                                         <div class="d-flex align-items-center">
                                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                                <img src="../assets/img/icons8-masters.png" style="width: 48px;" alt="">
+                                                <img src="../assets/img/icons8-captain.png" style="width: 48px;" alt="">
                                             </div>
                                             <div class="ps-3">
                                                 <!--<h6><?= $admin->fetchTotalApplications(1)[0]["total"]; ?></h6>-->
@@ -156,7 +156,7 @@ require_once('../inc/page-data.php');
                                             </div>
                                             <div class="ps-3">
                                                 <h6><?= $admin->fetchTotalAwaitingResults()[0]["total"]; ?></h6>
-                                                <span class="text-muted small pt-2 ps-1">awaiting results for WASSCE applicants</span>
+                                                <span class="text-muted small pt-2 ps-1"> applications</span>
                                             </div>
                                         </div>
                                     </a>
