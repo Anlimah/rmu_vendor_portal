@@ -88,7 +88,7 @@ require_once('../inc/page-data.php');
                                                 <img src="../assets/img/icons8-masters.png" style="width: 48px;" alt="">
                                             </div>
                                             <div class="ps-3">
-                                                <!--<h6><?= $admin->fetchTotalApplications(1)[0]["total"]; ?></h6>-->
+                                                <h6><?= $admin->fetchTotalApplicationsForMastersUpgraders("MASTERS")[0]["total"]; ?></h6>
                                                 <span class="text-muted small pt-2 ps-1">Applications</span>
                                             </div>
                                         </div>
@@ -108,7 +108,7 @@ require_once('../inc/page-data.php');
                                                 <img src="../assets/img/icons8-captain.png" style="width: 48px;" alt="">
                                             </div>
                                             <div class="ps-3">
-                                                <!--<h6><?= $admin->fetchTotalApplications(1)[0]["total"]; ?></h6>-->
+                                                <h6><?= $admin->fetchTotalApplicationsForMastersUpgraders("UPGRADERS")[0]["total"]; ?></h6>
                                                 <span class="text-muted small pt-2 ps-1">Applications</span>
                                             </div>
                                         </div>
