@@ -92,7 +92,7 @@ require_once('../inc/page-data.php');
                         </div>
 
                         <div class="card-body">
-                            <h5 class="card-title">Applicantions</h5>
+                            <h5 class="card-title">Applications</h5>
 
                             <div class="row mx-auto">
                                 <!-- summary data buttons -->
