@@ -1157,7 +1157,7 @@ class AdminController
         $query = "SELECT COUNT(DISTINCT pd.id) AS total
                     FROM purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, forms AS ft, programs AS pg 
                     WHERE ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id 
-                        AND pd.form_id = ft.id AND ft.id = pg.type AND ft.id = 1 AND fc.declaration = 1$SQL_COND";
+                        AND pd.form_id = ft.id AND ft.id = pg.type AND ft.id = 1 AND fc.declaration = 1 AND fc.admitted = 0$SQL_COND";
         return $this->dm->getData($query);
     }
 
