@@ -27,7 +27,7 @@ class Broadsheet
     {
         $awaitingApps = $this->admin->fetchAllAwaitingApplicationsBS();
         if (empty($awaitingApps)) return 0;
-        $this->admin->saveDownloadedAwaitingResults($awaitingApps);
+        if (empty($this->admin->saveDownloadedAwaitingResults($awaitingApps))) return 0;
         $this->dataSheet = $awaitingApps;
         return 1;
     }
@@ -78,7 +78,7 @@ class Broadsheet
         $this->fileName .= $dateData[0]["start_year"] . " - " . $dateData[0]["end_year"] . ")";
     }
 
-    public function generateFile()
+    public function generateFile(): mixed
     {
         if ($this->prepareBSData()) {
             $this->createFileName();
@@ -87,6 +87,7 @@ class Broadsheet
             $this->saveSpreadsheetFile($this->fileName);
             return $this->fileName;
         }
+        return 0;
     }
 
     public function downloadFile($file)
@@ -101,4 +102,4 @@ class Broadsheet
 
 $broadsheet = new Broadsheet();
 $file = $broadsheet->generateFile();
-$broadsheet->downloadFile($file);
+if (!empty($file)) $broadsheet->downloadFile($file);
