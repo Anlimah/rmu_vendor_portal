@@ -1236,11 +1236,12 @@ class AdminController
 
     public function fetchTotalAwaitingResults()
     {
-        $query = "SELECT COUNT(*) AS total 
-                FROM purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, forms AS ft, 
-                academic_background AS ab 
-                WHERE ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id AND 
-                ab.app_login = al.id AND pd.form_id = ft.id AND fc.`declaration` = 1 AND ab.`awaiting_result` = 1 AND ab.cert_type = 'WASSCE'";
+        $query = "SELECT COUNT(pd.id) AS total 
+                FROM purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, 
+                applicants_login AS al, forms AS ft, academic_background AS ab 
+                WHERE ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND 
+                al.purchase_id = pd.id AND ab.app_login = al.id AND pd.form_id = ft.id AND fc.`declaration` = 1 AND 
+                ab.`awaiting_result` = 1 AND ab.cert_type = 'WASSCE' AND ab.country = 'GHANA'";
         return $this->dm->getData($query);
     }
 
