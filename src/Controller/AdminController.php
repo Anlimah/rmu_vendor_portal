@@ -798,7 +798,8 @@ class AdminController
                     applicants_login AS al, purchase_detail AS pd, admission_period AS ap, academic_background AS ab 
                 WHERE 
                     al.id = ab.app_login AND al.purchase_id = pd.id AND ap.id = pd.admission_period AND ab.awaiting_result = 1 AND 
-                    ap.active = 1 AND ab.cert_type = 'WASSCE' AND pd.id NOT IN (SELECT admission_number FROM downloaded_awaiting_results)";
+                    ap.active = 1 AND ab.cert_type = 'WASSCE' AND ab.country = 'GHANA' AND 
+                    pd.id NOT IN (SELECT admission_number FROM downloaded_awaiting_results)";
         return $this->dm->getData($query);
     }
 
