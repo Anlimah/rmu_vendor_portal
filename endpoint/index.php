@@ -767,6 +767,24 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         die(json_encode($admin->verifyTransactionStatus($transID, false)));
     }
 
+    // send an sms to customer
+    elseif ($_GET["url"] == "sms-customer") {
+        if (!isset($_POST["recipient"]) || empty($_POST["recipient"]))
+            die(json_encode(array("success" => false, "message" => "No recipient!")));
+        if (!isset($_POST["message"]) || empty($_POST["message"]))
+            die(json_encode(array("success" => false, "message" => "No message typed!")));
+        if (strlen($_POST["message"]) > 160)
+            die(json_encode(array("success" => false, "message" => "Message is too long. Maximum allowed is 160 characters!")));
+
+        // Send SMS message
+        $to = str_replace(array("+", "(", ")", " "), "", $_POST["recipient"]);
+        $response = json_decode($expose->sendSMS($to, $_POST["message"]));
+
+        // Set SMS response status
+        if (!$response->status) die(json_encode(array("success" => true, "message" => "Message sent successfully!")));
+        die(json_encode(array("success" => true, "message" => "Failed to send message!")));
+    }
+
     // fetch group sales data
     elseif ($_GET["url"] == "group-sales-report") {
         if (!isset($_POST["from-date"])) die(json_encode(array("success" => false, "message" => "Invalid input request for from date!")));

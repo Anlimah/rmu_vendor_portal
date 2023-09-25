@@ -512,6 +512,29 @@ require_once('../inc/page-data.php');
                 </div>
             </div>
 
+            <!-- Purchase info Modal -->
+            <div class="modal fade" id="smsCustomerModal" tabindex="-1" aria-labelledby="smsCustomerModal" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="smsCustomerModalTitle">SMS Customer</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-dismissible infoFeed" style="display:none" role="alert">
+                                <span id="smsStatusMsg"></span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            <div class="mb-3">
+                                <label for="p-name" class="form-label">Recipient: <span id="sms-recipient"></span></label>
+                                <textarea name="sms-message" id="sms-message" cols="30" rows="3" class="form-control" placeholder="Type mesage..."></textarea>
+                            </div>
+                            <button type="button" id="smsCustomerBtn" class="btn btn-success">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Right side columns -->
             <!-- End Right side columns -->
 
@@ -565,8 +588,9 @@ require_once('../inc/page-data.php');
                                     '<td>' + value.formType + '</td>' +
                                     '<td>' + value.status + '</td>' +
                                     '<td>' + value.paymentMethod + '</td>' +
-                                    '<td>' +
+                                    '<td style="display: flex; justify-content: space-around">' +
                                     '<button id="' + value.id + '" class="btn btn-xs btn-primary openPurchaseInfo" data-bs-toggle="modal" data-bs-target="#purchaseInfoModal">View</button>' +
+                                    '<button id="' + value.id + '" class="btn btn-xs btn-success openSmsCustomer" data-bs-toggle="modal" data-bs-target="#smsCustomerModal" data-phonenumber="' + value.phoneNumber + '">SMS</button>' +
                                     '</td>' +
                                     '</tr>'
                                 );
@@ -722,6 +746,36 @@ require_once('../inc/page-data.php');
                             alert(result.message)
                         }
 
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+
+            $(document).on("click", ".openSmsCustomer", function() {
+                $("#sms-recipient").text(this.dataset.phonenumber);
+            });
+
+            $("#smsCustomerBtn").on("click", function() {
+                data = {
+                    recipient: $("#sms-recipient").text(),
+                    message: $("#sms-message").val()
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "../endpoint/sms-customer",
+                    data: data,
+                    success: function(result) {
+                        console.log(result);
+
+                        if (result.message == "logout") {
+                            window.location.href = "?logout=true";
+                            return;
+                        }
+
+                        alert(result.message);
                     },
                     error: function(error) {
                         console.log(error);
