@@ -1243,7 +1243,8 @@ class AdminController
                 applicants_login AS al, forms AS ft, academic_background AS ab 
                 WHERE ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND 
                 al.purchase_id = pd.id AND ab.app_login = al.id AND pd.form_id = ft.id AND fc.`declaration` = 1 AND 
-                ab.`awaiting_result` = 1 AND ab.cert_type = 'WASSCE' AND ab.country = 'GHANA'";
+                ab.`awaiting_result` = 1 AND ab.cert_type = 'WASSCE' AND ab.country = 'GHANA' AND 
+                pd.id NOT IN (SELECT admission_number FROM downloaded_awaiting_results)";
         return $this->dm->getData($query);
     }
 
