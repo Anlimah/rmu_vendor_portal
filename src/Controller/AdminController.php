@@ -795,13 +795,21 @@ class AdminController
         $query = "SELECT pd.id AS AdmissionNumber, ab.index_number AS IndexNumber, 
                     ab.month_completed AS ExamMonth, ab.year_completed AS ExamYear 
                 FROM 
-                    applicants_login AS al, purchase_detail AS pd, 
-                    admission_period AS ap, academic_background AS ab  
-                WHERE
-                    al.id = ab.app_login AND al.purchase_id = pd.id AND 
-                    ap.id = pd.admission_period AND ab.awaiting_result = 1 AND 
-                    ap.active = 1 AND ab.cert_type = 'WASSCE'";
+                    applicants_login AS al, purchase_detail AS pd, admission_period AS ap, academic_background AS ab 
+                WHERE 
+                    al.id = ab.app_login AND al.purchase_id = pd.id AND ap.id = pd.admission_period AND ab.awaiting_result = 1 AND 
+                    ap.active = 1 AND ab.cert_type = 'WASSCE' AND pd.id NOT IN (SELECT admission_number FROM downloaded_awaiting_results)";
         return $this->dm->getData($query);
+    }
+
+    public function saveDownloadedAwaitingResults($data = array()): mixed
+    {
+        $count = 0;
+        foreach ($data as $d) {
+            $this->dm->inputData("INSERT INTO downloaded_awaiting_results (`admission_number`) VALUES(:al)", array(":al" => $d["AdmissionNumber"]));
+            $count++;
+        }
+        return $count;
     }
 
     /**
@@ -1154,7 +1162,7 @@ class AdminController
         $SQL_COND = "";
         if ($prog_code == "UPGRADERS") $SQL_COND = " AND pg.program_code = 'UPGRADE'";
         else if ($prog_code == "MASTERS") $SQL_COND = " AND pg.program_code IN ('MSC', 'MA')";
-        $query = "SELECT COUNT(DISTINCT pd.id) AS total
+        $query = "SELECT COUNT(DISTINCT pd.id) AS total 
                     FROM purchase_detail AS pd, admission_period AS ap, form_sections_chek AS fc, applicants_login AS al, forms AS ft, programs AS pg 
                     WHERE ap.id = pd.admission_period AND ap.active = 1 AND fc.app_login = al.id AND al.purchase_id = pd.id 
                         AND pd.form_id = ft.id AND ft.id = pg.type AND ft.id = 1 AND fc.declaration = 1 AND fc.admitted = 0$SQL_COND";

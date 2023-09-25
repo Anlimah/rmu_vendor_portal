@@ -26,6 +26,7 @@ class Broadsheet
     public function prepareBSData()
     {
         $awaitingApps = $this->admin->fetchAllAwaitingApplicationsBS();
+        $this->admin->saveDownloadedAwaitingResults($awaitingApps);
         if (empty($awaitingApps)) return 0;
         $this->dataSheet = $awaitingApps;
         return 1;
