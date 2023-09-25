@@ -795,9 +795,11 @@ class AdminController
         $query = "SELECT pd.id AS AdmissionNumber, ab.index_number AS IndexNumber, 
                     ab.month_completed AS ExamMonth, ab.year_completed AS ExamYear 
                 FROM 
-                    applicants_login AS al, purchase_detail AS pd, admission_period AS ap, academic_background AS ab 
+                    applicants_login AS al, purchase_detail AS pd, admission_period AS ap, 
+                    academic_background AS ab, , form_sections_chek AS fc 
                 WHERE 
-                    al.id = ab.app_login AND al.purchase_id = pd.id AND ap.id = pd.admission_period AND ab.awaiting_result = 1 AND 
+                    al.id = ab.app_login AND al.purchase_id = pd.id AND ap.id = pd.admission_period AND 
+                    fc.app_login = al.id AND fc.`declaration` = 1 AND ab.awaiting_result = 1 AND 
                     ap.active = 1 AND ab.cert_type = 'WASSCE' AND ab.country = 'GHANA' AND 
                     pd.id NOT IN (SELECT admission_number FROM downloaded_awaiting_results)";
         return $this->dm->getData($query);
