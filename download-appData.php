@@ -55,7 +55,7 @@ $uploads = $user->fetchUploadedDocs($_GET['q']);
 $form_name = $admin->getFormTypeName($_GET["t"]);
 $app_number = $admin->getApplicantAppNum($_GET["q"]);
 
-$admin->updateApplicationStatus($_GET["q"]);
+$admin->updateApplicationStatus($_GET["q"], 'reviewed', 1);
 ?>
 <!DOCTYPE html>
 <html lang="en">

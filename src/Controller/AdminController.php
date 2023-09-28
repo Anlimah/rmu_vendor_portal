@@ -431,8 +431,12 @@ class AdminController
 
     public function fetchAllFromProgramByName($prog_name)
     {
-        $query = "SELECT * FROM programs WHERE `name` = :n";
-        return $this->dm->getData($query, array(":n" => $prog_name));
+        return $this->dm->getData("SELECT * FROM programs WHERE `name` = :n", array(":n" => $prog_name));
+    }
+
+    public function fetchAllFromProgramByID($prog_id)
+    {
+        return $this->dm->getData("SELECT * FROM programs WHERE `id` = :i", array(":i" => $prog_id));
     }
 
     public function addProgramme($prog_name, $prog_type, $prog_wkd, $prog_grp)
@@ -960,13 +964,6 @@ class AdminController
     /**
      * fetching applicants data
      */
-
-    public function updatePrintedStatus($appID): mixed
-    {
-        $query = "UPDATE form_sections_chek SET printed = 1 WHERE app_login = :a";
-        return $this->dm->getData($query, array(":a" => $appID));
-    }
-
     public function fetchAppsSummaryData($data)
     {
         // extract the array values into variables
@@ -1039,7 +1036,7 @@ class AdminController
                 WHERE 
                     p.app_login = al.id AND pi.app_login = al.id AND fs.app_login = al.id AND
                     pd.admission_period = ap.id AND pd.form_id = ft.id AND pd.id = al.purchase_id AND 
-                    ap.active = 1 AND fs.declaration = 1 AND fs.admitted = 0 AND fs.declined = 0$SQL_COND";
+                    ap.active = 1 AND fs.declaration = 1 AND fs.admitted = 0 AND fs.admitted = 0 AND fs.declined = 0$SQL_COND";
         return $this->dm->getData($query);
     }
 
@@ -1655,11 +1652,15 @@ class AdminController
         return $this->dm->getData($sql, array(':i' => $appID));
     }
 
-    public function admitIndividualApplicant($appID, $prog_choice)
+    public function admitIndividualApplicant($appID, $progName)
     {
-        $prog_choice_q = $prog_choice . "_qualified";
-        $query = "UPDATE `form_sections_chek` SET `admitted` = 1, `declined` = 0, `$prog_choice_q` = 1 WHERE `app_login` = :i";
-        if ($this->dm->inputData($query, array(":i" => $appID))) {
+        $progID = $this->fetchAllFromProgramByName($progName);
+        $query = "UPDATE `form_sections_chek` SET `admitted` = 1, `declined` = 0, `programme_awarded` = :p WHERE `app_login` = :i";
+        if ($this->dm->inputData($query, array(":i" => $appID, ":p" => $progID[0]["id"]))) {
+            // return output message
+            return array("success" => true, "message" => "Applicant awarded " . $progName);
+
+            /*
             $contactInfo = $this->getApplicantContactInfo($appID);
             $programInfo = $this->getAppProgDetailsByAppID($appID);
 
@@ -1708,6 +1709,7 @@ class AdminController
 
             // return output message
             return array("success" => true, "message" => $output);
+            */
         }
         return array("success" => false, "message" => "Failed to admit applicant!");
     }
@@ -1721,10 +1723,10 @@ class AdminController
         return array("success" => false, "message" => "Failed to declined applicant admission!");
     }
 
-    public function updateApplicationStatus($appID)
+    public function updateApplicationStatus($appID, $statusName, $statusState)
     {
-        $query = "UPDATE `form_sections_chek` SET `reviewed` = 1 WHERE `app_login` = :i";
-        $this->dm->inputData($query, array(":i" => $appID));
+        $query = "UPDATE `form_sections_chek` SET `$statusName` = :ss WHERE `app_login` = :i";
+        $this->dm->inputData($query, array(":i" => $appID, ":ss" => $statusState));
     }
 
     /**
@@ -2164,7 +2166,8 @@ class AdminController
 
     public function fetchApplicationStatus($appID)
     {
-        $query = "SELECT `declaration`, `reviewed`, `admitted`, `declined` FROM `form_sections_chek` WHERE `app_login` = :i";
+        $query = "SELECT `declaration`, `reviewed`, `enrolled`, `admitted`, `declined`, `printed`, `programme_awarded` 
+                    FROM `form_sections_chek` WHERE `app_login` = :i";
         return $this->dm->getData($query, array(":i" => $appID));
     }
 

@@ -76,27 +76,34 @@ require_once('../inc/page-data.php');
                                     <div class="col-3">
                                         <!--<label for="cert-type" class="form-label">Certificate Type</label>-->
                                         <select name="cert-type" id="cert-type" class="form-select">
-                                            <option value="" hidden>Choose Certificate</option>
-                                            <option value="WASSCE">WASSCE/NECO</option>
-                                            <option value="SSSCE">SSSCE/GBCE</option>
-                                            <option value="Baccalaureate">BACCALAUREATE</option>
-                                            <option value="ALL">ALL</option>
+                                            <option value="" hidden>Choose Category</option>
+                                            <option value="MASTERS">MASTERS</option>
+                                            <option value="DEGREE">DEGREE</option>
+                                            <option value="DIPLOMA">DIPLOMA</option>
+                                            <option value="UPGRADERS">UPGRADERS</option>
                                         </select>
                                     </div>
-                                    <div class="col-3 mt-4">
-                                        <button type="submit" class="btn mb-4 btn-outline-primary">Fetch Data</button>
+                                    <div class="col-3" style="display: none;" id="bs-masters-prog">
+                                        <!--<label for="cert-type" class="form-label">Certificate Type</label>-->
+                                        <select name="cert-type" id="cert-type" class="form-select" data-bs-programme="MASTERS">
+                                            <option value="" hidden>Choose Programme</option>
+                                            <!--Fetch all masters programmes-->
+                                        </select>
                                     </div>
+                                    <!--<div class="col-3 mt-4">
+                                        <button type="submit" class="btn mb-4 btn-outline-primary">Fetch Data</button>
+                                    </div>-->
                                 </div>
                             </form>
                             <div id="info-output"></div>
-                            <table class="table table-borderless datatable table-striped table-hover">
+                            <table id="wassce-apps" class="table table-borderless table-striped table-hover" style="display: none;">
                                 <thead>
                                     <tr class="table-dark">
                                         <th scope="col">#</th>
-                                        <th scope="col" colspan="1">Full Name</th>
-                                        <th scope="col" colspan="1">Programme</th>
-                                        <th scope="col" colspan="4" style="text-align: center;">Core Subjects</th>
-                                        <th scope="col" colspan="4" style="text-align: center;">Elective Subjects</th>
+                                        <th scope="col" colspan="1">FULL NAME</th>
+                                        <th scope="col" colspan="1">PROGRAMME</th>
+                                        <th scope="col" colspan="4" style="text-align: center;">CORE SUBJECTS</th>
+                                        <th scope="col" colspan="4" style="text-align: center;">ELECTIVE SUBJECTS</th>
                                     </tr>
                                     <tr class="table-grey">
                                         <th scope="col"></th>
@@ -110,6 +117,21 @@ require_once('../inc/page-data.php');
                                         <th scope="col" style="background-color: #999; text-align: center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Elective 2">E2</th>
                                         <th scope="col" style="background-color: #999; text-align: center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Elective 3">E3</th>
                                         <th scope="col" style="background-color: #999; text-align: center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Elective 4">E4</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                            <table id="other-apps" class="table table-borderless table-striped table-hover" style="display: none;">
+                                <thead>
+                                    <tr class="table-dark">
+                                        <th scope="col">S/N</th>
+                                        <th scope="col" colspan="1">FULL NAME</th>
+                                        <th scope="col" colspan="1">AGE</th>
+                                        <th scope="col" colspan="1">SEX</th>
+                                        <th scope="col" colspan="1">QUALIFICATION</th>
+                                        <th scope="col" colspan="1">NATIONALITY</th>
+                                        <th scope="col" colspan="1">REMARKS</th>
                                     </tr>
                                 </thead>
                                 <tbody>
