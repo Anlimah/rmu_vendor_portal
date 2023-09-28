@@ -598,6 +598,9 @@ $admin->updateApplicationStatus($_GET["q"]);
     <!-- End Right side columns -->
 
     <script>
-        //window.print();
+        document.addEventListener("DOMContentLoaded", function() {
+            window.print();
+            window.close();
+        });
     </script>
 </body>
