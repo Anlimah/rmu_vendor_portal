@@ -762,9 +762,11 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     // send purchase info
     elseif ($_GET["url"] == "verify-transaction-status") {
         if (!isset($_POST["verifyTransID"]) || empty($_POST["verifyTransID"]))
-            die(json_encode(array("success" => false, "message" => "Invalid request!")));
+            die(json_encode(array("success" => false, "message" => "Invalid request:  transaction!")));
+        if (!isset($_POST["payMethod"]) || empty($_POST["payMethod"]))
+            die(json_encode(array("success" => false, "message" => "Invalid request: payment method!")));
         $transID = $expose->validateNumber($_POST["verifyTransID"]);
-        die(json_encode($admin->verifyTransactionStatus($transID, false)));
+        die(json_encode($admin->verifyTransactionStatus($_POST["payMethod"], $transID, false)));
     }
 
     // send an sms to customer

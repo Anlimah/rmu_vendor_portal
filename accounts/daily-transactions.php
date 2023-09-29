@@ -589,8 +589,8 @@ require_once('../inc/page-data.php');
                                     '<td>' + value.status + '</td>' +
                                     '<td>' + value.paymentMethod + '</td>' +
                                     '<td style="display: flex; justify-content: space-around">' +
-                                    '<button id="' + value.id + '" class="btn btn-xs btn-primary openPurchaseInfo" data-bs-toggle="modal" data-bs-target="#purchaseInfoModal">View</button>' +
-                                    '<button id="' + value.id + '" class="btn btn-xs btn-success openSmsCustomer" data-bs-toggle="modal" data-bs-target="#smsCustomerModal" data-phonenumber="' + value.phoneNumber + '">SMS</button>' +
+                                    '<button id="' + value.id + '" class="btn btn-xs btn-primary openPurchaseInfo" data-bs-toggle="modal" data-bs-target="#purchaseInfoModal" title="View details"><span class="bi bi-eye"></span></button>' +
+                                    '<button id="' + value.id + '" class="btn btn-xs btn-success openSmsCustomer" data-bs-toggle="modal" data-bs-target="#smsCustomerModal" data-phonenumber="' + value.phoneNumber + '" title="Send SMS"><span class="bi bi-send"></span></button>' +
                                     '</td>' +
                                     '</tr>'
                                 );
@@ -725,10 +725,13 @@ require_once('../inc/page-data.php');
             $("#verifyTransactionStatusForm").on("submit", function(e) {
                 e.preventDefault();
                 triggeredBy = 5;
+                let formData = new FormData(this);
+                formData.append("payMethod", $("#p-payM").val());
+
                 $.ajax({
                     type: "POST",
                     url: "../endpoint/verify-transaction-status",
-                    data: new FormData(this),
+                    data: formData,
                     processData: false,
                     contentType: false,
                     success: function(result) {

@@ -27,6 +27,8 @@ if (isset($_GET['logout']) || !$isUser) {
     header('Location: ../index.php');
 }
 
+if (!isset($_GET["t"]) || !isset($_GET["c"]) || empty($_GET["t"]) || empty($_GET["c"])) header('Location: index.php?error=app');
+
 $_SESSION["lastAccessed"] = time();
 
 require_once('../bootstrap.php');
@@ -163,7 +165,7 @@ require_once('../inc/page-data.php');
                                                 <option value="" hidden>Choose</option>
                                                 <option value="All">All</option>
                                                 <?php
-                                                $data = $admin->fetchPrograms(0);
+                                                $data = $admin->fetchPrograms($_GET["t"], $_GET["c"]);
                                                 foreach ($data as $ft) {
                                                 ?>
                                                     <option value="<?= $ft['name'] ?>"><?= $ft['name'] ?></option>

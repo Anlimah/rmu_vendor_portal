@@ -73,12 +73,19 @@ class AdminController
         return $this->dm->getID("SELECT `id` FROM `admission_period` WHERE `active` = 1");
     }
 
-    public function fetchPrograms(int $type)
+    public function fetchPrograms(int $type = 0, $prog = "")
     {
-        $param = array();
-        if ($type != 0) {
-            $query = "SELECT * FROM programs WHERE `type` = :t";
-            $param = array(':t' => $type);
+        if ($type != 0 && !empty($prog)) {
+            $prog_code = match ($prog) {
+                "MASTERS" => "MSC",
+                "UPGRADERS" => "UPGRADE",
+                "DEGREE" => "BSC",
+                "DIPLOMA" => "DIPLOMA",
+                "MARINE ENG MEC" => "SHORT",
+                "CILT, DILT AND ADILT" => "SHORT"
+            };
+            $query = "SELECT * FROM programs WHERE `type` = :t AND `program_code` = :p";
+            $param = array(':t' => $type, ':p' => $prog_code);
         } else {
             $query = "SELECT * FROM programs";
         }
@@ -2074,10 +2081,21 @@ class AdminController
         return array("success" => true, "message" => $output);
     }
 
-    public function verifyTransactionStatus($transID)
+    public function verifyTransactionStatusFromDB($trans_id)
     {
-        $pay = new PaymentController();
-        return $pay->verifyTransactionStatus($transID);
+        $sql = "SELECT `id`, `status` FROM `purchase_detail` WHERE `id` = :t";
+        $data = $this->dm->getData($sql, array(':t' => $trans_id));
+
+        if (empty($data)) return array("success" => false, "message" => "Invalid transaction ID! Code: -1");
+        if (strtoupper($data[0]["status"]) == "FAILED") return array("success" => false, "message" => "FAILED");
+        if (strtoupper($data[0]["status"]) == "COMPLETED") return array("success" => true, "message" => "COMPLETED");
+        if (strtoupper($data[0]["status"]) == "PENDING") return array("success" => true, "message" => "PENDING");
+    }
+
+    public function verifyTransactionStatus($payMethod, $transID)
+    {
+        if ($payMethod == "CASH") return $this->verifyTransactionStatusFromDB($transID);
+        else return (new PaymentController())->verifyTransactionStatusFromOrchard($transID);
     }
 
     public function prepareDownloadQuery($data)

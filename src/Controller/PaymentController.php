@@ -21,22 +21,20 @@ class PaymentController
         return $this->voucher->SaveFormPurchaseData($data, $trans_id);
     }
 
-    public function verifyTransactionStatus(int $transaction_id)
+    public function verifyTransactionStatusFromOrchard(int $transaction_id)
     {
         $response = json_decode($this->getTransactionStatusFromOrchard($transaction_id));
-        if (empty($response)) return array("success" => false, "message" => "Invalid transaction Parameters! Code: -2");
+        if (empty($response)) return array("success" => false, "message" => "Invalid transaction ID! Code: -2");
 
         if (isset($response->trans_status)) {
             $status_code = substr($response->trans_status, 0, 3);
             if ($status_code == '000') return array("success" => true, "message" => "COMPLETED");
             if ($status_code == '001') return array("success" => true, "message" => "FAILED");
-            return array("success" => false, "message" => "transaction process FAILED!");
         } elseif (isset($response->resp_code)) {
             if ($response->resp_code == '084') return array("success" => true, "message" => "PENDING");
             if ($response->resp_code == '067') return array("success" => false, "message" => "NO RECORD");
-            return array("success" => false, "message" => "transaction process FAILED!");
         }
-        return array("success" => false, "message" => "Bad request: Payment process failed!");
+        return array("success" => false, "message" => "Bad request: this transaction process failed!");
     }
 
     /**

@@ -81,7 +81,7 @@ require_once('../inc/page-data.php');
                         <div class="col-xxl-3 col-md-3">
                             <div class="card info-card sales-card">
                                 <div class="card-body">
-                                    <a href="applications.php?t=1">
+                                    <a href="applications.php?t=1&c=MASTERS">
                                         <h5 class="card-title">MASTERS</h5>
                                         <div class="d-flex align-items-center">
                                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
@@ -101,7 +101,7 @@ require_once('../inc/page-data.php');
                         <div class="col-xxl-3 col-md-3">
                             <div class="card info-card sales-card">
                                 <div class="card-body">
-                                    <a href="applications.php?t=1">
+                                    <a href="applications.php?t=1&c=UPGRADERS">
                                         <h5 class="card-title">UPGRADERS</h5>
                                         <div class="d-flex align-items-center">
                                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
@@ -125,7 +125,7 @@ require_once('../inc/page-data.php');
                             <div class="col-xxl-3 col-md-3">
                                 <div class="card info-card sales-card">
                                     <div class="card-body">
-                                        <a href="applications.php?t=<?= $form_type["id"] ?>">
+                                        <a href="applications.php?t=<?= $form_type["id"] ?>&c=<?= $form_type["name"] ?>">
                                             <h5 class="card-title"><?= $form_type["name"] ?></h5>
                                             <div class="d-flex align-items-center">
                                                 <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
