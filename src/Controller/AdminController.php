@@ -1659,64 +1659,69 @@ class AdminController
         return $this->dm->getData($sql, array(':i' => $appID));
     }
 
+    public function sendAppAdmissionStatus($appID, $prog_choice): mixed
+    {
+        $contactInfo = $this->getApplicantContactInfo($appID);
+        $programInfo = $this->getAppProgDetailsByAppID($appID);
+
+        // Prepare SMS message
+        $message = 'Hi ' . ucfirst(strtolower($contactInfo[0]["first_name"])) . " " . ucfirst(strtolower($contactInfo[0]["last_name"])) . '. ';
+        $message .= 'Congratulations! You have been offered admission into Regional Maritime University to read ' . $programInfo[0][$prog_choice];
+        $message .= ' as a ' . $programInfo[0]['study_stream'] . " student. To secure this offer, please ";
+        $message .= 'visit the application portal at https://admissions.rmuictonline.com and login to complete an acceptance form.';
+        $to = $contactInfo[0]["phone_no1_code"] . $contactInfo[0]["phone_no1"];
+
+        $sentEmail = false;
+        $smsSent = false;
+
+        // Send SMS message
+        $response = json_decode($this->expose->sendSMS($to, $message));
+
+        // Set SMS response status
+        if (!$response->status) $smsSent = true;
+
+        // Check if email address was provided
+        if (!empty($data[0]["email_address"])) {
+            // Prepare email message
+            $e_message = '<p>Hi ' . $data[0]["first_name"] . ",</p>";
+            $e_message .= '<p>Congratulations! You have been offered admission into Regional Maritime University to read ' . $programInfo[0][$prog_choice];
+            $e_message .= 'as a ' . strtolower($programInfo[0]['study_stream']) . ' student.</p>';
+            $e_message .= '<p>To secure this offer, please visit the application portal at https://admissions.rmuictonline.com and login to complete an acceptance form.';
+
+            // Send email message
+            $e_response = $this->expose->sendEmail($contactInfo[0]["email_addr"], 'ONLINE APPLICATION PORTAL LOGIN INFORMATION', $e_message);
+
+            // Ste email reponse status
+            if ($e_response) $sentEmail = true;
+        }
+
+        // Set output message
+        $output = "";
+        if ($smsSent || $sentEmail) $output = "Applicant admitted successfully and SMS/email sent!";
+        else $output = "Applicant admitted successfully but failed to send SMS/Email!";
+
+        // Log activity
+        $this->logActivity(
+            $_SESSION["user"],
+            "INSERT",
+            "Admissions user {$_SESSION["user"]} admitted applicant with ID {$appID}"
+        );
+
+        // return output message
+        return array("success" => true, "message" => $output);
+    }
+
+    private function generateApplicantAdmissionLetter($appID): mixed
+    {
+    }
+
     public function admitIndividualApplicant($appID, $progName)
     {
         $progID = $this->fetchAllFromProgramByName($progName);
         $query = "UPDATE `form_sections_chek` SET `admitted` = 1, `declined` = 0, `programme_awarded` = :p WHERE `app_login` = :i";
         if ($this->dm->inputData($query, array(":i" => $appID, ":p" => $progID[0]["id"]))) {
-            // return output message
+            $this->generateApplicantAdmissionLetter($appID);
             return array("success" => true, "message" => "Applicant awarded " . $progName);
-
-            /*
-            $contactInfo = $this->getApplicantContactInfo($appID);
-            $programInfo = $this->getAppProgDetailsByAppID($appID);
-
-            // Prepare SMS message
-            $message = 'Hi ' . ucfirst(strtolower($contactInfo[0]["first_name"])) . " " . ucfirst(strtolower($contactInfo[0]["last_name"])) . '. ';
-            $message .= 'Congratulations! You have been offered admission into Regional Maritime University to read ' . $programInfo[0][$prog_choice];
-            $message .= ' as a ' . $programInfo[0]['study_stream'] . " student. To secure this offer, please ";
-            $message .= 'visit the application portal at https://admissions.rmuictonline.com and login to complete an acceptance form.';
-            $to = $contactInfo[0]["phone_no1_code"] . $contactInfo[0]["phone_no1"];
-
-            $sentEmail = false;
-            $smsSent = false;
-
-            // Send SMS message
-            $response = json_decode($this->expose->sendSMS($to, $message));
-
-            // Set SMS response status
-            if (!$response->status) $smsSent = true;
-
-            // Check if email address was provided
-            if (!empty($data[0]["email_address"])) {
-                // Prepare email message
-                $e_message = '<p>Hi ' . $data[0]["first_name"] . ",</p>";
-                $e_message .= '<p>Congratulations! You have been offered admission into Regional Maritime University to read ' . $programInfo[0][$prog_choice];
-                $e_message .= 'as a ' . strtolower($programInfo[0]['study_stream']) . ' student.</p>';
-                $e_message .= '<p>To secure this offer, please visit the application portal at https://admissions.rmuictonline.com and login to complete an acceptance form.';
-
-                // Send email message
-                $e_response = $this->expose->sendEmail($contactInfo[0]["email_addr"], 'ONLINE APPLICATION PORTAL LOGIN INFORMATION', $e_message);
-
-                // Ste email reponse status
-                if ($e_response) $sentEmail = true;
-            }
-
-            // Set output message
-            $output = "";
-            if ($smsSent || $sentEmail) $output = "Applicant admitted successfully and SMS/email sent!";
-            else $output = "Applicant admitted successfully but failed to send SMS/Email!";
-
-            // Log activity
-            $this->logActivity(
-                $_SESSION["user"],
-                "INSERT",
-                "Admissions user {$_SESSION["user"]} admitted applicant with ID {$appID}"
-            );
-
-            // return output message
-            return array("success" => true, "message" => $output);
-            */
         }
         return array("success" => false, "message" => "Failed to admit applicant!");
     }
@@ -1735,6 +1740,20 @@ class AdminController
         $query = "UPDATE `form_sections_chek` SET `$statusName` = :ss WHERE `app_login` = :i";
         $this->dm->inputData($query, array(":i" => $appID, ":ss" => $statusState));
     }
+
+    public function sendAdmissionFiles($appID, $fileObj): mixed
+    {
+    }
+
+    public function enrollApplicant($appID): mixed
+    {
+        if ($this->updateApplicationStatus($appID, "enrolled", 1)) {
+            //create index number from program and number of student that exists
+            //create email address from applicant name
+        }
+        return array("success" => false, "message" => "Failed to enroll applicant!");
+    }
+
 
     /**
      * For accounts officers

@@ -152,7 +152,7 @@ $app_statuses = $admin->fetchApplicationStatus($_GET['q']);
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.php">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="applications.php?t=<?= $_GET["t"] ?>"><?= $form_name[0]["name"] ?></a></li>
+                    <li class="breadcrumb-item"><a href="applications.php?t=<?= $_GET["t"] ?>&c=<?= $_GET["c"] ?>"><?= $form_name[0]["name"] ?></a></li>
                     <li class="breadcrumb-item active"><?= $app_number[0]["app_number"] ?></li>
                 </ol>
             </nav>
@@ -205,9 +205,9 @@ $app_statuses = $admin->fetchApplicationStatus($_GET['q']);
                                 <div class="col-6">
                                     <div style="display: flex; flex-direction:column; justify-content: space-between; height: 100%; padding-bottom:15px">
                                         <div style="display: flex; justify-content: space-between; background-color:#e6e6e6; padding: 15px; padding-bottom: 0 !important; border-radius:15px">
-                                            <table class="table table-borderless">
+                                            <table class="table table-borderless" style="flex-grow: 8;">
                                                 <tr>
-                                                    <td style="width: 200px; padding: 4px 8px !important"><b>APPLICATION STATUS: </b> </td>
+                                                    <td style="width: 100px; padding: 4px 8px !important"><b>APP. STATUS: </b> </td>
                                                     <td style="padding: 4px 8px !important">
                                                         <?php
                                                         if (!empty($app_statuses)) {
@@ -225,7 +225,7 @@ $app_statuses = $admin->fetchApplicationStatus($_GET['q']);
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td style="width: 200px; padding: 4px 8px !important"><b>PROGRAMME AWARDED:</b> </td>
+                                                    <td style="width: 100px; padding: 4px 8px !important"><b>PROGRAMME:</b> </td>
                                                     <td style="padding: 4px 8px !important">
                                                         <?php
                                                         if (!empty($app_statuses)) {
@@ -239,19 +239,28 @@ $app_statuses = $admin->fetchApplicationStatus($_GET['q']);
                                                     </td>
                                                 </tr>
                                             </table>
-
-                                            <form method="post" style="width:85px;">
-                                                <input type="file" name="enroll-files" id="enroll-files" multiple style="display: none;">
-                                                <label class="btn btn-success btn-sm" id="enroll-files-check" style="width:100%">
-                                                    <span class="bi bi-check2-square"></span> Enroll
-                                                </label>
-                                                <input type="hidden" name="app-login" id="app-login" value="<?= $personal_AB[0]["app_login"] ?>">
-                                                <input type="hidden" name="programme-awarded" id="programme-awarded" value="<?= !empty($app_statuses[0]["programme_awarded"]) ? $app_statuses[0]["programme_awarded"] : 0  ?>">
-                                            </form>
+                                            <div style="flex-grow: 4;">
+                                                <div style="display: flex; flex-direction:column; justify-content: flex-start;">
+                                                    <form method="post" style="width:100px;" id="enrollAppForm">
+                                                        <button class="btn btn-outline-success btn-xs" id="enroll-app-check" style="width:100%;" type="submit">
+                                                            <span class="bi bi-check2-square"></span> <b id="enrollAppBtn-text">Enroll</b>
+                                                        </button>
+                                                        <input type="hidden" name="app-login" id="app-login" value="<?= $personal_AB[0]["app_login"] ?>">
+                                                    </form>
+                                                    <form method="post" style="width:100px; margin-top: 10px" id="sendFilesForm">
+                                                        <input type="file" name="send-files" id="send-files" multiple style="display: none;">
+                                                        <label class="btn btn-outline-dark btn-xs" id="send-files-check" style="width:100%" for="send-files">
+                                                            <span class="bi bi-file"></span> <b id="sendBtn-text">Send Files</b>
+                                                        </label>
+                                                        <input type="hidden" name="app-login" id="app-login" value="<?= $personal_AB[0]["app_login"] ?>">
+                                                        <input type="hidden" name="programme-awarded" id="programme-awarded" value="<?= !empty($app_statuses[0]["programme_awarded"]) ? $app_statuses[0]["programme_awarded"] : 0  ?>">
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div style="display: flex; justify-content: flex-end; padding: 15px; border-radius:15px">
-                                            <a style="width: 75px" class="btn btn-primary btn-sm" target="_blank" href="../download-appData.php?<?= "t=" . $_GET["t"] . "&q=" . $_GET["q"] ?>">
-                                                <span class="bi bi-printer"></span> Print
+                                            <a style="width: 100px" class="btn btn-primary btn-xs" target="_blank" href="../download-appData.php?<?= "t=" . $_GET["t"] . "&q=" . $_GET["q"] ?>">
+                                                <span class="bi bi-printer"></span> <b>Print</b>
                                             </a>
                                         </div>
                                     </div>
@@ -741,14 +750,70 @@ $app_statuses = $admin->fetchApplicationStatus($_GET['q']);
                 });
             });
 
-            $("#enroll-files-check").on("click", function() {
-                if ($("#programme-awarded").val() != 0) $("#enroll-files").click();
+            $("#send-files-check").on("click", function() {
+                if ($("#programme-awarded").val() != 0) $("#send-files").click();
                 else alert("Sorry, this applicant has not been offered any admission!");
             });
 
-            $("#enroll-files").change("blur", function() {
-
+            $("#send-files").change("blur", function() {
+                $("#sendBtn-text").text("Sending...");
+                $("#sendFilesForm").submit();
+                setTimeout(function() {
+                    $("#sendBtn-text").text("Send Files");
+                }, 1000);
             });
+
+            $("#sendFilesForm").on("submit", function(e) {
+                e.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    url: "../endpoint/send-admission-files",
+                    data: new FormData(this),
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function(result) {
+                        console.log(result);
+                        if (result.message == "logout") {
+                            window.location.href = "?logout=true";
+                            return;
+                        } else {
+
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+
+            $("#enrollAppForm").on("submit", function(e) {
+                e.preventDefault();
+                $("#enrollAppBtn-text").text("Enrolling...");
+                $.ajax({
+                    type: "POST",
+                    url: "../endpoint/enroll-applicant",
+                    data: new FormData(this),
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function(result) {
+                        console.log(result);
+                        if (result.message == "logout") {
+                            window.location.href = "?logout=true";
+                            return;
+                        } else {
+
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+                setTimeout(function() {
+                    $("#sendBtn-text").text("Enroll");
+                }, 1000);
+            })
 
         });
     </script>

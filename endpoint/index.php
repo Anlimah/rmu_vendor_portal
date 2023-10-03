@@ -885,6 +885,33 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         die(json_encode($admin->declineIndividualApplicant($_POST["app-login"])));
     }
 
+    //
+    elseif ($_GET["url"] == "send-admission-files") {
+        if (!isset($_POST["app-login"]) || empty($_POST["app-login"]))
+            die(json_encode(array("success" => false, "message" => "There no match for this applicant in database!")));
+        if (!isset($_FILES["send-files"]) || empty($_FILES["send-files"]))
+            die(json_encode(array("success" => false, "message" => "Invalid request!")));
+        if ($_FILES["send-files"]['error'])
+            die(json_encode(array("success" => false, "message" => "Failed to upload file!")));
+        die(json_encode($admin->sendAdmissionFiles($_POST["app-login"], $_FILES["send-files"])));
+    }
+
+    // 
+    elseif ($_GET["url"] == "enroll-applicant") {
+        if (!isset($_POST["app-login"]) || empty($_POST["app-login"]))
+            die(json_encode(array("success" => false, "message" => "There no match for this applicant in database!")));
+        if ($admin->updateApplicationStatus($_POST["app-login"], "enrolled", 1)) die(json_encode(array("success" => true)));
+        die(json_encode(array("success" => false, "message" => "Failed to updated enrollment status!")));
+    }
+
+    //
+    elseif ($_GET["url"] == "unenroll-applicant") {
+        if (!isset($_POST["app-login"]) || empty($_POST["app-login"]))
+            die(json_encode(array("success" => false, "message" => "There no match for this applicant in database!")));
+        if ($admin->updateApplicationStatus($_POST["app-login"], "enrolled", 0)) die(json_encode(array("success" => true)));
+        die(json_encode(array("success" => false, "message" => "Failed to updated enrollment status!")));
+    }
+
     ///
     elseif ($_GET["url"] == "export-excel") {
         $t = new DownloadAllExcelDataController($_POST["action"]);
