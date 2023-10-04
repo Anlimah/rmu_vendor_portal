@@ -246,6 +246,7 @@ $app_statuses = $admin->fetchApplicationStatus($_GET['q']);
                                                             <span class="bi bi-check2-square"></span> <b id="enrollAppBtn-text">Enroll</b>
                                                         </button>
                                                         <input type="hidden" name="app-login" id="app-login" value="<?= $personal_AB[0]["app_login"] ?>">
+                                                        <input type="hidden" name="app-prog" value="<?= !empty($app_statuses[0]["programme_awarded"]) ? $app_statuses[0]["programme_awarded"] : 0  ?>">
                                                     </form>
                                                     <form method="post" style="width:100px; margin-top: 10px" id="sendFilesForm">
                                                         <input type="file" name="send-files" id="send-files" multiple style="display: none;">

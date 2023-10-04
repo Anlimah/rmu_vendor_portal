@@ -1325,6 +1325,9 @@ class AdminController
         return $this->dm->getData($query, array(":i" => $loginID));
     }
 
+    /**
+     * @param program mixed $program
+     */
     public function getAppProgDetails($program)
     {
         $query = "SELECT `id`, `name` `type`, `group`, `weekend` FROM programs WHERE `name` = :p";
@@ -1738,18 +1741,72 @@ class AdminController
     public function updateApplicationStatus($appID, $statusName, $statusState)
     {
         $query = "UPDATE `form_sections_chek` SET `$statusName` = :ss WHERE `app_login` = :i";
-        $this->dm->inputData($query, array(":i" => $appID, ":ss" => $statusState));
+        return $this->dm->inputData($query, array(":i" => $appID, ":ss" => $statusState));
     }
 
     public function sendAdmissionFiles($appID, $fileObj): mixed
     {
     }
 
-    public function enrollApplicant($appID): mixed
+    private function createStudentIndexNumber($progID): mixed
+    {
+        $progInfo = $this->fetchAllFromProgramByID($progID)[0];
+
+        $adminPeriodYear = $this->dm->getData(
+            "SELECT YEAR(`start_date`) AS sYear FROM admission_period WHERE id = :i",
+            array(":i" => $_SESSION["admin_period"])
+        )[0]["sYear"];
+
+        $startYear = (int) substr($adminPeriodYear, -2);
+
+        $stdCount = $this->dm->getData(
+            "SELECT COUNT(programme) AS total FROM enrolled_applicants WHERE programme = :p",
+            array(":p" => $progInfo["name"])
+        )[0]["total"] + 1;
+
+        if ($stdCount <= 10) $numCount = "0000";
+        elseif ($stdCount <= 100) $numCount = "000";
+        elseif ($stdCount <= 1000) $numCount = "00";
+        elseif ($stdCount <= 10000) $numCount = "0";
+        elseif ($stdCount <= 100000) $numCount = "";
+
+        if ($progInfo["dur_format"] == "year") $completionYear = $startYear +  (int) $progInfo["duration"];
+        return array("index_number" => $progInfo["index_code"] . $numCount . $stdCount . $completionYear, "programme" => $progInfo["name"]);
+    }
+
+    /**
+     * @param int $appID
+     * @param int $progID
+     * @return mixed
+     */
+    public function enrollApplicant($appID, $progID): mixed
     {
         if ($this->updateApplicationStatus($appID, "enrolled", 1)) {
+
             //create index number from program and number of student that exists
+            $indexCreation = $this->createStudentIndexNumber($progID)["index_number"];
+
             //create email address from applicant name
+            $appDetails = $this->dm->getData(
+                "SELECT * FROM `personal_information` WHERE `app_login` = :a",
+                array(":a" => $appID)
+            )[0];
+            $stEmailAddress = $appDetails["first_name"] . "." . $appDetails["last_name"] . "@st.rmu.edu.gh";
+
+            // check if email exists
+            $checkEmail = $this->dm->getData(
+                "SELECT id FROM enrolled_applicants WHERE email_address = :e",
+                array(":e" => $stEmailAddress)
+            );
+            if (!empty($checkEmail)) $stEmailAddress = "";
+
+            // Save Data
+            $addStudent = $this->dm->inputData(
+                "INSERT INTO enrolled_applicants VALUES(`app_id`, `index_number`, `email_address`, `programme`, `first_name`, `middle_name`, `last_name`, `sex`, `dob`, `nationality`, `phone_number`)",
+                array($appID, $indexCreation["index_number"], $stEmailAddress, $indexCreation["programme"], $appDetails["first_name"], $appDetails["middle_name"], $appDetails["last_name"], $appDetails["gender"], $appDetails["dob"], $appDetails["nationality"], $appDetails["phone_no1_code"] . $appDetails["phone_no1"])
+            );
+
+            if (!empty($addStudent)) return 1;
         }
         return array("success" => false, "message" => "Failed to enroll applicant!");
     }
@@ -1938,10 +1995,6 @@ class AdminController
 
             //register in Personal information table in db
             $this->registerApplicantPersI($user_id);
-
-            //register in Acaedmic backgorund
-            // Removed this education background because data will be bulk saved and also user can add more than 1
-            //$this->registerApplicantAcaB($user_id);
 
             //register in Programs information
             $this->registerApplicantProgI($user_id);

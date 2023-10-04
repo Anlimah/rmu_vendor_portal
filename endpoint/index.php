@@ -868,7 +868,8 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         $changePassword = $admin->resetUserPassword($_SESSION["user"], $newPass);
         die(json_encode($changePassword));
     }
-    //
+
+    // admit an applicant to a particular programme and generate admission letter
     elseif ($_GET["url"] == "admit-individual-applicant") {
         if (!isset($_POST["app-prog"]) || empty($_POST["app-prog"]))
             die(json_encode(array("success" => false, "message" => "Please choose a programme!")));
@@ -878,14 +879,14 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         die(json_encode($admin->admitIndividualApplicant($_POST["app-login"], $_POST["app-prog"])));
     }
 
-    //
+    // decline applicant admission
     elseif ($_GET["url"] == "decline-individual-applicant") {
         if (!isset($_POST["app-login"]) || empty($_POST["app-login"]))
             die(json_encode(array("success" => false, "message" => "There no match for this applicant in database!")));
         die(json_encode($admin->declineIndividualApplicant($_POST["app-login"])));
     }
 
-    //
+    // Send admission letter to applicant
     elseif ($_GET["url"] == "send-admission-files") {
         if (!isset($_POST["app-login"]) || empty($_POST["app-login"]))
             die(json_encode(array("success" => false, "message" => "There no match for this applicant in database!")));
@@ -896,12 +897,13 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         die(json_encode($admin->sendAdmissionFiles($_POST["app-login"], $_FILES["send-files"])));
     }
 
-    // 
+    // Enroll applicant
     elseif ($_GET["url"] == "enroll-applicant") {
         if (!isset($_POST["app-login"]) || empty($_POST["app-login"]))
             die(json_encode(array("success" => false, "message" => "There no match for this applicant in database!")));
-        if ($admin->updateApplicationStatus($_POST["app-login"], "enrolled", 1)) die(json_encode(array("success" => true)));
-        die(json_encode(array("success" => false, "message" => "Failed to updated enrollment status!")));
+        if (!isset($_POST["app-prog"]) || empty($_POST["app-prog"]))
+            die(json_encode(array("success" => false, "message" => "Please choose a programme!")));
+        die(json_encode($admin->enrollApplicant($_POST["app-login"], $_POST["app-prog"])));
     }
 
     //
