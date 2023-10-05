@@ -251,7 +251,7 @@ $app_statuses = $admin->fetchApplicationStatus($_GET['q']);
                                                     <form method="post" style="width:100px; margin-top: 10px" id="sendFilesForm">
                                                         <input type="file" name="send-files" id="send-files" multiple style="display: none;">
                                                         <label class="btn btn-outline-dark btn-xs" id="send-files-check" style="width:100%" for="send-files">
-                                                            <span class="bi bi-file"></span> <b id="sendBtn-text">Send Files</b>
+                                                            <span class="bi bi-file-text"></span> <b id="sendBtn-text">Send Files</b>
                                                         </label>
                                                         <input type="hidden" name="app-login" id="app-login" value="<?= $personal_AB[0]["app_login"] ?>">
                                                         <input type="hidden" name="programme-awarded" id="programme-awarded" value="<?= !empty($app_statuses[0]["programme_awarded"]) ? $app_statuses[0]["programme_awarded"] : 0  ?>">
@@ -260,7 +260,7 @@ $app_statuses = $admin->fetchApplicationStatus($_GET['q']);
                                             </div>
                                         </div>
                                         <div style="display: flex; justify-content: flex-end; padding: 15px; border-radius:15px">
-                                            <a style="width: 100px" class="btn btn-primary btn-xs" target="_blank" href="../download-appData.php?<?= "t=" . $_GET["t"] . "&q=" . $_GET["q"] ?>">
+                                            <a style="width: 100px" class="btn btn-primary btn-sm" target="_blank" href="../download-appData.php?<?= "t=" . $_GET["t"] . "&q=" . $_GET["q"] ?>">
                                                 <span class="bi bi-printer"></span> <b>Print</b>
                                             </a>
                                         </div>

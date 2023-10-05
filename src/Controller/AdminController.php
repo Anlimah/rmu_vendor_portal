@@ -88,6 +88,7 @@ class AdminController
             $param = array(':t' => $type, ':p' => $prog_code);
         } else {
             $query = "SELECT * FROM programs";
+            $param = array();
         }
         return $this->dm->getData($query, $param);
     }
