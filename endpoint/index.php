@@ -340,17 +340,6 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         die(json_encode(array("success" => true, "message" => $result)));
     }
     //
-    elseif ($_GET["url"] == "getBroadsheetData") {
-
-        if (!isset($_POST["cert-type"])) die(json_encode(array("success" => false, "message" => "Invalid input field")));
-        if (empty($_POST["cert-type"])) die(json_encode(array("success" => false, "message" => "Missing input field")));
-
-        $result = $admin->fetchAllAdmittedApplicantsData($_POST["cert-type"]);
-
-        if (empty($result)) die(json_encode(array("success" => false, "message" => "No result found!")));
-        die(json_encode(array("success" => true, "message" => $result)));
-    }
-    //
     elseif ($_GET["url"] == "admitAll") {
         if (!isset($_POST["cert-type"]) || !isset($_POST["prog-type"])) {
             die(json_encode(array("success" => false, "message" => "Invalid input field")));
@@ -368,14 +357,19 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     }
     //
     elseif ($_GET["url"] == "downloadBS") {
-        if (!isset($_POST["cert-type"])) {
-            die(json_encode(array("success" => false, "message" => "Invalid input field")));
-        }
-        if (empty($_POST["cert-type"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field")));
-        }
+        if (!isset($_POST["cert-type"]) || empty($_POST["cert-type"]))
+            die(json_encode(array("success" => false, "message" => "Please choose a certificate type!")));
         $url = "https://office.rmuictonline.com/download-bs.php?a=bs&c=" . $_POST["cert-type"];
         die(json_encode(array("success" => true, "message" => $url)));
+    }
+    //
+    elseif ($_GET["url"] == "getBroadsheetData") {
+
+        if (!isset($_POST["cert-type"]) || empty($_POST["cert-type"]))
+            die(json_encode(array("success" => false, "message" => "Please choose a certificate type!")));
+
+        //$result = $admin->fetchAllAdmittedApplicantsData($_POST["cert-type"]);
+        die(json_encode($admin->fetchAllSubmittedApplicantsData($_POST["cert-type"])));
     }
     //
     elseif ($_GET["url"] == "downloadAwaiting") {
