@@ -241,8 +241,8 @@ require_once('../inc/page-data.php');
                                         '<td>' + value.full_name + '</td>' +
                                         '<td>' + value.age + '</td>' +
                                         '<td>' + value.sex + '</td>' +
-                                        '<td>' + value.nationality + '</td>' +
                                         '<td>' + value.academic_background + '</td>' +
+                                        '<td>' + value.nationality + '</td>' +
                                         '<td>' + value.first_prog + '</td>' +
                                         '</tr>'
                                     );
