@@ -1393,9 +1393,8 @@ class AdminController
         else if ($cert_type == "DIPLOMA") $in_query = "WHERE pg.program_code = 'DIPLOMA'";
         else if ($cert_type == "CERTIFICATE") $in_query = "WHERE pg.program_code = 'SHORT'";
 
-        $query = "SELECT
-                    a.`id`, p.`first_name`, p.`middle_name`, p.`last_name`,
-                    YEAR(CURDATE()) - YEAR(p.`dob`) AS age, p.`nationality`, p.`gender` AS sex,
+        $query = "SELECT 
+                    a.`id`, p.`first_name`, p.`middle_name`, p.`last_name`, YEAR(CURDATE()) - YEAR(p.`dob`) AS age, p.`nationality`, p.`gender` AS sex,
                     GROUP_CONCAT(
                         CONCAT(
                             CASE 
@@ -1409,17 +1408,15 @@ class AdminController
                             ')'
                         ) 
                         ORDER BY ab.`year_completed` DESC
-                    ) AS academic_background, pi.`first_prog`, pi.`second_prog`
-                FROM
-                    `applicants_login` AS a
-                    JOIN `personal_information` AS p ON a.`id` = p.`app_login` JOIN `form_sections_chek` AS fs ON a.`id` = fs.`app_login`
-                    JOIN `academic_background` AS ab ON a.`id` = ab.`app_login` JOIN `program_info` AS pi ON a.`id` = pi.`app_login`
-                WHERE
-                    fs.`declaration` = 1 AND pi.first_prog IN (SELECT pg.name FROM programs AS pg $in_query)
-                GROUP BY
-                    a.`id`, p.`first_name`, p.`middle_name`, p.`last_name`, age, p.`nationality`, p.`gender`, pi.`first_prog`, pi.`second_prog`;
+                    ) AS academic_background, pi.`first_prog` 
+                FROM 
+                    `applicants_login` AS a 
+                    JOIN `personal_information` AS p ON a.`id` = p.`app_login` JOIN `form_sections_chek` AS fs ON a.`id` = fs.`app_login` 
+                    JOIN `academic_background` AS ab ON a.`id` = ab.`app_login` JOIN `program_info` AS pi ON a.`id` = pi.`app_login` 
+                WHERE fs.`declaration` = 1 AND pi.first_prog IN (SELECT pg.name FROM programs AS pg $in_query) 
+                GROUP BY 
+                    a.`id`, p.`first_name`, p.`middle_name`, p.`last_name`, age, p.`nationality`, p.`gender`, pi.`first_prog`;
                 ";
-        return $query;
         $result = $this->dm->getData($query);
         if (empty($result)) return array("success" => false, "message" => "No result found!");
         return array("success" => true, "message" => $result);
