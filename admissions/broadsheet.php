@@ -97,7 +97,7 @@ require_once('../inc/page-data.php');
                                 </div>
                             </form>
                             <div id="info-output"></div>
-                            <table class="table table-borderless table-striped table-hover" style="display: none;">
+                            <table class="table table-borderless table-striped table-hover wassce-apps" style="display: none;">
                                 <thead>
                                     <tr class="table-dark">
                                         <th scope="col">#</th>
@@ -126,7 +126,7 @@ require_once('../inc/page-data.php');
                                 <tbody id="wassce-apps">
                                 </tbody>
                             </table>
-                            <table id="postgrad-apps" class="table table-borderless table-striped table-hover" style="display: none;">
+                            <table class="table table-borderless table-striped table-hover postgrad-apps" style="display: none;">
                                 <thead>
                                     <tr class="table-dark">
                                         <th scope="col">S/N</th>
@@ -231,6 +231,7 @@ require_once('../inc/page-data.php');
                                         '</tr>'
                                     );
                                 });
+                                $(".wassce-apps").show();
                             } else {
                                 $("#postgrad-apps").html('');
                                 $.each(result.message, function(index, value) {
@@ -246,7 +247,7 @@ require_once('../inc/page-data.php');
                                         '</tr>'
                                     );
                                 });
-                                $("#postgrad-apps").show();
+                                $(".postgrad-apps").show();
                             }
                             $("#down-bs").show();
                         } else {
