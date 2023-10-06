@@ -1387,18 +1387,12 @@ class AdminController
 
     public function fetchAllSubmittedApplicantsData($cert_type)
     {
-        if ($cert_type == "MASTERS")
-            $in_query = " AND pi.first_prog IN (SELECT pg.name FROM programs AS pg WHERE pg.program_code IN ('MSC', 'MA')";
-        else if ($cert_type == "UPDRADERS")
-            $in_query = " AND pi.first_prog IN (SELECT pg.name FROM programs AS pg WHERE pg.program_code = 'UPGRADE'";
-        else if ($cert_type == "DEGREE")
-            $in_query = " AND pi.first_prog IN (SELECT pg.name FROM programs AS pg WHERE pg.program_code = 'BSC'";
-        else if ($cert_type == "DIPLOMA")
-            $in_query = " AND pi.first_prog IN (SELECT pg.name FROM programs AS pg WHERE pg.program_code = 'DIPLOMA'";
-        else if ($cert_type == "MEM")
-            $in_query = " AND pi.first_prog IN (SELECT pg.name FROM programs AS pg WHERE pg.name = 'MARINE ENGINE MECHANICS'";
-        else if ($cert_type == "CDADILT")
-            $in_query = " AND pi.first_prog IN (SELECT pg.name FROM programs AS pg WHERE pg.name = 'CILT, DILT AND ADILT'";
+        if ($cert_type == "MASTERS") $in_query = "WHERE pg.program_code IN ('MSC', 'MA')";
+        else if ($cert_type == "UPDRADERS") $in_query = "WHERE pg.program_code = 'UPGRADE'";
+        else if ($cert_type == "DEGREE") $in_query = "WHERE pg.program_code = 'BSC'";
+        else if ($cert_type == "DIPLOMA") $in_query = "WHERE pg.program_code = 'DIPLOMA'";
+        else if ($cert_type == "MEM") $in_query = "WHERE pg.name = 'MARINE ENGINE MECHANICS'";
+        else if ($cert_type == "CDADILT") $in_query = "WHERE pg.name = 'CILT, DILT AND ADILT'";
 
         $query = "SELECT 
                     a.`id`, p.`first_name`, p.`middle_name`, p.`last_name`, YEAR(CURDATE()) - YEAR(p.`dob`) AS age, p.`nationality`, p.`gender` AS sex,
@@ -1420,7 +1414,7 @@ class AdminController
                     `applicants_login` AS a 
                     JOIN `personal_information` AS p ON a.`id` = p.`app_login` JOIN `form_sections_chek` AS fs ON a.`id` = fs.`app_login` 
                     JOIN `academic_background` AS ab ON a.`id` = ab.`app_login` JOIN `program_info` AS pi ON a.`id` = pi.`app_login` 
-                WHERE fs.`declaration` = 1$in_query 
+                WHERE fs.`declaration` = 1 AND pi.`first_prog` IN (SELECT pg.name FROM programs AS pg $in_query) 
                 GROUP BY 
                     a.`id`, p.`first_name`, p.`middle_name`, p.`last_name`, age, p.`nationality`, p.`gender`, pi.`first_prog`;
                 ";
