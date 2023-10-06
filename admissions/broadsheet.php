@@ -135,7 +135,7 @@ require_once('../inc/page-data.php');
                                         <th scope="col" colspan="1">SEX</th>
                                         <th scope="col" colspan="1">QUALIFICATION</th>
                                         <th scope="col" colspan="1">NATIONALITY</th>
-                                        <th scope="col" colspan="1">REMARKS</th>
+                                        <th scope="col" colspan="1">PROGRAM</th>
                                     </tr>
                                 </thead>
                                 <tbody id="postgrad-apps">
@@ -209,28 +209,44 @@ require_once('../inc/page-data.php');
                     data: data,
                     success: function(result) {
                         console.log(result);
-                        alert(data["cert-type"])
                         if (result.success) {
-                            $("#postgrad-apps").html('');
-                            $.each(result.message, function(index, value) {
-                                $("#postgrad-apps").append(
-                                    '<tr>' +
-                                    '<th scope="row">' + (index + 1) + '</th>' +
-                                    '<td>' + value.full_name + '</td>' +
-                                    '<td>' + value.age + '</td>' +
-                                    '<td>' + value.sex + '</td>' +
-                                    '<td>' + value.nationality + '</td>' +
-                                    '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[0].subject + '">' + value.sch_rslt[0].grade + '</td>' +
-                                    '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[1].subject + '">' + value.sch_rslt[1].grade + '</td>' +
-                                    '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[2].subject + '">' + value.sch_rslt[2].grade + '</td>' +
-                                    '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[3].subject + '">' + value.sch_rslt[3].grade + '</td>' +
-                                    '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[4].subject + '">' + value.sch_rslt[4].grade + '</td>' +
-                                    '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[5].subject + '">' + value.sch_rslt[5].grade + '</td>' +
-                                    '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[6].subject + '">' + value.sch_rslt[6].grade + '</td>' +
-                                    '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[7].subject + '">' + value.sch_rslt[7].grade + '</td>' +
-                                    '</tr>'
-                                );
-                            });
+                            if (data["cert-type"] == "DIPLOMA" || data["cert-type"] == "DEGREE") {
+                                $("#wassce-apps").html('');
+                                $.each(result.message, function(index, value) {
+                                    $("#wassce-apps").append(
+                                        '<tr>' +
+                                        '<th scope="row">' + (index + 1) + '</th>' +
+                                        '<td>' + value.full_name + '</td>' +
+                                        '<td>' + value.age + '</td>' +
+                                        '<td>' + value.sex + '</td>' +
+                                        '<td>' + value.nationality + '</td>' +
+                                        '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[0].subject + '">' + value.sch_rslt[0].grade + '</td>' +
+                                        '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[1].subject + '">' + value.sch_rslt[1].grade + '</td>' +
+                                        '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[2].subject + '">' + value.sch_rslt[2].grade + '</td>' +
+                                        '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[3].subject + '">' + value.sch_rslt[3].grade + '</td>' +
+                                        '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[4].subject + '">' + value.sch_rslt[4].grade + '</td>' +
+                                        '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[5].subject + '">' + value.sch_rslt[5].grade + '</td>' +
+                                        '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[6].subject + '">' + value.sch_rslt[6].grade + '</td>' +
+                                        '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[7].subject + '">' + value.sch_rslt[7].grade + '</td>' +
+                                        '</tr>'
+                                    );
+                                });
+                            } else {
+                                $("#postgrad-apps").html('');
+                                $.each(result.message, function(index, value) {
+                                    $("#postgrad-apps").append(
+                                        '<tr>' +
+                                        '<th scope="row">' + (index + 1) + '</th>' +
+                                        '<td>' + value.full_name + '</td>' +
+                                        '<td>' + value.age + '</td>' +
+                                        '<td>' + value.sex + '</td>' +
+                                        '<td>' + value.nationality + '</td>' +
+                                        '<td>' + value.academic_background + '</td>' +
+                                        '<td>' + value.first_prog + '</td>' +
+                                        '</tr>'
+                                    );
+                                });
+                            }
                             $("#down-bs").show();
                         } else {
                             if (result.message == "logout") {
