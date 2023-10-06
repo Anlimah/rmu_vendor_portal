@@ -1420,7 +1420,7 @@ class AdminController
                     `applicants_login` AS a 
                     JOIN `personal_information` AS p ON a.`id` = p.`app_login` JOIN `form_sections_chek` AS fs ON a.`id` = fs.`app_login` 
                     JOIN `academic_background` AS ab ON a.`id` = ab.`app_login` JOIN `program_info` AS pi ON a.`id` = pi.`app_login` 
-                WHERE fs.`declaration` = 1 $in_query 
+                WHERE fs.`declaration` = 1$in_query
                 GROUP BY 
                     a.`id`, p.`first_name`, p.`middle_name`, p.`last_name`, age, p.`nationality`, p.`gender`, pi.`first_prog`;
                 ";
