@@ -97,7 +97,7 @@ require_once('../inc/page-data.php');
                                 </div>
                             </form>
                             <div id="info-output"></div>
-                            <table id="wassce-apps" class="table table-borderless table-striped table-hover" style="display: none;">
+                            <table class="table table-borderless table-striped table-hover" style="display: none;">
                                 <thead>
                                     <tr class="table-dark">
                                         <th scope="col">#</th>
@@ -123,7 +123,7 @@ require_once('../inc/page-data.php');
                                         <th scope="col" style="background-color: #999; text-align: center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Elective 4">E4</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="wassce-apps">
                                 </tbody>
                             </table>
                             <table id="postgrad-apps" class="table table-borderless table-striped table-hover" style="display: none;">
@@ -138,7 +138,7 @@ require_once('../inc/page-data.php');
                                         <th scope="col" colspan="1">REMARKS</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="postgrad-apps">
                                 </tbody>
                             </table>
                             <div class="mt-4" id="down-bs" style="display: none;float:right">
@@ -209,15 +209,17 @@ require_once('../inc/page-data.php');
                     data: data,
                     success: function(result) {
                         console.log(result);
-
+                        alert(data["cert-type"])
                         if (result.success) {
-                            $("tbody").html('');
+                            $("#postgrad-apps").html('');
                             $.each(result.message, function(index, value) {
-                                $("tbody").append(
+                                $("#postgrad-apps").append(
                                     '<tr>' +
                                     '<th scope="row">' + (index + 1) + '</th>' +
-                                    '<td>' + value.app_pers.first_name + ' ' + value.app_pers.last_name + '</td>' +
-                                    '<td>' + value.app_pers.programme + '</td>' +
+                                    '<td>' + value.full_name + '</td>' +
+                                    '<td>' + value.age + '</td>' +
+                                    '<td>' + value.sex + '</td>' +
+                                    '<td>' + value.nationality + '</td>' +
                                     '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[0].subject + '">' + value.sch_rslt[0].grade + '</td>' +
                                     '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[1].subject + '">' + value.sch_rslt[1].grade + '</td>' +
                                     '<td style="cursor: help; text-align: center" title="' + value.sch_rslt[2].subject + '">' + value.sch_rslt[2].grade + '</td>' +

@@ -1395,7 +1395,8 @@ class AdminController
         else if ($cert_type == "CDADILT") $in_query = "WHERE pg.name = 'CILT, DILT AND ADILT'";
 
         $query = "SELECT 
-                    a.`id`, p.`first_name`, p.`middle_name`, p.`last_name`, YEAR(CURDATE()) - YEAR(p.`dob`) AS age, p.`nationality`, p.`gender` AS sex,
+                    a.`id`, CONCAT(p.first_name, ' ', IFNULL(p.middle_name, ''), ' ', p.last_name) AS full_name, 
+                    YEAR(CURDATE()) - YEAR(p.`dob`) AS age, p.`nationality`, p.`gender` AS sex,
                     GROUP_CONCAT(
                         CONCAT(
                             CASE 
