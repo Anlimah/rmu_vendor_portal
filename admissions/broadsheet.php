@@ -81,8 +81,8 @@ require_once('../inc/page-data.php');
                                             <option value="DEGREE">DEGREE</option>
                                             <option value="DIPLOMA">DIPLOMA</option>
                                             <option value="UPGRADERS">UPGRADERS</option>
-                                            <option value="MARINE ENGINE MECHANICS">MARINE ENGINE MECHANICS</option>
-                                            <option value="CILT, DILT AND ADILT">CILT, DILT, & ADILT</option>
+                                            <option value="MEM">MARINE ENGINE MECHANICS</option>
+                                            <option value="CDADILT">CILT, DILT, & ADILT</option>
                                         </select>
                                     </div>
                                     <!--<div class="col-3" style="display: none;" id="bs-masters-prog">
