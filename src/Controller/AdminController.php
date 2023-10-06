@@ -1419,6 +1419,7 @@ class AdminController
                 GROUP BY
                     a.`id`, p.`first_name`, p.`middle_name`, p.`last_name`, age, p.`nationality`, p.`gender`, pi.`first_prog`, pi.`second_prog`;
                 ";
+        return $query;
         $result = $this->dm->getData($query);
         if (empty($result)) return array("success" => false, "message" => "No result found!");
         return array("success" => true, "message" => $result);
