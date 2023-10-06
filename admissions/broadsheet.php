@@ -246,6 +246,7 @@ require_once('../inc/page-data.php');
                                         '</tr>'
                                     );
                                 });
+                                $("#postgrad-apps").show();
                             }
                             $("#down-bs").show();
                         } else {
