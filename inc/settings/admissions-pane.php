@@ -131,11 +131,6 @@
 
         $("#addOrUpdateAdmisPeriodForm").on("submit", function(e) {
             e.preventDefault();
-            alert("ADD")
-
-            if ($("#adp-action").val() == "add") {
-                alert("ADD")
-            }
 
             $.ajax({
                 type: "POST",
@@ -199,7 +194,6 @@
         });
 
         $(".close-adp").click(function(e) {
-            alert($(this).attr("id"))
             var data = {
                 adp_key: $(this).attr("id")
             }

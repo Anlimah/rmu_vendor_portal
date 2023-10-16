@@ -592,25 +592,22 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
     //
     elseif ($_GET["url"] == "adp-form") {
-        if (!isset($_POST["adp-start"]) || empty($_POST["adp-start"])) {
+        if (!isset($_POST["adp-start"]) || empty($_POST["adp-start"]))
             die(json_encode(array("success" => false, "message" => "Missing input field: Start Date")));
-        }
-        if (!isset($_POST["adp-end"]) || empty($_POST["adp-end"])) {
+        if (!isset($_POST["adp-end"]) || empty($_POST["adp-end"]))
             die(json_encode(array("success" => false, "message" => "Missing input field: End Date")));
-        }
-        if (!isset($_POST["adp-desc"])) {
+        if (!isset($_POST["adp-intake"]) || empty($_POST["adp-end"]))
             die(json_encode(array("success" => false, "message" => "Missing input field: Description")));
-        }
+        if (!isset($_POST["adp-desc"]))
+            die(json_encode(array("success" => false, "message" => "Missing input field: Description")));
 
         if (isset($_POST["adp-desc"]) && empty($_POST["adp-desc"])) $desc = '';
 
         $result;
         switch ($_POST["adp-action"]) {
             case 'add':
-                $rslt = $admin->addAdmissionPeriod($_POST["adp-start"], $_POST["adp-end"], $_POST["adp-desc"]);
-                if (!$rslt["success"]) {
-                    die(json_encode($rslt));
-                }
+                $rslt = $admin->addAdmissionPeriod($_POST["adp-start"], $_POST["adp-end"], $_POST["adp-desc"], $_POST["adp-intake"]);
+                if (!$rslt["success"]) die(json_encode($rslt));
                 break;
 
             case 'update':
@@ -933,7 +930,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
             die(json_encode(array("success" => false, "message" => "Missing input field")));
         }
 
-        $rslt = $admin->closeAdmissionPeriod($_PUT["adp_key"]);
+        $rslt = $admin->openOrCloseAdmissionPeriod($_PUT["adp_key"], 0);
         if (!$rslt) die(json_encode(array("success" => false, "message" => "Failed to delete programme!")));
         die(json_encode(array("success" => true, "message" => "Successfully deleted programme!")));
     }
