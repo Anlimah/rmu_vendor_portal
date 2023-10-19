@@ -596,7 +596,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
             die(json_encode(array("success" => false, "message" => "Missing input field: Start Date")));
         if (!isset($_POST["adp-end"]) || empty($_POST["adp-end"]))
             die(json_encode(array("success" => false, "message" => "Missing input field: End Date")));
-        if (!isset($_POST["adp-intake"]) || empty($_POST["adp-end"]))
+        if (!isset($_POST["adp-intake"]) || empty($_POST["adp-intake"]))
             die(json_encode(array("success" => false, "message" => "Missing input field: Description")));
         if (!isset($_POST["adp-desc"]))
             die(json_encode(array("success" => false, "message" => "Missing input field: Description")));
@@ -606,19 +606,12 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         $result;
         switch ($_POST["adp-action"]) {
             case 'add':
-                $rslt = $admin->addAdmissionPeriod($_POST["adp-start"], $_POST["adp-end"], $_POST["adp-desc"], $_POST["adp-intake"]);
-                if (!$rslt["success"]) die(json_encode($rslt));
+                $result = $admin->addAdmissionPeriod($_POST["adp-start"], $_POST["adp-end"], $_POST["adp-desc"], $_POST["adp-intake"]);
                 break;
-
             case 'update':
-                $rslt = $admin->updateAdmissionPeriod($_POST["adp-id"], $_POST["adp-start"], $_POST["adp-desc"]);
-                if (!$rslt) {
-                    die(json_encode(array("success" => false, "message" => "Failed to update admission information!")));
-                }
-                $result = array("success" => true, "message" => "Successfully updated admission information!");
+                $result = $admin->updateAdmissionPeriod($_POST["adp-id"], $_POST["adp-start"], $_POST["adp-desc"]);
                 break;
         }
-
         die(json_encode($result));
     }
     //

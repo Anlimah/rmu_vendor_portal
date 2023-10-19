@@ -494,7 +494,7 @@ class AdminController
 
     public function fetchAllAdmissionPeriod()
     {
-        return $this->dm->getData("SELECT * FROM admission_period ORDER BY `end_date` ASC");
+        return $this->dm->getData("SELECT * FROM admission_period ORDER BY `id` DESC");
     }
 
     public function fetchCurrentAdmissionPeriod()
@@ -511,13 +511,12 @@ class AdminController
     public function addAdmissionPeriod($adp_start, $adp_end, $adp_info, $intake)
     {
         $query = "INSERT INTO admission_period (`start_date`, `end_date`, `info`, `intake`) 
-                VALUES(:sd, :ed, :i, :t, :a)";
+                VALUES(:sd, :ed, :i, :t)";
         $params = array(":sd" => $adp_start, ":ed" => $adp_end, ":i" => $adp_info, ":t" => $intake);
         $query_result = $this->dm->inputData($query, $params);
-
         if (empty($query_result)) return array("success" => false, "message" => "Failed to open new admission period!");
         $this->openOrCloseAdmissionPeriod($this->expose->getCurrentAdmissionPeriodID(), 0);
-        $this->openOrCloseAdmissionPeriod($this->expose->getCurrentAdmissionPeriodID(), 1);
+        $this->openOrCloseAdmissionPeriod($query_result, 1);
         $this->logActivity(
             $_SESSION["user"],
             "INSERT",
@@ -531,19 +530,20 @@ class AdminController
         $query = "UPDATE admission_period SET `end_date` = :ed, `info` = :i WHERE id = :id";
         $params = array(":ed" => $adp_end, ":i" => $adp_info, ":id" => $adp_id);
         $query_result = $this->dm->inputData($query, $params);
+        if (empty($query_result)) return array("success" => false, "message" => "Failed to update admission information!");
         if ($query_result)
             $this->logActivity(
                 $_SESSION["user"],
                 "UPDATE",
                 "Updated information for admisiion period {$adp_id}"
             );
-        return $query_result;
+        return array("success" => true, "message" => "Successfully updated admission information!");
     }
 
     public function openOrCloseAdmissionPeriod($adp_id, $status): mixed
     {
-        $query = "UPDATE admission_period SET active = :s WHERE id = :i";
-        $query_result = $this->dm->inputData($query, array(":s" => $status, ":i" => $adp_id));
+        $query = "UPDATE admission_period SET active = :s, closed = :c WHERE id = :i";
+        $query_result = $this->dm->inputData($query, array(":s" => $status, ":c" => !$status, ":i" => $adp_id));
         if (empty($query_result)) return 0;
         if ($status == 0) $this->logActivity($_SESSION["user"], "UPDATE", "Closed admission with id {$adp_id}");
         else if ($status == 1) $this->logActivity($_SESSION["user"], "UPDATE", "Opened admission with id {$adp_id}");

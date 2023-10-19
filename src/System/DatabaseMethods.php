@@ -19,7 +19,9 @@ class DatabaseMethods
         $stmt->execute($params);
         if (explode(' ', $str)[0] == 'SELECT' || explode(' ', $str)[0] == 'CALL') {
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } elseif (explode(' ', $str)[0] == 'INSERT' || explode(' ', $str)[0] == 'UPDATE' || explode(' ', $str)[0] == 'DELETE') {
+        } elseif (explode(' ', $str)[0] == 'INSERT') {
+            return $this->conn->lastInsertId();
+        } elseif (explode(' ', $str)[0] == 'UPDATE' || explode(' ', $str)[0] == 'DELETE') {
             return 1;
         }
     }
