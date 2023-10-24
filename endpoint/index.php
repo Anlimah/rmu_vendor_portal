@@ -131,6 +131,14 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         die(json_encode(array("success" => true,  "message" => strtolower($result[0]["role"]))));
     }
 
+    // set admission period
+    elseif ($_GET["url"] == "set-admission-period") {
+        if (!isset($_POST["data"])) die(json_encode(array("success" => false, "message" => "Invalid request!")));
+        if (empty($_POST["data"])) die(json_encode(array("success" => false, "message" => "Missing input in request!")));
+        $_SESSION["admin_period"] = (int) $_POST["data"];
+        die(json_encode(array("success" => true,  "message" => "Admisssion period changed!")));
+    }
+
     // Resend verification code
     elseif ($_GET["url"] == "resend-code") {
         if (!isset($_POST["resend_code"])) die(json_encode(array("success" => false, "message" => "Invalid request!")));
@@ -264,7 +272,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         $v_action = $expose->validateText($_POST["action"]);
         $v_form_t = $expose->validateNumber($_POST["form_t"]);
         $data = array('action' => $v_action, 'country' => 'All', 'type' => $v_form_t, 'program' => 'All');
-        $result = $admin->fetchAppsSummaryData($data);
+        $result = $admin->fetchAppsSummaryData($_SESSION["admin_period"], $data);
         if (empty($result)) die(json_encode(array("success" => false, "message" => "Empty result!")));
         die(json_encode(array("success" => true, "message" => $result)));
     }
@@ -278,7 +286,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
             die(json_encode(array("success" => false, "message" => "Missing input!")));
         }
 
-        $result = $admin->fetchAppsSummaryData($_POST);
+        $result = $admin->fetchAppsSummaryData($_SESSION["admin_period"], $_POST);
         if (!empty($result)) {
             $data["success"] = true;
             $data["message"] = $result;
@@ -712,7 +720,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
         $_POST["vendor-id"] = $_SESSION["vendor_id"];
 
-        $result = $admin->fetchAllVendorFormPurchases($_POST);
+        $result = $admin->fetchAllVendorFormPurchases($_SESSION["admin_period"], $_POST);
         if (empty($result)) die(json_encode(array("success" => false, "message" => "No result found for given parameters!")));
         die(json_encode(array("success" => true, "message" => $result)));
     }

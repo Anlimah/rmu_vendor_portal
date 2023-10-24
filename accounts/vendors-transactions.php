@@ -36,6 +36,7 @@ use Src\Controller\AdminController;
 $admin = new AdminController();
 require_once('../inc/page-data.php');
 
+$adminSetup = true;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -374,6 +375,29 @@ require_once('../inc/page-data.php');
                     actionType: $(this).attr("id")
                 }
                 $("#reportsForm").trigger("submit", $(this).attr("id"));
+            });
+
+            $("#admission-period").change("blur", function(e) {
+                data = {
+                    "data": $(this).val()
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "../endpoint/set-admission-period",
+                    data: data,
+                    success: function(result) {
+                        console.log(result);
+                        if (result.message == "logout") {
+                            window.location.href = "?logout=true";
+                            return;
+                        }
+                        if (!result.success) alert(result.message);
+                        else window.location.reload();
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
             });
 
         });

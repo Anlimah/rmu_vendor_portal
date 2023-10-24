@@ -25,7 +25,7 @@ class Broadsheet
 
     public function prepareBSData()
     {
-        $awaitingApps = $this->admin->fetchAllAwaitingApplicationsBS();
+        $awaitingApps = $this->admin->fetchAllAwaitingApplicationsBS($_SESSION["admin_period"]);
         if (empty($awaitingApps)) return 0;
         if (empty($this->admin->saveDownloadedAwaitingResults($awaitingApps))) return 0;
         $this->dataSheet = $awaitingApps;
@@ -73,7 +73,7 @@ class Broadsheet
 
     public function createFileName()
     {
-        $dateData = $this->admin->getAcademicPeriod();
+        $dateData = $this->admin->getAcademicPeriod($_SESSION["admin_period"]);
         $this->fileName = "List of Applicants Awaiting results (";
         $this->fileName .= $dateData[0]["start_year"] . " - " . $dateData[0]["end_year"] . ")";
     }

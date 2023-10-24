@@ -101,42 +101,42 @@ require_once('../inc/page-data.php');
                                 <button id="apps-total" class="btn btn-outline-primary col me-2 toggle-output">
                                     Total
                                     <span class="badge text-bg-secondary">
-                                        <?= isset($_GET["t"]) ? $admin->fetchTotalApplications($_GET["t"])[0]["total"] : ""; ?>
+                                        <?= isset($_GET["t"]) ? $admin->fetchTotalApplications($_SESSION["admin_period"], $_GET["t"])[0]["total"] : ""; ?>
                                     </span>
                                 </button>
 
                                 <button id="apps-submitted" class="btn btn-outline-primary col me-2 toggle-output">
                                     Submitted
                                     <span class="badge text-bg-secondary">
-                                        <?= isset($_GET["t"]) ? $admin->fetchTotalSubmittedApps($_GET["t"])[0]["total"] : ""; ?>
+                                        <?= isset($_GET["t"]) ? $admin->fetchTotalSubmittedApps($_SESSION["admin_period"], $_GET["t"])[0]["total"] : ""; ?>
                                     </span>
                                 </button>
 
                                 <button id="apps-in-progress" class="btn btn-outline-primary col me-2 toggle-output">
                                     In Progress
                                     <span class="badge text-bg-secondary">
-                                        <?= isset($_GET["t"]) ? $admin->fetchTotalUnsubmittedApps($_GET["t"])[0]["total"] : ""; ?>
+                                        <?= isset($_GET["t"]) ? $admin->fetchTotalUnsubmittedApps($_SESSION["admin_period"], $_GET["t"])[0]["total"] : ""; ?>
                                     </span>
                                 </button>
 
                                 <button id="apps-admitted" class="btn btn-outline-primary col me-2 toggle-output">
                                     Admitted
                                     <span class="badge text-bg-secondary">
-                                        <?= isset($_GET["t"]) ? $admin->fetchTotalAdmittedApplicants($_GET["t"])[0]["total"] : ""; ?>
+                                        <?= isset($_GET["t"]) ? $admin->fetchTotalAdmittedApplicants($_SESSION["admin_period"], $_GET["t"])[0]["total"] : ""; ?>
                                     </span>
                                 </button>
 
                                 <button id="apps-unadmitted" class="btn btn-outline-primary col me-2 toggle-output">
                                     Unadmitted
                                     <span class="badge text-bg-secondary">
-                                        <?= isset($_GET["t"]) ? $admin->fetchTotalUnadmittedApplicants($_GET["t"])[0]["total"] : ""; ?>
+                                        <?= isset($_GET["t"]) ? $admin->fetchTotalUnadmittedApplicants($_SESSION["admin_period"], $_GET["t"])[0]["total"] : ""; ?>
                                     </span>
                                 </button>
 
                                 <button id="apps-awaiting" class="btn btn-outline-primary col toggle-output">
                                     Awaiting
                                     <span class="badge text-bg-secondary">
-                                        <?= isset($_GET["t"]) ? $admin->fetchTotalAwaitingResultsByFormType($_GET["t"])[0]["total"] : ""; ?>
+                                        <?= isset($_GET["t"]) ? $admin->fetchTotalAwaitingResultsByFormType($_SESSION["admin_period"], $_GET["t"])[0]["total"] : ""; ?>
                                     </span>
                                 </button>
 

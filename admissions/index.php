@@ -36,6 +36,7 @@ use Src\Controller\AdminController;
 $admin = new AdminController();
 require_once('../inc/page-data.php');
 
+$adminSetup = true;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -88,7 +89,7 @@ require_once('../inc/page-data.php');
                                                 <img src="../assets/img/icons8-masters.png" style="width: 48px;" alt="">
                                             </div>
                                             <div class="ps-3">
-                                                <h6><?= $admin->fetchTotalApplicationsForMastersUpgraders("MASTERS")[0]["total"]; ?></h6>
+                                                <h6><?= $admin->fetchTotalApplicationsForMastersUpgraders($_SESSION["admin_period"], "MASTERS")[0]["total"]; ?></h6>
                                                 <span class="text-muted small pt-2 ps-1">Applications</span>
                                             </div>
                                         </div>
@@ -108,7 +109,7 @@ require_once('../inc/page-data.php');
                                                 <img src="../assets/img/icons8-captain.png" style="width: 48px;" alt="">
                                             </div>
                                             <div class="ps-3">
-                                                <h6><?= $admin->fetchTotalApplicationsForMastersUpgraders("UPGRADERS")[0]["total"]; ?></h6>
+                                                <h6><?= $admin->fetchTotalApplicationsForMastersUpgraders($_SESSION["admin_period"], "UPGRADERS")[0]["total"]; ?></h6>
                                                 <span class="text-muted small pt-2 ps-1">Applications</span>
                                             </div>
                                         </div>
@@ -132,7 +133,7 @@ require_once('../inc/page-data.php');
                                                     <img src="../assets/img/icons8-<?= ucfirst(strtolower($form_type["name"])) ?>.png" style="width: 48px;" alt="">
                                                 </div>
                                                 <div class="ps-3">
-                                                    <h6><?= $admin->fetchTotalApplications($form_type["id"])[0]["total"]; ?></h6>
+                                                    <h6><?= $admin->fetchTotalApplications($_SESSION["admin_period"], $form_type["id"])[0]["total"]; ?></h6>
                                                     <span class="text-muted small pt-2 ps-1">Applications</span>
                                                 </div>
                                             </div>
@@ -155,7 +156,7 @@ require_once('../inc/page-data.php');
                                                 <img src="../assets/img/icons8-queue-64.png" style="width: 48px;" alt="">
                                             </div>
                                             <div class="ps-3">
-                                                <h6><?= $admin->fetchTotalAwaitingResults()[0]["total"]; ?></h6>
+                                                <h6><?= $admin->fetchTotalAwaitingResults($_SESSION["admin_period"])[0]["total"]; ?></h6>
                                                 <span class="text-muted small pt-2 ps-1"> applications</span>
                                             </div>
                                         </div>
@@ -272,7 +273,30 @@ require_once('../inc/page-data.php');
     <?= require_once("../inc/footer-section.php") ?>
     <script src="../js/jquery-3.6.0.min.js"></script>
     <script>
-
+        $(document).ready(function() {
+            $("#admission-period").change("blur", function(e) {
+                data = {
+                    "data": $(this).val()
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "../endpoint/set-admission-period",
+                    data: data,
+                    success: function(result) {
+                        console.log(result);
+                        if (result.message == "logout") {
+                            window.location.href = "?logout=true";
+                            return;
+                        }
+                        if (!result.success) alert(result.message);
+                        else window.location.reload();
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+        });
     </script>
 </body>
 

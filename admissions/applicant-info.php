@@ -803,9 +803,8 @@ $app_statuses = $admin->fetchApplicationStatus($_GET['q']);
                         if (result.message == "logout") {
                             window.location.href = "?logout=true";
                             return;
-                        } else {
-
                         }
+                        alert(result.message);
                     },
                     error: function(error) {
                         console.log(error);
