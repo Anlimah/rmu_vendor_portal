@@ -14,18 +14,20 @@ class Broadsheet
     private $sheet = null;
     private $dataSheet = [];
     private $fileName = null;
+    private $admin_period = null;
 
-    public function __construct()
+    public function __construct($admin_period)
     {
         $this->spreadsheet = new Spreadsheet();
         $this->sheet = $this->spreadsheet->getActiveSheet();
         $this->writer = new Xlsx($this->spreadsheet);
         $this->admin = new AdminController();
+        $this->admin_period = $admin_period;
     }
 
     public function prepareBSData()
     {
-        $awaitingApps = $this->admin->fetchAllAwaitingApplicationsBS($_SESSION["admin_period"]);
+        $awaitingApps = $this->admin->fetchAllAwaitingApplicationsBS($this->admin_period);
         if (empty($awaitingApps)) return 0;
         if (empty($this->admin->saveDownloadedAwaitingResults($awaitingApps))) return 0;
         $this->dataSheet = $awaitingApps;
@@ -100,6 +102,6 @@ class Broadsheet
     }
 }
 
-$broadsheet = new Broadsheet();
+$broadsheet = new Broadsheet($_GET["ap"]);
 $file = $broadsheet->generateFile();
 if (!empty($file)) $broadsheet->downloadFile($file);

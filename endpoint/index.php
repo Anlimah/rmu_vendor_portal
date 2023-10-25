@@ -381,7 +381,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     }
     //
     elseif ($_GET["url"] == "downloadAwaiting") {
-        $url = "../download-awaiting-ds.php?a=as&c=awaiting";
+        $url = "../download-awaiting-ds.php?a=as&c=awaiting&ap=" . $_SESSION['admin_period'];
         die(json_encode(array("success" => true, "message" => $url)));
     }
     //
