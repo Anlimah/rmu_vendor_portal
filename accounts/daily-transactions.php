@@ -280,7 +280,7 @@ $adminSetup = true;
                             <form id="reportsForm" method="post">
                                 <div class="row">
 
-                                    <div class="col-2 col-md-2 col-sm-12 mt-2">
+                                    <!--<div class="col-2 col-md-2 col-sm-12 mt-2">
                                         <label for="admission-period" class="form-label">Admission Period</label>
                                         <select name="admission-period" id="admission-period" class="form-select">
                                             <option value="" hidden>Choose</option>
@@ -294,7 +294,7 @@ $adminSetup = true;
                                             }
                                             ?>
                                         </select>
-                                    </div>
+                                    </div>-->
 
                                     <div class="col-2 col-md-2 col-sm-12 mt-2">
                                         <label for="from-date" class="form-label">From (Date)</label>
