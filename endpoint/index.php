@@ -702,7 +702,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         if ((!empty($_POST["from-date"]) && empty($_POST["to-date"])) || (!empty($_POST["to-date"]) && empty($_POST["from-date"])))
             die(json_encode(array("success" => false, "message" => "Date range (From - To) must be set!")));
 
-        $result = $admin->fetchAllFormPurchases($_POST);
+        $result = $admin->fetchAllFormPurchases($_SESSION["admin_period"], $_POST);
         if (empty($result)) die(json_encode(array("success" => false, "message" => "No result found for given parameters!")));
         die(json_encode(array("success" => true, "message" => $result)));
     }

@@ -1767,6 +1767,20 @@ class AdminController
 
     private function generateApplicantAdmissionLetter($appID): mixed
     {
+        try {
+            // Load the Word document
+            $phpWordObj = \PhpOffice\PhpWord\IOFactory::createReader("Word2007");
+            $phpWord = $phpWordObj->load(__DIR__ . '/letter_template.docx');
+
+            // Replace placeholders with actual data
+            $phpWord->setValue('Full_Name', "Francis Anlimah");
+
+            // Save the modified document
+            $phpWord->save(__DIR__ . '/modified_document.docx');
+            return 1;
+        } catch (\Exception $e) {
+            return 'Error: ' . $e->getMessage();
+        }
     }
 
     private function sendAdmissionLetter(): mixed
@@ -1778,8 +1792,8 @@ class AdminController
         $progInfo = $this->fetchAllFromProgramByName($progName);
         $query = "UPDATE `form_sections_chek` SET `admitted` = 1, `declined` = 0, `programme_awarded` = :p WHERE `app_login` = :i";
         if ($this->dm->inputData($query, array(":i" => $appID, ":p" => $progInfo[0]["id"]))) {
-            $this->generateApplicantAdmissionLetter($appID);
-            $this->sendAdmissionLetter($appID);
+            return array("success" => true, "message" => $this->generateApplicantAdmissionLetter($appID));
+            //$this->sendAdmissionLetter($appID);
             return array("success" => true, "message" => "Applicant awarded " . $progName);
         }
         return array("success" => false, "message" => "Failed to admit applicant!");
