@@ -28,9 +28,9 @@ class Broadsheet
 
     public function prepareBSData()
     {
-        return $this->admin->fetchAllAwaitingApplicationsBS($this->admin_period);
-        /*$awaitingAppsGrp = $this->admin->fetchAllAwaitingApplicationsBSGrouped($this->admin_period);
-        if (empty($awaitingApps) || empty($awaitingAppsGrp)) return 0;
+        //return $this->admin->fetchAllAwaitingApplicationsBS($this->admin_period);
+        return $this->admin->fetchAllAwaitingApplicationsBSGrouped($this->admin_period);
+        /*if (empty($awaitingApps) || empty($awaitingAppsGrp)) return 0;
         if (empty($this->admin->saveDownloadedAwaitingResults($awaitingApps))) return 0;
         $this->dataSheet = array("awaitingApps" => $awaitingApps, "awaitingAppsGrp" => $awaitingAppsGrp);
         return 1;*/
