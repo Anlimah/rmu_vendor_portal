@@ -87,6 +87,7 @@ class Broadsheet
         if ($this->prepareBSData()) {
             $count = 0;
             foreach ($this->dataSheet["awaitingAppsGrp"] as $grp) {
+                echo $grp;
                 $this->createFileName($grp);
                 $this->formatSpreadsheet();
                 $this->makeSpreadsheetContent($this->dataSheet);
