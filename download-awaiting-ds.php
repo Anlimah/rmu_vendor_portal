@@ -119,7 +119,7 @@ class Broadsheet
 }
 
 $broadsheet = new Broadsheet($_GET["ap"]);
-return $broadsheet->generateFile();
+var_dump($broadsheet->generateFile());
 /*if ($result) {
     foreach ($broadsheet->createdFiles as $file) {
         $broadsheet->downloadFile($file);
