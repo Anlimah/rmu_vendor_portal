@@ -801,17 +801,32 @@ class AdminController
     public function fetchAllAwaitingApplicationsBS($admin_period)
     {
         $query = "SELECT pd.id AS AdmissionNumber, ab.index_number AS IndexNumber, 
-                    ab.month_completed AS ExamMonth, ab.year_completed AS ExamYear 
+                    ab.month_completed AS ExamMonth, ab.year_completed AS ExamYear, pf.first_prog AS Program 
                 FROM 
                     applicants_login AS al, purchase_detail AS pd, admission_period AS ap, 
-                    academic_background AS ab, form_sections_chek AS fc 
+                    academic_background AS ab, form_sections_chek AS fc, program_info AS pf 
                 WHERE 
-                    al.id = ab.app_login AND al.purchase_id = pd.id AND ap.id = pd.admission_period AND 
-                    fc.app_login = al.id AND fc.`declaration` = 1 AND ab.awaiting_result = 1 AND 
-                    ap.id = :ai AND ab.cert_type = 'WASSCE' AND ab.country = 'GHANA' AND 
-                    pd.id NOT IN (SELECT admission_number FROM downloaded_awaiting_results)";
+                    al.id = ab.app_login AND al.purchase_id = pd.id AND ap.id = pd.admission_period AND al.id = pf.app_login AND 
+                    fc.app_login = al.id AND fc.`declaration` = 1 AND ab.awaiting_result = 1 AND ap.id = :ai AND 
+                    ab.cert_type = 'WASSCE' AND ab.country = 'GHANA' AND 
+                    pd.id NOT IN (SELECT admission_number FROM downloaded_awaiting_results) ORDER BY Program";
         return $this->dm->getData($query, array(":ai" => $admin_period));
     }
+
+    public function fetchAllAwaitingApplicationsBSGrouped($admin_period): mixed
+    {
+        $query = "SELECT pf.first_prog AS Program 
+                FROM 
+                    applicants_login AS al, purchase_detail AS pd, admission_period AS ap, 
+                    academic_background AS ab, form_sections_chek AS fc, program_info AS pf 
+                WHERE 
+                    al.id = ab.app_login AND al.purchase_id = pd.id AND ap.id = pd.admission_period AND al.id = pf.app_login AND 
+                    fc.app_login = al.id AND fc.`declaration` = 1 AND ab.awaiting_result = 1 AND ap.id = :ai AND 
+                    ab.cert_type = 'WASSCE' AND ab.country = 'GHANA' AND 
+                    pd.id NOT IN (SELECT admission_number FROM downloaded_awaiting_results) GROUP BY Program ORDER BY Program";
+        return $this->dm->getData($query, array(":ai" => $admin_period));
+    }
+
 
     public function saveDownloadedAwaitingResults($data = array()): mixed
     {

@@ -13,6 +13,7 @@ class Broadsheet
     private $admin = null;
     private $sheet = null;
     private $dataSheet = [];
+    public $createdFiles = [];
     private $fileName = null;
     private $admin_period = null;
 
@@ -28,9 +29,10 @@ class Broadsheet
     public function prepareBSData()
     {
         $awaitingApps = $this->admin->fetchAllAwaitingApplicationsBS($this->admin_period);
-        if (empty($awaitingApps)) return 0;
+        $awaitingAppsGrp = $this->admin->fetchAllAwaitingApplicationsBSGrouped($this->admin_period);
+        if (empty($awaitingApps) || empty($awaitingAppsGrp)) return 0;
         if (empty($this->admin->saveDownloadedAwaitingResults($awaitingApps))) return 0;
-        $this->dataSheet = $awaitingApps;
+        $this->dataSheet = array("awaitingApps" => $awaitingApps, "awaitingAppsGrp" => $awaitingAppsGrp);
         return 1;
     }
 
@@ -63,7 +65,7 @@ class Broadsheet
 
     private function saveSpreadsheetFile($filename)
     {
-        $file = $filename . '.xlsx';
+        $file = "./awaiting_results/" . $filename . '.xlsx';
 
         if (file_exists($file)) {
             unlink($file);
@@ -73,28 +75,33 @@ class Broadsheet
         unset($this->spreadsheet);
     }
 
-    public function createFileName()
+    public function createFileName($program)
     {
-        $dateData = $this->admin->getAcademicPeriod($_SESSION["admin_period"]);
-        $this->fileName = "List of Applicants Awaiting results (";
+        $dateData = $this->admin->getAcademicPeriod($this->admin_period);
+        $this->fileName = "{$program} - Awaiting Results Applicants (";
         $this->fileName .= $dateData[0]["start_year"] . " - " . $dateData[0]["end_year"] . ")";
     }
 
     public function generateFile(): mixed
     {
         if ($this->prepareBSData()) {
-            $this->createFileName();
-            $this->formatSpreadsheet();
-            $this->makeSpreadsheetContent($this->dataSheet);
-            $this->saveSpreadsheetFile($this->fileName);
-            return $this->fileName;
+            $count = 0;
+            foreach ($this->dataSheet["awaitingAppsGrp"] as $grp) {
+                $this->createFileName($grp);
+                $this->formatSpreadsheet();
+                $this->makeSpreadsheetContent($this->dataSheet);
+                $this->saveSpreadsheetFile($this->fileName);
+                array_push($this->createdFiles, $this->fileName);
+                $count += 1;
+            }
+            return $count;
         }
         return 0;
     }
 
     public function downloadFile($file)
     {
-        $file_url = './' . $file . ".xlsx";
+        $file_url = './awaiting_results/' . $file . ".xlsx";
         header('Content-Type:application/octet-stream');
         header("Content-Transfer-Encoding:utf-8");
         header("Content-disposition:attachment;filename=\"" . basename($file_url) . "\"");
@@ -103,5 +110,9 @@ class Broadsheet
 }
 
 $broadsheet = new Broadsheet($_GET["ap"]);
-$file = $broadsheet->generateFile();
-if (!empty($file)) $broadsheet->downloadFile($file);
+$result = $broadsheet->generateFile();
+if ($result) {
+    foreach ($broadsheet->createdFiles as $file) {
+        $broadsheet->downloadFile($file);
+    }
+}
