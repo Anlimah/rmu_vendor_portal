@@ -28,12 +28,19 @@ class Broadsheet
 
     public function prepareBSData()
     {
+        return $this->admin->fetchAllAwaitingApplicationsBS($this->admin_period);
+        /*$awaitingAppsGrp = $this->admin->fetchAllAwaitingApplicationsBSGrouped($this->admin_period);
+        if (empty($awaitingApps) || empty($awaitingAppsGrp)) return 0;
+        if (empty($this->admin->saveDownloadedAwaitingResults($awaitingApps))) return 0;
+        $this->dataSheet = array("awaitingApps" => $awaitingApps, "awaitingAppsGrp" => $awaitingAppsGrp);
+        return 1;*/
+        /*
         $awaitingApps = $this->admin->fetchAllAwaitingApplicationsBS($this->admin_period);
         $awaitingAppsGrp = $this->admin->fetchAllAwaitingApplicationsBSGrouped($this->admin_period);
         if (empty($awaitingApps) || empty($awaitingAppsGrp)) return 0;
         if (empty($this->admin->saveDownloadedAwaitingResults($awaitingApps))) return 0;
         $this->dataSheet = array("awaitingApps" => $awaitingApps, "awaitingAppsGrp" => $awaitingAppsGrp);
-        return 1;
+        return 1;*/
     }
 
     public function formatSpreadsheet()
@@ -84,7 +91,8 @@ class Broadsheet
 
     public function generateFile(): mixed
     {
-        if ($this->prepareBSData()) {
+        return $this->prepareBSData();
+        /*if ($this->prepareBSData()) {
             $count = 0;
             foreach ($this->dataSheet["awaitingAppsGrp"] as $grp) {
                 echo $grp;
@@ -97,7 +105,7 @@ class Broadsheet
             }
             return $count;
         }
-        return 0;
+        return 0*/
     }
 
     public function downloadFile($file)
@@ -111,9 +119,9 @@ class Broadsheet
 }
 
 $broadsheet = new Broadsheet($_GET["ap"]);
-$result = $broadsheet->generateFile();
-if ($result) {
+return $broadsheet->generateFile();
+/*if ($result) {
     foreach ($broadsheet->createdFiles as $file) {
         $broadsheet->downloadFile($file);
     }
-}
+}*/
