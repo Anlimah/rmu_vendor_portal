@@ -81,7 +81,7 @@ class Broadsheet
             $count = 0;
 
             foreach ($this->dataSheet["awaitingAppsGrp"] as $grp) {
-
+                echo "Count: " . ($count + 1) . $grp["Program"] . "<br>";
                 $fileName = $this->createFileName($grp["Program"]);
                 array_push($this->fileNames, $fileName);
 
@@ -91,6 +91,7 @@ class Broadsheet
                 $row = 2;
 
                 foreach ($this->dataSheet["awaitingApps"] as $appData) {
+                    echo "Row: " . (($row * 0) + 1) . $appData["AdmissionNumber"] . "<br>";
                     if ($grp["Program"] == $appData["Program"]) {
                         $this->formatSpreadsheet();
                         $this->makeSpreadsheetContent($appData);
@@ -105,10 +106,15 @@ class Broadsheet
                 // Save spreadsheet file
                 //$this->saveSpreadsheetFile($fileName);
                 $file = "./awaiting_results/" . $fileName . '.xlsx';
+                echo "File name: " . $file . "<br>";
                 if (file_exists($file)) unlink($file);
+                echo "Continued <br>";
                 $this->writer->save($file);
+                echo "save <br>";
                 $this->spreadsheet->disconnectWorksheets();
+                echo "disconnectWorksheets <br>";
                 unset($this->spreadsheet);
+                echo "unset <br>";
 
                 $count += 1;
             }
