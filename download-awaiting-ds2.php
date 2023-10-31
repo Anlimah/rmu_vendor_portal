@@ -81,10 +81,11 @@ class Broadsheet
             $count = 0;
 
             foreach ($this->dataSheet["awaitingAppsGrp"] as $grp) {
+                echo "Program: " . $grp["Program"] . "<br>";
                 $fileName = $this->createFileName($grp["Program"]);
                 array_push($this->fileNames, $fileName);
 
-                $spreadsheet = new Spreadsheet();
+                /*$spreadsheet = new Spreadsheet();
                 $sheet = $spreadsheet->getActiveSheet();
                 $writer = new Xlsx($spreadsheet);
 
@@ -97,33 +98,28 @@ class Broadsheet
                 $sheet->getColumnDimension('B')->setAutoSize(true);
                 $sheet->getColumnDimension('C')->setAutoSize(true);
                 $sheet->getColumnDimension('D')->setAutoSize(true);
-                $sheet->getStyle('A1:D1')->getAlignment()->setHorizontal('center');
+                $sheet->getStyle('A1:D1')->getAlignment()->setHorizontal('center');*/
 
                 $row = 2;
 
                 foreach ($this->dataSheet["awaitingApps"] as $appData) {
                     if ($grp["Program"] == $appData["Program"]) {
-                        //$this->makeSpreadsheetContent($appData);
-                        $sheet->setCellValue("A" . $row, $appData["AdmissionNumber"]);
+                        echo "Applicant: " . $appData["AdmissionNumber"] . "<br>";
+                        /*$sheet->setCellValue("A" . $row, $appData["AdmissionNumber"]);
                         $sheet->setCellValue("B" . $row, $appData["IndexNumber"]);
                         $sheet->setCellValue("C" . $row, $appData["ExamMonth"]);
-                        $sheet->setCellValue("D" . $row, $appData["ExamYear"]);
+                        $sheet->setCellValue("D" . $row, $appData["ExamYear"]);*/
                         $row += 1;
                     }
                 }
 
                 // Save spreadsheet file
                 //$this->saveSpreadsheetFile($fileName);
-                $file = "awaiting_results/" . $fileName . '.xlsx';
-                echo "File name: " . $file . "<br>";
-                if (file_exists($file)) unlink($file);
-                echo "Continued <br>";
-                $writer->save($file);
-                echo "save <br>";
-                $spreadsheet->disconnectWorksheets();
-                echo "disconnectWorksheets <br>";
+                //$file = "awaiting_results/" . $fileName . '.xlsx';
+                //if (file_exists($file)) unlink($file);
+                //$writer->save($file);
+                //$spreadsheet->disconnectWorksheets();
                 unset($spreadsheet);
-                echo "unset <br>";
 
                 $count += 1;
             }
