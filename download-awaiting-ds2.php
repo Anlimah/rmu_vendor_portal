@@ -88,13 +88,24 @@ class Broadsheet
                 $this->spreadsheet = new Spreadsheet();
                 $this->sheet = $this->spreadsheet->getActiveSheet();
                 $this->writer = new Xlsx($this->spreadsheet);
+
+                //$this->formatSpreadsheet();
+                $this->sheet->setCellValue('A1', "AdmissionNumber");
+                $this->sheet->setCellValue('B1', "IndexNumber");
+                $this->sheet->setCellValue('C1', "ExamMonth");
+                $this->sheet->setCellValue('D1', "ExamYear");
+                $this->sheet->getColumnDimension('A')->setAutoSize(true);
+                $this->sheet->getColumnDimension('B')->setAutoSize(true);
+                $this->sheet->getColumnDimension('C')->setAutoSize(true);
+                $this->sheet->getColumnDimension('D')->setAutoSize(true);
+                $this->sheet->getStyle('A1:D1')->getAlignment()->setHorizontal('center');
+
                 $row = 2;
 
                 foreach ($this->dataSheet["awaitingApps"] as $appData) {
                     echo "Row: " . (($row * 0) + 1) . $appData["AdmissionNumber"] . "<br>";
                     if ($grp["Program"] == $appData["Program"]) {
-                        $this->formatSpreadsheet();
-                        $this->makeSpreadsheetContent($appData);
+                        //$this->makeSpreadsheetContent($appData);
                         $this->sheet->setCellValue("A" . $row, $appData["AdmissionNumber"]);
                         $this->sheet->setCellValue("B" . $row, $appData["IndexNumber"]);
                         $this->sheet->setCellValue("C" . $row, $appData["ExamMonth"]);
