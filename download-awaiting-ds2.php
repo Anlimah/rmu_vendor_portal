@@ -81,16 +81,15 @@ class Broadsheet
             $count = 0;
 
             foreach ($this->dataSheet["awaitingAppsGrp"] as $grp) {
-                echo "Count: " . ($count + 1) . $grp["Program"] . "<br>";
                 $fileName = $this->createFileName($grp["Program"]);
                 array_push($this->fileNames, $fileName);
 
-                /*$spreadsheet = new Spreadsheet();
+                $spreadsheet = new Spreadsheet();
                 $sheet = $spreadsheet->getActiveSheet();
                 $writer = new Xlsx($spreadsheet);
 
                 //$this->formatSpreadsheet();
-                /*$sheet->setCellValue('A1', "AdmissionNumber");
+                $sheet->setCellValue('A1', "AdmissionNumber");
                 $sheet->setCellValue('B1', "IndexNumber");
                 $sheet->setCellValue('C1', "ExamMonth");
                 $sheet->setCellValue('D1', "ExamYear");
@@ -98,18 +97,17 @@ class Broadsheet
                 $sheet->getColumnDimension('B')->setAutoSize(true);
                 $sheet->getColumnDimension('C')->setAutoSize(true);
                 $sheet->getColumnDimension('D')->setAutoSize(true);
-                $sheet->getStyle('A1:D1')->getAlignment()->setHorizontal('center');*/
+                $sheet->getStyle('A1:D1')->getAlignment()->setHorizontal('center');
 
                 $row = 2;
 
                 foreach ($this->dataSheet["awaitingApps"] as $appData) {
                     if ($grp["Program"] == $appData["Program"]) {
-                        echo "Row: " . (($row * 0) + 1) . $appData["AdmissionNumber"] . "<br>";
                         //$this->makeSpreadsheetContent($appData);
-                        /*$sheet->setCellValue("A" . $row, $appData["AdmissionNumber"]);
+                        $sheet->setCellValue("A" . $row, $appData["AdmissionNumber"]);
                         $sheet->setCellValue("B" . $row, $appData["IndexNumber"]);
                         $sheet->setCellValue("C" . $row, $appData["ExamMonth"]);
-                        $sheet->setCellValue("D" . $row, $appData["ExamYear"]);*/
+                        $sheet->setCellValue("D" . $row, $appData["ExamYear"]);
                         $row += 1;
                     }
                 }
@@ -120,11 +118,11 @@ class Broadsheet
                 echo "File name: " . $file . "<br>";
                 if (file_exists($file)) unlink($file);
                 echo "Continued <br>";
-                //$this->writer->save($file);
+                $this->writer->save($file);
                 echo "save <br>";
-                //$this->spreadsheet->disconnectWorksheets();
+                $this->spreadsheet->disconnectWorksheets();
                 echo "disconnectWorksheets <br>";
-                //unset($this->spreadsheet);
+                unset($this->spreadsheet);
                 echo "unset <br>";
 
                 $count += 1;
