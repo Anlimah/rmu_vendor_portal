@@ -114,7 +114,7 @@ class Broadsheet
                 }
 
                 // Save spreadsheet file
-                $this->saveSpreadsheetFile($fileName);
+                //$this->saveSpreadsheetFile($fileName);
                 $file = "awaiting_results/" . $fileName . '.xlsx';
                 if (file_exists($file)) unlink($file);
                 $writer->save($file);
