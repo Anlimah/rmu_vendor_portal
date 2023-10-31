@@ -85,7 +85,7 @@ class Broadsheet
                 $fileName = $this->createFileName($grp["Program"]);
                 array_push($this->fileNames, $fileName);
 
-                $this->spreadsheet = new Spreadsheet();
+                /*$this->spreadsheet = new Spreadsheet();
                 $this->sheet = $this->spreadsheet->getActiveSheet();
                 $this->writer = new Xlsx($this->spreadsheet);
 
@@ -98,9 +98,9 @@ class Broadsheet
                 $this->sheet->getColumnDimension('B')->setAutoSize(true);
                 $this->sheet->getColumnDimension('C')->setAutoSize(true);
                 $this->sheet->getColumnDimension('D')->setAutoSize(true);
-                $this->sheet->getStyle('A1:D1')->getAlignment()->setHorizontal('center');
+                $this->sheet->getStyle('A1:D1')->getAlignment()->setHorizontal('center');*/
 
-                $row = 2;
+                /*$row = 2;
 
                 foreach ($this->dataSheet["awaitingApps"] as $appData) {
                     echo "Row: " . (($row * 0) + 1) . $appData["AdmissionNumber"] . "<br>";
@@ -112,7 +112,7 @@ class Broadsheet
                         $this->sheet->setCellValue("D" . $row, $appData["ExamYear"]);
                         $row += 1;
                     }
-                }
+                }*/
 
                 // Save spreadsheet file
                 //$this->saveSpreadsheetFile($fileName);
@@ -120,11 +120,11 @@ class Broadsheet
                 echo "File name: " . $file . "<br>";
                 if (file_exists($file)) unlink($file);
                 echo "Continued <br>";
-                $this->writer->save($file);
+                //$this->writer->save($file);
                 echo "save <br>";
-                $this->spreadsheet->disconnectWorksheets();
+                //$this->spreadsheet->disconnectWorksheets();
                 echo "disconnectWorksheets <br>";
-                unset($this->spreadsheet);
+                //unset($this->spreadsheet);
                 echo "unset <br>";
 
                 $count += 1;
@@ -146,8 +146,8 @@ class Broadsheet
 
 $broadsheet = new Broadsheet($_GET["ap"]);
 $result = $broadsheet->generateFile();
-if ($result) {
+/*if ($result) {
     foreach ($broadsheet->fileNames as $file) {
         $broadsheet->downloadFile($file);
     }
-}
+}*/
