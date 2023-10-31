@@ -85,34 +85,34 @@ class Broadsheet
                 $fileName = $this->createFileName($grp["Program"]);
                 array_push($this->fileNames, $fileName);
 
-                /*$this->spreadsheet = new Spreadsheet();
-                $this->sheet = $this->spreadsheet->getActiveSheet();
-                $this->writer = new Xlsx($this->spreadsheet);
+                /*$spreadsheet = new Spreadsheet();
+                $sheet = $spreadsheet->getActiveSheet();
+                $writer = new Xlsx($spreadsheet);
 
                 //$this->formatSpreadsheet();
-                $this->sheet->setCellValue('A1', "AdmissionNumber");
-                $this->sheet->setCellValue('B1', "IndexNumber");
-                $this->sheet->setCellValue('C1', "ExamMonth");
-                $this->sheet->setCellValue('D1', "ExamYear");
-                $this->sheet->getColumnDimension('A')->setAutoSize(true);
-                $this->sheet->getColumnDimension('B')->setAutoSize(true);
-                $this->sheet->getColumnDimension('C')->setAutoSize(true);
-                $this->sheet->getColumnDimension('D')->setAutoSize(true);
-                $this->sheet->getStyle('A1:D1')->getAlignment()->setHorizontal('center');*/
+                /*$sheet->setCellValue('A1', "AdmissionNumber");
+                $sheet->setCellValue('B1', "IndexNumber");
+                $sheet->setCellValue('C1', "ExamMonth");
+                $sheet->setCellValue('D1', "ExamYear");
+                $sheet->getColumnDimension('A')->setAutoSize(true);
+                $sheet->getColumnDimension('B')->setAutoSize(true);
+                $sheet->getColumnDimension('C')->setAutoSize(true);
+                $sheet->getColumnDimension('D')->setAutoSize(true);
+                $sheet->getStyle('A1:D1')->getAlignment()->setHorizontal('center');*/
 
-                /*$row = 2;
+                $row = 2;
 
                 foreach ($this->dataSheet["awaitingApps"] as $appData) {
-                    echo "Row: " . (($row * 0) + 1) . $appData["AdmissionNumber"] . "<br>";
                     if ($grp["Program"] == $appData["Program"]) {
+                        echo "Row: " . (($row * 0) + 1) . $appData["AdmissionNumber"] . "<br>";
                         //$this->makeSpreadsheetContent($appData);
-                        $this->sheet->setCellValue("A" . $row, $appData["AdmissionNumber"]);
-                        $this->sheet->setCellValue("B" . $row, $appData["IndexNumber"]);
-                        $this->sheet->setCellValue("C" . $row, $appData["ExamMonth"]);
-                        $this->sheet->setCellValue("D" . $row, $appData["ExamYear"]);
+                        /*$sheet->setCellValue("A" . $row, $appData["AdmissionNumber"]);
+                        $sheet->setCellValue("B" . $row, $appData["IndexNumber"]);
+                        $sheet->setCellValue("C" . $row, $appData["ExamMonth"]);
+                        $sheet->setCellValue("D" . $row, $appData["ExamYear"]);*/
                         $row += 1;
                     }
-                }*/
+                }
 
                 // Save spreadsheet file
                 //$this->saveSpreadsheetFile($fileName);
