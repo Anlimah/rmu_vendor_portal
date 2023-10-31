@@ -118,11 +118,11 @@ class Broadsheet
                 echo "File name: " . $file . "<br>";
                 if (file_exists($file)) unlink($file);
                 echo "Continued <br>";
-                $this->writer->save($file);
+                $writer->save($file);
                 echo "save <br>";
-                $this->spreadsheet->disconnectWorksheets();
+                $spreadsheet->disconnectWorksheets();
                 echo "disconnectWorksheets <br>";
-                unset($this->spreadsheet);
+                unset($spreadsheet);
                 echo "unset <br>";
 
                 $count += 1;
