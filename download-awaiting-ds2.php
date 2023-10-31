@@ -61,7 +61,7 @@ class Broadsheet
 
     private function saveSpreadsheetFile($filename)
     {
-        $file = "./awaiting_results/" . $filename . '.xlsx';
+        $file = "awaiting_results/" . $filename . '.xlsx';
         if (file_exists($file)) unlink($file);
         $this->writer->save($file);
         $this->spreadsheet->disconnectWorksheets();
@@ -114,7 +114,7 @@ class Broadsheet
 
                 // Save spreadsheet file
                 //$this->saveSpreadsheetFile($fileName);
-                $file = "./awaiting_results/" . $fileName . '.xlsx';
+                $file = "awaiting_results/" . $fileName . '.xlsx';
                 echo "File name: " . $file . "<br>";
                 if (file_exists($file)) unlink($file);
                 echo "Continued <br>";
@@ -134,7 +134,7 @@ class Broadsheet
 
     public function downloadFile($file)
     {
-        $file_url = './awaiting_results/' . $file . ".xlsx";
+        $file_url = 'awaiting_results/' . $file . ".xlsx";
         header('Content-Type:application/octet-stream');
         header("Content-Transfer-Encoding:utf-8");
         header("Content-disposition:attachment;filename=\"" . basename($file_url) . "\"");
