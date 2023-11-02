@@ -8,100 +8,110 @@ use Src\Controller\AdminController;
 
 class Broadsheet
 {
-    private $spreadsheet = null;
-    private $writer = null;
     private $admin = null;
-    private $sheet = null;
     private $dataSheet = [];
-    private $fileName = null;
     private $admin_period = null;
+    public $admission_data = null;
 
     public function __construct($admin_period)
     {
-        $this->spreadsheet = new Spreadsheet();
-        $this->sheet = $this->spreadsheet->getActiveSheet();
-        $this->writer = new Xlsx($this->spreadsheet);
         $this->admin = new AdminController();
         $this->admin_period = $admin_period;
     }
 
     public function prepareBSData()
     {
+        $this->admission_data = $this->admin->getAcademicPeriod($this->admin_period);
         $awaitingApps = $this->admin->fetchAllAwaitingApplicationsBS($this->admin_period);
-        if (empty($awaitingApps)) return 0;
-        if (empty($this->admin->saveDownloadedAwaitingResults($awaitingApps))) return 0;
-        $this->dataSheet = $awaitingApps;
+        $awaitingAppsGrp = $this->admin->fetchAllAwaitingApplicationsBSGrouped($this->admin_period);
+        if (empty($awaitingApps) || empty($awaitingAppsGrp)) return 0;
+        //if (empty($this->admin->saveDownloadedAwaitingResults($awaitingApps))) return 0;
+        $this->dataSheet = array("awaitingApps" => $awaitingApps, "awaitingAppsGrp" => $awaitingAppsGrp);
         return 1;
-    }
-
-    public function formatSpreadsheet()
-    {
-        $this->sheet->setCellValue('A1', "AdmissionNumber");
-        $this->sheet->setCellValue('B1', "IndexNumber");
-        $this->sheet->setCellValue('C1', "ExamMonth");
-        $this->sheet->setCellValue('D1', "ExamYear");
-
-        $this->sheet->getColumnDimension('A')->setAutoSize(true);
-        $this->sheet->getColumnDimension('B')->setAutoSize(true);
-        $this->sheet->getColumnDimension('C')->setAutoSize(true);
-        $this->sheet->getColumnDimension('D')->setAutoSize(true);
-
-        $this->sheet->getStyle('A1:D1')->getAlignment()->setHorizontal('center');
-    }
-
-    private function makeSpreadsheetContent($datasheet)
-    {
-        $row = 2;
-        foreach ($datasheet as $data) {
-            $this->sheet->setCellValue("A" . $row, $data["AdmissionNumber"]);
-            $this->sheet->setCellValue("B" . $row, $data["IndexNumber"]);
-            $this->sheet->setCellValue("C" . $row, $data["ExamMonth"]);
-            $this->sheet->setCellValue("D" . $row, $data["ExamYear"]);
-            $row += 1;
-        }
-    }
-
-    private function saveSpreadsheetFile($filename)
-    {
-        $file = $filename . '.xlsx';
-
-        if (file_exists($file)) {
-            unlink($file);
-        }
-        $this->writer->save($file);
-        $this->spreadsheet->disconnectWorksheets();
-        unset($this->spreadsheet);
-    }
-
-    public function createFileName()
-    {
-        $dateData = $this->admin->getAcademicPeriod($_SESSION["admin_period"]);
-        $this->fileName = "List of Applicants Awaiting results (";
-        $this->fileName .= $dateData[0]["start_year"] . " - " . $dateData[0]["end_year"] . ")";
     }
 
     public function generateFile(): mixed
     {
         if ($this->prepareBSData()) {
-            $this->createFileName();
-            $this->formatSpreadsheet();
-            $this->makeSpreadsheetContent($this->dataSheet);
-            $this->saveSpreadsheetFile($this->fileName);
-            return $this->fileName;
+            $count = 0;
+
+            $zip = new ZipArchive();
+            $zipFileName = $this->admission_data[0]["info"]; // The name of the zip file you want to create
+
+            if ($zip->open($zipFileName, ZipArchive::CREATE) === TRUE) {
+
+                foreach ($this->dataSheet["awaitingAppsGrp"] as $grp) {
+                    echo "Program: " . $grp["Program"] . "<br>";
+
+                    $sanitizedFileName = str_replace('/', '_', $grp["Program"]);
+                    $sanitizedFileName = preg_replace('/[^A-Za-z0-9_. -]/', '', $sanitizedFileName);
+                    $sanitizedFileName = trim($sanitizedFileName);
+
+                    $dateData = $this->admin->getAcademicPeriod($this->admin_period);
+                    $fileName = "{$sanitizedFileName} - Awaiting Results Applicants ({$dateData[0]["start_year"]} - {$dateData[0]["end_year"]})";
+
+                    $spreadsheet = new Spreadsheet();
+                    $sheet = $spreadsheet->getActiveSheet();
+                    $writer = new Xlsx($spreadsheet);
+
+                    //$this->formatSpreadsheet();
+                    $sheet->setCellValue('A1', "AdmissionNumber");
+                    $sheet->setCellValue('B1', "IndexNumber");
+                    $sheet->setCellValue('C1', "ExamMonth");
+                    $sheet->setCellValue('D1', "ExamYear");
+                    $sheet->getColumnDimension('A')->setAutoSize(true);
+                    $sheet->getColumnDimension('B')->setAutoSize(true);
+                    $sheet->getColumnDimension('C')->setAutoSize(true);
+                    $sheet->getColumnDimension('D')->setAutoSize(true);
+                    $sheet->getStyle('A1:D1')->getAlignment()->setHorizontal('center');
+
+                    $row = 2;
+
+                    foreach ($this->dataSheet["awaitingApps"] as $appData) {
+                        if ($grp["Program"] == $appData["Program"]) {
+                            echo "Applicant: " . $appData["AdmissionNumber"] . "<br>";
+                            $sheet->setCellValue("A" . $row, $appData["AdmissionNumber"]);
+                            $sheet->setCellValue("B" . $row, $appData["IndexNumber"]);
+                            $sheet->setCellValue("C" . $row, $appData["ExamMonth"]);
+                            $sheet->setCellValue("D" . $row, $appData["ExamYear"]);
+                            $row += 1;
+                        }
+                    }
+
+                    // Save spreadsheet file
+                    $filepath = "awaiting_results/" . $fileName . '.xlsx';
+                    if (file_exists($filepath)) unlink($filepath);
+                    $writer->save($filepath);
+                    $spreadsheet->disconnectWorksheets();
+
+                    // Add files to the zip archive
+                    $zip->addFile($filepath);
+
+                    $count += 1;
+                }
+            } else {
+                echo 'Failed to create the zip archive';
+            }
+            unset($spreadsheet);
+
+            // Close the zip archive
+            $zip->close();
+
+            return array("fileCount" => $count, "zipFile" => $zipFileName);
         }
         return 0;
     }
 
     public function downloadFile($file)
     {
-        $file_url = './' . $file . ".xlsx";
-        header('Content-Type:application/octet-stream');
+        header('Content-Type:application/zip');
         header("Content-Transfer-Encoding:utf-8");
-        header("Content-disposition:attachment;filename=\"" . basename($file_url) . "\"");
-        readfile($file_url);
+        header("Content-disposition:attachment;filename=\"" . basename($file) . "\"");
+        readfile($file);
+        unlink($file);
     }
 }
 
 $broadsheet = new Broadsheet($_GET["ap"]);
-$file = $broadsheet->generateFile();
-if (!empty($file)) $broadsheet->downloadFile($file);
+$result = $broadsheet->generateFile();
+if (!empty($result)) $broadsheet->downloadFile($result["zipFile"]);
