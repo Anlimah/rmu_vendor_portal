@@ -88,7 +88,7 @@ class Broadsheet
                 echo "Program: " . $grp["Program"] . "<br>";
 
                 $sanitizedFileName = str_replace('/', '_', $grp["Program"]);
-                $sanitizedFileName = preg_replace('/[^A-Za-z0-9_.-]/', '', $sanitizedFileName);
+                $sanitizedFileName = preg_replace('/[^A-Za-z0-9_. -]/', '', $sanitizedFileName);
                 $sanitizedFileName = trim($sanitizedFileName);
 
                 $dateData = $this->admin->getAcademicPeriod($this->admin_period);
