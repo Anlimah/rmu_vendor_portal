@@ -92,7 +92,7 @@ class Broadsheet
                 $sanitizedFileName = trim($sanitizedFileName);
 
                 $dateData = $this->admin->getAcademicPeriod($this->admin_period);
-                $fileName = "{$grp["Program"]} - Awaiting Results Applicants (" . $dateData[0]["start_year"] . " - " . $dateData[0]["end_year"] . ")";
+                $fileName = "{$sanitizedFileName} - Awaiting Results Applicants ({$dateData[0]["start_year"]} - {$dateData[0]["end_year"]})";
 
                 array_push($this->fileNames, $fileName);
 
