@@ -70,6 +70,10 @@ class Broadsheet
 
     public function createFileName($program)
     {
+        $sanitizedFileName = str_replace('/', '_', $program);
+        $sanitizedFileName = preg_replace('/[^A-Za-z0-9_.-]/', '', $sanitizedFileName);
+        $sanitizedFileName = trim($sanitizedFileName);
+
         $dateData = $this->admin->getAcademicPeriod($this->admin_period);
         $fileName = "{$program} - Awaiting Results Applicants (" . $dateData[0]["start_year"] . " - " . $dateData[0]["end_year"] . ")";
         return $fileName;
@@ -82,7 +86,14 @@ class Broadsheet
 
             foreach ($this->dataSheet["awaitingAppsGrp"] as $grp) {
                 echo "Program: " . $grp["Program"] . "<br>";
-                $fileName = $this->createFileName($grp["Program"]);
+
+                $sanitizedFileName = str_replace('/', '_', $grp["Program"]);
+                $sanitizedFileName = preg_replace('/[^A-Za-z0-9_.-]/', '', $sanitizedFileName);
+                $sanitizedFileName = trim($sanitizedFileName);
+
+                $dateData = $this->admin->getAcademicPeriod($this->admin_period);
+                $fileName = "{$grp["Program"]} - Awaiting Results Applicants (" . $dateData[0]["start_year"] . " - " . $dateData[0]["end_year"] . ")";
+
                 array_push($this->fileNames, $fileName);
 
                 $spreadsheet = new Spreadsheet();
@@ -114,7 +125,6 @@ class Broadsheet
                 }
 
                 // Save spreadsheet file
-                //$this->saveSpreadsheetFile($fileName);
                 $file = "awaiting_results/" . $fileName . '.xlsx';
                 if (file_exists($file)) unlink($file);
                 $writer->save($file);
