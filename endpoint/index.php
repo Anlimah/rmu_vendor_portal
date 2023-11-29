@@ -141,55 +141,6 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
     // Resend verification code
     elseif ($_GET["url"] == "resend-code") {
-        if (!isset($_POST["resend_code"])) die(json_encode(array("success" => false, "message" => "Invalid request!")));
-        if (empty($_POST["resend_code"])) die(json_encode(array("success" => false, "message" => "Missing input!")));
-
-        $code_type = $expose->validateText($_POST["resend_code"]);
-        switch ($code_type) {
-            case 'sms':
-                // For vendor resend otp code
-                if (isset($_SESSION["_verifySMSToken"]) && !empty($_SESSION["_verifySMSToken"]) && isset($_POST["_vSMSToken"]) && !empty($_POST["_vSMSToken"]) && $_POST["_vSMSToken"] == $_SESSION["_verifySMSToken"]) {
-
-                    $vendorPhone = $expose->getVendorPhoneByUserID($_SESSION["user"]);
-
-                    if (!empty($vendorPhone)) {
-                        $response = $expose->sendOTP($vendorPhone[0]["phone_number"]);
-
-                        if (isset($response["otp_code"])) {
-                            $_SESSION['sms_code'] = $response["otp_code"];
-                            $_SESSION['verifySMSCode'] = true;
-                            $data["success"] = true;
-                            $data["message"] = "Verification code sent!";
-                        } else {
-                            $data["success"] = false;
-                            $data["message"] = $response["statusDescription"];
-                        }
-                    } else {
-                        $data["success"] = false;
-                        $data["message"] = "No phone number entry found for this user!";
-                    }
-                }
-
-                // for user/applicant/online resend otp code
-                else if (isset($_SESSION["_step5Token"]) && !empty($_SESSION["_step5Token"]) && isset($_POST["_v5Token"]) && !empty($_POST["_v5Token"]) && $_POST["_v5Token"] == $_SESSION["_step5Token"]) {
-
-                    $to = $_SESSION["step4"]["country_code"] . $_SESSION["step4"]["phone_number"];
-                    $response = $expose->sendOTP($to);
-
-                    if (isset($response["otp_code"])) {
-                        $_SESSION['sms_code'] = $response["otp_code"];
-                        $data["success"] = true;
-                        $data["message"] = "Verification code resent!";
-                    } else {
-                        $data["success"] = false;
-                        $data["message"] = $response["statusDescription"];
-                    }
-                } else {
-                    die(json_encode(array("success" => false, "message" => "Invalid OTP SMS request!")));
-                }
-                break;
-        }
-        die(json_encode($data));
     }
 
     // Get details on form
@@ -266,118 +217,34 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
     //
     elseif ($_GET["url"] == "apps-data") {
-        if (!isset($_POST["action"]) || !isset($_POST["form_t"])) die(json_encode(array("success" => false, "message" => "Invalid input!")));
-        if (empty($_POST["action"]) || empty($_POST["form_t"])) die(json_encode(array("success" => false, "message" => "Missing request!")));
-
-        $v_action = $expose->validateText($_POST["action"]);
-        $v_form_t = $expose->validateNumber($_POST["form_t"]);
-        $data = array('action' => $v_action, 'country' => 'All', 'type' => $v_form_t, 'program' => 'All');
-        $result = $admin->fetchAppsSummaryData($_SESSION["admin_period"], $data);
-        if (empty($result)) die(json_encode(array("success" => false, "message" => "Empty result!")));
-        die(json_encode(array("success" => true, "message" => $result)));
     }
     //
     elseif ($_GET["url"] == "applicants") {
-
-        if (!isset($_POST["action"]) || !isset($_POST["country"]) || !isset($_POST["type"]) || !isset($_POST["program"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input!")));
-        }
-        if (empty($_POST["action"]) || empty($_POST["country"]) || empty($_POST["type"]) || empty($_POST["program"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input!")));
-        }
-
-        $result = $admin->fetchAppsSummaryData($_SESSION["admin_period"], $_POST);
-        if (!empty($result)) {
-            $data["success"] = true;
-            $data["message"] = $result;
-        } else {
-            $data["success"] = false;
-            $data["message"] = "No result found!";
-        }
-        die(json_encode($data));
     }
 
     //
     else if ($_GET["url"] == "checkPrintedDocument") {
-        if (!isset($_POST["app"]) || empty($_POST["app"])) die(json_encode(array("success" => false, "message" => "Missing input!")));
-        if (!empty($admin->updateApplicationStatus($_POST["app"], 'printed', 1))) die(json_encode(array("success" => true)));
-        die(json_encode(array("success" => false, "message" => "Failed to updated printed status!")));
     }
 
     //
     elseif ($_GET["url"] == "getAllAdmittedApplicants") {
-
-        if (!isset($_POST["cert-type"]))
-            die(json_encode(array("success" => false, "message" => "Invalid input field")));
-        if (empty($_POST["cert-type"]))
-            die(json_encode(array("success" => false, "message" => "Missing input field")));
-
-        $result = $admin->getAllAdmittedApplicantsAllAll($_POST["cert-type"]);
-        if (empty($result)) die(json_encode(array("success" => false, "message" => "No result found!")));
-        die(json_encode(array("success" => true, "message" => $result)));
     }
 
     //
     elseif ($_GET["url"] == "getAllDeclinedApplicants") {
-
-        if (!isset($_POST["cert-type"]))
-            die(json_encode(array("success" => false, "message" => "Invalid input field")));
-        if (empty($_POST["cert-type"]))
-            die(json_encode(array("success" => false, "message" => "Missing input field")));
-
-        $result = $admin->getAllDeclinedApplicantsAllAll($_POST["cert-type"]);
-        if (empty($result)) die(json_encode(array("success" => false, "message" => "No result found!")));
-        die(json_encode(array("success" => true, "message" => $result)));
     }
 
     //
     elseif ($_GET["url"] == "getUnadmittedApps") {
-
-        if (!isset($_POST["cert-type"]) || !isset($_POST["prog-type"])) {
-            die(json_encode(array("success" => false, "message" => "Invalid input field")));
-        }
-        if (empty($_POST["cert-type"]) || empty($_POST["prog-type"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field")));
-        }
-
-        $result = $admin->fetchAllUnadmittedApplicantsData($_POST["cert-type"], $_POST["prog-type"]);
-
-        if (empty($result)) {
-            die(json_encode(array("success" => false, "message" => "No result found!")));
-        }
-        die(json_encode(array("success" => true, "message" => $result)));
     }
     //
     elseif ($_GET["url"] == "admitAll") {
-        if (!isset($_POST["cert-type"]) || !isset($_POST["prog-type"])) {
-            die(json_encode(array("success" => false, "message" => "Invalid input field")));
-        }
-        if (empty($_POST["cert-type"]) || empty($_POST["prog-type"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field")));
-        }
-
-        $result = $admin->admitQualifiedStudents($_POST["cert-type"], $_POST["prog-type"]);
-
-        if (empty($result)) {
-            die(json_encode(array("success" => false, "message" => "No result found!")));
-        }
-        die(json_encode(array("success" => true, "message" => $result)));
     }
     //
     elseif ($_GET["url"] == "downloadBS") {
-        if (!isset($_POST["cert-type"]) || empty($_POST["cert-type"]))
-            die(json_encode(array("success" => false, "message" => "Please choose a certificate type!")));
-        $url = "https://office.rmuictonline.com/download-bs.php?a=bs&c=" . $_POST["cert-type"];
-        die(json_encode(array("success" => true, "message" => $url)));
     }
     //
     elseif ($_GET["url"] == "getBroadsheetData") {
-
-        if (!isset($_POST["cert-type"]) || empty($_POST["cert-type"]))
-            die(json_encode(array("success" => false, "message" => "Please choose a certificate type!")));
-
-        //$result = $admin->fetchAllAdmittedApplicantsData($_POST["cert-type"]);
-        die(json_encode($admin->fetchAllSubmittedApplicantsData($_POST["cert-type"])));
     }
     //
     elseif ($_GET["url"] == "downloadAwaiting") {
@@ -386,194 +253,26 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     }
     //
     elseif ($_GET["url"] == "extra-awaiting-data") {
-
-        if (!isset($_POST["action"]) || empty($_POST["action"])) {
-            die(json_encode(array("success" => false, "message" => "Invalid request (1)!")));
-        }
-
-        $result;
-
-        switch ($_POST["action"]) {
-                // download broadsheet dbs
-            case 'dbs':
-                $broadsheet = new DownloadExcelDataController($_POST['c']);
-                $file = $broadsheet->generateFile();
-                $result = $broadsheet->downloadFile($file);
-                break;
-
-                // upload awaiting datasheet uad
-            case 'uad':
-
-                if (!isset($_FILES["awaiting-ds"]) || empty($_FILES["awaiting-ds"])) {
-                    die(json_encode(array("success" => false, "message" => "Invalid request!")));
-                }
-
-                if ($_FILES["awaiting-ds"]['error']) {
-                    die(json_encode(array("success" => false, "message" => "Failed to upload file!")));
-                }
-
-                $startRow = $expose->validateNumber($_POST['startRow']);
-                $endRow = $expose->validateNumber($_POST['endRow']);
-
-                $excelData = new UploadExcelDataController($_FILES["awaiting-ds"], $_POST['startRow'], $_POST['endRow']);
-                $result = $excelData->extractAwaitingApplicantsResults();
-                break;
-        }
-
-        die(json_encode($result));
     }
 
     ///
     elseif ($_GET["url"] == "form-price") {
-        if (!isset($_POST["form_type"]) || !isset($_POST["form_price"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field")));
-        }
-        if (empty($_POST["form_type"]) || empty($_POST["form_price"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field")));
-        }
-        if (empty($_POST["form_name"]) || empty($_POST["form_name"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field")));
-        }
-
-        $result = [];
-
-        switch ($_POST["action"]) {
-            case 'add':
-                $rslt = $admin->addFormPrice($_POST["form_type"], $_POST["form_name"], $_POST["form_price"]);
-                if (!$rslt) {
-                    die(json_encode(array("success" => false, "message" => "Failed to add price!")));
-                }
-                $result = array("success" => true, "message" => "Successfully added form price!");
-                break;
-
-            case 'update':
-                $rslt = $admin->updateFormPrice($_POST["form_id"], $_POST["form_type"], $_POST["form_name"], $_POST["form_price"]);
-                if (!$rslt) {
-                    die(json_encode(array("success" => false, "message" => "Failed to update price!")));
-                }
-                $result = array("success" => true, "message" => "Successfully updated form price!");
-                break;
-
-            default:
-                die(json_encode(array("success" => false, "message" => "Invalid action!")));
-                break;
-        }
-
-        die(json_encode($result));
     }
 
     //
     elseif ($_GET["url"] == "vendor-sub-branches-group") {
-        if (!isset($_POST["vendor_key"]) || empty($_POST["vendor_key"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field")));
-        }
-        $rslt = $admin->fetchVendorSubBranchesGrp($_POST["vendor_key"]);
-        if (!$rslt) die(json_encode(array("success" => false, "message" => "Error fetching vendor details!")));
-        die(json_encode(array("success" => true, "message" => $rslt)));
     }
 
     //
     elseif ($_GET["url"] == "vendor-sub-branches") {
-        if (!isset($_POST["vendor_branch"]) || empty($_POST["vendor_branch"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field")));
-        }
-        $rslt = $admin->fetchVendorSubBranches($_POST["vendor_branch"]);
-        if (!$rslt) die(json_encode(array("success" => false, "message" => "Error fetching vendor details!")));
-        die(json_encode(array("success" => true, "message" => $rslt)));
     }
     //
     elseif ($_GET["url"] == "vendor-form") {
-
-        if (!isset($_POST["v-action"]) || empty($_POST["v-action"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field: Ghana Card")));
-        }
-        if (!isset($_POST["v-name"]) || empty($_POST["v-name"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field: Vendor Name")));
-        }
-        if (!isset($_POST["v-code"]) || empty($_POST["v-code"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field: Company code")));
-        }
-        if (!isset($_POST["v-email"]) || empty($_POST["v-email"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field: Email Address")));
-        }
-        if (!isset($_POST["v-phone"]) || empty($_POST["v-phone"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field: Phone Number")));
-        }
-        if (!isset($_POST["v-api-user"]) || empty($_POST["v-api-user"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field: API User status")));
-        }
-
-        $user_data = array(
-            "first_name" => $_POST["v-name"], "last_name" => "MAIN", "user_name" => $_POST["v-email"], "user_role" => "Vendors",
-            "user_type" => "user", "vendor_company" => $_POST["v-name"], "company_code" => $_POST["v-code"], "vendor_role" => "Ops Head",
-            "vendor_phone" => $_POST["v-phone"], "vendor_branch" => "MAIN", "api_user" => ($_POST["v-api-user"] == "YES" ? 1 : 0)
-        );
-
-        $privileges = array("select" => 1, "insert" => 1, "update" => 0, "delete" => 0);
-
-        $result;
-        switch ($_POST["v-action"]) {
-            case 'add':
-                $rslt = $admin->addSystemUser($user_data, $privileges);
-                if (!$rslt["success"]) die(json_encode($rslt));
-                $result = array("success" => true, "message" => "Successfully added vendor account!");
-                break;
-
-            case 'update':
-                $rslt = $admin->updateVendor($_POST["v-id"], $_POST["v-email"], $_POST["v-phone"]);
-                if (!$rslt["success"]) die(json_encode($rslt));
-                $result = array("success" => true, "message" => "Successfully updated vendor account information!");
-                break;
-        }
-
-        if (isset($_FILES["other-branches"]) && !empty($_FILES["other-branches"])) {
-            if ($_FILES["other-branches"]['error']) {
-                $result = array("success" => false, "message" => "Successfully {$_POST["v-action"]}ed vendor's account information");
-            } else {
-                $result = $admin->uploadCompanyBranchesData($_POST["v-name"], $_FILES["other-branches"]);
-            }
-        }
-
-        die(json_encode($result));
     }
     //
     elseif ($_GET["url"] == "prog-form") {
-        if (!isset($_POST["prog-name"]) || empty($_POST["prog-name"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field: Name")));
-        }
-        if (!isset($_POST["prog-type"]) || empty($_POST["prog-type"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field: Type")));
-        }
-        if (!isset($_POST["prog-wkd"]) || empty($_POST["prog-wkd"])) {
-            $prog_wkd = "0";
-        } else {
-            $prog_wkd = "1";
-        }
-        if (!isset($_POST["prog-grp"]) || empty($_POST["prog-grp"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field: Group")));
-        }
-
-        $result;
-        switch ($_POST["prog-action"]) {
-            case 'add':
-                $rslt = $admin->addProgramme($_POST["prog-name"], $_POST["prog-type"], $prog_wkd, $_POST["prog-grp"]);
-                if (!$rslt) {
-                    die(json_encode(array("success" => false, "message" => "Failed to add vendor!")));
-                }
-                $result = array("success" => true, "message" => "Successfully added vendor!");
-                break;
-
-            case 'update':
-                $rslt = $admin->updateProgramme($_POST["prog-id"], $_POST["prog-name"], $_POST["prog-type"], $prog_wkd, $_POST["prog-grp"]);
-                if (!$rslt) {
-                    die(json_encode(array("success" => false, "message" => "Failed to update vendor information!")));
-                }
-                $result = array("success" => true, "message" => "Successfully updated vendor information!");
-                break;
-        }
-
-        die(json_encode($result));
     }
+
     //
     elseif ($_GET["url"] == "adp-form-verify" && $_POST["adp-action"] == 'add') {
         if (!isset($_POST["adp-start"]) || empty($_POST["adp-start"])) {
@@ -600,94 +299,9 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
     //
     elseif ($_GET["url"] == "adp-form") {
-        if (!isset($_POST["adp-start"]) || empty($_POST["adp-start"]))
-            die(json_encode(array("success" => false, "message" => "Missing input field: Start Date")));
-        if (!isset($_POST["adp-end"]) || empty($_POST["adp-end"]))
-            die(json_encode(array("success" => false, "message" => "Missing input field: End Date")));
-        if (!isset($_POST["adp-intake"]) || empty($_POST["adp-intake"]))
-            die(json_encode(array("success" => false, "message" => "Missing input field: Description")));
-        if (!isset($_POST["adp-desc"]))
-            die(json_encode(array("success" => false, "message" => "Missing input field: Description")));
-
-        if (isset($_POST["adp-desc"]) && empty($_POST["adp-desc"])) $desc = '';
-
-        $result;
-        switch ($_POST["adp-action"]) {
-            case 'add':
-                $result = $admin->addAdmissionPeriod($_POST["adp-start"], $_POST["adp-end"], $_POST["adp-desc"], $_POST["adp-intake"]);
-                break;
-            case 'update':
-                $result = $admin->updateAdmissionPeriod($_POST["adp-id"], $_POST["adp-start"], $_POST["adp-desc"]);
-                break;
-        }
-        die(json_encode($result));
     }
     //
     elseif ($_GET["url"] == "user-form") {
-        if (!isset($_POST["user-fname"]) || empty($_POST["user-fname"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field: First name")));
-        }
-        if (!isset($_POST["user-lname"]) || empty($_POST["user-lname"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field: Last name")));
-        }
-        if (!isset($_POST["user-email"]) || empty($_POST["user-email"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field: Email")));
-        }
-        if (!isset($_POST["user-role"]) || empty($_POST["user-role"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field: Role")));
-        }
-        if (!isset($_POST["user-type"]) || empty($_POST["user-type"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field: User Type")));
-        }
-
-        if ($_POST["user-role"] == "Vendors") {
-            if (!isset($_POST["vendor-tin"]) || empty($_POST["vendor-tin"])) {
-                die(json_encode(array("success" => false, "message" => "Missing input field: Ghana Card")));
-            }
-            if (!isset($_POST["vendor-phone"]) || empty($_POST["vendor-phone"])) {
-                die(json_encode(array("success" => false, "message" => "Missing input field: Phone Number")));
-            }
-            if (!isset($_POST["vendor-company"]) || empty($_POST["vendor-company"])) {
-                die(json_encode(array("success" => false, "message" => "Missing input field: Address")));
-            }
-            if (!isset($_POST["vendor-address"]) || empty($_POST["vendor-address"])) {
-                die(json_encode(array("success" => false, "message" => "Missing input field: Address")));
-            }
-        }
-
-        $user_data = array(
-            "first_name" => $_POST["user-fname"], "last_name" => $_POST["user-lname"],
-            "user_name" => $_POST["user-email"], "user_role" => $_POST["user-role"],
-            "user_type" => $_POST["user-type"], "vendor_company" => $_POST["vendor-company"],
-            "vendor_tin" => $_POST["vendor-tin"], "vendor_phone" => $_POST["vendor-phone"],
-            "vendor_address" => $_POST["vendor-address"]
-        );
-
-        $privileges = array("select" => 1, "insert" => 0, "update" => 0, "delete" => 0);
-        if (isset($_POST["privileges"]) && !empty($_POST["privileges"])) {
-            foreach ($_POST["privileges"] as $privilege) {
-                if ($privilege == "insert") $privileges["insert"] = 1;
-                if ($privilege == "update") $privileges["update"] = 1;
-                if ($privilege == "delete") $privileges["delete"] = 1;
-            }
-        }
-
-        $result;
-        switch ($_POST["user-action"]) {
-            case 'add':
-                $result = $admin->addSystemUser($user_data, $privileges);
-                break;
-
-            case 'update':
-                $rslt = $admin->updateSystemUser($_POST, $privileges);
-                if (!$rslt) {
-                    die(json_encode(array("success" => false, "message" => "Failed to update admission information!")));
-                }
-                $result = array("success" => true, "message" => "Successfully updated admission information!");
-                break;
-        }
-
-        die(json_encode($result));
     }
 
     // For sales report on accounts dashboard
@@ -763,20 +377,6 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
     // send an sms to customer
     elseif ($_GET["url"] == "sms-customer") {
-        if (!isset($_POST["recipient"]) || empty($_POST["recipient"]))
-            die(json_encode(array("success" => false, "message" => "No recipient!")));
-        if (!isset($_POST["message"]) || empty($_POST["message"]))
-            die(json_encode(array("success" => false, "message" => "No message typed!")));
-        if (strlen($_POST["message"]) > 160)
-            die(json_encode(array("success" => false, "message" => "Message is too long. Maximum allowed is 160 characters!")));
-
-        // Send SMS message
-        $to = str_replace(array("+", "(", ")", " "), "", $_POST["recipient"]);
-        $response = json_decode($expose->sendSMS($to, $_POST["message"]));
-
-        // Set SMS response status
-        if (!$response->status) die(json_encode(array("success" => true, "message" => "Message sent successfully!")));
-        die(json_encode(array("success" => true, "message" => "Failed to send message!")));
     }
 
     // fetch group sales data
@@ -820,20 +420,6 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
     // backup database
     elseif ($_GET["url"] == "backup-data") {
-        $dbs = ["rmu_admissions"];
-        $user = "root";
-        $pass = "";
-        $host = "localhost";
-
-        if (!file_exists("../Backups")) mkdir("../Backups");
-
-        foreach ($dbs as $db) {
-            if (!file_exists("../Backups/$db")) mkdir("../Backups/$db");
-            $file_name = $db . "_" . date("F_d_Y") . "@" . date("g_ia") . uniqid("_", false);
-            $folder = "../Backups/$db/$file_name" . ".sql";
-            $d = exec("mysqldump --user={$user} --password={$pass} --host={$host} {$db} --result-file={$folder}", $output);
-            die(json_encode(array("success" => true, "message" => $output)));
-        }
     }
 
     // reset password
@@ -863,55 +449,26 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
     // admit an applicant to a particular programme and generate admission letter
     elseif ($_GET["url"] == "admit-individual-applicant") {
-        if (!isset($_POST["app-prog"]) || empty($_POST["app-prog"]))
-            die(json_encode(array("success" => false, "message" => "Please choose a programme!")));
-        if (!isset($_POST["app-login"]) || empty($_POST["app-login"]))
-            die(json_encode(array("success" => false, "message" => "There no match for this applicant in database!")));
-
-        die(json_encode($admin->admitIndividualApplicant($_POST["app-login"], $_POST["app-prog"])));
     }
 
     // decline applicant admission
     elseif ($_GET["url"] == "decline-individual-applicant") {
-        if (!isset($_POST["app-login"]) || empty($_POST["app-login"]))
-            die(json_encode(array("success" => false, "message" => "There no match for this applicant in database!")));
-        die(json_encode($admin->declineIndividualApplicant($_POST["app-login"])));
     }
 
     // Send admission letter to applicant
     elseif ($_GET["url"] == "send-admission-files") {
-        if (!isset($_POST["app-login"]) || empty($_POST["app-login"]))
-            die(json_encode(array("success" => false, "message" => "There no match for this applicant in database!")));
-        if (!isset($_FILES["send-files"]) || empty($_FILES["send-files"]))
-            die(json_encode(array("success" => false, "message" => "Invalid request!")));
-        if ($_FILES["send-files"]['error'])
-            die(json_encode(array("success" => false, "message" => "Failed to upload file!")));
-        die(json_encode($admin->sendAdmissionFiles($_POST["app-login"], $_FILES["send-files"])));
     }
 
     // Enroll applicant
     elseif ($_GET["url"] == "enroll-applicant") {
-        if (!isset($_POST["app-login"]) || empty($_POST["app-login"]))
-            die(json_encode(array("success" => false, "message" => "There no match for this applicant in database!")));
-        if (!isset($_POST["app-prog"]) || empty($_POST["app-prog"]))
-            die(json_encode(array("success" => false, "message" => "Please choose a programme!")));
-        die(json_encode($admin->enrollApplicant($_POST["app-login"], $_POST["app-prog"])));
     }
 
     //
     elseif ($_GET["url"] == "unenroll-applicant") {
-        if (!isset($_POST["app-login"]) || empty($_POST["app-login"]))
-            die(json_encode(array("success" => false, "message" => "There no match for this applicant in database!")));
-        if ($admin->updateApplicationStatus($_POST["app-login"], "enrolled", 0)) die(json_encode(array("success" => true)));
-        die(json_encode(array("success" => false, "message" => "Failed to updated enrollment status!")));
     }
 
     ///
     elseif ($_GET["url"] == "export-excel") {
-        $t = new DownloadAllExcelDataController($_POST["action"]);
-        $file = $t->generateFile();
-        $t->downloadFile($file);
-        die(json_encode(array("success" => true)));
     }
 
     //
@@ -927,13 +484,6 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     parse_str(file_get_contents("php://input"), $_PUT);
 
     if ($_GET["url"] == "adp-form") {
-        if (!isset($_PUT["adp_key"]) || empty($_PUT["adp_key"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field")));
-        }
-
-        $rslt = $admin->openOrCloseAdmissionPeriod($_PUT["adp_key"], 0);
-        if (!$rslt) die(json_encode(array("success" => false, "message" => "Failed to delete programme!")));
-        die(json_encode(array("success" => true, "message" => "Successfully deleted programme!")));
     }
 
     // All DELETE request will be sent here
@@ -941,43 +491,15 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     parse_str(file_get_contents("php://input"), $_DELETE);
 
     if ($_GET["url"] == "form-price") {
-        if (!isset($_DELETE["form_key"]) || empty($_DELETE["form_key"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field")));
-        }
-
-        $rslt = $admin->deleteFormPrice($_DELETE["form_key"]);
-        if (!$rslt) die(json_encode(array("success" => false, "message" => "Failed to delete form price!")));
-        die(json_encode(array("success" => true, "message" => "Successfully deleted form price!")));
     }
 
     if ($_GET["url"] == "vendor-form") {
-        if (!isset($_DELETE["vendor_key"]) || empty($_DELETE["vendor_key"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field")));
-        }
-
-        $rslt = $admin->deleteVendor($_DELETE["vendor_key"]);
-        if (!$rslt) die(json_encode(array("success" => false, "message" => "Failed to delete form price!")));
-        die(json_encode(array("success" => true, "message" => "Successfully deleted form price!")));
     }
 
     if ($_GET["url"] == "prog-form") {
-        if (!isset($_DELETE["prog_key"]) || empty($_DELETE["prog_key"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field")));
-        }
-
-        $rslt = $admin->deleteProgramme($_DELETE["prog_key"]);
-        if (!$rslt)  die(json_encode(array("success" => false, "message" => "Failed to delete programme!")));
-        die(json_encode(array("success" => true, "message" => "Successfully deleted programme!")));
     }
 
     if ($_GET["url"] == "user-form") {
-        if (!isset($_DELETE["user_key"]) || empty($_DELETE["user_key"])) {
-            die(json_encode(array("success" => false, "message" => "Missing input field")));
-        }
-
-        $rslt = $admin->deleteSystemUser($_DELETE["user_key"]);
-        if (!$rslt) die(json_encode(array("success" => false, "message" => "Failed to delete user account!")));
-        die(json_encode(array("success" => true, "message" => "Successfully deleted user account!")));
     }
 } else {
     http_response_code(405);

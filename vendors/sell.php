@@ -311,15 +311,6 @@ require_once('../inc/page-data.php');
                 });
             });
 
-            $(document).on({
-                ajaxStart: function() {
-                    $("#submitBtn").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
-                },
-                ajaxStop: function() {
-                    $("#submitBtn").prop("disabled", false).html('Sell');
-                }
-            });
-
             $("#num1").focus();
 
             $(".num").on("keyup", function() {
@@ -341,13 +332,13 @@ require_once('../inc/page-data.php');
                 setTimeout(() => {
                     flashMessage.style.visibility = "visible";
                     flashMessage.classList.add("show");
-                }, 500);
+                }, 5000);
 
                 setTimeout(() => {
                     flashMessage.classList.remove("show");
                     setTimeout(() => {
                         flashMessage.style.visibility = "hidden";
-                    }, 500);
+                    }, 5000);
                 }, 5000);
             }
         });
